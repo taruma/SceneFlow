@@ -228,6 +228,49 @@ export default function App() {
     return () => stopTimer();
   }, [player]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger shortcuts if user is typing in an input or textarea
+      if (
+        document.activeElement?.tagName === 'INPUT' ||
+        document.activeElement?.tagName === 'TEXTAREA' ||
+        isScriptModalOpen ||
+        isCuesModalOpen
+      ) {
+        return;
+      }
+
+      if (!player) return;
+
+      switch (e.code) {
+        case 'Space':
+          e.preventDefault();
+          const playerState = player.getPlayerState();
+          if (playerState === 1) { // Playing
+            player.pauseVideo();
+          } else {
+            player.playVideo();
+          }
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          const backTime = Math.max(0, player.getCurrentTime() - 5);
+          player.seekTo(backTime, true);
+          setCurrentTime(backTime);
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          const forwardTime = player.getCurrentTime() + 5;
+          player.seekTo(forwardTime, true);
+          setCurrentTime(forwardTime);
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [player, isScriptModalOpen, isCuesModalOpen]);
+
   // Handle text selection in Edit Mode
   const handleSelection = () => {
     if (mode !== 'edit') return;
@@ -685,6 +728,23 @@ export default function App() {
         </div>
         
         <div className="flex items-center gap-2 lg:gap-4">
+          <div className="hidden lg:flex items-center gap-1.5 mr-2">
+            <button 
+              onClick={loadBlank}
+              title="New Blank Project"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-stone-200 shadow-sm"
+            >
+              <Plus size={12} /> Blank
+            </button>
+            <button 
+              onClick={resetState}
+              title="Reset to Default Demo"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-red-100 shadow-sm"
+            >
+              <Trash2 size={12} /> Reset
+            </button>
+          </div>
+
           <div className="hidden lg:flex items-center gap-2 px-4 py-2 bg-stone-900 rounded-xl shadow-inner animate-in fade-in zoom-in duration-500">
             <span className="text-[10px] font-black text-stone-500 uppercase tracking-widest">Current Time</span>
             <span className="text-lg font-mono font-bold text-white w-16 text-right">{currentTime.toFixed(1)}s</span>
@@ -713,16 +773,16 @@ export default function App() {
           
           <div className="h-8 w-px bg-stone-200 mx-2" />
           
-          <div className="flex gap-2">
-            <label className="cursor-pointer flex items-center gap-2 px-4 py-2 text-sm font-bold text-stone-600 hover:bg-stone-50 rounded-xl transition-all border border-transparent hover:border-stone-200">
-              <Upload size={16} /> Open Sync
+          <div className="flex gap-1.5">
+            <label className="cursor-pointer flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-black uppercase tracking-widest text-stone-600 hover:bg-stone-50 rounded-lg transition-all border border-transparent hover:border-stone-200">
+              <Upload size={14} /> Open Sync
               <input type="file" accept=".json" onChange={importJson} className="hidden" />
             </label>
             <button
               onClick={exportJson}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-stone-600 hover:bg-stone-50 rounded-xl transition-all border border-transparent hover:border-stone-200"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-black uppercase tracking-widest text-stone-600 hover:bg-stone-50 rounded-lg transition-all border border-transparent hover:border-stone-200"
             >
-              <Download size={16} /> Save Sync
+              <Download size={14} /> Save Sync
             </button>
           </div>
         </div>
@@ -883,18 +943,6 @@ export default function App() {
                     className="flex items-center gap-2 px-3 py-1.5 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-stone-200 shadow-sm"
                   >
                     <Edit2 size={10} /> Edit Raw
-                  </button>
-                  <button 
-                    onClick={loadBlank}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-stone-200 shadow-sm"
-                  >
-                    <Plus size={10} /> Blank
-                  </button>
-                  <button 
-                    onClick={resetState}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-red-100 shadow-sm"
-                  >
-                    <Trash2 size={10} /> Reset
                   </button>
                 </div>
               </div>
