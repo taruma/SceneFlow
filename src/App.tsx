@@ -124,6 +124,13 @@ export default function App() {
     }
   };
 
+  const resetState = () => {
+    if (confirm("Are you sure you want to reset all data? This will delete all cues and restore the default script.")) {
+      localStorage.removeItem('screenplay_sync_state');
+      window.location.reload();
+    }
+  };
+
   const onReady: YouTubeProps['onReady'] = (event) => {
     setPlayer(event.target);
   };
@@ -164,12 +171,11 @@ export default function App() {
       return;
     }
 
-    const text = sel.toString().trim();
-    if (!text) return;
+    const text = sel.toString();
+    if (!text.trim()) return;
 
     console.log("Selection captured:", text);
 
-    // Normalize text for searching (handle browser-specific whitespace/newlines)
     const fullText = state.scriptText;
     
     // Try exact match first
@@ -177,27 +183,28 @@ export default function App() {
     
     // If not found, try matching with normalized whitespace
     if (startIndex === -1) {
-      const normalizedSearch = text.replace(/\s+/g, ' ');
+      const normalizedSearch = text.replace(/\s+/g, ' ').trim();
       const normalizedFull = fullText.replace(/\s+/g, ' ');
       const normIndex = normalizedFull.indexOf(normalizedSearch);
       
       if (normIndex !== -1) {
-        // Find approximate index in original text
-        // This is a fallback
-        startIndex = fullText.toLowerCase().indexOf(text.toLowerCase());
+        // We found it in normalized text, now we need to find it in the original
+        // This is a bit complex, but for a screenplay it's usually okay to search case-insensitively
+        startIndex = fullText.toLowerCase().indexOf(text.toLowerCase().trim());
       }
     }
     
     if (startIndex !== -1) {
       console.log("Text found in script at index:", startIndex);
+      const actualText = fullText.substring(startIndex, startIndex + text.length);
       setSelection({
-        text,
+        text: actualText,
         start: startIndex,
         end: startIndex + text.length,
       });
       setNewCue(prev => ({
         ...prev,
-        selectedText: text,
+        selectedText: actualText,
         startIndex: startIndex,
         endIndex: startIndex + text.length,
       }));
@@ -413,10 +420,14 @@ export default function App() {
         }
 
         // Add the highlighted span
-        const colorInfo = COLORS.find(c => c.class === cue.colorClass);
+        // Robust color matching: check if the class starts with the same base color
+        const colorInfo = COLORS.find(c => 
+          c.class === cue.colorClass || 
+          (cue.colorClass && c.class.startsWith(cue.colorClass.split('/')[0]))
+        );
         const isTemp = cue.id === 'temp-selection';
         const rgb = isTemp ? '191, 219, 254' : (colorInfo?.rgb || '156, 163, 175');
-        const opacity = isTemp ? 0.5 : ((cue as any).opacity * 0.5);
+        const opacity = isTemp ? 0.5 : ((cue as any).opacity || 0) * 0.5;
 
         segments.push(
           <span 
@@ -581,6 +592,7 @@ export default function App() {
                     modestbranding: 1,
                     rel: 0,
                     controls: 1,
+                    origin: typeof window !== 'undefined' ? window.location.origin : undefined,
                   },
                 }}
                 onReady={onReady}
@@ -636,6 +648,12 @@ export default function App() {
                   className="flex items-center gap-2 px-3 py-1.5 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-stone-200 shadow-sm"
                 >
                   <Edit2 size={10} /> Edit Raw
+                </button>
+                <button 
+                  onClick={resetState}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-red-100 shadow-sm"
+                >
+                  <Trash2 size={10} /> Reset
                 </button>
               </div>
             </section>
