@@ -217,16 +217,23 @@ export default function App() {
     // Try exact match first
     let startIndex = fullText.indexOf(text);
     
-    // If not found, try matching with normalized whitespace
+    // If not found, try matching with normalized whitespace and quotes
     if (startIndex === -1) {
-      const normalizedSearch = text.replace(/\s+/g, ' ').trim();
-      const normalizedFull = fullText.replace(/\s+/g, ' ');
+      const normalizedSearch = text.replace(/\s+/g, ' ').replace(/['’]/g, "'").trim();
+      const normalizedFull = fullText.replace(/\s+/g, ' ').replace(/['’]/g, "'");
       const normIndex = normalizedFull.indexOf(normalizedSearch);
       
       if (normIndex !== -1) {
-        // We found it in normalized text, now we need to find it in the original
-        // This is a bit complex, but for a screenplay it's usually okay to search case-insensitively
-        startIndex = fullText.toLowerCase().indexOf(text.toLowerCase().trim());
+        // Fallback to regex search for more flexibility
+        const escaped = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+').replace(/['’]/g, "['’]");
+        const regex = new RegExp(escaped, 'gi');
+        const match = regex.exec(fullText);
+        if (match) {
+          startIndex = match.index;
+        } else {
+          // Last resort: case-insensitive search
+          startIndex = fullText.toLowerCase().indexOf(text.toLowerCase().trim());
+        }
       }
     }
     
@@ -336,8 +343,8 @@ export default function App() {
 
         // Escape special characters for regex
         const escapedSearch = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        // Replace any whitespace with \s+ to match any whitespace in the script
-        const regexStr = escapedSearch.replace(/\s+/g, '\\s+');
+        // Replace any whitespace with \s+ and quotes with a character class
+        const regexStr = escapedSearch.replace(/\s+/g, '\\s+').replace(/['’]/g, "['’]");
         
         try {
           const regex = new RegExp(regexStr, 'gi');
@@ -364,7 +371,7 @@ export default function App() {
           // (Useful if the script text was edited significantly)
           const shortSearch = searchText.substring(0, 15).trim();
           if (shortSearch.length >= 5) {
-            const shortEscaped = shortSearch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
+            const shortEscaped = shortSearch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+').replace(/['’]/g, "['’]");
             const shortRegex = new RegExp(shortEscaped, 'gi');
             
             shortRegex.lastIndex = lastIndex;
@@ -603,7 +610,7 @@ export default function App() {
     });
   }, [state.scriptText, state.cues, currentTime, selection, mode, newCue.id, player]);
 
-  const canSave = newCue.selectedText && newCue.startTime !== undefined && newCue.endTime !== undefined;
+  const canSave = newCue.selectedText && newCue.startTime !== undefined && newCue.endTime !== undefined && newCue.startIndex !== undefined && newCue.endIndex !== undefined;
 
   return (
     <div className="flex flex-col h-screen bg-stone-100 text-stone-900 font-sans overflow-hidden selection:bg-blue-100">
@@ -1057,6 +1064,50 @@ export default function App() {
                             <Clock size={14} />
                           </button>
                         </div>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">Start Index</label>
+                        <input 
+                          type="number"
+                          min="0"
+                          value={newCue.startIndex ?? ''}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value) || 0;
+                            setNewCue(prev => {
+                              const updated = { ...prev, startIndex: val };
+                              if (updated.endIndex !== undefined && updated.startIndex !== undefined) {
+                                const text = state.scriptText.substring(updated.startIndex, updated.endIndex);
+                                updated.selectedText = text;
+                                setSelection(s => s ? { ...s, text, start: updated.startIndex!, end: updated.endIndex! } : null);
+                              }
+                              return updated;
+                            });
+                          }}
+                          className="w-full bg-white border border-stone-200 rounded-lg px-2 py-1.5 text-stone-800 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">End Index</label>
+                        <input 
+                          type="number"
+                          min="0"
+                          value={newCue.endIndex ?? ''}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value) || 0;
+                            setNewCue(prev => {
+                              const updated = { ...prev, endIndex: val };
+                              if (updated.endIndex !== undefined && updated.startIndex !== undefined) {
+                                const text = state.scriptText.substring(updated.startIndex, updated.endIndex);
+                                updated.selectedText = text;
+                                setSelection(s => s ? { ...s, text, start: updated.startIndex!, end: updated.endIndex! } : null);
+                              }
+                              return updated;
+                            });
+                          }}
+                          className="w-full bg-white border border-stone-200 rounded-lg px-2 py-1.5 text-stone-800 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        />
                       </div>
                     </div>
 
