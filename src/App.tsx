@@ -618,8 +618,12 @@ export default function App() {
             <Video size={20} className="text-white hidden lg:block" />
           </div>
           <div>
-            <h1 className="text-sm lg:text-lg font-bold tracking-tight text-stone-900 leading-none">Screenplay Sync</h1>
-            <p className="hidden sm:block text-[9px] lg:text-[10px] text-stone-400 uppercase tracking-widest mt-1">Production Tool v1.0</p>
+            <h1 className="text-sm lg:text-lg font-black tracking-tight text-stone-900 leading-none uppercase italic">SceneFlow</h1>
+            <div className="flex items-center gap-2 mt-1">
+              <p className="hidden sm:block text-[9px] lg:text-[10px] text-stone-400 uppercase tracking-widest font-bold">Script-to-Video Sync</p>
+              <div className="w-1 h-1 rounded-full bg-stone-200 hidden sm:block" />
+              <p className="text-[9px] lg:text-[10px] text-stone-500 font-mono">by @tarumainfo</p>
+            </div>
           </div>
         </div>
         
