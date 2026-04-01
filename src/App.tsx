@@ -782,50 +782,51 @@ export default function App() {
             </svg>
           </div>
           <div>
-            <h1 className="text-sm lg:text-lg font-black tracking-tight text-stone-900 leading-none uppercase italic">SceneFlow</h1>
+            <h1 className="text-sm lg:text-base xl:text-lg font-black tracking-tight text-stone-900 leading-none uppercase italic">SceneFlow</h1>
             <div className="flex items-center gap-2 mt-1">
-              <p className="hidden sm:block text-[9px] lg:text-[10px] text-stone-400 uppercase tracking-widest font-bold">Script-to-Video Sync</p>
-              <div className="w-1 h-1 rounded-full bg-stone-200 hidden sm:block" />
+              <p className="hidden xl:block text-[10px] text-stone-400 uppercase tracking-widest font-bold">Script-to-Video Sync</p>
+              <div className="w-1 h-1 rounded-full bg-stone-200 hidden xl:block" />
               <a 
                 href="https://x.com/tarumainfo" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-[9px] lg:text-[10px] text-stone-500 font-mono hover:underline decoration-stone-400 underline-offset-2"
               >
-                by Taruma Sakti
+                <span className="hidden sm:inline xl:hidden">by @tarumainfo</span>
+                <span className="hidden xl:inline">by Taruma Sakti</span>
               </a>
             </div>
           </div>
         </div>
         
         <div className="flex items-center gap-2 lg:gap-4">
-          <div className="hidden lg:flex items-center gap-1.5 mr-2">
+          <div className="hidden lg:flex items-center gap-1.5 mr-1 xl:mr-2">
             <button 
               onClick={() => setResetConfirmation({ isOpen: true, type: 'blank' })}
               title="New Blank Project"
-              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-stone-200 shadow-sm"
+              className="flex items-center gap-1.5 px-2 py-1.5 xl:px-2.5 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-stone-200 shadow-sm"
             >
-              <Plus size={12} /> Blank
+              <Plus size={12} /> <span className="hidden xl:inline">Blank</span>
             </button>
             <button 
               onClick={() => setResetConfirmation({ isOpen: true, type: 'data' })}
               title="Reset to Default Demo"
-              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-red-100 shadow-sm"
+              className="flex items-center gap-1.5 px-2 py-1.5 xl:px-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-red-100 shadow-sm"
             >
-              <Trash2 size={12} /> Reset
+              <Trash2 size={12} /> <span className="hidden xl:inline">Reset</span>
             </button>
           </div>
 
-          <div className="hidden lg:flex items-center gap-2 px-4 py-2 bg-stone-900 rounded-xl shadow-inner animate-in fade-in zoom-in duration-500">
-            <span className="text-[10px] font-black text-stone-500 uppercase tracking-widest">Current Time</span>
-            <span className="text-lg font-mono font-bold text-white w-16 text-right">{currentTime.toFixed(1)}s</span>
+          <div className="hidden lg:flex items-center gap-2 px-3 xl:px-4 py-2 bg-stone-900 rounded-xl shadow-inner animate-in fade-in zoom-in duration-500">
+            <span className="hidden xl:inline text-[10px] font-black text-stone-500 uppercase tracking-widest">Current Time</span>
+            <span className="text-base xl:text-lg font-mono font-bold text-white w-12 xl:w-16 text-right">{currentTime.toFixed(1)}s</span>
           </div>
 
-          <div className="flex bg-stone-100 p-1 rounded-lg lg:rounded-xl ring-1 ring-stone-200 scale-90 lg:scale-100">
+          <div className="flex bg-stone-100 p-1 rounded-lg lg:rounded-xl ring-1 ring-stone-200 scale-90 xl:scale-100">
             <button
               onClick={() => setMode('playback')}
               className={cn(
-                "px-5 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2",
+                "px-3 xl:px-5 py-2 rounded-lg text-xs xl:text-sm font-semibold transition-all flex items-center gap-2",
                 mode === 'playback' ? "bg-white shadow-md text-stone-900" : "text-stone-500 hover:text-stone-700"
               )}
             >
@@ -834,7 +835,7 @@ export default function App() {
             <button
               onClick={() => setMode('edit')}
               className={cn(
-                "px-5 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2",
+                "px-3 xl:px-5 py-2 rounded-lg text-xs xl:text-sm font-semibold transition-all flex items-center gap-2",
                 mode === 'edit' ? "bg-white shadow-md text-stone-900" : "text-stone-500 hover:text-stone-700"
               )}
             >
@@ -857,16 +858,16 @@ export default function App() {
           
           <div className="h-8 w-px bg-stone-200 mx-2" />
           
-          <div className="flex gap-1.5">
-            <label className="cursor-pointer flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-black uppercase tracking-widest text-stone-600 hover:bg-stone-50 rounded-lg transition-all border border-transparent hover:border-stone-200">
-              <Upload size={14} /> Open Sync
+          <div className="flex gap-1">
+            <label className="cursor-pointer flex items-center gap-1.5 px-2 py-1.5 xl:px-2.5 text-[10px] font-black uppercase tracking-widest text-stone-600 hover:bg-stone-50 rounded-lg transition-all border border-transparent hover:border-stone-200">
+              <Upload size={14} /> <span className="hidden xl:inline">Open Sync</span>
               <input type="file" accept=".json" onChange={importJson} className="hidden" />
             </label>
             <button
               onClick={exportJson}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-black uppercase tracking-widest text-stone-600 hover:bg-stone-50 rounded-lg transition-all border border-transparent hover:border-stone-200"
+              className="flex items-center gap-1.5 px-2 py-1.5 xl:px-2.5 text-[10px] font-black uppercase tracking-widest text-stone-600 hover:bg-stone-50 rounded-lg transition-all border border-transparent hover:border-stone-200"
             >
-              <Download size={14} /> Save Sync
+              <Download size={14} /> <span className="hidden xl:inline">Save Sync</span>
             </button>
           </div>
         </div>
