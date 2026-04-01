@@ -179,6 +179,23 @@ export default function App() {
     }
   };
 
+  const loadBlank = () => {
+    if (confirm("Are you sure you want to load a blank script? This will delete all current cues.")) {
+      fetch('/blank.json')
+        .then(res => res.json())
+        .then(data => {
+          setState(data);
+          localStorage.setItem('screenplay_sync_state', JSON.stringify(data));
+          setMode('edit');
+          setCurrentTime(0);
+        })
+        .catch(err => {
+          console.error("Failed to load blank script", err);
+          alert("Failed to load blank script.");
+        });
+    }
+  };
+
   const onReady: YouTubeProps['onReady'] = (event) => {
     setPlayer(event.target);
   };
@@ -860,18 +877,26 @@ export default function App() {
                     </p>
                   </div>
                 </div>
-                <button 
-                  onClick={() => setIsScriptModalOpen(true)}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-stone-200 shadow-sm"
-                >
-                  <Edit2 size={10} /> Edit Raw
-                </button>
-                <button 
-                  onClick={resetState}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-red-100 shadow-sm"
-                >
-                  <Trash2 size={10} /> Reset
-                </button>
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={() => setIsScriptModalOpen(true)}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-stone-200 shadow-sm"
+                  >
+                    <Edit2 size={10} /> Edit Raw
+                  </button>
+                  <button 
+                    onClick={loadBlank}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-stone-200 shadow-sm"
+                  >
+                    <Plus size={10} /> Blank
+                  </button>
+                  <button 
+                    onClick={resetState}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-red-100 shadow-sm"
+                  >
+                    <Trash2 size={10} /> Reset
+                  </button>
+                </div>
               </div>
             </section>
           )}
