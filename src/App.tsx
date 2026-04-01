@@ -1061,7 +1061,7 @@ export default function App() {
         {/* Right Panel: The Screenplay */}
         <div className={cn(
           "bg-stone-50 flex flex-col overflow-hidden relative transition-all duration-500",
-          mode === 'edit' ? "w-full lg:w-1/2 h-full" : "w-full lg:w-1/2 flex-1"
+          mode === 'edit' ? "hidden lg:flex w-full lg:w-1/2 h-full" : "w-full lg:w-1/2 flex-1"
         )}>
           <div className={cn(
             "h-16 border-b border-stone-200 flex items-center justify-between px-4 lg:px-8 bg-white shrink-0 z-20",
@@ -1121,9 +1121,9 @@ export default function App() {
                       <p className="text-xs font-mono line-clamp-1 text-stone-600 italic">"{selection.text}"</p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <label className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">Start Time</label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <div className="space-y-1">
+                        <label className="text-[8px] uppercase tracking-widest text-stone-400 font-black">Start Time</label>
                         <div className="flex gap-1">
                           <input 
                             type="number"
@@ -1131,19 +1131,19 @@ export default function App() {
                             min="0"
                             value={newCue.startTime ?? ''}
                             onChange={(e) => setNewCue(prev => ({ ...prev, startTime: parseFloat(e.target.value) || 0 }))}
-                            className="w-full bg-white border border-stone-200 rounded-lg px-2 py-1.5 text-stone-800 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="w-full bg-white border border-stone-200 rounded-lg px-1.5 py-1 text-stone-800 font-mono text-[10px] focus:outline-none focus:ring-1 focus:ring-blue-500"
                           />
                           <button
                             onClick={() => setNewCue(prev => ({ ...prev, startTime: player?.getCurrentTime() || 0 }))}
-                            className="bg-stone-100 hover:bg-stone-200 p-1.5 rounded-lg text-blue-500 transition-colors"
+                            className="bg-stone-100 hover:bg-stone-200 p-1 rounded-lg text-blue-500 transition-colors"
                           >
-                            <Clock size={14} />
+                            <Clock size={12} />
                           </button>
                         </div>
                       </div>
 
-                      <div className="space-y-1.5">
-                        <label className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">End Time</label>
+                      <div className="space-y-1">
+                        <label className="text-[8px] uppercase tracking-widest text-stone-400 font-black">End Time</label>
                         <div className="flex gap-1">
                           <input 
                             type="number"
@@ -1151,19 +1151,19 @@ export default function App() {
                             min="0"
                             value={newCue.endTime ?? ''}
                             onChange={(e) => setNewCue(prev => ({ ...prev, endTime: parseFloat(e.target.value) || 0 }))}
-                            className="w-full bg-white border border-stone-200 rounded-lg px-2 py-1.5 text-stone-800 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="w-full bg-white border border-stone-200 rounded-lg px-1.5 py-1 text-stone-800 font-mono text-[10px] focus:outline-none focus:ring-1 focus:ring-blue-500"
                           />
                           <button
                             onClick={() => setNewCue(prev => ({ ...prev, endTime: player?.getCurrentTime() || 0 }))}
-                            className="bg-stone-100 hover:bg-stone-200 p-1.5 rounded-lg text-blue-500 transition-colors"
+                            className="bg-stone-100 hover:bg-stone-200 p-1 rounded-lg text-blue-500 transition-colors"
                           >
-                            <Clock size={14} />
+                            <Clock size={12} />
                           </button>
                         </div>
                       </div>
 
-                      <div className="space-y-1.5">
-                        <label className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">Start Index</label>
+                      <div className="space-y-1">
+                        <label className="text-[8px] uppercase tracking-widest text-stone-400 font-black">Start Index</label>
                         <input 
                           type="number"
                           min="0"
@@ -1180,12 +1180,12 @@ export default function App() {
                               return updated;
                             });
                           }}
-                          className="w-full bg-white border border-stone-200 rounded-lg px-2 py-1.5 text-stone-800 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full bg-white border border-stone-200 rounded-lg px-1.5 py-1 text-stone-800 font-mono text-[10px] focus:outline-none focus:ring-1 focus:ring-blue-500"
                         />
                       </div>
 
-                      <div className="space-y-1.5">
-                        <label className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">End Index</label>
+                      <div className="space-y-1">
+                        <label className="text-[8px] uppercase tracking-widest text-stone-400 font-black">End Index</label>
                         <input 
                           type="number"
                           min="0"
@@ -1202,7 +1202,7 @@ export default function App() {
                               return updated;
                             });
                           }}
-                          className="w-full bg-white border border-stone-200 rounded-lg px-2 py-1.5 text-stone-800 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full bg-white border border-stone-200 rounded-lg px-1.5 py-1 text-stone-800 font-mono text-[10px] focus:outline-none focus:ring-1 focus:ring-blue-500"
                         />
                       </div>
                     </div>
