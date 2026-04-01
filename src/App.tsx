@@ -111,17 +111,36 @@ export default function App() {
   const [newCue, setNewCue] = useState<Partial<Cue>>({
     colorClass: COLORS[0].class,
   });
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; cue: Cue | null }>({
+    isOpen: false,
+    cue: null,
+  });
+  const [overlapPicker, setOverlapPicker] = useState<{ isOpen: boolean; cues: Cue[]; position: { x: number; y: number } }>({
+    isOpen: false,
+    cues: [],
+    position: { x: 0, y: 0 },
+  });
 
   const [isAligning, setIsAligning] = useState(false);
   const [alignSuccess, setAlignSuccess] = useState(false);
+  const [leftPanelScroll, setLeftPanelScroll] = useState(0);
 
   const scriptRef = useRef<HTMLDivElement>(null);
+  const leftPanelRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<number | null>(null);
 
   // Save to localStorage on state change
   useEffect(() => {
     localStorage.setItem('screenplay_sync_state', JSON.stringify(state));
   }, [state]);
+
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (overlapPicker.isOpen) setOverlapPicker(prev => ({ ...prev, isOpen: false }));
+    };
+    window.addEventListener('click', handleClickOutside);
+    return () => window.removeEventListener('click', handleClickOutside);
+  }, [overlapPicker.isOpen]);
 
   // YouTube Player Event Handlers
   useEffect(() => {
@@ -182,7 +201,9 @@ export default function App() {
   const handleSelection = () => {
     if (mode !== 'edit') return;
     const sel = window.getSelection();
+    
     if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+      if (overlapPicker.isOpen) setOverlapPicker(prev => ({ ...prev, isOpen: false }));
       return;
     }
 
@@ -236,7 +257,7 @@ export default function App() {
 
     const colorInfo = COLORS.find(c => c.class === (newCue.colorClass || COLORS[0].class));
     const cue: Cue = {
-      id: generateId(),
+      id: newCue.id || generateId(),
       selectedText: newCue.selectedText,
       startIndex: newCue.startIndex!,
       endIndex: newCue.endIndex!,
@@ -246,20 +267,46 @@ export default function App() {
       type: colorInfo?.type || 'dialogue',
     };
 
-    setState(prev => ({
-      ...prev,
-      cues: [...(prev.cues || []), cue],
-    }));
+    setState(prev => {
+      const existingIdx = (prev.cues || []).findIndex(c => c.id === cue.id);
+      let newCues = [...(prev.cues || [])];
+      if (existingIdx >= 0) {
+        newCues[existingIdx] = cue;
+      } else {
+        newCues.push(cue);
+      }
+      return { ...prev, cues: newCues };
+    });
+    
     setSelection(null);
     setNewCue({ colorClass: COLORS[0].class });
     console.log("Cue saved successfully:", cue);
   };
 
+  const cancelEdit = () => {
+    setSelection(null);
+    setNewCue({ colorClass: COLORS[0].class });
+  };
+
   const deleteCue = (id: string) => {
-    setState(prev => ({
-      ...prev,
-      cues: (prev.cues || []).filter(c => c.id !== id),
-    }));
+    const cueToDelete = (state.cues || []).find(c => c.id === id);
+    if (cueToDelete) {
+      setDeleteConfirmation({ isOpen: true, cue: cueToDelete });
+    }
+  };
+
+  const confirmDelete = () => {
+    if (deleteConfirmation.cue) {
+      const id = deleteConfirmation.cue.id;
+      setState(prev => ({
+        ...prev,
+        cues: (prev.cues || []).filter(c => c.id !== id),
+      }));
+      if (newCue.id === id) {
+        cancelEdit();
+      }
+      setDeleteConfirmation({ isOpen: false, cue: null });
+    }
   };
 
   const realignCues = (targetState?: AppState) => {
@@ -408,7 +455,6 @@ export default function App() {
   // Rendering the screenplay with highlights
   const renderedScript = useMemo(() => {
     const cues = state.cues || [];
-    const activeCues = cues.filter(c => currentTime >= c.startTime - 1 && currentTime <= c.endTime + 2);
     const scriptText = state.scriptText || "";
     const lines = scriptText.split('\n');
     
@@ -421,31 +467,32 @@ export default function App() {
       let className = "mb-1 text-stone-700 leading-relaxed";
       const trimmed = line.trim();
       
-      // Simplify: Only bold all-caps lines, no complex screenplay layout
       if (trimmed.length > 0 && trimmed === trimmed.toUpperCase()) {
         className = "font-bold text-stone-900 mt-4 mb-1 tracking-tight";
       } else if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
         className = "italic text-stone-500 mb-1 text-[13px]";
       }
 
-      // Find cues that overlap with this line
-      const lineCues = activeCues
+      // Filter cues that overlap with this line
+      const lineCues = (mode === 'edit' ? cues : cues.filter(c => currentTime >= c.startTime - 1 && currentTime <= c.endTime + 2))
         .filter(cue => cue.startIndex < lineEnd && cue.endIndex > lineStart)
         .map(cue => {
-          const opacity = (() => {
+          let opacity = 1;
+          if (mode === 'playback') {
             if (currentTime < cue.startTime) {
-              // Fade in: from 0 at startTime-1 to 1 at startTime
-              return Math.max(0, Math.min(1, currentTime - (cue.startTime - 1)));
+              opacity = Math.max(0, Math.min(1, currentTime - (cue.startTime - 1)));
             } else if (currentTime > cue.endTime) {
-              // Fade out: from 1 at endTime to 0 at endTime+2
-              return Math.max(0, Math.min(1, 1 - (currentTime - cue.endTime) / 2));
+              opacity = Math.max(0, Math.min(1, 1 - (currentTime - cue.endTime) / 2));
             }
-            return 1;
-          })();
+          } else {
+            // In edit mode, non-active cues are faded but visible
+            const isActive = currentTime >= cue.startTime && currentTime <= cue.endTime;
+            const isEditing = newCue.id === cue.id;
+            opacity = isEditing ? 1 : (isActive ? 0.8 : 0.4);
+          }
           
           return {
-            id: cue.id,
-            colorClass: cue.colorClass,
+            ...cue,
             start: Math.max(0, cue.startIndex - lineStart),
             end: Math.min(line.length, cue.endIndex - lineStart),
             opacity
@@ -456,11 +503,16 @@ export default function App() {
       if (mode === 'edit' && selection && selection.start < lineEnd && selection.end > lineStart) {
         lineCues.push({
           id: 'temp-selection',
+          selectedText: selection.text,
+          startIndex: selection.start,
+          endIndex: selection.end,
+          startTime: 0,
+          endTime: 0,
           colorClass: '',
           start: Math.max(0, selection.start - lineStart),
           end: Math.min(line.length, selection.end - lineStart),
           opacity: 1
-        });
+        } as any);
       }
 
       if (lineCues.length === 0) {
@@ -471,56 +523,76 @@ export default function App() {
         );
       }
 
-      // Sort and merge overlapping ranges for this line
-      // For simplicity, we'll just sort and take the most relevant ones
-      lineCues.sort((a, b) => a.start - b.start || (b.end - b.start) - (a.end - a.start));
-
-      const segments: React.ReactNode[] = [];
-      let lastIdx = 0;
-
+      // Split line into segments based on cue boundaries
+      const points = new Set<number>([0, line.length]);
       lineCues.forEach(cue => {
-        // Skip if this cue is entirely within a previously processed range
-        if (cue.start < lastIdx) {
-          if (cue.end > lastIdx) {
-            // Partial overlap - we could handle this but for now we skip to avoid broken HTML
-            // In a screenplay sync tool, overlapping cues on the same line are rare
-          }
-          return;
+        points.add(cue.start);
+        points.add(cue.end);
+      });
+      const sortedPoints = Array.from(points).sort((a, b) => a - b);
+      
+      const segments: React.ReactNode[] = [];
+      for (let i = 0; i < sortedPoints.length - 1; i++) {
+        const start = sortedPoints[i];
+        const end = sortedPoints[i + 1];
+        const segmentText = line.substring(start, end);
+        const segmentCues = lineCues.filter(c => c.start <= start && c.end >= end);
+
+        if (segmentCues.length === 0) {
+          segments.push(segmentText);
+          continue;
         }
 
-        // Add text before the highlight
-        if (cue.start > lastIdx) {
-          segments.push(line.substring(lastIdx, cue.start));
-        }
-
-        // Add the highlighted span
-        // Robust color matching: check if the class starts with the same base color
+        // If multiple cues, we pick the most "important" one for the primary color
+        // but we'll indicate overlap visually
+        const isTemp = segmentCues.some(c => c.id === 'temp-selection');
+        const editingCue = segmentCues.find(c => c.id === newCue.id);
+        const primaryCue = editingCue || segmentCues[0];
+        
         const colorInfo = COLORS.find(c => 
-          c.class === cue.colorClass || 
-          (cue.colorClass && c.class.startsWith(cue.colorClass.split('/')[0]))
+          c.class === primaryCue.colorClass || 
+          (primaryCue.colorClass && c.class.startsWith(primaryCue.colorClass.split('/')[0]))
         );
-        const isTemp = cue.id === 'temp-selection';
+        
         const rgb = isTemp ? '191, 219, 254' : (colorInfo?.rgb || '156, 163, 175');
-        const opacity = isTemp ? 0.5 : ((cue as any).opacity || 0) * 0.5;
+        const maxOpacity = Math.max(...segmentCues.map(c => (c as any).opacity || 0));
+        const finalOpacity = isTemp ? 0.5 : maxOpacity * 0.5;
 
         segments.push(
           <span 
-            key={cue.id} 
+            key={`${lineIdx}-${start}`}
+            onClick={(e) => {
+              if (mode !== 'edit' || isTemp) return;
+              e.stopPropagation();
+              
+              const actualCues = segmentCues.filter(c => c.id !== 'temp-selection');
+              if (actualCues.length === 1) {
+                const cue = actualCues[0];
+                setNewCue(cue);
+                setSelection({ text: cue.selectedText, start: cue.startIndex, end: cue.endIndex });
+                if (player) player.seekTo(cue.startTime, true);
+              } else if (actualCues.length > 1) {
+                setOverlapPicker({
+                  isOpen: true,
+                  cues: actualCues,
+                  position: { x: e.clientX, y: e.clientY }
+                });
+              }
+            }}
             className={cn(
-              "transition-all duration-300 rounded-sm px-0.5 text-stone-900",
-              isTemp && "ring-2 ring-blue-400 ring-inset"
+              "transition-all duration-300 rounded-sm px-0.5 text-stone-900 relative group",
+              mode === 'edit' && !isTemp && "cursor-pointer hover:ring-1 hover:ring-stone-400",
+              isTemp && "ring-2 ring-blue-400 ring-inset",
+              editingCue && "ring-2 ring-stone-900 ring-inset z-10 shadow-sm"
             )}
-            style={{ backgroundColor: `rgba(${rgb}, ${opacity})` }}
+            style={{ backgroundColor: `rgba(${rgb}, ${finalOpacity})` }}
           >
-            {line.substring(cue.start, cue.end)}
+            {segmentText}
+            {segmentCues.length > 1 && mode === 'edit' && !isTemp && (
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-stone-900 rounded-full border border-white shadow-sm z-20" title="Multiple cues overlap here" />
+            )}
           </span>
         );
-        lastIdx = cue.end;
-      });
-
-      // Add remaining text
-      if (lastIdx < line.length) {
-        segments.push(line.substring(lastIdx));
       }
 
       return (
@@ -529,7 +601,7 @@ export default function App() {
         </div>
       );
     });
-  }, [state.scriptText, state.cues, currentTime, selection, mode]);
+  }, [state.scriptText, state.cues, currentTime, selection, mode, newCue.id, player]);
 
   const canSave = newCue.selectedText && newCue.startTime !== undefined && newCue.endTime !== undefined;
 
@@ -600,60 +672,76 @@ export default function App() {
         mode === 'playback' && "overflow-y-auto lg:overflow-hidden"
       )}>
         {/* Left Panel: Media & Controls */}
-        <div className={cn(
-          "flex flex-col border-stone-200 bg-white transition-all duration-500",
-          mode === 'edit' 
-            ? "w-full lg:w-1/2 border-r p-4 lg:p-10 gap-6 lg:gap-8 overflow-y-auto" 
-            : "w-full lg:w-1/2 border-r p-0 lg:p-10 gap-0 lg:gap-6 lg:overflow-y-auto sticky top-0 z-30 shadow-md lg:shadow-none"
-        )}>
-          {/* Video Player Section */}
-          <section className={cn("space-y-4", mode === 'playback' && "space-y-4 lg:space-y-6")}>
-            {mode === 'edit' && (
-              <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-500">
-                <div className="flex items-center justify-between px-1">
-                  <label className="text-[10px] uppercase tracking-[0.2em] text-stone-400 font-black flex items-center gap-2">
-                    <Video size={12} /> YouTube Source
-                    <div className={cn(
-                      "w-2 h-2 rounded-full transition-all duration-500",
-                      player ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]" : "bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.4)]"
-                    )} />
-                  </label>
-                  {state.youtubeId && extractYoutubeId(state.youtubeId) !== state.youtubeId && (
-                    <span className="text-[9px] font-mono text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">
-                      ID: {extractYoutubeId(state.youtubeId)}
-                    </span>
-                  )}
-                </div>
-                <div className="relative group">
-                  <input
-                    type="text"
-                    value={state.youtubeId}
-                    onChange={(e) => setState(prev => ({ ...prev, youtubeId: e.target.value }))}
-                    className="w-full pl-10 pr-10 py-3 bg-stone-50 border border-stone-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-stone-900/5 focus:border-stone-300 transition-all font-mono text-sm"
-                    placeholder="Paste YouTube URL or Video ID"
-                  />
-                  <Video size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 group-focus-within:text-stone-600 transition-colors" />
-                  {state.youtubeId && (
-                    <button 
-                      onClick={() => setState(prev => ({ ...prev, youtubeId: '' }))}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-300 hover:text-stone-600 transition-colors"
-                    >
-                      <X size={16} />
-                    </button>
-                  )}
-                </div>
+        <div 
+          ref={leftPanelRef}
+          onScroll={(e) => setLeftPanelScroll(e.currentTarget.scrollTop)}
+          className={cn(
+            "flex flex-col border-stone-200 bg-white transition-all duration-500",
+            mode === 'edit' 
+              ? "w-full lg:w-1/2 border-r p-4 lg:p-10 overflow-y-auto scrollbar-hide" 
+              : "w-full lg:w-1/2 border-r p-0 lg:p-10 gap-0 lg:gap-6 lg:overflow-y-auto sticky top-0 z-30 shadow-md lg:shadow-none"
+          )}
+        >
+          {/* YouTube Source Input - Not Sticky in Edit Mode */}
+          {mode === 'edit' && (
+            <div className="space-y-3 mb-8 animate-in fade-in slide-in-from-top-2 duration-500">
+              <div className="flex items-center justify-between px-1">
+                <label className="text-[10px] uppercase tracking-[0.2em] text-stone-400 font-black flex items-center gap-2">
+                  <Video size={12} /> YouTube Source
+                  <div className={cn(
+                    "w-2 h-2 rounded-full transition-all duration-500",
+                    player ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]" : "bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.4)]"
+                  )} />
+                </label>
+                {state.youtubeId && extractYoutubeId(state.youtubeId) !== state.youtubeId && (
+                  <span className="text-[9px] font-mono text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">
+                    ID: {extractYoutubeId(state.youtubeId)}
+                  </span>
+                )}
               </div>
-            )}
+              <div className="relative group">
+                <input
+                  type="text"
+                  value={state.youtubeId}
+                  onChange={(e) => setState(prev => ({ ...prev, youtubeId: e.target.value }))}
+                  className="w-full pl-10 pr-10 py-3 bg-stone-50 border border-stone-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-stone-900/5 focus:border-stone-300 transition-all font-mono text-sm"
+                  placeholder="Paste YouTube URL or Video ID"
+                />
+                <Video size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 group-focus-within:text-stone-600 transition-colors" />
+                {state.youtubeId && (
+                  <button 
+                    onClick={() => setState(prev => ({ ...prev, youtubeId: '' }))}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-300 hover:text-stone-600 transition-colors"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
 
-            <div className={cn("flex items-center justify-between", mode === 'playback' && "hidden lg:flex", mode === 'edit' && "flex")}>
+          {/* Video Player Section - Sticky in Edit Mode */}
+          <section className={cn(
+            "space-y-4 transition-all duration-300", 
+            mode === 'playback' && "space-y-4 lg:space-y-6",
+            mode === 'edit' && "sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-stone-100 -mt-4 lg:-mt-10 pt-4 lg:pt-10 mb-6",
+            mode === 'edit' && leftPanelScroll > 80 && "pb-3 mb-4 shadow-sm"
+          )}>
+            <div className={cn(
+              "flex items-center justify-between transition-all duration-300", 
+              mode === 'playback' && "hidden lg:flex", 
+              mode === 'edit' && "flex",
+              mode === 'edit' && leftPanelScroll > 80 && "opacity-0 h-0 overflow-hidden mb-0"
+            )}>
                <h2 className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-stone-400 flex items-center gap-2">
                 <Video size={14} /> {mode === 'edit' ? 'Media Preview' : 'Now Playing'}
               </h2>
             </div>
             
             <div className={cn(
-              "aspect-video bg-stone-900 overflow-hidden shadow-2xl ring-1 ring-stone-200 relative group",
-              mode === 'edit' ? "rounded-3xl" : "rounded-none lg:rounded-3xl"
+              "aspect-video bg-stone-900 overflow-hidden shadow-2xl ring-1 ring-stone-200 relative group transition-all duration-500 origin-top-left",
+              mode === 'edit' ? "rounded-3xl" : "rounded-none lg:rounded-3xl",
+              mode === 'edit' && leftPanelScroll > 80 && "w-1/2 rounded-xl shadow-lg"
             )}>
               <YouTube
                 key={extractYoutubeId(state.youtubeId)}
@@ -800,7 +888,18 @@ export default function App() {
                 </div>
                 <div className="grid gap-3">
                    {(state.cues || []).map(cue => (
-                    <div key={cue.id} className="flex items-center justify-between p-4 bg-stone-50 border border-stone-200 rounded-2xl group hover:bg-white hover:shadow-md transition-all relative overflow-hidden">
+                    <div 
+                      key={cue.id} 
+                      onClick={() => {
+                        setNewCue(cue);
+                        setSelection({ text: cue.selectedText, start: cue.startIndex, end: cue.endIndex });
+                        if (player) player.seekTo(cue.startTime, true);
+                      }}
+                      className={cn(
+                        "flex items-center justify-between p-4 bg-stone-50 border rounded-2xl group hover:bg-white hover:shadow-md transition-all relative overflow-hidden cursor-pointer",
+                        newCue.id === cue.id ? "border-stone-900 ring-1 ring-stone-900 bg-white shadow-md" : "border-stone-200"
+                      )}
+                    >
                       <div className="flex items-center gap-4 flex-1 min-w-0">
                         <div className={cn("w-1.5 h-10 rounded-full shrink-0", cue.colorClass)} />
                         <div className="flex flex-col flex-1 min-w-0">
@@ -819,7 +918,10 @@ export default function App() {
                       </div>
                       <div className="flex items-center gap-4 shrink-0 ml-4">
                         <button
-                          onClick={() => deleteCue(cue.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteCue(cue.id);
+                          }}
                           className="p-2 text-stone-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 shrink-0"
                         >
                           <Trash2 size={18} />
@@ -885,14 +987,11 @@ export default function App() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Plus size={16} className="text-blue-500" />
-                        <h3 className="text-sm font-bold text-stone-800">New Sync Cue</h3>
+                        {newCue.id ? <Edit2 size={16} className="text-amber-500" /> : <Plus size={16} className="text-blue-500" />}
+                        <h3 className="text-sm font-bold text-stone-800">{newCue.id ? 'Edit Sync Cue' : 'New Sync Cue'}</h3>
                       </div>
                       <button 
-                        onClick={() => {
-                          setSelection(null);
-                          setNewCue({ colorClass: COLORS[0].class });
-                        }}
+                        onClick={cancelEdit}
                         className="text-[10px] uppercase tracking-widest text-stone-400 hover:text-stone-600 underline"
                       >
                         Cancel
@@ -966,18 +1065,29 @@ export default function App() {
                           </button>
                         ))}
                       </div>
-                      <button
-                        onClick={saveCue}
-                        disabled={!canSave}
-                        className={cn(
-                          "px-4 py-2 rounded-lg font-bold text-xs transition-all flex items-center gap-2",
-                          canSave 
-                            ? "bg-blue-500 hover:bg-blue-600 text-white shadow-md" 
-                            : "bg-stone-100 text-stone-300 cursor-not-allowed"
+                      <div className="flex items-center gap-2">
+                        {newCue.id && (
+                          <button
+                            onClick={() => deleteCue(newCue.id!)}
+                            className="p-2 text-stone-400 hover:text-red-500 transition-colors"
+                            title="Delete Cue"
+                          >
+                            <Trash2 size={18} />
+                          </button>
                         )}
-                      >
-                        <Check size={14} /> Save Cue
-                      </button>
+                        <button
+                          onClick={saveCue}
+                          disabled={!canSave}
+                          className={cn(
+                            "px-4 py-2 rounded-lg font-bold text-xs transition-all flex items-center gap-2",
+                            canSave 
+                              ? (newCue.id ? "bg-amber-500 hover:bg-amber-600 text-white shadow-md" : "bg-blue-500 hover:bg-blue-600 text-white shadow-md")
+                              : "bg-stone-100 text-stone-300 cursor-not-allowed"
+                          )}
+                        >
+                          <Check size={14} /> {newCue.id ? 'Update Cue' : 'Save Cue'}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1099,6 +1209,80 @@ export default function App() {
                   className="flex-1 py-4 bg-blue-500 hover:bg-blue-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-blue-500/20"
                 >
                   Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Overlap Picker Menu */}
+      {overlapPicker.isOpen && (
+        <div 
+          className="fixed z-[100] bg-white border border-stone-200 rounded-xl shadow-2xl p-1.5 min-w-[160px] animate-in zoom-in-95 duration-200"
+          style={{ left: overlapPicker.position.x, top: overlapPicker.position.y }}
+        >
+          <div className="px-3 py-2 border-b border-stone-100 mb-1">
+            <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Select Cue to Edit</p>
+          </div>
+          {overlapPicker.cues.map(cue => (
+            <button
+              key={cue.id}
+              onClick={() => {
+                setNewCue(cue);
+                setSelection({ text: cue.selectedText, start: cue.startIndex, end: cue.endIndex });
+                if (player) player.seekTo(cue.startTime, true);
+                setOverlapPicker({ ...overlapPicker, isOpen: false });
+              }}
+              className="w-full flex items-center gap-3 px-3 py-2 hover:bg-stone-50 rounded-lg transition-colors text-left group"
+            >
+              <div className={cn("w-2 h-2 rounded-full", cue.colorClass)} />
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">{cue.type}</p>
+                <p className="text-[9px] text-stone-400 font-mono italic truncate">"{cue.selectedText}"</p>
+              </div>
+            </button>
+          ))}
+          <button 
+            onClick={() => setOverlapPicker({ ...overlapPicker, isOpen: false })}
+            className="w-full mt-1 px-3 py-1.5 text-[10px] font-bold text-stone-400 hover:text-stone-600 hover:bg-stone-50 rounded-lg transition-all text-center"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmation.isOpen && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-stone-900/40 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-stone-200">
+            <div className="p-8 space-y-6 text-center">
+              <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto border border-red-100">
+                <Trash2 size={24} className="text-red-500" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-stone-900">Delete Sync Cue?</h3>
+                <p className="text-sm text-stone-500 mt-2">This action cannot be undone. Are you sure you want to remove this cue?</p>
+              </div>
+              
+              {deleteConfirmation.cue && (
+                <div className="bg-stone-50 p-4 rounded-2xl border border-stone-100 text-left">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-stone-400 mb-1">Cue Content</p>
+                  <p className="text-xs italic text-stone-600 line-clamp-2">"{deleteConfirmation.cue.selectedText}"</p>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  onClick={() => setDeleteConfirmation({ isOpen: false, cue: null })}
+                  className="px-6 py-3 bg-stone-100 text-stone-600 rounded-xl font-bold hover:bg-stone-200 transition-all active:scale-95"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="px-6 py-3 bg-red-500 text-white rounded-xl font-bold hover:bg-red-600 transition-all active:scale-95 shadow-lg shadow-red-500/20"
+                >
+                  Delete
                 </button>
               </div>
             </div>
