@@ -53,12 +53,12 @@ No. I'm good.
 He stands up and leaves.`;
 
 const COLORS = [
-  { name: 'Blue', class: 'bg-blue-400/50' },
-  { name: 'Yellow', class: 'bg-yellow-400/50' },
-  { name: 'Green', class: 'bg-green-400/50' },
-  { name: 'Red', class: 'bg-red-400/50' },
-  { name: 'Purple', class: 'bg-purple-400/50' },
-  { name: 'Gray', class: 'bg-gray-400/50' },
+  { name: 'Blue', class: 'bg-blue-400/50', rgb: '96, 165, 250' },
+  { name: 'Yellow', class: 'bg-yellow-400/50', rgb: '250, 204, 21' },
+  { name: 'Green', class: 'bg-green-400/50', rgb: '74, 222, 128' },
+  { name: 'Red', class: 'bg-red-400/50', rgb: '248, 113, 113' },
+  { name: 'Purple', class: 'bg-purple-400/50', rgb: '192, 132, 252' },
+  { name: 'Gray', class: 'bg-gray-400/50', rgb: '156, 163, 175' },
 ];
 
 const generateId = () => {
@@ -321,7 +321,7 @@ export default function App() {
 
   // Rendering the screenplay with highlights
   const renderedScript = useMemo(() => {
-    const activeCues = state.cues.filter(c => currentTime >= c.startTime && currentTime <= c.endTime);
+    const activeCues = state.cues.filter(c => currentTime >= c.startTime - 1 && currentTime <= c.endTime + 2);
     const lines = state.scriptText.split('\n');
     
     let currentPos = 0;
@@ -350,20 +350,35 @@ export default function App() {
       // Find cues that overlap with this line
       const lineCues = activeCues
         .filter(cue => cue.startIndex < lineEnd && cue.endIndex > lineStart)
-        .map(cue => ({
-          id: cue.id,
-          colorClass: cue.colorClass,
-          start: Math.max(0, cue.startIndex - lineStart),
-          end: Math.min(line.length, cue.endIndex - lineStart)
-        }));
+        .map(cue => {
+          const opacity = (() => {
+            if (currentTime < cue.startTime) {
+              // Fade in: from 0 at startTime-1 to 1 at startTime
+              return Math.max(0, Math.min(1, currentTime - (cue.startTime - 1)));
+            } else if (currentTime > cue.endTime) {
+              // Fade out: from 1 at endTime to 0 at endTime+2
+              return Math.max(0, Math.min(1, 1 - (currentTime - cue.endTime) / 2));
+            }
+            return 1;
+          })();
+          
+          return {
+            id: cue.id,
+            colorClass: cue.colorClass,
+            start: Math.max(0, cue.startIndex - lineStart),
+            end: Math.min(line.length, cue.endIndex - lineStart),
+            opacity
+          };
+        });
 
       // Add temporary selection if in edit mode
       if (mode === 'edit' && selection && selection.start < lineEnd && selection.end > lineStart) {
         lineCues.push({
           id: 'temp-selection',
-          colorClass: 'bg-blue-200/50 ring-2 ring-blue-400 ring-inset',
+          colorClass: '',
           start: Math.max(0, selection.start - lineStart),
-          end: Math.min(line.length, selection.end - lineStart)
+          end: Math.min(line.length, selection.end - lineStart),
+          opacity: 1
         });
       }
 
@@ -398,8 +413,20 @@ export default function App() {
         }
 
         // Add the highlighted span
+        const colorInfo = COLORS.find(c => c.class === cue.colorClass);
+        const isTemp = cue.id === 'temp-selection';
+        const rgb = isTemp ? '191, 219, 254' : (colorInfo?.rgb || '156, 163, 175');
+        const opacity = isTemp ? 0.5 : ((cue as any).opacity * 0.5);
+
         segments.push(
-          <span key={cue.id} className={cn("transition-all duration-300 rounded-sm px-0.5", cue.colorClass)}>
+          <span 
+            key={cue.id} 
+            className={cn(
+              "transition-all duration-300 rounded-sm px-0.5 text-stone-900",
+              isTemp && "ring-2 ring-blue-400 ring-inset"
+            )}
+            style={{ backgroundColor: `rgba(${rgb}, ${opacity})` }}
+          >
             {line.substring(cue.start, cue.end)}
           </span>
         );
