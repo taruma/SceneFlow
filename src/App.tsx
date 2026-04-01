@@ -683,7 +683,7 @@ export default function App() {
             "flex flex-col border-stone-200 bg-white transition-all duration-500",
             mode === 'edit' 
               ? "w-full lg:w-1/2 border-r p-4 lg:p-10 overflow-y-auto scrollbar-hide" 
-              : "w-full lg:w-1/2 border-r p-0 lg:p-10 gap-0 lg:gap-6 lg:overflow-y-auto sticky top-0 z-30 shadow-md lg:shadow-none"
+              : "w-full lg:w-1/2 border-r p-0 lg:p-10 gap-0 lg:gap-6 lg:overflow-y-auto scrollbar-hide sticky top-0 z-30 shadow-md lg:shadow-none"
           )}
         >
           {/* YouTube Source Input - Not Sticky in Edit Mode */}
@@ -726,10 +726,11 @@ export default function App() {
 
           {/* Video Player Section - Sticky in Edit Mode */}
           <section className={cn(
-            "space-y-4 transition-all duration-300", 
+            "transition-all duration-300 z-30 sticky top-0", 
             mode === 'playback' && "space-y-4 lg:space-y-6",
-            mode === 'edit' && "sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-stone-100 -mt-4 lg:-mt-10 pt-4 lg:pt-10 mb-6",
-            mode === 'edit' && leftPanelScroll > 80 && "pb-3 mb-4 shadow-sm"
+            mode === 'edit' && "-mx-4 lg:-mx-10 -mt-4 lg:-mt-10 px-4 lg:px-10 pt-4 lg:pt-10",
+            mode === 'edit' && leftPanelScroll <= 80 && "bg-white border-b border-stone-100 pb-6 mb-8 space-y-4",
+            mode === 'edit' && leftPanelScroll > 80 && "bg-transparent pointer-events-none space-y-0 pb-0 mb-0"
           )}>
             <div className={cn(
               "flex items-center justify-between transition-all duration-300", 
@@ -743,9 +744,9 @@ export default function App() {
             </div>
             
             <div className={cn(
-              "aspect-video bg-stone-900 overflow-hidden shadow-2xl ring-1 ring-stone-200 relative group transition-all duration-500 origin-top-left",
+              "aspect-video bg-stone-900 overflow-hidden shadow-2xl ring-1 ring-stone-200 relative group transition-all duration-500 origin-top-left pointer-events-auto",
               mode === 'edit' ? "rounded-3xl" : "rounded-none lg:rounded-3xl",
-              mode === 'edit' && leftPanelScroll > 80 && "w-1/2 rounded-xl shadow-lg"
+              mode === 'edit' && leftPanelScroll > 80 && "w-1/2 rounded-2xl shadow-2xl scale-90 -translate-y-2"
             )}>
               <YouTube
                 key={extractYoutubeId(state.youtubeId)}
@@ -806,7 +807,7 @@ export default function App() {
 
           {/* Script Management Section - Only in Edit Mode */}
           {mode === 'edit' && (
-            <section className="animate-in fade-in duration-500">
+            <section className="animate-in fade-in duration-500 mb-10">
               <div className="flex items-center justify-between bg-stone-50 border border-stone-200 rounded-2xl px-4 py-3">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center border border-stone-100 shadow-sm">
@@ -837,7 +838,7 @@ export default function App() {
 
           {/* Edit Mode Controls - Moved Cue Creation to Right Panel */}
           {mode === 'edit' && (
-            <section className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <section className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 mt-4">
               {/* Cue List */}
               <div className="space-y-4">
                 <div className="flex flex-col gap-4">
