@@ -33,26 +33,6 @@ interface AppState {
   cues: Cue[];
 }
 
-const DEFAULT_SCRIPT = `INT. COFFEE SHOP - DAY
-
-DAVE (30s, tired) sits at a corner table. He stares at a cold cup of coffee.
-
-DAVE
-(to himself)
-Why did I come here?
-
-A WAITRESS approaches.
-
-WAITRESS
-Refill?
-
-Dave looks up. He slowly lowers his head.
-
-DAVE
-No. I'm good.
-
-He stands up and leaves.`;
-
 const COLORS = [
   { type: 'dialogue', class: 'bg-yellow-400/50', rgb: '250, 204, 21' },
   { type: 'action', class: 'bg-blue-400/50', rgb: '96, 165, 250' },
@@ -81,7 +61,7 @@ export default function App() {
         // Ensure it has required properties
         return {
           youtubeId: parsed.youtubeId || 'dQw4w9WgXcQ',
-          scriptText: parsed.scriptText || DEFAULT_SCRIPT,
+          scriptText: parsed.scriptText || '',
           cues: Array.isArray(parsed.cues) ? parsed.cues.map((c: any) => {
             if (!c.type && c.colorClass) {
               const colorInfo = COLORS.find(col => col.class === c.colorClass);
@@ -95,11 +75,13 @@ export default function App() {
       }
     }
     return {
-      youtubeId: 'dQw4w9WgXcQ', // Default video
-      scriptText: DEFAULT_SCRIPT,
+      youtubeId: '', // Will be loaded from example_the_expansion.json
+      scriptText: '',
       cues: [],
     };
   });
+
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const [mode, setMode] = useState<'playback' | 'edit'>('playback');
   const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
@@ -131,8 +113,29 @@ export default function App() {
 
   // Save to localStorage on state change
   useEffect(() => {
-    localStorage.setItem('screenplay_sync_state', JSON.stringify(state));
-  }, [state]);
+    if (isInitialized) {
+      localStorage.setItem('screenplay_sync_state', JSON.stringify(state));
+    }
+  }, [state, isInitialized]);
+
+  // Initial load of default data if no local storage
+  useEffect(() => {
+    const saved = localStorage.getItem('screenplay_sync_state');
+    if (!saved) {
+      fetch('/example_the_expansion.json')
+        .then(res => res.json())
+        .then(data => {
+          setState(data);
+          setIsInitialized(true);
+        })
+        .catch(err => {
+          console.error("Failed to load default script", err);
+          setIsInitialized(true);
+        });
+    } else {
+      setIsInitialized(true);
+    }
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -160,8 +163,19 @@ export default function App() {
 
   const resetState = () => {
     if (confirm("Are you sure you want to reset all data? This will delete all cues and restore the default script.")) {
-      localStorage.removeItem('screenplay_sync_state');
-      window.location.reload();
+      fetch('/example_the_expansion.json')
+        .then(res => res.json())
+        .then(data => {
+          setState(data);
+          localStorage.setItem('screenplay_sync_state', JSON.stringify(data));
+          setMode('playback');
+          setCurrentTime(0);
+        })
+        .catch(err => {
+          console.error("Failed to reset to default script", err);
+          localStorage.removeItem('screenplay_sync_state');
+          window.location.reload();
+        });
     }
   };
 
@@ -429,7 +443,7 @@ export default function App() {
         // Basic validation to prevent crashes
         const validatedJson = {
           youtubeId: json.youtubeId || 'dQw4w9WgXcQ',
-          scriptText: json.scriptText || DEFAULT_SCRIPT,
+          scriptText: json.scriptText || '',
           cues: Array.isArray(json.cues) ? json.cues.map((c: any) => {
             if (!c.type && c.colorClass) {
               const colorInfo = COLORS.find(col => col.class === c.colorClass);
@@ -611,6 +625,15 @@ export default function App() {
   }, [state.scriptText, state.cues, currentTime, selection, mode, newCue.id, player]);
 
   const canSave = newCue.selectedText && newCue.startTime !== undefined && newCue.endTime !== undefined && newCue.startIndex !== undefined && newCue.endIndex !== undefined;
+
+  if (!isInitialized) {
+    return (
+      <div className="h-screen w-full flex flex-col items-center justify-center bg-stone-100 gap-4">
+        <Loader2 className="w-10 h-10 text-stone-400 animate-spin" />
+        <p className="text-stone-500 font-mono text-sm animate-pulse">Initializing SceneFlow...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-screen bg-stone-100 text-stone-900 font-sans overflow-hidden selection:bg-blue-100">
