@@ -4,6 +4,7 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Libre Baskerville", serif;
+  --animate-spin-slow: spin 3s linear infinite;
 }
 
 body {

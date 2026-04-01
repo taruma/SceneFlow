@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import YouTube, { YouTubeProps } from 'react-youtube';
-import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2 } from 'lucide-react';
+import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -27,10 +27,16 @@ interface Cue {
   type?: string;
 }
 
+interface TimingSettings {
+  before: number;
+  after: number;
+}
+
 interface AppState {
   youtubeId: string;
   scriptText: string;
   cues: Cue[];
+  settings?: Record<string, TimingSettings>;
 }
 
 const COLORS = [
@@ -43,6 +49,11 @@ const COLORS = [
   { type: 'transition', class: 'bg-pink-400/50', rgb: '244, 114, 182' },
   { type: 'environment', class: 'bg-slate-400/50', rgb: '148, 163, 184' },
 ];
+
+const DEFAULT_SETTINGS: Record<string, TimingSettings> = {
+  general: { before: 0, after: 0 },
+  ...Object.fromEntries(COLORS.map(c => [c.type, { before: 1, after: 2 }]))
+};
 
 const generateId = () => {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -69,6 +80,7 @@ export default function App() {
             }
             return c;
           }) : [],
+          settings: parsed.settings || DEFAULT_SETTINGS,
         };
       } catch (e) {
         console.error("Failed to parse saved state", e);
@@ -78,6 +90,7 @@ export default function App() {
       youtubeId: '', // Will be loaded from example_the_expansion.json
       scriptText: '',
       cues: [],
+      settings: DEFAULT_SETTINGS,
     };
   });
 
@@ -86,6 +99,7 @@ export default function App() {
   const [mode, setMode] = useState<'playback' | 'edit'>('playback');
   const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
   const [isCuesModalOpen, setIsCuesModalOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [rawCuesText, setRawCuesText] = useState("");
   const [currentTime, setCurrentTime] = useState(0);
   const [player, setPlayer] = useState<any>(null);
@@ -96,6 +110,10 @@ export default function App() {
   const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; cue: Cue | null }>({
     isOpen: false,
     cue: null,
+  });
+  const [resetConfirmation, setResetConfirmation] = useState<{ isOpen: boolean; type: 'settings' | 'data' | 'blank' | null }>({
+    isOpen: false,
+    type: null,
   });
   const [overlapPicker, setOverlapPicker] = useState<{ isOpen: boolean; cues: Cue[]; position: { x: number; y: number } }>({
     isOpen: false,
@@ -162,38 +180,38 @@ export default function App() {
   };
 
   const resetState = () => {
-    if (confirm("Are you sure you want to reset all data? This will delete all cues and restore the default script.")) {
-      fetch('/example_the_expansion.json')
-        .then(res => res.json())
-        .then(data => {
-          setState(data);
-          localStorage.setItem('screenplay_sync_state', JSON.stringify(data));
-          setMode('playback');
-          setCurrentTime(0);
-        })
-        .catch(err => {
-          console.error("Failed to reset to default script", err);
-          localStorage.removeItem('screenplay_sync_state');
-          window.location.reload();
-        });
-    }
+    fetch('/example_the_expansion.json')
+      .then(res => res.json())
+      .then(data => {
+        const finalData = { ...data, settings: data.settings || DEFAULT_SETTINGS };
+        setState(finalData);
+        localStorage.setItem('screenplay_sync_state', JSON.stringify(finalData));
+        setMode('playback');
+        setCurrentTime(0);
+        setResetConfirmation({ isOpen: false, type: null });
+      })
+      .catch(err => {
+        console.error("Failed to reset to default script", err);
+        localStorage.removeItem('screenplay_sync_state');
+        window.location.reload();
+      });
   };
 
   const loadBlank = () => {
-    if (confirm("Are you sure you want to load a blank script? This will delete all current cues.")) {
-      fetch('/blank.json')
-        .then(res => res.json())
-        .then(data => {
-          setState(data);
-          localStorage.setItem('screenplay_sync_state', JSON.stringify(data));
-          setMode('edit');
-          setCurrentTime(0);
-        })
-        .catch(err => {
-          console.error("Failed to load blank script", err);
-          alert("Failed to load blank script.");
-        });
-    }
+    fetch('/blank.json')
+      .then(res => res.json())
+      .then(data => {
+        const finalData = { ...data, settings: data.settings || DEFAULT_SETTINGS };
+        setState(finalData);
+        localStorage.setItem('screenplay_sync_state', JSON.stringify(finalData));
+        setMode('edit');
+        setCurrentTime(0);
+        setResetConfirmation({ isOpen: false, type: null });
+      })
+      .catch(err => {
+        console.error("Failed to load blank script", err);
+        alert("Failed to load blank script.");
+      });
   };
 
   const onReady: YouTubeProps['onReady'] = (event) => {
@@ -511,6 +529,7 @@ export default function App() {
             }
             return c;
           }) : [],
+          settings: json.settings || DEFAULT_SETTINGS,
         };
 
         setState(validatedJson);
@@ -555,15 +574,26 @@ export default function App() {
       }
 
       // Filter cues that overlap with this line
-      const lineCues = (mode === 'edit' ? cues : cues.filter(c => currentTime >= c.startTime - 1 && currentTime <= c.endTime + 2))
+      const lineCues = (mode === 'edit' ? cues : cues.filter(c => {
+        const typeSettings = state.settings?.[c.type || ''] || DEFAULT_SETTINGS.general;
+        const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
+        const totalBefore = (typeSettings.before || 0) + (generalSettings.before || 0);
+        const totalAfter = (typeSettings.after || 0) + (generalSettings.after || 0);
+        return currentTime >= c.startTime - totalBefore && currentTime <= c.endTime + totalAfter;
+      }))
         .filter(cue => cue.startIndex < lineEnd && cue.endIndex > lineStart)
         .map(cue => {
           let opacity = 1;
           if (mode === 'playback') {
+            const typeSettings = state.settings?.[cue.type || ''] || DEFAULT_SETTINGS.general;
+            const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
+            const totalBefore = (typeSettings.before || 0) + (generalSettings.before || 0);
+            const totalAfter = (typeSettings.after || 0) + (generalSettings.after || 0);
+
             if (currentTime < cue.startTime) {
-              opacity = Math.max(0, Math.min(1, currentTime - (cue.startTime - 1)));
+              opacity = totalBefore > 0 ? Math.max(0, Math.min(1, (currentTime - (cue.startTime - totalBefore)) / totalBefore)) : 1;
             } else if (currentTime > cue.endTime) {
-              opacity = Math.max(0, Math.min(1, 1 - (currentTime - cue.endTime) / 2));
+              opacity = totalAfter > 0 ? Math.max(0, Math.min(1, 1 - (currentTime - cue.endTime) / totalAfter)) : 1;
             }
           } else {
             // In edit mode, non-active cues are faded but visible
@@ -730,14 +760,14 @@ export default function App() {
         <div className="flex items-center gap-2 lg:gap-4">
           <div className="hidden lg:flex items-center gap-1.5 mr-2">
             <button 
-              onClick={loadBlank}
+              onClick={() => setResetConfirmation({ isOpen: true, type: 'blank' })}
               title="New Blank Project"
               className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-stone-200 shadow-sm"
             >
               <Plus size={12} /> Blank
             </button>
             <button 
-              onClick={resetState}
+              onClick={() => setResetConfirmation({ isOpen: true, type: 'data' })}
               title="Reset to Default Demo"
               className="flex items-center gap-1.5 px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-red-100 shadow-sm"
             >
@@ -768,6 +798,19 @@ export default function App() {
               )}
             >
               <Edit2 size={14} /> Edit
+            </button>
+          </div>
+          
+          <div className="relative">
+            <button
+              onClick={() => setIsSettingsOpen(true)}
+              className={cn(
+                "p-2 rounded-lg transition-all border shadow-sm active:scale-95",
+                isSettingsOpen ? "bg-stone-900 text-white border-stone-900" : "bg-white text-stone-500 hover:text-stone-700 border-stone-200"
+              )}
+              title="Timing Settings"
+            >
+              <Settings size={18} />
             </button>
           </div>
           
@@ -1445,6 +1488,184 @@ export default function App() {
                   className="px-6 py-3 bg-red-500 text-white rounded-xl font-bold hover:bg-red-600 transition-all active:scale-95 shadow-lg shadow-red-500/20"
                 >
                   Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* General Reset Confirmation Modal */}
+      {resetConfirmation.isOpen && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-stone-900/40 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-stone-200">
+            <div className="p-8 space-y-6 text-center">
+              <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto border border-amber-100">
+                <RefreshCw size={24} className="text-amber-500" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-stone-900">
+                  {resetConfirmation.type === 'settings' ? 'Reset Timing Settings?' : 
+                   resetConfirmation.type === 'blank' ? 'Load Blank Script?' : 'Reset All Data?'}
+                </h3>
+                <p className="text-sm text-stone-500 mt-2">
+                  {resetConfirmation.type === 'settings' ? 'This will restore all timing buffers to their factory default values.' : 
+                   resetConfirmation.type === 'blank' ? 'This will delete all current cues and start a fresh project.' : 
+                   'This will delete all cues and restore the original demo script.'}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  onClick={() => setResetConfirmation({ isOpen: false, type: null })}
+                  className="px-6 py-3 bg-stone-100 text-stone-600 rounded-xl font-bold hover:bg-stone-200 transition-all active:scale-95"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    if (resetConfirmation.type === 'settings') {
+                      setState(prev => ({ ...prev, settings: DEFAULT_SETTINGS }));
+                      setResetConfirmation({ isOpen: false, type: null });
+                    } else if (resetConfirmation.type === 'blank') {
+                      loadBlank();
+                    } else if (resetConfirmation.type === 'data') {
+                      resetState();
+                    }
+                  }}
+                  className="px-6 py-3 bg-stone-900 text-white rounded-xl font-bold hover:bg-stone-800 transition-all active:scale-95 shadow-lg shadow-stone-900/20"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Timing Settings Modal */}
+      {isSettingsOpen && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-stone-200">
+            <div className="p-8 lg:p-10 space-y-8">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-stone-900 rounded-2xl flex items-center justify-center shadow-lg shadow-stone-900/20">
+                    <Settings size={24} className="text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-black uppercase tracking-widest text-stone-900">Timing Settings</h2>
+                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Adjust highlight visibility buffers</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setIsSettingsOpen(false)}
+                  className="p-3 hover:bg-stone-100 rounded-2xl text-stone-400 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* General Master Control - Highlighted */}
+                <div className="md:col-span-3 p-6 bg-blue-50 border-2 border-blue-100 rounded-3xl space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+                      <span className="text-xs font-black uppercase tracking-widest text-blue-600">General Master Offset</span>
+                    </div>
+                    <p className="text-[10px] font-bold text-blue-400 italic">Adds extra time to ALL categories globally</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 ml-1">Global Before (+s)</label>
+                      <input 
+                        type="number" step="0.1" min="0"
+                        value={state.settings?.general?.before ?? 0}
+                        onChange={(e) => {
+                          const val = parseFloat(e.target.value) || 0;
+                          setState(prev => ({
+                            ...prev,
+                            settings: { ...prev.settings, general: { ...prev.settings?.general!, before: val } }
+                          }));
+                        }}
+                        className="w-full bg-white border-2 border-blue-100 rounded-2xl px-4 py-3 text-sm font-mono focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 ml-1">Global After (+s)</label>
+                      <input 
+                        type="number" step="0.1" min="0"
+                        value={state.settings?.general?.after ?? 0}
+                        onChange={(e) => {
+                          const val = parseFloat(e.target.value) || 0;
+                          setState(prev => ({
+                            ...prev,
+                            settings: { ...prev.settings, general: { ...prev.settings?.general!, after: val } }
+                          }));
+                        }}
+                        className="w-full bg-white border-2 border-blue-100 rounded-2xl px-4 py-3 text-sm font-mono focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Specific Category Grid */}
+                <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {COLORS.map(color => (
+                    <div key={color.type} className="p-4 bg-stone-50 border border-stone-100 rounded-2xl space-y-3 hover:bg-white hover:shadow-md transition-all">
+                      <div className="flex items-center gap-2">
+                        <div className={cn("w-2.5 h-2.5 rounded-full", color.class)} />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-stone-600">{color.type}</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="space-y-1">
+                          <label className="text-[8px] font-black uppercase tracking-widest text-stone-400">Before (s)</label>
+                          <input 
+                            type="number" step="0.1" min="0"
+                            value={state.settings?.[color.type]?.before ?? 1}
+                            onChange={(e) => {
+                              const val = parseFloat(e.target.value) || 0;
+                              setState(prev => ({
+                                ...prev,
+                                settings: { ...prev.settings, [color.type]: { ...prev.settings?.[color.type]!, before: val } }
+                              }));
+                            }}
+                            className="w-full bg-white border border-stone-200 rounded-xl px-2 py-1.5 text-[10px] font-mono focus:outline-none focus:ring-2 focus:ring-stone-900/5"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[8px] font-black uppercase tracking-widest text-stone-400">After (s)</label>
+                          <input 
+                            type="number" step="0.1" min="0"
+                            value={state.settings?.[color.type]?.after ?? 2}
+                            onChange={(e) => {
+                              const val = parseFloat(e.target.value) || 0;
+                              setState(prev => ({
+                                ...prev,
+                                settings: { ...prev.settings, [color.type]: { ...prev.settings?.[color.type]!, after: val } }
+                              }));
+                            }}
+                            className="w-full bg-white border border-stone-200 rounded-xl px-2 py-1.5 text-[10px] font-mono focus:outline-none focus:ring-2 focus:ring-stone-900/5"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-4 border-t border-stone-100">
+                <button 
+                  onClick={() => setResetConfirmation({ isOpen: true, type: 'settings' })}
+                  className="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-stone-400 hover:text-red-500 transition-colors flex items-center gap-2"
+                >
+                  <RefreshCw size={12} /> Reset to Defaults
+                </button>
+                <button
+                  onClick={() => setIsSettingsOpen(false)}
+                  className="px-10 py-4 bg-stone-900 text-white rounded-2xl font-bold hover:bg-stone-800 transition-all active:scale-95 shadow-lg shadow-stone-900/20"
+                >
+                  Save & Close
                 </button>
               </div>
             </div>
