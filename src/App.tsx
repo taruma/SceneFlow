@@ -127,6 +127,21 @@ export default function App() {
   const [isAligning, setIsAligning] = useState(false);
   const [alignSuccess, setAlignSuccess] = useState(false);
   const [leftPanelScroll, setLeftPanelScroll] = useState(0);
+  const [hiddenCueTypes, setHiddenCueTypes] = useState<Set<string>>(new Set());
+
+  const activeCueTypes = useMemo(() => {
+    const active = new Set<string>();
+    (state.cues || []).forEach(c => {
+      const typeSettings = state.settings?.[c.type || ''] || DEFAULT_SETTINGS.general;
+      const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
+      const totalBefore = (typeSettings.before || 0) + (generalSettings.before || 0);
+      const totalAfter = (typeSettings.after || 0) + (generalSettings.after || 0);
+      if (currentTime >= c.startTime - totalBefore && currentTime <= c.endTime + totalAfter) {
+        active.add(c.type || 'dialogue');
+      }
+    });
+    return active;
+  }, [state.cues, state.settings, currentTime]);
 
   const scriptRef = useRef<HTMLDivElement>(null);
   const leftPanelRef = useRef<HTMLDivElement>(null);
@@ -215,6 +230,27 @@ export default function App() {
         console.error("Failed to load blank script", err);
         alert("Failed to load blank script.");
       });
+  };
+
+  const toggleCueTypeVisibility = (type: string) => {
+    setHiddenCueTypes(prev => {
+      const next = new Set(prev);
+      if (next.has(type)) {
+        next.delete(type);
+      } else {
+        next.add(type);
+      }
+      return next;
+    });
+  };
+
+  const isCueVisible = (c: Cue) => {
+    if (hiddenCueTypes.has(c.type || 'dialogue')) return false;
+    const typeSettings = state.settings?.[c.type || ''] || DEFAULT_SETTINGS.general;
+    const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
+    const totalBefore = (typeSettings.before || 0) + (generalSettings.before || 0);
+    const totalAfter = (typeSettings.after || 0) + (generalSettings.after || 0);
+    return currentTime >= c.startTime - totalBefore && currentTime <= c.endTime + totalAfter;
   };
 
   const onReady: YouTubeProps['onReady'] = (event) => {
@@ -577,13 +613,7 @@ export default function App() {
       }
 
       // Filter cues that overlap with this line
-      const lineCues = (mode === 'edit' ? cues : cues.filter(c => {
-        const typeSettings = state.settings?.[c.type || ''] || DEFAULT_SETTINGS.general;
-        const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
-        const totalBefore = (typeSettings.before || 0) + (generalSettings.before || 0);
-        const totalAfter = (typeSettings.after || 0) + (generalSettings.after || 0);
-        return currentTime >= c.startTime - totalBefore && currentTime <= c.endTime + totalAfter;
-      }))
+      const lineCues = (mode === 'edit' ? cues : cues.filter(isCueVisible))
         .filter(cue => cue.startIndex < lineEnd && cue.endIndex > lineStart)
         .map(cue => {
           let opacity = 1;
@@ -938,23 +968,39 @@ export default function App() {
                     <Video size={14} /> Active Highlights
                   </h3>
                   <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-2 py-0.5 rounded uppercase">
-                    {(state.cues || []).filter(c => {
-                      const typeSettings = state.settings?.[c.type || ''] || DEFAULT_SETTINGS.general;
-                      const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
-                      const totalBefore = (typeSettings.before || 0) + (generalSettings.before || 0);
-                      const totalAfter = (typeSettings.after || 0) + (generalSettings.after || 0);
-                      return currentTime >= c.startTime - totalBefore && currentTime <= c.endTime + totalAfter;
-                    }).length} active
+                    {(state.cues || []).filter(isCueVisible).length} active
                   </span>
                 </div>
+
+                {/* Legend / Filter */}
+                <div className="flex flex-wrap gap-1.5 mb-6">
+                  {COLORS.map(color => {
+                    const isActive = activeCueTypes.has(color.type);
+                    const isHidden = hiddenCueTypes.has(color.type);
+                    return (
+                      <button
+                        key={color.type}
+                        onClick={() => toggleCueTypeVisibility(color.type)}
+                        className={cn(
+                          "flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all border relative overflow-hidden",
+                          isHidden 
+                            ? "bg-stone-50 border-stone-100 text-stone-300 opacity-60" 
+                            : "bg-white border-stone-200 text-stone-500 hover:border-stone-300 shadow-sm",
+                          isActive && !isHidden && "bg-stone-50"
+                        )}
+                      >
+                        {isActive && !isHidden && (
+                          <span className={cn("absolute inset-0 opacity-30 animate-pulse", color.class)} />
+                        )}
+                        <div className={cn("w-2 h-2 rounded-full shrink-0", isHidden ? "bg-stone-200" : color.class)} />
+                        {color.type}
+                      </button>
+                    );
+                  })}
+                </div>
+
                 <div className="flex-1 space-y-3 overflow-y-auto pr-2 scrollbar-hide">
-                  {(state.cues || []).filter(c => {
-                    const typeSettings = state.settings?.[c.type || ''] || DEFAULT_SETTINGS.general;
-                    const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
-                    const totalBefore = (typeSettings.before || 0) + (generalSettings.before || 0);
-                    const totalAfter = (typeSettings.after || 0) + (generalSettings.after || 0);
-                    return currentTime >= c.startTime - totalBefore && currentTime <= c.endTime + totalAfter;
-                  }).sort((a, b) => {
+                  {(state.cues || []).filter(isCueVisible).sort((a, b) => {
                     const order = COLORS.map(c => c.type);
                     return order.indexOf(a.type || 'dialogue') - order.indexOf(b.type || 'dialogue');
                   }).map(cue => (
@@ -970,13 +1016,7 @@ export default function App() {
                       </div>
                     </div>
                   ))}
-                  {(state.cues || []).filter(c => {
-                    const typeSettings = state.settings?.[c.type || ''] || DEFAULT_SETTINGS.general;
-                    const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
-                    const totalBefore = (typeSettings.before || 0) + (generalSettings.before || 0);
-                    const totalAfter = (typeSettings.after || 0) + (generalSettings.after || 0);
-                    return currentTime >= c.startTime - totalBefore && currentTime <= c.endTime + totalAfter;
-                  }).length === 0 && (
+                  {(state.cues || []).filter(isCueVisible).length === 0 && (
                     <div className="h-32 border-2 border-dashed border-stone-100 rounded-3xl flex items-center justify-center">
                       <p className="text-xs text-stone-300 italic">No active highlights at this time</p>
                     </div>
