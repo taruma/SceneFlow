@@ -622,7 +622,7 @@ export default function App() {
             <div className="flex items-center gap-2 mt-1">
               <p className="hidden sm:block text-[9px] lg:text-[10px] text-stone-400 uppercase tracking-widest font-bold">Script-to-Video Sync</p>
               <div className="w-1 h-1 rounded-full bg-stone-200 hidden sm:block" />
-              <p className="text-[9px] lg:text-[10px] text-stone-500 font-mono">by @tarumainfo</p>
+              <p className="text-[9px] lg:text-[10px] text-stone-500 font-mono">by Taruma Sakti</p>
             </div>
           </div>
         </div>
