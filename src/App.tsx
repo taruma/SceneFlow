@@ -52,7 +52,10 @@ const COLORS = [
 
 const DEFAULT_SETTINGS: Record<string, TimingSettings> = {
   general: { before: 0, after: 0 },
-  ...Object.fromEntries(COLORS.map(c => [c.type, { before: 1, after: 2 }]))
+  ...Object.fromEntries(COLORS.map(c => [
+    c.type, 
+    c.type === 'dialogue' ? { before: 0, after: 0 } : { before: 1, after: 1 }
+  ]))
 };
 
 const generateId = () => {
@@ -935,11 +938,23 @@ export default function App() {
                     <Video size={14} /> Active Highlights
                   </h3>
                   <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-2 py-0.5 rounded uppercase">
-                    {(state.cues || []).filter(c => currentTime >= c.startTime && currentTime <= c.endTime).length} active
+                    {(state.cues || []).filter(c => {
+                      const typeSettings = state.settings?.[c.type || ''] || DEFAULT_SETTINGS.general;
+                      const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
+                      const totalBefore = (typeSettings.before || 0) + (generalSettings.before || 0);
+                      const totalAfter = (typeSettings.after || 0) + (generalSettings.after || 0);
+                      return currentTime >= c.startTime - totalBefore && currentTime <= c.endTime + totalAfter;
+                    }).length} active
                   </span>
                 </div>
                 <div className="flex-1 space-y-3 overflow-y-auto pr-2 scrollbar-hide">
-                  {(state.cues || []).filter(c => currentTime >= c.startTime && currentTime <= c.endTime).sort((a, b) => {
+                  {(state.cues || []).filter(c => {
+                    const typeSettings = state.settings?.[c.type || ''] || DEFAULT_SETTINGS.general;
+                    const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
+                    const totalBefore = (typeSettings.before || 0) + (generalSettings.before || 0);
+                    const totalAfter = (typeSettings.after || 0) + (generalSettings.after || 0);
+                    return currentTime >= c.startTime - totalBefore && currentTime <= c.endTime + totalAfter;
+                  }).sort((a, b) => {
                     const order = COLORS.map(c => c.type);
                     return order.indexOf(a.type || 'dialogue') - order.indexOf(b.type || 'dialogue');
                   }).map(cue => (
@@ -955,7 +970,13 @@ export default function App() {
                       </div>
                     </div>
                   ))}
-                  {(state.cues || []).filter(c => currentTime >= c.startTime && currentTime <= c.endTime).length === 0 && (
+                  {(state.cues || []).filter(c => {
+                    const typeSettings = state.settings?.[c.type || ''] || DEFAULT_SETTINGS.general;
+                    const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
+                    const totalBefore = (typeSettings.before || 0) + (generalSettings.before || 0);
+                    const totalAfter = (typeSettings.after || 0) + (generalSettings.after || 0);
+                    return currentTime >= c.startTime - totalBefore && currentTime <= c.endTime + totalAfter;
+                  }).length === 0 && (
                     <div className="h-32 border-2 border-dashed border-stone-100 rounded-3xl flex items-center justify-center">
                       <p className="text-xs text-stone-300 italic">No active highlights at this time</p>
                     </div>
