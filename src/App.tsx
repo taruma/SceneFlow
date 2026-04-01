@@ -128,6 +128,14 @@ export default function App() {
   const [alignSuccess, setAlignSuccess] = useState(false);
   const [leftPanelScroll, setLeftPanelScroll] = useState(0);
   const [hiddenCueTypes, setHiddenCueTypes] = useState<Set<string>>(new Set());
+  const [videoWidth, setVideoWidth] = useState(100); // Percentage of container width
+  const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const activeCueTypes = useMemo(() => {
     const active = new Set<string>();
@@ -934,13 +942,30 @@ export default function App() {
                <h2 className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-stone-400 flex items-center gap-2">
                 <Video size={14} /> {mode === 'edit' ? 'Media Preview' : 'Now Playing'}
               </h2>
+              {mode === 'playback' && isDesktop && (
+                <div className="flex items-center gap-3 animate-in fade-in slide-in-from-right-2 duration-500">
+                  <span className="text-[9px] font-black uppercase tracking-widest text-stone-300">Size</span>
+                  <input 
+                    type="range" 
+                    min="40" 
+                    max="100" 
+                    step="5"
+                    value={videoWidth}
+                    onChange={(e) => setVideoWidth(parseInt(e.target.value))}
+                    className="w-24 h-1 bg-stone-100 rounded-lg appearance-none cursor-pointer accent-stone-400 hover:accent-stone-600 transition-all"
+                  />
+                  <span className="text-[9px] font-mono font-bold text-stone-400 w-8">{videoWidth}%</span>
+                </div>
+              )}
             </div>
             
             <div className={cn(
               "aspect-video bg-stone-900 overflow-hidden shadow-2xl ring-1 ring-stone-200 relative group transition-all duration-500 origin-top-left pointer-events-auto",
               mode === 'edit' ? "rounded-3xl" : "rounded-none lg:rounded-3xl",
               mode === 'edit' && leftPanelScroll > 80 && "w-1/2 rounded-2xl shadow-2xl scale-90 -translate-y-2"
-            )}>
+            )}
+            style={mode === 'playback' && isDesktop ? { width: `${videoWidth}%`, margin: '0 auto' } : {}}
+            >
               <YouTube
                 key={extractYoutubeId(state.youtubeId)}
                 videoId={extractYoutubeId(state.youtubeId)}
