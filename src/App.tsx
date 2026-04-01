@@ -24,6 +24,7 @@ interface Cue {
   startTime: number;
   endTime: number;
   colorClass: string;
+  type?: string;
 }
 
 interface AppState {
@@ -53,12 +54,14 @@ No. I'm good.
 He stands up and leaves.`;
 
 const COLORS = [
-  { name: 'Blue', class: 'bg-blue-400/50', rgb: '96, 165, 250' },
-  { name: 'Yellow', class: 'bg-yellow-400/50', rgb: '250, 204, 21' },
-  { name: 'Green', class: 'bg-green-400/50', rgb: '74, 222, 128' },
-  { name: 'Red', class: 'bg-red-400/50', rgb: '248, 113, 113' },
-  { name: 'Purple', class: 'bg-purple-400/50', rgb: '192, 132, 252' },
-  { name: 'Gray', class: 'bg-gray-400/50', rgb: '156, 163, 175' },
+  { type: 'dialogue', class: 'bg-yellow-400/50', rgb: '250, 204, 21' },
+  { type: 'action', class: 'bg-blue-400/50', rgb: '96, 165, 250' },
+  { type: 'camera', class: 'bg-green-400/50', rgb: '74, 222, 128' },
+  { type: 'shot', class: 'bg-purple-400/50', rgb: '192, 132, 252' },
+  { type: 'audio', class: 'bg-orange-400/50', rgb: '251, 146, 60' },
+  { type: 'vfx', class: 'bg-cyan-400/50', rgb: '34, 211, 238' },
+  { type: 'transition', class: 'bg-pink-400/50', rgb: '244, 114, 182' },
+  { type: 'environment', class: 'bg-slate-400/50', rgb: '148, 163, 184' },
 ];
 
 const generateId = () => {
@@ -74,7 +77,19 @@ export default function App() {
     const saved = localStorage.getItem('screenplay_sync_state');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // Ensure it has required properties
+        return {
+          youtubeId: parsed.youtubeId || 'dQw4w9WgXcQ',
+          scriptText: parsed.scriptText || DEFAULT_SCRIPT,
+          cues: Array.isArray(parsed.cues) ? parsed.cues.map((c: any) => {
+            if (!c.type && c.colorClass) {
+              const colorInfo = COLORS.find(col => col.class === c.colorClass);
+              return { ...c, type: colorInfo?.type || 'dialogue' };
+            }
+            return c;
+          }) : [],
+        };
       } catch (e) {
         console.error("Failed to parse saved state", e);
       }
@@ -219,6 +234,7 @@ export default function App() {
       return;
     }
 
+    const colorInfo = COLORS.find(c => c.class === (newCue.colorClass || COLORS[0].class));
     const cue: Cue = {
       id: generateId(),
       selectedText: newCue.selectedText,
@@ -227,11 +243,12 @@ export default function App() {
       startTime: newCue.startTime,
       endTime: newCue.endTime,
       colorClass: newCue.colorClass || COLORS[0].class,
+      type: colorInfo?.type || 'dialogue',
     };
 
     setState(prev => ({
       ...prev,
-      cues: [...prev.cues, cue],
+      cues: [...(prev.cues || []), cue],
     }));
     setSelection(null);
     setNewCue({ colorClass: COLORS[0].class });
@@ -241,54 +258,100 @@ export default function App() {
   const deleteCue = (id: string) => {
     setState(prev => ({
       ...prev,
-      cues: prev.cues.filter(c => c.id !== id),
+      cues: (prev.cues || []).filter(c => c.id !== id),
     }));
   };
 
-  const realignCues = () => {
+  const realignCues = (targetState?: AppState) => {
+    // If targetState is an event (from onClick), ignore it
+    const actualState = (targetState && typeof targetState === 'object' && 'cues' in targetState) ? (targetState as AppState) : state;
+    
+    if (!actualState || !actualState.cues || actualState.cues.length === 0) {
+      console.warn("No cues to realign");
+      return;
+    }
+    
     setIsAligning(true);
     
-    // Simulate a brief delay for visual feedback
+    // Use a small delay for visual feedback if it's a manual click
+    const isManual = !targetState || !('cues' in targetState);
+    const delay = isManual ? 600 : 0;
+    
+    console.log("Aligning cues. Manual:", isManual, "Cues count:", (actualState.cues || []).length);
+    
     setTimeout(() => {
       let lastIndex = 0;
       let alignedCount = 0;
       
-      const updatedCues = state.cues.map(cue => {
-        // 1. Try exact match starting from lastIndex (sequential dialogue)
-        let newStart = state.scriptText.indexOf(cue.selectedText, lastIndex);
+      const updatedCues = (actualState.cues || []).map(cue => {
+        const searchText = cue.selectedText.trim();
+        if (!searchText) return cue;
+
+        // Escape special characters for regex
+        const escapedSearch = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        // Replace any whitespace with \s+ to match any whitespace in the script
+        const regexStr = escapedSearch.replace(/\s+/g, '\\s+');
         
-        // 2. If not found, try exact match from beginning
-        if (newStart === -1) {
-          newStart = state.scriptText.indexOf(cue.selectedText);
-        }
-        
-        // 3. Fallback: Normalized whitespace match
-        if (newStart === -1) {
-          const normalizedSearch = cue.selectedText.replace(/\s+/g, ' ').toLowerCase();
-          const normalizedFull = state.scriptText.replace(/\s+/g, ' ').toLowerCase();
-          const normIndex = normalizedFull.indexOf(normalizedSearch);
-          
-          if (normIndex !== -1) {
-            // Find approximate index in original text
-            newStart = state.scriptText.toLowerCase().indexOf(cue.selectedText.toLowerCase());
+        try {
+          const regex = new RegExp(regexStr, 'gi');
+
+          // 1. Try match starting from lastIndex
+          regex.lastIndex = lastIndex;
+          let match = regex.exec(actualState.scriptText);
+
+          // 2. If not found, try match from beginning
+          if (!match) {
+            regex.lastIndex = 0;
+            match = regex.exec(actualState.scriptText);
           }
+
+          if (match) {
+            const newStart = match.index;
+            const newEnd = newStart + match[0].length;
+            lastIndex = newEnd;
+            alignedCount++;
+            return { ...cue, startIndex: newStart, endIndex: newEnd };
+          }
+          
+          // 3. Last resort: try matching just the first 15 characters if the full text is not found
+          // (Useful if the script text was edited significantly)
+          const shortSearch = searchText.substring(0, 15).trim();
+          if (shortSearch.length >= 5) {
+            const shortEscaped = shortSearch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
+            const shortRegex = new RegExp(shortEscaped, 'gi');
+            
+            shortRegex.lastIndex = lastIndex;
+            let shortMatch = shortRegex.exec(actualState.scriptText);
+            if (!shortMatch) {
+              shortRegex.lastIndex = 0;
+              shortMatch = shortRegex.exec(actualState.scriptText);
+            }
+            
+            if (shortMatch) {
+              const newStart = shortMatch.index;
+              const newEnd = newStart + searchText.length; // Approximate
+              lastIndex = newEnd;
+              alignedCount++;
+              return { ...cue, startIndex: newStart, endIndex: newEnd };
+            }
+          }
+        } catch (e) {
+          console.error("Regex error during alignment:", e);
         }
-        
-        if (newStart !== -1) {
-          const newEnd = newStart + cue.selectedText.length;
-          lastIndex = newEnd;
-          alignedCount++;
-          return { ...cue, startIndex: newStart, endIndex: newEnd };
-        }
+
+        console.warn(`Could not align cue: "${searchText}"`);
         return cue;
       });
       
       setState(prev => ({ ...prev, cues: updatedCues }));
       setIsAligning(false);
-      setAlignSuccess(true);
-      setTimeout(() => setAlignSuccess(false), 2000);
-      console.log(`Cues realigned: ${alignedCount} of ${state.cues.length} updated.`);
-    }, 600);
+      
+      if (isManual) {
+        setAlignSuccess(true);
+        setTimeout(() => setAlignSuccess(false), 2000);
+      }
+      console.log(`Cues realigned: ${alignedCount} of ${actualState.cues.length} updated.`);
+    }, delay);
   };
 
   const exportJson = () => {
@@ -308,7 +371,23 @@ export default function App() {
     reader.onload = (event) => {
       try {
         const json = JSON.parse(event.target?.result as string);
-        setState(json);
+        
+        // Basic validation to prevent crashes
+        const validatedJson = {
+          youtubeId: json.youtubeId || 'dQw4w9WgXcQ',
+          scriptText: json.scriptText || DEFAULT_SCRIPT,
+          cues: Array.isArray(json.cues) ? json.cues.map((c: any) => {
+            if (!c.type && c.colorClass) {
+              const colorInfo = COLORS.find(col => col.class === c.colorClass);
+              return { ...c, type: colorInfo?.type || 'dialogue' };
+            }
+            return c;
+          }) : [],
+        };
+
+        setState(validatedJson);
+        // Automatically trigger alignment after import
+        realignCues(validatedJson);
       } catch (err) {
         alert("Invalid JSON file");
       }
@@ -320,16 +399,18 @@ export default function App() {
   useEffect(() => {
     console.log("Current App State:", {
       mode,
-      cuesCount: state.cues.length,
+      cuesCount: state?.cues?.length || 0,
       hasSelection: !!selection,
       currentTime
     });
-  }, [mode, state.cues.length, selection, currentTime]);
+  }, [mode, state?.cues?.length, selection, currentTime]);
 
   // Rendering the screenplay with highlights
   const renderedScript = useMemo(() => {
-    const activeCues = state.cues.filter(c => currentTime >= c.startTime - 1 && currentTime <= c.endTime + 2);
-    const lines = state.scriptText.split('\n');
+    const cues = state.cues || [];
+    const activeCues = cues.filter(c => currentTime >= c.startTime - 1 && currentTime <= c.endTime + 2);
+    const scriptText = state.scriptText || "";
+    const lines = scriptText.split('\n');
     
     let currentPos = 0;
     return lines.map((line, lineIdx) => {
@@ -337,21 +418,14 @@ export default function App() {
       const lineEnd = currentPos + line.length;
       currentPos += line.length + 1; // +1 for the newline character
 
-      let className = "mb-1";
+      let className = "mb-1 text-stone-700 leading-relaxed";
       const trimmed = line.trim();
       
-      if (trimmed === trimmed.toUpperCase() && trimmed.length > 0) {
-        if (trimmed.startsWith('INT.') || trimmed.startsWith('EXT.')) {
-          className = "font-bold mt-4 mb-2 uppercase text-stone-900 tracking-tight"; // Scene Heading
-        } else {
-          className = "text-center mt-3 mb-0.5 uppercase w-full text-stone-900 font-bold tracking-wide"; // Character Name
-        }
+      // Simplify: Only bold all-caps lines, no complex screenplay layout
+      if (trimmed.length > 0 && trimmed === trimmed.toUpperCase()) {
+        className = "font-bold text-stone-900 mt-4 mb-1 tracking-tight";
       } else if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
-        className = "text-center italic mb-0.5 text-stone-500 px-8 text-[13px]"; // Parenthetical
-      } else if (trimmed.length > 0 && lineIdx > 0 && lines[lineIdx-1].trim() === lines[lineIdx-1].trim().toUpperCase() && lines[lineIdx-1].trim().length > 0) {
-        className = "px-8 mb-2 text-stone-800 text-center leading-snug"; // Dialogue
-      } else {
-        className = "mb-2 text-stone-700 leading-snug"; // Action
+        className = "italic text-stone-500 mb-1 text-[13px]";
       }
 
       // Find cues that overlap with this line
@@ -608,17 +682,27 @@ export default function App() {
                     <Video size={14} /> Active Highlights
                   </h3>
                   <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-2 py-0.5 rounded uppercase">
-                    {state.cues.filter(c => currentTime >= c.startTime && currentTime <= c.endTime).length} active
+                    {(state.cues || []).filter(c => currentTime >= c.startTime && currentTime <= c.endTime).length} active
                   </span>
                 </div>
                 <div className="flex-1 space-y-3 overflow-y-auto pr-2 scrollbar-hide">
-                  {state.cues.filter(c => currentTime >= c.startTime && currentTime <= c.endTime).map(cue => (
-                    <div key={cue.id} className="p-4 bg-stone-50 border border-stone-200 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2">
+                  {(state.cues || []).filter(c => currentTime >= c.startTime && currentTime <= c.endTime).sort((a, b) => {
+                    const order = COLORS.map(c => c.type);
+                    return order.indexOf(a.type || 'dialogue') - order.indexOf(b.type || 'dialogue');
+                  }).map(cue => (
+                    <div key={cue.id} className="p-4 bg-stone-50 border border-stone-200 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 relative overflow-hidden">
                       <div className={cn("w-1.5 h-8 rounded-full shrink-0", cue.colorClass)} />
-                      <p className="text-sm font-serif italic text-stone-700 line-clamp-2">"{cue.selectedText}"</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-serif italic text-stone-700 line-clamp-2">"{cue.selectedText}"</p>
+                        {cue.type && (
+                          <span className="absolute top-1 right-2 text-[8px] font-black uppercase tracking-widest text-stone-300">
+                            {cue.type}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   ))}
-                  {state.cues.filter(c => currentTime >= c.startTime && currentTime <= c.endTime).length === 0 && (
+                  {(state.cues || []).filter(c => currentTime >= c.startTime && currentTime <= c.endTime).length === 0 && (
                     <div className="h-32 border-2 border-dashed border-stone-100 rounded-3xl flex items-center justify-center">
                       <p className="text-xs text-stone-300 italic">No active highlights at this time</p>
                     </div>
@@ -664,50 +748,67 @@ export default function App() {
             <section className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
               {/* Cue List */}
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-stone-400">Timeline Cues</h3>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => {
-                        setRawCuesText(JSON.stringify(state.cues, null, 2));
-                        setIsCuesModalOpen(true);
-                      }}
-                      title="Edit raw JSON cues"
-                      className="flex items-center gap-1.5 px-2.5 py-1 bg-stone-100 border border-stone-200 text-stone-500 hover:text-stone-700 hover:bg-stone-200 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95"
-                    >
-                      <Edit2 size={10} /> Raw
-                    </button>
-                    {state.cues.length > 0 && (
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-stone-400">Timeline Cues</h3>
+                    <div className="flex items-center gap-2">
                       <button
-                        onClick={realignCues}
-                        disabled={isAligning}
-                        title="Re-align cues with script text"
-                        className={cn(
-                          "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border",
-                          alignSuccess 
-                            ? "bg-green-50 border-green-100 text-green-600" 
-                            : "bg-stone-100 border-stone-200 text-stone-500 hover:text-stone-700 hover:bg-stone-200"
-                        )}
+                        onClick={() => {
+                          setRawCuesText(JSON.stringify(state.cues, null, 2));
+                          setIsCuesModalOpen(true);
+                        }}
+                        title="Edit raw JSON cues"
+                        className="flex items-center gap-1.5 px-2.5 py-1 bg-stone-100 border border-stone-200 text-stone-500 hover:text-stone-700 hover:bg-stone-200 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95"
                       >
-                        {isAligning ? (
-                          <Loader2 size={10} className="animate-spin" />
-                        ) : alignSuccess ? (
-                          <Check size={10} />
-                        ) : (
-                          <RefreshCw size={10} />
-                        )}
-                        {alignSuccess ? 'Aligned' : 'Align'}
+                        <Edit2 size={10} /> Raw
                       </button>
-                    )}
-                    <span className="text-[10px] font-bold text-stone-300 bg-stone-100 px-2 py-0.5 rounded uppercase">{state.cues.length} total</span>
+                      {(state.cues || []).length > 0 && (
+                        <button
+                          onClick={() => realignCues()}
+                          disabled={isAligning}
+                          title="Re-align cues with script text"
+                          className={cn(
+                            "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border",
+                            alignSuccess 
+                              ? "bg-green-50 border-green-100 text-green-600" 
+                              : "bg-stone-100 border-stone-200 text-stone-500 hover:text-stone-700 hover:bg-stone-200"
+                          )}
+                        >
+                          {isAligning ? (
+                            <Loader2 size={10} className="animate-spin" />
+                          ) : alignSuccess ? (
+                            <Check size={10} />
+                          ) : (
+                            <RefreshCw size={10} />
+                          )}
+                          {alignSuccess ? 'Aligned' : 'Align'}
+                        </button>
+                      )}
+                      <span className="text-[10px] font-bold text-stone-300 bg-stone-100 px-2 py-0.5 rounded uppercase">{(state.cues || []).length} total</span>
+                    </div>
+                  </div>
+
+                  {/* Legend */}
+                  <div className="flex flex-wrap gap-2 p-3 bg-stone-50 border border-stone-200 rounded-2xl">
+                    {COLORS.map(color => (
+                      <div key={color.type} className="flex items-center gap-1.5">
+                        <div className={cn("w-2.5 h-2.5 rounded-full", color.class)} />
+                        <span className="text-[9px] font-black uppercase tracking-widest text-stone-400">{color.type}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
                 <div className="grid gap-3">
-                  {state.cues.map(cue => (
-                    <div key={cue.id} className="flex items-center justify-between p-4 bg-stone-50 border border-stone-200 rounded-2xl group hover:bg-white hover:shadow-md transition-all">
+                   {(state.cues || []).map(cue => (
+                    <div key={cue.id} className="flex items-center justify-between p-4 bg-stone-50 border border-stone-200 rounded-2xl group hover:bg-white hover:shadow-md transition-all relative overflow-hidden">
                       <div className="flex items-center gap-4 flex-1 min-w-0">
                         <div className={cn("w-1.5 h-10 rounded-full shrink-0", cue.colorClass)} />
                         <div className="flex flex-col flex-1 min-w-0">
+                          {cue.type && (
+                            <span className={cn("text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md w-fit mb-1", cue.colorClass, "bg-opacity-20 text-stone-600")}>
+                              {cue.type}
+                            </span>
+                          )}
                           <span className="text-sm font-bold text-stone-800 italic leading-tight break-words">"{cue.selectedText}"</span>
                           <div className="flex items-center gap-2 mt-1">
                             <span className="text-[10px] font-mono font-bold text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded">{cue.startTime.toFixed(1)}s</span>
@@ -716,15 +817,17 @@ export default function App() {
                           </div>
                         </div>
                       </div>
-                      <button
-                        onClick={() => deleteCue(cue.id)}
-                        className="p-2 text-stone-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 shrink-0 ml-2"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                      <div className="flex items-center gap-4 shrink-0 ml-4">
+                        <button
+                          onClick={() => deleteCue(cue.id)}
+                          className="p-2 text-stone-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 shrink-0"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
                     </div>
                   ))}
-                  {state.cues.length === 0 && (
+                  {(state.cues || []).length === 0 && (
                     <div className="text-center py-12 border-2 border-dashed border-stone-100 rounded-[2rem] bg-stone-50/50">
                       <p className="text-sm text-stone-400 font-medium italic">No cues created yet.</p>
                     </div>
@@ -844,17 +947,23 @@ export default function App() {
                     </div>
 
                     <div className="flex items-center justify-between pt-1">
-                      <div className="flex gap-1.5">
+                      <div className="flex flex-wrap gap-1.5">
                         {COLORS.map(color => (
                           <button
                             key={color.class}
                             onClick={() => setNewCue(prev => ({ ...prev, colorClass: color.class }))}
+                            title={color.type}
                             className={cn(
-                              "w-5 h-5 rounded-full transition-all border-2",
+                              "px-2 py-1 rounded-md transition-all border text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5",
                               color.class,
-                              newCue.colorClass === color.class ? "border-stone-900 scale-110" : "border-transparent opacity-40 hover:opacity-100"
+                              newCue.colorClass === color.class 
+                                ? "border-stone-900 scale-105 shadow-sm opacity-100" 
+                                : "border-transparent opacity-40 hover:opacity-80"
                             )}
-                          />
+                          >
+                            <div className="w-1.5 h-1.5 rounded-full bg-stone-900/20" />
+                            {color.type}
+                          </button>
                         ))}
                       </div>
                       <button
