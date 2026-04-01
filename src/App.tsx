@@ -614,15 +614,25 @@ export default function App() {
       )}>
         <div className="flex items-center gap-2 lg:gap-3">
           <div className="w-8 h-8 lg:w-10 lg:h-10 bg-stone-900 rounded-lg lg:rounded-xl flex items-center justify-center shadow-lg transform -rotate-3">
-            <Video size={16} className="text-white lg:hidden" />
-            <Video size={20} className="text-white hidden lg:block" />
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 lg:w-6 lg:h-6">
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+              <polyline points="14 2 14 8 20 8" />
+              <path d="m10 13 3 2-3 2v-4Z" fill="white" />
+            </svg>
           </div>
           <div>
             <h1 className="text-sm lg:text-lg font-black tracking-tight text-stone-900 leading-none uppercase italic">SceneFlow</h1>
             <div className="flex items-center gap-2 mt-1">
               <p className="hidden sm:block text-[9px] lg:text-[10px] text-stone-400 uppercase tracking-widest font-bold">Script-to-Video Sync</p>
               <div className="w-1 h-1 rounded-full bg-stone-200 hidden sm:block" />
-              <p className="text-[9px] lg:text-[10px] text-stone-500 font-mono">by Taruma Sakti</p>
+              <a 
+                href="https://x.com/tarumainfo" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-[9px] lg:text-[10px] text-stone-500 font-mono hover:underline decoration-stone-400 underline-offset-2"
+              >
+                by Taruma Sakti
+              </a>
             </div>
           </div>
         </div>
@@ -658,14 +668,14 @@ export default function App() {
           
           <div className="flex gap-2">
             <label className="cursor-pointer flex items-center gap-2 px-4 py-2 text-sm font-bold text-stone-600 hover:bg-stone-50 rounded-xl transition-all border border-transparent hover:border-stone-200">
-              <Upload size={16} /> Import
+              <Upload size={16} /> Open Sync
               <input type="file" accept=".json" onChange={importJson} className="hidden" />
             </label>
             <button
               onClick={exportJson}
               className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-stone-600 hover:bg-stone-50 rounded-xl transition-all border border-transparent hover:border-stone-200"
             >
-              <Download size={16} /> Export
+              <Download size={16} /> Save Sync
             </button>
           </div>
         </div>
