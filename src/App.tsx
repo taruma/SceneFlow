@@ -824,7 +824,7 @@ export default function App() {
     <div className="flex flex-col h-screen bg-stone-100 text-stone-900 font-sans overflow-hidden selection:bg-blue-100">
       {/* Header */}
       <header className={cn(
-        "h-16 border-b border-stone-200 bg-white flex items-center justify-between px-4 lg:px-6 shrink-0 z-40 shadow-sm transition-all",
+        "h-16 border-b border-stone-200 bg-white flex items-center justify-between px-2 lg:px-6 shrink-0 z-40 shadow-sm transition-all",
         mode === 'playback' && "hidden lg:flex"
       )}>
         <div className="flex items-center gap-2 lg:gap-3">
@@ -835,7 +835,7 @@ export default function App() {
               <path d="m10 13 3 2-3 2v-4Z" fill="white" />
             </svg>
           </div>
-          <div>
+          <div className="hidden lg:block">
             <h1 className="text-sm lg:text-base xl:text-lg font-black tracking-tight text-stone-900 leading-none uppercase italic">SceneFlow</h1>
             <div className="flex items-center gap-2 mt-1">
               <p className="hidden xl:block text-[10px] text-stone-400 uppercase tracking-widest font-bold">Script-to-Video Sync</p>
@@ -854,11 +854,11 @@ export default function App() {
         </div>
         
         <div className="flex items-center gap-2 lg:gap-4">
-          <div className="hidden lg:flex items-center gap-1.5 mr-1 xl:mr-2">
+          <div className="flex items-center gap-1 lg:gap-1.5 mr-1 xl:mr-2">
             <button 
               onClick={() => setResetConfirmation({ isOpen: true, type: 'blank' })}
               title="New Blank Project"
-              className="flex items-center gap-1.5 px-2 py-1.5 xl:px-2.5 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-stone-200 shadow-sm"
+              className="hidden lg:flex items-center gap-1.5 px-2 py-1.5 xl:px-2.5 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-stone-200 shadow-sm"
             >
               <Plus size={12} /> <span className="hidden xl:inline">Blank</span>
             </button>
@@ -868,7 +868,7 @@ export default function App() {
                 onClick={() => setIsLibraryOpen(!isLibraryOpen)}
                 title="Example Library"
                 className={cn(
-                  "flex items-center gap-1.5 px-2 py-1.5 xl:px-2.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border shadow-sm",
+                  "flex items-center gap-1 px-1.5 py-1.5 lg:gap-1.5 lg:px-2 xl:px-2.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border shadow-sm",
                   isLibraryOpen ? "bg-stone-900 text-white border-stone-900" : "bg-white hover:bg-stone-50 text-stone-600 border-stone-200"
                 )}
               >
@@ -882,7 +882,7 @@ export default function App() {
                     className="fixed inset-0 z-40" 
                     onClick={() => setIsLibraryOpen(false)} 
                   />
-                  <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-stone-200 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="absolute top-full left-0 lg:left-auto lg:right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-stone-200 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="p-3 border-b border-stone-100 bg-stone-50">
                       <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest">Taruma's Library</p>
                     </div>
@@ -916,28 +916,28 @@ export default function App() {
             <span className="text-base xl:text-lg font-mono font-bold text-white w-12 xl:w-16 text-right">{currentTime.toFixed(1)}s</span>
           </div>
 
-          <div className="flex bg-stone-100 p-1 rounded-lg lg:rounded-xl ring-1 ring-stone-200 scale-90 xl:scale-100">
+          <div className="flex bg-stone-100 p-0.5 lg:p-1 rounded-lg lg:rounded-xl ring-1 ring-stone-200 scale-90 xl:scale-100">
             <button
               onClick={() => setMode('playback')}
               className={cn(
-                "px-3 xl:px-5 py-2 rounded-lg text-xs xl:text-sm font-semibold transition-all flex items-center gap-2",
+                "px-2 lg:px-3 xl:px-5 py-1.5 lg:py-2 rounded-lg text-[10px] lg:text-xs xl:text-sm font-semibold transition-all flex items-center gap-1 lg:gap-2",
                 mode === 'playback' ? "bg-white shadow-md text-stone-900" : "text-stone-500 hover:text-stone-700"
               )}
             >
-              <Play size={14} className={mode === 'playback' ? "fill-current" : ""} /> Playback
+              <Play size={12} className={mode === 'playback' ? "fill-current" : ""} /> Playback
             </button>
             <button
               onClick={() => setMode('edit')}
               className={cn(
-                "px-3 xl:px-5 py-2 rounded-lg text-xs xl:text-sm font-semibold transition-all flex items-center gap-2",
+                "px-2 lg:px-3 xl:px-5 py-1.5 lg:py-2 rounded-lg text-[10px] lg:text-xs xl:text-sm font-semibold transition-all flex items-center gap-1 lg:gap-2",
                 mode === 'edit' ? "bg-white shadow-md text-stone-900" : "text-stone-500 hover:text-stone-700"
               )}
             >
-              <Edit2 size={14} /> Edit
+              <Edit2 size={12} /> Edit
             </button>
           </div>
           
-          <div className="relative">
+          <div className="relative hidden lg:block">
             <button
               onClick={() => setIsSettingsOpen(true)}
               className={cn(
@@ -950,9 +950,9 @@ export default function App() {
             </button>
           </div>
           
-          <div className="h-8 w-px bg-stone-200 mx-2" />
+          <div className="hidden lg:block h-8 w-px bg-stone-200 mx-2" />
           
-          <div className="flex gap-1">
+          <div className="hidden lg:flex gap-1">
             <label className="cursor-pointer flex items-center gap-1.5 px-2 py-1.5 xl:px-2.5 text-[10px] font-black uppercase tracking-widest text-stone-600 hover:bg-stone-50 rounded-lg transition-all border border-transparent hover:border-stone-200">
               <Upload size={14} /> <span className="hidden xl:inline">Open Sync</span>
               <input type="file" accept=".json" onChange={importJson} className="hidden" />
