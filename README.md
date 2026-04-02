@@ -102,10 +102,10 @@ All examples use continuous takes (oners) to showcase Seedance 2.0's ability to 
 
 ```bash
 # Clone the repository
-git clone https://github.com/taruma/Screenplay-Sync.git
+git clone https://github.com/taruma/SceneFlow.git
 
 # Navigate to project directory
-cd Screenplay-Sync
+cd SceneFlow
 
 # Install dependencies
 npm install
