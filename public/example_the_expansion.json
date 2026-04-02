@@ -294,9 +294,9 @@
       "id": "action_7",
       "type": "action",
       "speaker": null,
-      "selectedText": "They shift their weight onto the balls of their feet.",
-      "startIndex": 2099,
-      "endIndex": 2149,
+      "selectedText": "FRANK and DAVE both shift their weight onto the balls of their feet.",
+      "startIndex": 3668,
+      "endIndex": 3736,
       "startTime": 25.483,
       "endTime": 26,
       "matchStatus": "confirmed",
@@ -352,9 +352,9 @@
     },
     {
       "id": "shot_2",
-      "selectedText": "GOD’S EYE",
-      "startIndex": 3963,
-      "endIndex": 3972,
+      "selectedText": "(GOD'S EYE)",
+      "startIndex": 3962,
+      "endIndex": 3973,
       "startTime": 32,
       "endTime": 34,
       "colorClass": "bg-purple-400/50",
@@ -624,5 +624,43 @@
       "matchStatus": "confirmed",
       "colorClass": "bg-pink-400/50"
     }
-  ]
+  ],
+  "settings": {
+    "general": {
+      "before": 0,
+      "after": 0
+    },
+    "dialogue": {
+      "before": 0,
+      "after": 0
+    },
+    "action": {
+      "before": 1,
+      "after": 1
+    },
+    "camera": {
+      "before": 1,
+      "after": 1
+    },
+    "shot": {
+      "before": 1,
+      "after": 1
+    },
+    "audio": {
+      "before": 1,
+      "after": 1
+    },
+    "vfx": {
+      "before": 1,
+      "after": 1
+    },
+    "transition": {
+      "before": 1,
+      "after": 1
+    },
+    "environment": {
+      "before": 1,
+      "after": 1
+    }
+  }
 }
