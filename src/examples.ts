@@ -18,4 +18,10 @@ export const EXAMPLES: Example[] = [
     path: '/example_intent_over_rules_sceneflow.json', 
     description: 'The Illusion of Control' 
   },
+  { 
+    id: 'mozaic', 
+    title: 'Mozaic', 
+    path: '/example_mozaic.json', 
+    description: 'Logic of the Grid' 
+  },
 ];
