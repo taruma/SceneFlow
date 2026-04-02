@@ -14,6 +14,8 @@
 
 ---
 
+https://github.com/user-attachments/assets/e2469136-4224-4192-affc-d19d7e403f74
+
 ## 📖 Overview
 
 **SceneFlow** is a tool that syncs screenplays with video content, letting you see which parts of your script appear on screen in real-time.
@@ -53,6 +55,8 @@ Built for evaluating how AI video models (like Seedance 2.0) visualize screenpla
 | 🔷 VFX | Cyan | Visual effects descriptions |
 | 🩷 Transition | Pink | Scene transitions |
 | ⚪ Environment | Slate | Setting and atmosphere descriptions |
+
+https://github.com/user-attachments/assets/cf3a7fec-2a4b-48d8-9028-245eba49934c
 
 ### Data Management
 
