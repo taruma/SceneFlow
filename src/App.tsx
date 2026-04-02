@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import YouTube, { YouTubeProps } from 'react-youtube';
-import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book } from 'lucide-react';
+import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book, Target } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { EXAMPLES } from './examples';
@@ -105,6 +105,8 @@ export default function App() {
   const [isCuesModalOpen, setIsCuesModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+  const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
+  const [lastScrolledCueId, setLastScrolledCueId] = useState<string | null>(null);
   const [rawCuesText, setRawCuesText] = useState("");
   const [currentTime, setCurrentTime] = useState(0);
   const [player, setPlayer] = useState<any>(null);
@@ -168,6 +170,30 @@ export default function App() {
       localStorage.setItem('screenplay_sync_state', JSON.stringify(state));
     }
   }, [state, isInitialized]);
+
+  // Auto-scroll logic
+  useEffect(() => {
+    if (mode === 'playback' && isAutoScrollEnabled) {
+      const activeDialogueCue = (state.cues || []).find(c => {
+        if (c.type !== 'dialogue') return false;
+        const typeSettings = state.settings?.[c.type || ''] || DEFAULT_SETTINGS.general;
+        const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
+        const totalBefore = (typeSettings.before || 0) + (generalSettings.before || 0);
+        const totalAfter = (typeSettings.after || 0) + (generalSettings.after || 0);
+        return currentTime >= c.startTime - totalBefore && currentTime <= c.endTime + totalAfter;
+      });
+
+      if (activeDialogueCue && activeDialogueCue.id !== lastScrolledCueId) {
+        const element = document.getElementById(`cue-${activeDialogueCue.id}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setLastScrolledCueId(activeDialogueCue.id);
+        }
+      } else if (!activeDialogueCue) {
+        setLastScrolledCueId(null);
+      }
+    }
+  }, [currentTime, mode, isAutoScrollEnabled, state.cues, state.settings, lastScrolledCueId]);
 
   // Initial load of default data if no local storage
   useEffect(() => {
@@ -740,6 +766,7 @@ export default function App() {
         segments.push(
           <span 
             key={`${lineIdx}-${start}`}
+            id={primaryCue.id ? `cue-${primaryCue.id}` : undefined}
             onClick={(e) => {
               if (mode !== 'edit' || isTemp) return;
               e.stopPropagation();
@@ -857,7 +884,7 @@ export default function App() {
                   />
                   <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-stone-200 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="p-3 border-b border-stone-100 bg-stone-50">
-                      <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest">Starter Library</p>
+                      <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest">Taruma's Library</p>
                     </div>
                     <div className="p-1.5">
                       {EXAMPLES.map(example => (
@@ -1262,7 +1289,7 @@ export default function App() {
         )}>
           <div className={cn(
             "h-16 border-b border-stone-200 flex items-center justify-between px-4 lg:px-8 bg-white shrink-0 z-20",
-            mode === 'playback' ? "h-12 lg:hidden sticky top-0 shadow-sm" : "h-16"
+            mode === 'playback' ? "h-12 sticky top-0 shadow-sm" : "h-16"
           )}>
             <div className="flex items-center gap-2 lg:gap-3">
               <FileText size={16} className="text-stone-400" />
@@ -1270,12 +1297,26 @@ export default function App() {
             </div>
             <div className="flex items-center gap-2 lg:gap-4">
               {mode === 'playback' && (
-                <button 
-                  onClick={() => setMode('edit')}
-                  className="lg:hidden flex items-center gap-1 px-2 py-1 bg-stone-100 rounded text-[10px] font-bold text-stone-600"
-                >
-                  <Edit2 size={10} /> Edit
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setIsAutoScrollEnabled(!isAutoScrollEnabled)}
+                    className={cn(
+                      "flex items-center gap-1.5 px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border shadow-sm",
+                      isAutoScrollEnabled ? "bg-blue-500 text-white border-blue-600" : "bg-white text-stone-400 border-stone-200 hover:text-stone-600"
+                    )}
+                    title={isAutoScrollEnabled ? "Auto-scroll enabled" : "Auto-scroll disabled"}
+                  >
+                    <Target size={10} className={cn(isAutoScrollEnabled && "animate-pulse")} />
+                    <span className="hidden sm:inline">Auto-Scroll</span>
+                  </button>
+                  <div className="h-4 w-px bg-stone-200 mx-1 hidden lg:block" />
+                  <button 
+                    onClick={() => setMode('edit')}
+                    className="lg:hidden flex items-center gap-1 px-2 py-1 bg-stone-100 rounded text-[10px] font-bold text-stone-600"
+                  >
+                    <Edit2 size={10} /> Edit
+                  </button>
+                </div>
               )}
               <div className={cn(
                 "px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest",

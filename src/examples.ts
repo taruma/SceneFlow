@@ -24,4 +24,10 @@ export const EXAMPLES: Example[] = [
     path: '/example_mozaic.json', 
     description: 'Logic of the Grid' 
   },
+  { 
+    id: 'invasion', 
+    title: '🐸 Invasion', 
+    path: '/example_frog_invasion.json', 
+    description: 'The Optimized Self' 
+  },
 ];
