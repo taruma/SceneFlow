@@ -997,7 +997,7 @@ export default function App() {
           <section className={cn(
             "transition-all duration-300 z-30 sticky top-0", 
             mode === 'playback' && "space-y-4 lg:space-y-6",
-            mode === 'edit' && "-mx-4 lg:-mx-10 -mt-4 lg:-mt-10 px-4 lg:px-10 pt-4 lg:pt-10",
+            mode === 'edit' && "-mx-4 lg:-mx-10 px-4 lg:px-10",
             mode === 'edit' && leftPanelScroll <= 80 && "bg-white border-b border-stone-100 pb-6 mb-8 space-y-4",
             mode === 'edit' && leftPanelScroll > 80 && "bg-transparent pointer-events-none space-y-0 pb-0 mb-0"
           )}>
