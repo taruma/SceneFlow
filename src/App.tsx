@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import YouTube, { YouTubeProps } from 'react-youtube';
-import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp } from 'lucide-react';
+import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { EXAMPLES } from './examples';
 
 // Utility to extract YouTube ID from various URL formats
 function extractYoutubeId(url: string) {
@@ -103,6 +104,7 @@ export default function App() {
   const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
   const [isCuesModalOpen, setIsCuesModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [rawCuesText, setRawCuesText] = useState("");
   const [currentTime, setCurrentTime] = useState(0);
   const [player, setPlayer] = useState<any>(null);
@@ -114,7 +116,12 @@ export default function App() {
     isOpen: false,
     cue: null,
   });
-  const [resetConfirmation, setResetConfirmation] = useState<{ isOpen: boolean; type: 'settings' | 'data' | 'blank' | null }>({
+  const [resetConfirmation, setResetConfirmation] = useState<{ 
+    isOpen: boolean; 
+    type: 'settings' | 'data' | 'blank' | 'example' | null;
+    examplePath?: string;
+    exampleTitle?: string;
+  }>({
     isOpen: false,
     type: null,
   });
@@ -237,6 +244,26 @@ export default function App() {
       .catch(err => {
         console.error("Failed to load blank script", err);
         alert("Failed to load blank script.");
+      });
+  };
+
+  const loadExample = (path: string) => {
+    fetch(path)
+      .then(res => res.json())
+      .then(data => {
+        const finalData = { ...data, settings: data.settings || DEFAULT_SETTINGS };
+        setState(finalData);
+        localStorage.setItem('screenplay_sync_state', JSON.stringify(finalData));
+        setMode('playback');
+        setCurrentTime(0);
+        setResetConfirmation({ isOpen: false, type: null });
+        setIsLibraryOpen(false);
+        // Realign cues after loading to ensure indices are correct
+        realignCues(finalData);
+      })
+      .catch(err => {
+        console.error("Failed to load example", err);
+        alert("Failed to load example.");
       });
   };
 
@@ -808,13 +835,53 @@ export default function App() {
             >
               <Plus size={12} /> <span className="hidden xl:inline">Blank</span>
             </button>
-            <button 
-              onClick={() => setResetConfirmation({ isOpen: true, type: 'data' })}
-              title="Reset to Default Demo"
-              className="flex items-center gap-1.5 px-2 py-1.5 xl:px-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-red-100 shadow-sm"
-            >
-              <Trash2 size={12} /> <span className="hidden xl:inline">Reset</span>
-            </button>
+            
+            <div className="relative">
+              <button 
+                onClick={() => setIsLibraryOpen(!isLibraryOpen)}
+                title="Example Library"
+                className={cn(
+                  "flex items-center gap-1.5 px-2 py-1.5 xl:px-2.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border shadow-sm",
+                  isLibraryOpen ? "bg-stone-900 text-white border-stone-900" : "bg-white hover:bg-stone-50 text-stone-600 border-stone-200"
+                )}
+              >
+                <Book size={12} /> <span className="hidden xl:inline">Library</span>
+                <ChevronDown size={10} className={cn("transition-transform duration-200", isLibraryOpen && "rotate-180")} />
+              </button>
+              
+              {isLibraryOpen && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setIsLibraryOpen(false)} 
+                  />
+                  <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-stone-200 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="p-3 border-b border-stone-100 bg-stone-50">
+                      <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest">Starter Library</p>
+                    </div>
+                    <div className="p-1.5">
+                      {EXAMPLES.map(example => (
+                        <button
+                          key={example.id}
+                          onClick={() => {
+                            setResetConfirmation({ 
+                              isOpen: true, 
+                              type: 'example', 
+                              examplePath: example.path, 
+                              exampleTitle: example.title 
+                            });
+                          }}
+                          className="w-full flex flex-col items-start gap-0.5 p-2.5 hover:bg-stone-50 rounded-xl transition-colors group text-left"
+                        >
+                          <span className="text-xs font-bold text-stone-900 group-hover:text-stone-900">{example.title}</span>
+                          <span className="text-[10px] text-stone-400 font-medium">{example.description}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
 
           <div className="hidden lg:flex items-center gap-2 px-3 xl:px-4 py-2 bg-stone-900 rounded-xl shadow-inner animate-in fade-in zoom-in duration-500">
@@ -1593,11 +1660,13 @@ export default function App() {
               <div>
                 <h3 className="text-lg font-bold text-stone-900">
                   {resetConfirmation.type === 'settings' ? 'Reset Timing Settings?' : 
-                   resetConfirmation.type === 'blank' ? 'Load Blank Script?' : 'Reset All Data?'}
+                   resetConfirmation.type === 'blank' ? 'Load Blank Script?' : 
+                   resetConfirmation.type === 'example' ? `Load "${resetConfirmation.exampleTitle}"?` : 'Reset All Data?'}
                 </h3>
                 <p className="text-sm text-stone-500 mt-2">
                   {resetConfirmation.type === 'settings' ? 'This will restore all timing buffers to their factory default values.' : 
                    resetConfirmation.type === 'blank' ? 'This will delete all current cues and start a fresh project.' : 
+                   resetConfirmation.type === 'example' ? `This will replace your current script and cues with the "${resetConfirmation.exampleTitle}" demo.` :
                    'This will delete all cues and restore the original demo script.'}
                 </p>
               </div>
@@ -1618,6 +1687,8 @@ export default function App() {
                       loadBlank();
                     } else if (resetConfirmation.type === 'data') {
                       resetState();
+                    } else if (resetConfirmation.type === 'example' && resetConfirmation.examplePath) {
+                      loadExample(resetConfirmation.examplePath);
                     }
                   }}
                   className="px-6 py-3 bg-stone-900 text-white rounded-xl font-bold hover:bg-stone-800 transition-all active:scale-95 shadow-lg shadow-stone-900/20"

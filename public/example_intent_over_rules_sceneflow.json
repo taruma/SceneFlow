@@ -1,0 +1,356 @@
+{
+  "youtubeId": "https://youtu.be/_pWr-Rolcm4",
+  "scriptText": "PART 1\n\nINT. MARK'S OFFICE - DAY\n\nCLOSE UP on MARK's hands. His fingers are gripped tightly around the spine of a thick, blue mathematics textbook.\n\nMARK\n(Voice low, gravelly)\nWe've been building cages, ROBERT. Every constraint we give the model is just another bar.\n\nCUT TO: MEDIUM TWO-SHOT.\nMARK is staring at the book. He doesn't look up. ROBERT is visible in the frame, leaning against a bookshelf, his glasses catching a glint of the desk lamp. ROBERT adjusts his stance, a subtle shift of weight that signals he's listening.\n\nROBERT\n(Calm, verifying)\nYou're talking about the safety filters. The \"don't do this, don't go there\" logic.\n\nMARK\nIt's more than that. It's the \"how.\" We're so obsessed with the steps that we're suffocating the destination.\n\nMARK's thumb slowly releases the tension on the book's spine, a micro-expression of realization.\n\nPART 2\n\nINT. MARK'S OFFICE - CONTINUOUS\n\nThe camera follows MARK as he stands. The movement is deliberate. He looks past the camera, his mind racing. ROBERT enters the frame from the right, becoming more prominent.\n\nMARK\n(Urgent, continuing his thought)\nIf we prioritize the Intent—the pure mathematical 'why'—and minimize the Constraints...\n\nROBERT\n(Interrupting/Overlapping)\n...the reasoning path becomes organic.\n\nMARK\nExactly. It stops being a calculation and starts being a realization.\n\nMARK stops moving. He finally turns his head to look directly at ROBERT. A small, knowing smirk begins to form—the first sign of a breakthrough.\n\nPART 3\n\nINT. MARK'S OFFICE - CONTINUOUS\n\nROBERT watches MARK closely. He speaks with the rhythm of a man explaining a simple truth to a complicated mind.\n\nROBERT\nIt's like a GPS, isn't it? If I tell the car \"don't turn left,\" \"stay under forty,\" and \"avoid the highway,\" I might never get home.\n\nMARK\nBut if you just say \"get me home\".\n\nROBERT\n(overlapping)\n...it finds the alleyways we didn't even know existed. \n\nMARK lets out a short, silent breath through his nose. The tension in his shoulders drops. ROBERT watches MARK, his expression softening into a look of quiet verification. \n\nPART 4\n\nINT. MARK'S OFFICE - CONTINUOUS\n\nThe air in the room feels still. MARK is looking at ROBERT, but his mind is clearly staring at the mathematical future.\n\nMARK\n(A quiet, heavy realization)\nThe logic isn't in the rules anymore. It's in the desire to solve.\n\nMEDIUM SHOT - ROBERT\nROBERT exhales slowly. He adjusts his glasses with one hand, a small, weary movement.\n\nROBERT\nTerrifying. And brilliant.\n\nMEDIUM SHOT - MARK\nMARK slowly walks and sits back into his leather chair. The chair creaks under his weight. He looks up at ROBERT, then his gaze drifts to the side, into the shadows of the office.\n\nMARK\n(Almost a whisper)\nMostly terrifying.\n\nWIDE SHOT\nAs the camera pulls back slightly, leaving the two men framed by the towering, shadowed bookshelves.",
+  "cues": [
+    {
+      "id": "shot-1",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "CLOSE UP on MARK's hands.",
+      "startIndex": 34,
+      "endIndex": 59,
+      "startTime": 0,
+      "endTime": 2,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-purple-400/50"
+    },
+    {
+      "id": "dialogue-1",
+      "type": "dialogue",
+      "speaker": "MARK",
+      "selectedText": "We've been building cages, ROBERT.",
+      "startIndex": 176,
+      "endIndex": 210,
+      "startTime": 0.5,
+      "endTime": 2.5,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-yellow-400/50"
+    },
+    {
+      "id": "shot-2",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "CUT TO: MEDIUM TWO-SHOT.",
+      "startIndex": 268,
+      "endIndex": 292,
+      "startTime": 2.5,
+      "endTime": 3.5,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-purple-400/50"
+    },
+    {
+      "id": "dialogue-2",
+      "type": "dialogue",
+      "speaker": "MARK",
+      "selectedText": "Every constraint we give the model is just another bar.",
+      "startIndex": 211,
+      "endIndex": 266,
+      "startTime": 3.5,
+      "endTime": 6,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-yellow-400/50"
+    },
+    {
+      "id": "action-1",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "ROBERT is visible in the frame, leaning against a bookshelf, his glasses catching a glint of the desk lamp. ROBERT adjusts his stance, a subtle shift of weight that signals he's listening.",
+      "startIndex": 342,
+      "endIndex": 530,
+      "startTime": 6,
+      "endTime": 7,
+      "matchStatus": "partial",
+      "colorClass": "bg-blue-400/50"
+    },
+    {
+      "id": "dialogue-3",
+      "type": "dialogue",
+      "speaker": "ROBERT",
+      "selectedText": "You're talking about the safety filters.",
+      "startIndex": 557,
+      "endIndex": 597,
+      "startTime": 6,
+      "endTime": 7.5,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-yellow-400/50"
+    },
+    {
+      "id": "dialogue-4",
+      "type": "dialogue",
+      "speaker": "ROBERT",
+      "selectedText": "The \"don't do this, don't go there\" logic.",
+      "startIndex": 598,
+      "endIndex": 640,
+      "startTime": 7.5,
+      "endTime": 10.5,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-yellow-400/50"
+    },
+    {
+      "id": "dialogue-5",
+      "type": "dialogue",
+      "speaker": "MARK",
+      "selectedText": "It's more than that. It's the \"how.\"",
+      "startIndex": 647,
+      "endIndex": 683,
+      "startTime": 10.5,
+      "endTime": 12,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-yellow-400/50"
+    },
+    {
+      "id": "dialogue-6",
+      "type": "dialogue",
+      "speaker": "MARK",
+      "selectedText": "We're so obsessed with the steps that we're suffocating the destination.",
+      "startIndex": 684,
+      "endIndex": 756,
+      "startTime": 12,
+      "endTime": 15.5,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-yellow-400/50"
+    },
+    {
+      "id": "camera-1",
+      "type": "camera",
+      "speaker": null,
+      "selectedText": "The camera follows MARK as he stands.",
+      "startIndex": 897,
+      "endIndex": 934,
+      "startTime": 15.5,
+      "endTime": 18,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-green-400/50"
+    },
+    {
+      "id": "dialogue-7",
+      "type": "dialogue",
+      "speaker": "MARK",
+      "selectedText": "If we prioritize the Intent—the pure mathematical 'why'—and minimize the Constraints...",
+      "startIndex": 1110,
+      "endIndex": 1197,
+      "startTime": 16,
+      "endTime": 21.5,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-yellow-400/50"
+    },
+    {
+      "id": "action-2",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "ROBERT enters the frame from the right, becoming more prominent.",
+      "startIndex": 1006,
+      "endIndex": 1070,
+      "startTime": 21,
+      "endTime": 22,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-blue-400/50"
+    },
+    {
+      "id": "dialogue-8",
+      "type": "dialogue",
+      "speaker": "ROBERT",
+      "selectedText": "...the reasoning path becomes organic.",
+      "startIndex": 1233,
+      "endIndex": 1271,
+      "startTime": 21.5,
+      "endTime": 24,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-yellow-400/50"
+    },
+    {
+      "id": "dialogue-9",
+      "type": "dialogue",
+      "speaker": "MARK",
+      "selectedText": "Exactly.",
+      "startIndex": 1278,
+      "endIndex": 1286,
+      "startTime": 25,
+      "endTime": 26,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-yellow-400/50"
+    },
+    {
+      "id": "dialogue-10",
+      "type": "dialogue",
+      "speaker": "MARK",
+      "selectedText": "It stops being a calculation and starts being a realization.",
+      "startIndex": 1287,
+      "endIndex": 1347,
+      "startTime": 26,
+      "endTime": 30,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-yellow-400/50"
+    },
+    {
+      "id": "action-3",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "MARK stops moving. He finally turns his head to look directly at ROBERT. A small, knowing smirk begins to form—the first sign of a breakthrough.",
+      "startIndex": 1349,
+      "endIndex": 1493,
+      "startTime": 26,
+      "endTime": 30,
+      "matchStatus": "partial",
+      "colorClass": "bg-blue-400/50"
+    },
+    {
+      "id": "dialogue-11",
+      "type": "dialogue",
+      "speaker": "ROBERT",
+      "selectedText": "It's like a GPS, isn't it?",
+      "startIndex": 1657,
+      "endIndex": 1683,
+      "startTime": 30.5,
+      "endTime": 32,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-yellow-400/50"
+    },
+    {
+      "id": "dialogue-12",
+      "type": "dialogue",
+      "speaker": "ROBERT",
+      "selectedText": "If I tell the car \"don't turn left,\" \"stay under forty,\" and \"avoid the highway,\" I might never get home.",
+      "startIndex": 1684,
+      "endIndex": 1789,
+      "startTime": 32.5,
+      "endTime": 38.5,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-yellow-400/50"
+    },
+    {
+      "id": "dialogue-13",
+      "type": "dialogue",
+      "speaker": "MARK",
+      "selectedText": "But if you just say \"get me home\".",
+      "startIndex": 1796,
+      "endIndex": 1830,
+      "startTime": 38.5,
+      "endTime": 41,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-yellow-400/50"
+    },
+    {
+      "id": "dialogue-14",
+      "type": "dialogue",
+      "speaker": "ROBERT",
+      "selectedText": "...it finds the alleyways we didn't even know existed.",
+      "startIndex": 1853,
+      "endIndex": 1907,
+      "startTime": 41,
+      "endTime": 44,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-yellow-400/50"
+    },
+    {
+      "id": "dialogue-15",
+      "type": "dialogue",
+      "speaker": "MARK",
+      "selectedText": "The logic isn't in the rules anymore. It's in the desire to solve.",
+      "startIndex": 2280,
+      "endIndex": 2346,
+      "startTime": 44.5,
+      "endTime": 47,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-yellow-400/50"
+    },
+    {
+      "id": "action-4",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "ROBERT exhales slowly. He adjusts his glasses with one hand, a small, weary movement.",
+      "startIndex": 2369,
+      "endIndex": 2454,
+      "startTime": 48.5,
+      "endTime": 50.5,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-blue-400/50"
+    },
+    {
+      "id": "dialogue-16",
+      "type": "dialogue",
+      "speaker": "ROBERT",
+      "selectedText": "Terrifying. And brilliant.",
+      "startIndex": 2463,
+      "endIndex": 2489,
+      "startTime": 47.5,
+      "endTime": 50.5,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-yellow-400/50"
+    },
+    {
+      "id": "action-5",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "MARK slowly walks and sits back into his leather chair.",
+      "startIndex": 2510,
+      "endIndex": 2565,
+      "startTime": 52,
+      "endTime": 57,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-blue-400/50"
+    },
+    {
+      "id": "dialogue-17",
+      "type": "dialogue",
+      "speaker": "MARK",
+      "selectedText": "Mostly terrifying.",
+      "startIndex": 2715,
+      "endIndex": 2733,
+      "startTime": 57,
+      "endTime": 59,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-yellow-400/50"
+    },
+    {
+      "id": "shot-3",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "WIDE SHOT",
+      "startIndex": 2735,
+      "endIndex": 2744,
+      "startTime": 58,
+      "endTime": 60,
+      "matchStatus": "confirmed",
+      "colorClass": "bg-purple-400/50"
+    }
+  ],
+  "settings": {
+    "general": {
+      "before": 0,
+      "after": 0
+    },
+    "dialogue": {
+      "before": 1,
+      "after": 1
+    },
+    "action": {
+      "before": 1,
+      "after": 1
+    },
+    "camera": {
+      "before": 1,
+      "after": 1
+    },
+    "shot": {
+      "before": 1,
+      "after": 1
+    },
+    "audio": {
+      "before": 1,
+      "after": 1
+    },
+    "vfx": {
+      "before": 1,
+      "after": 1
+    },
+    "transition": {
+      "before": 1,
+      "after": 1
+    },
+    "environment": {
+      "before": 1,
+      "after": 1
+    }
+  }
+}
