@@ -671,9 +671,22 @@ export default function App() {
       const isNote = trimmed.startsWith('[') && trimmed.endsWith(']');
       const isEffect = trimmed.startsWith('SFX:') || trimmed.startsWith('VFX:');
       const isSeparator = trimmed === '---';
+      const isPartSeparator = /^PART \d+$/.test(trimmed);
+      const romanMatch = trimmed.match(/^[IVXLCDM]+\.\s+(.+)$/);
+      const isRomanTitle = romanMatch && trimmed === trimmed.toUpperCase() && (lineIdx === lines.length - 1 || lines[lineIdx + 1]?.trim() === '');
       
       if (isSeparator) {
         return <hr key={lineIdx} className="border-stone-100 my-6" />;
+      }
+
+      if (isPartSeparator || isRomanTitle) {
+        return (
+          <div key={lineIdx} className="flex items-center gap-4 my-10 px-4">
+            <div className="h-px bg-stone-200/50 flex-1" />
+            <span className="text-[9px] font-black text-stone-400 uppercase tracking-[0.4em] whitespace-nowrap">{trimmed}</span>
+            <div className="h-px bg-stone-200/50 flex-1" />
+          </div>
+        );
       }
 
       if (isHeading) {
