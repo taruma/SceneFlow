@@ -766,8 +766,8 @@
       "after": 0
     },
     "dialogue": {
-      "before": 2.5,
-      "after": 1
+      "before": 1,
+      "after": 2
     },
     "action": {
       "before": 1,

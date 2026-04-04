@@ -174,7 +174,7 @@ export default function App() {
   // Auto-scroll logic
   useEffect(() => {
     if (mode === 'playback' && isAutoScrollEnabled) {
-      const activeDialogueCue = (state.cues || []).find(c => {
+      const activeDialogueCues = (state.cues || []).filter(c => {
         if (c.type !== 'dialogue') return false;
         const typeSettings = state.settings?.[c.type || ''] || DEFAULT_SETTINGS.general;
         const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
@@ -182,6 +182,17 @@ export default function App() {
         const totalAfter = (typeSettings.after || 0) + (generalSettings.after || 0);
         return currentTime >= c.startTime - totalBefore && currentTime <= c.endTime + totalAfter;
       });
+
+      // Prioritize the one that started most recently (highest startTime)
+      // If start times are equal, prioritize the one that appears later in the script (higher index)
+      const activeDialogueCue = activeDialogueCues.length > 0
+        ? activeDialogueCues.reduce((best, current) => {
+            if (!best) return current;
+            if (current.startTime > best.startTime) return current;
+            if (current.startTime === best.startTime && (current.startIndex || 0) > (best.startIndex || 0)) return current;
+            return best;
+          }, null as Cue | null)
+        : null;
 
       if (activeDialogueCue && activeDialogueCue.id !== lastScrolledCueId) {
         const element = document.getElementById(`cue-${activeDialogueCue.id}`);
