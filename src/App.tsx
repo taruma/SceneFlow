@@ -3,7 +3,7 @@ import YouTube, { YouTubeProps } from 'react-youtube';
 import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book, Target } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { EXAMPLES } from './examples';
+import { EXAMPLE_SECTIONS } from './examples';
 
 // Utility to extract YouTube ID from various URL formats
 function extractYoutubeId(url: string) {
@@ -676,12 +676,12 @@ export default function App() {
       const isRomanTitle = romanMatch && trimmed === trimmed.toUpperCase() && (lineIdx === lines.length - 1 || lines[lineIdx + 1]?.trim() === '');
       
       if (isSeparator) {
-        return <hr key={lineIdx} className="border-stone-100 my-6" />;
+        return <hr key={lineIdx} className="border-stone-100 mt-10 mb-2 -mx-6 md:-mx-8 lg:-mx-12" />;
       }
 
       if (isPartSeparator || isRomanTitle) {
         return (
-          <div key={lineIdx} className="flex items-center gap-4 my-10 px-4">
+          <div key={lineIdx} className="flex items-center gap-4 mt-12 mb-2 -mx-6 md:-mx-8 lg:-mx-12 px-6 md:px-8 lg:px-12">
             <div className="h-px bg-stone-200/50 flex-1" />
             <span className="text-[9px] font-black text-stone-400 uppercase tracking-[0.4em] whitespace-nowrap">{trimmed}</span>
             <div className="h-px bg-stone-200/50 flex-1" />
@@ -690,7 +690,7 @@ export default function App() {
       }
 
       if (isHeading) {
-        className = "font-bold text-stone-900 mt-6 mb-1 tracking-tight uppercase";
+        className = "font-bold text-stone-900 mt-10 mb-2 tracking-tight uppercase bg-stone-50 border-y border-stone-100 -mx-6 md:-mx-8 lg:-mx-12 px-6 md:px-8 lg:px-12 py-2.5";
       } else if (isNote) {
         className = "font-mono text-[11px] text-stone-500 uppercase tracking-tight mb-1";
       } else if (isEffect) {
@@ -910,30 +910,37 @@ export default function App() {
               {isLibraryOpen && (
                 <>
                   <div 
-                    className="fixed inset-0 z-40" 
+                    className="fixed inset-0 z-40 bg-stone-900/20 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none" 
                     onClick={() => setIsLibraryOpen(false)} 
                   />
-                  <div className="absolute top-full left-0 lg:left-auto lg:right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-stone-200 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="p-3 border-b border-stone-100 bg-stone-50">
-                      <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest">Taruma's Library</p>
-                    </div>
-                    <div className="p-1.5">
-                      {EXAMPLES.map(example => (
-                        <button
-                          key={example.id}
-                          onClick={() => {
-                            setResetConfirmation({ 
-                              isOpen: true, 
-                              type: 'example', 
-                              examplePath: example.path, 
-                              exampleTitle: example.title 
-                            });
-                          }}
-                          className="w-full flex flex-col items-start gap-0.5 p-2.5 hover:bg-stone-50 rounded-xl transition-colors group text-left"
-                        >
-                          <span className="text-xs font-bold text-stone-900 group-hover:text-stone-900">{example.title}</span>
-                          <span className="text-[10px] text-stone-400 font-medium">{example.description}</span>
-                        </button>
+                  <div className="fixed lg:absolute top-1/2 lg:top-full left-1/2 lg:left-auto lg:right-0 -translate-x-1/2 lg:translate-x-0 -translate-y-1/2 lg:translate-y-0 mt-0 lg:mt-2 w-[calc(100%-2rem)] max-w-sm lg:w-64 bg-white rounded-2xl shadow-2xl border border-stone-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 lg:slide-in-from-top-2 duration-200">
+                    <div className="max-h-[70vh] overflow-y-auto scrollbar-hide">
+                      {EXAMPLE_SECTIONS.map((section, sectionIdx) => (
+                        <div key={section.label} className={cn(sectionIdx > 0 && "border-t border-stone-100")}>
+                          <div className="p-3 bg-stone-50/50">
+                            <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest">{section.label}</p>
+                          </div>
+                          <div className="p-1.5">
+                            {section.items.map(example => (
+                              <button
+                                key={example.id}
+                                onClick={() => {
+                                  setResetConfirmation({ 
+                                    isOpen: true, 
+                                    type: 'example', 
+                                    examplePath: example.path, 
+                                    exampleTitle: example.title 
+                                  });
+                                  setIsLibraryOpen(false);
+                                }}
+                                className="w-full flex flex-col items-start gap-0.5 p-2.5 hover:bg-stone-50 rounded-xl transition-colors group text-left"
+                              >
+                                <span className="text-xs font-bold text-stone-900 group-hover:text-stone-900">{example.title}</span>
+                                <span className="text-[10px] text-stone-400 font-medium">{example.description}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
                       ))}
                     </div>
                   </div>
