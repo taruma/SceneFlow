@@ -763,10 +763,13 @@ export default function App() {
         const maxOpacity = Math.max(...segmentCues.map(c => (c as any).opacity || 0));
         const finalOpacity = isTemp ? 0.5 : maxOpacity * 0.5;
 
+        const scrollCue = segmentCues.find(c => c.type === 'dialogue' && c.startIndex === lineStart + start);
+        const idToUse = scrollCue ? `cue-${scrollCue.id}` : (primaryCue.id ? `cue-${primaryCue.id}` : undefined);
+
         segments.push(
           <span 
             key={`${lineIdx}-${start}`}
-            id={primaryCue.id ? `cue-${primaryCue.id}` : undefined}
+            id={idToUse}
             onClick={(e) => {
               if (mode !== 'edit' || isTemp) return;
               e.stopPropagation();
