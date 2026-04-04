@@ -664,13 +664,28 @@ export default function App() {
       const lineEnd = currentPos + line.length;
       currentPos += line.length + 1; // +1 for the newline character
 
-      let className = "mb-1 text-stone-700 leading-relaxed";
+      let className = "mb-0.5 text-stone-700 leading-snug";
       const trimmed = line.trim();
       
-      if (trimmed.length > 0 && trimmed === trimmed.toUpperCase()) {
-        className = "font-bold text-stone-900 mt-4 mb-1 tracking-tight";
+      const isHeading = trimmed.startsWith('INT.') || trimmed.startsWith('EXT.');
+      const isNote = trimmed.startsWith('[') && trimmed.endsWith(']');
+      const isEffect = trimmed.startsWith('SFX:') || trimmed.startsWith('VFX:');
+      const isSeparator = trimmed === '---';
+      
+      if (isSeparator) {
+        return <hr key={lineIdx} className="border-stone-100 my-6" />;
+      }
+
+      if (isHeading) {
+        className = "font-bold text-stone-900 mt-6 mb-1 tracking-tight uppercase";
+      } else if (isNote) {
+        className = "font-mono text-[11px] text-stone-500 uppercase tracking-tight mb-1";
+      } else if (isEffect) {
+        className = "italic text-stone-400 mb-1";
+      } else if (trimmed.length > 0 && trimmed === trimmed.toUpperCase()) {
+        className = "font-bold text-stone-900 mt-3 mb-0.5 tracking-tight";
       } else if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
-        className = "italic text-stone-500 mb-1 text-[13px]";
+        className = "italic text-stone-500 mb-0.5 text-[13px]";
       }
 
       // Filter cues that overlap with this line
