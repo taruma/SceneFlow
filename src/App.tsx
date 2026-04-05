@@ -4,7 +4,8 @@ import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video,
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { EXAMPLE_SECTIONS } from './examples';
-import { parseScriptWithStaging } from './lib/scriptParser';
+import { processScript, type LineType, type ProcessedLine } from './lib/scriptProcessor';
+import { getLineClass, SCRIPT_STYLES } from './lib/scriptStyles';
 import { StagingModal } from './components/StagingModal';
 
 // Utility to extract YouTube ID from various URL formats
@@ -675,59 +676,34 @@ export default function App() {
     const cues = state.cues || [];
     const scriptText = state.scriptText || "";
     
-    // Parse for staging blocks
-    const { originalLines: lines, stagingLineIndices, stagingMarkers } = parseScriptWithStaging(scriptText);
-    
-    // Pre-calculate dialogue blocks
-    const dialogueInfo = new Array(lines.length).fill(null);
-    for (let i = 0; i < lines.length; i++) {
-      if (stagingLineIndices.has(i)) continue;
-      const trimmed = lines[i].trim();
-      // Rule: ALL CAPS and ends with ":"
-      if (trimmed.length > 0 && trimmed === trimmed.toUpperCase() && trimmed.endsWith(':')) {
-        const charName = trimmed.slice(0, -1);
-        dialogueInfo[i] = { type: 'name', name: charName };
-        let j = i + 1;
-        while (j < lines.length && lines[j].trim() !== '' && !stagingLineIndices.has(j)) {
-          dialogueInfo[j] = { type: 'speech', name: charName };
-          j++;
-        }
-        i = j - 1;
-      }
-    }
-
-    let currentPos = 0;
+    // Use the new processor to handle all structural and semantic logic
+    const processedLines = processScript(scriptText);
     const scriptElements: React.ReactNode[] = [];
 
-    lines.forEach((line, lineIdx) => {
-      const lineStart = currentPos;
-      const lineEnd = currentPos + line.length;
-      currentPos += line.length + 1; // +1 for the newline character
+    processedLines.forEach((lineData) => {
+      const { text: line, type, lineIdx, lineStart, lineEnd, isStaging, stagingMarker } = lineData;
+      const trimmed = line.trim();
 
       // Check for staging markers at this line
-      if (stagingMarkers[lineIdx]) {
-        const marker = stagingMarkers[lineIdx];
+      if (stagingMarker) {
         scriptElements.push(
-          <div key={`staging-${lineIdx}`} className="hidden lg:flex items-center justify-center gap-2">
-            {marker.blocks.map((block, bIdx) => (
+          <div key={`staging-${lineIdx}`} className={SCRIPT_STYLES.stagingContainer}>
+            {stagingMarker.blocks.map((block, bIdx) => (
               <button
                 key={bIdx}
                 onClick={() => {
-                  // Only allow opening if video is paused
                   if (playerState !== 1) {
                     setActiveStaging(block);
                   }
                 }}
                 disabled={playerState === 1}
                 className={cn(
-                  "flex items-center gap-1.5 px-3 py-1 rounded-full border border-stone-200 bg-white shadow-sm transition-all",
-                  playerState === 1 
-                    ? "opacity-30 cursor-not-allowed" 
-                    : "hover:border-stone-400 hover:shadow-md active:scale-95"
+                  SCRIPT_STYLES.stagingBadgeBase,
+                  playerState === 1 ? SCRIPT_STYLES.stagingBadgeDisabled : SCRIPT_STYLES.stagingBadgeActive
                 )}
               >
                 <Info size={10} className="text-stone-400" />
-                <span className="text-[9px] font-black uppercase tracking-widest text-stone-500">
+                <span className={SCRIPT_STYLES.stagingBadgeText}>
                   {block.label}
                 </span>
               </button>
@@ -737,56 +713,28 @@ export default function App() {
       }
 
       // If this line is part of a staging block, we don't render it
-      if (stagingLineIndices.has(lineIdx)) {
+      if (isStaging) {
         return;
       }
 
-      const info = dialogueInfo[lineIdx];
-      let className = "mb-0.5 text-stone-700 leading-snug";
-      const trimmed = line.trim();
-      
-      const isHeading = trimmed.startsWith('INT.') || trimmed.startsWith('EXT.');
-      const isNote = trimmed.startsWith('[') && trimmed.endsWith(']');
-      const isEffect = trimmed.startsWith('SFX:') || trimmed.startsWith('VFX:');
-      const isSeparator = trimmed === '---';
-      const isPartSeparator = /^PART \d+$/.test(trimmed);
-      const romanMatch = trimmed.match(/^[IVXLCDM]+\.\s+(.+)$/);
-      const isRomanTitle = romanMatch && trimmed === trimmed.toUpperCase() && (lineIdx === lines.length - 1 || lines[lineIdx + 1]?.trim() === '');
-      
-      if (isSeparator) {
-        scriptElements.push(<hr key={lineIdx} className="border-stone-100 mt-10 mb-2 -mx-6 md:-mx-8 lg:-mx-12" />);
+      // Handle special structural elements
+      if (type === 'separator') {
+        scriptElements.push(<hr key={lineIdx} className={SCRIPT_STYLES.separator} />);
         return;
       }
 
-      if (isPartSeparator || isRomanTitle) {
+      if (type === 'part-separator' || type === 'roman-title') {
         scriptElements.push(
-          <div key={lineIdx} className="flex items-center gap-4 mt-12 mb-2 -mx-6 md:-mx-8 lg:-mx-12 px-6 md:px-8 lg:px-12">
-            <div className="h-px bg-stone-200/50 flex-1" />
-            <span className="text-[9px] font-black text-stone-400 uppercase tracking-[0.4em] whitespace-nowrap">{trimmed}</span>
-            <div className="h-px bg-stone-200/50 flex-1" />
+          <div key={lineIdx} className={SCRIPT_STYLES.titleContainer}>
+            <div className={SCRIPT_STYLES.titleLine} />
+            <span className={SCRIPT_STYLES.titleText}>{trimmed}</span>
+            <div className={SCRIPT_STYLES.titleLine} />
           </div>
         );
         return;
       }
 
-      if (info?.type === 'name') {
-        className = "text-center font-bold text-stone-900 mb-0.5 tracking-tight uppercase";
-      } else if (info?.type === 'speech') {
-        className = "text-center max-w-[75%] mx-auto mb-0.5 text-stone-700 leading-snug";
-        if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
-          className = "text-center max-w-[75%] mx-auto italic text-stone-400 mb-0.5 text-[11px]";
-        }
-      } else if (isHeading) {
-        className = "font-bold text-stone-900 mt-10 mb-2 tracking-tight uppercase bg-stone-50 border-y border-stone-100 -mx-6 md:-mx-8 lg:-mx-12 px-6 md:px-8 lg:px-12 py-2.5";
-      } else if (isNote) {
-        className = "font-mono text-[11px] text-stone-500 uppercase tracking-tight mb-1";
-      } else if (isEffect) {
-        className = "italic text-stone-400 mb-1";
-      } else if (trimmed.length > 0 && trimmed === trimmed.toUpperCase()) {
-        className = "font-bold text-stone-900 mt-3 mb-0.5 tracking-tight";
-      } else if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
-        className = "italic text-stone-500 mb-0.5 text-[13px]";
-      }
+      const className = getLineClass(lineData);
 
       // Filter cues that overlap with this line
       const lineCues = (mode === 'edit' ? cues : cues.filter(isCueVisible))
@@ -838,7 +786,7 @@ export default function App() {
       if (lineCues.length === 0) {
         scriptElements.push(
           <div key={lineIdx} className={cn("whitespace-pre-wrap min-h-[1em]", className)}>
-            {info?.type === 'name' ? trimmed.slice(0, -1) : line}
+            {type === 'name' ? trimmed.slice(0, -1) : line}
           </div>
         );
         return;
@@ -857,7 +805,7 @@ export default function App() {
         const start = sortedPoints[i];
         const end = sortedPoints[i + 1];
         const segmentText = line.substring(start, end);
-        const displayValue = (info?.type === 'name' && end === line.length) 
+        const displayValue = (type === 'name' && end === line.length) 
           ? segmentText.replace(/:$/, '') 
           : segmentText;
         const segmentCues = lineCues.filter(c => c.start <= start && c.end >= end);
@@ -908,10 +856,10 @@ export default function App() {
               }
             }}
             className={cn(
-              "transition-all duration-300 rounded-sm px-0.5 text-stone-900 relative group",
-              mode === 'edit' && !isTemp && "cursor-pointer hover:ring-1 hover:ring-stone-400",
-              isTemp && "ring-2 ring-blue-400 ring-inset",
-              editingCue && "ring-2 ring-stone-900 ring-inset z-10 shadow-sm"
+              SCRIPT_STYLES.cueBase,
+              mode === 'edit' && !isTemp && SCRIPT_STYLES.cueEdit,
+              isTemp && SCRIPT_STYLES.cueTemp,
+              editingCue && SCRIPT_STYLES.cueEditing
             )}
             style={{ backgroundColor: `rgba(${rgb}, ${finalOpacity})` }}
           >
@@ -925,7 +873,7 @@ export default function App() {
 
       scriptElements.push(
         <div key={lineIdx} className={cn("whitespace-pre-wrap min-h-[1em]", className)}>
-          {segments}
+          {segments.length > 0 ? segments : (type === 'name' ? trimmed.slice(0, -1) : line)}
         </div>
       );
     });
