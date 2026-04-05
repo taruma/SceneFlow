@@ -12,7 +12,7 @@ export interface ExampleSection {
 
 export const EXAMPLE_SECTIONS: ExampleSection[] = [
   {
-    label: "Taruma's Library",
+    label: "AI Short Film",
     items: [
       { 
         id: 'expansion', 

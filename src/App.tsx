@@ -669,12 +669,30 @@ export default function App() {
     const scriptText = state.scriptText || "";
     const lines = scriptText.split('\n');
     
+    // Pre-calculate dialogue blocks
+    const dialogueInfo = new Array(lines.length).fill(null);
+    for (let i = 0; i < lines.length; i++) {
+      const trimmed = lines[i].trim();
+      // Rule: ALL CAPS and ends with ":"
+      if (trimmed.length > 0 && trimmed === trimmed.toUpperCase() && trimmed.endsWith(':')) {
+        const charName = trimmed.slice(0, -1);
+        dialogueInfo[i] = { type: 'name', name: charName };
+        let j = i + 1;
+        while (j < lines.length && lines[j].trim() !== '') {
+          dialogueInfo[j] = { type: 'speech', name: charName };
+          j++;
+        }
+        i = j - 1;
+      }
+    }
+
     let currentPos = 0;
     return lines.map((line, lineIdx) => {
       const lineStart = currentPos;
       const lineEnd = currentPos + line.length;
       currentPos += line.length + 1; // +1 for the newline character
 
+      const info = dialogueInfo[lineIdx];
       let className = "mb-0.5 text-stone-700 leading-snug";
       const trimmed = line.trim();
       
@@ -700,7 +718,14 @@ export default function App() {
         );
       }
 
-      if (isHeading) {
+      if (info?.type === 'name') {
+        className = "text-center font-bold text-stone-900 mb-0.5 tracking-tight uppercase";
+      } else if (info?.type === 'speech') {
+        className = "text-center max-w-[75%] mx-auto mb-0.5 text-stone-700 leading-snug";
+        if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
+          className = "text-center max-w-[75%] mx-auto italic text-stone-400 mb-0.5 text-[11px]";
+        }
+      } else if (isHeading) {
         className = "font-bold text-stone-900 mt-10 mb-2 tracking-tight uppercase bg-stone-50 border-y border-stone-100 -mx-6 md:-mx-8 lg:-mx-12 px-6 md:px-8 lg:px-12 py-2.5";
       } else if (isNote) {
         className = "font-mono text-[11px] text-stone-500 uppercase tracking-tight mb-1";
@@ -762,7 +787,7 @@ export default function App() {
       if (lineCues.length === 0) {
         return (
           <div key={lineIdx} className={cn("whitespace-pre-wrap min-h-[1em]", className)}>
-            {line}
+            {info?.type === 'name' ? trimmed.slice(0, -1) : line}
           </div>
         );
       }
@@ -780,10 +805,13 @@ export default function App() {
         const start = sortedPoints[i];
         const end = sortedPoints[i + 1];
         const segmentText = line.substring(start, end);
+        const displayValue = (info?.type === 'name' && end === line.length) 
+          ? segmentText.replace(/:$/, '') 
+          : segmentText;
         const segmentCues = lineCues.filter(c => c.start <= start && c.end >= end);
 
         if (segmentCues.length === 0) {
-          segments.push(segmentText);
+          segments.push(displayValue);
           continue;
         }
 
@@ -835,7 +863,7 @@ export default function App() {
             )}
             style={{ backgroundColor: `rgba(${rgb}, ${finalOpacity})` }}
           >
-            {segmentText}
+            {displayValue}
             {segmentCues.length > 1 && mode === 'edit' && !isTemp && (
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-stone-900 rounded-full border border-white shadow-sm z-20" title="Multiple cues overlap here" />
             )}
