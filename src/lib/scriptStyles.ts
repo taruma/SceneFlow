@@ -26,7 +26,7 @@ export function getLineClass(line: ProcessedLine): string {
       return `${baseStyle} italic text-stone-500 mb-0.5 text-[13px]`;
     
     case 'heading':
-      return `${baseStyle} font-bold text-stone-900 mt-10 mb-2 tracking-tight uppercase bg-stone-50 border-y border-stone-100 -mx-6 md:-mx-8 lg:-mx-12 px-6 md:px-8 lg:px-12 py-2.5`;
+      return `${baseStyle} font-bold text-stone-900 mt-5 mb-2 tracking-tight uppercase bg-stone-50 border-y border-stone-100 -mx-6 md:-mx-8 lg:-mx-12 px-6 md:px-8 lg:px-12 py-2.5`;
     
     case 'note':
       return `${baseStyle} font-mono text-[11px] text-stone-500 uppercase tracking-tight mb-1`;

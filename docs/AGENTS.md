@@ -17,7 +17,7 @@ If you need to add a new line type (e.g., `LYRICS` or `TRANSITION`):
 The parser relies on specific regex patterns. When modifying them, ensure:
 - **Character Names**: Must handle trailing colons and optional whitespace.
 - **Scene Headings**: Must be case-insensitive for `int.` and `ext.`.
-- **Staging**: Must use lazy matching `\[\[(.*?)\]\]` to handle multiple blocks on one line.
+- **Staging**: The parser uses a line-based approach. It looks for `[[STAGING]]` and `[[/STAGING]]` on their own lines to define blocks, rather than inline regex.
 
 ## 4. Sync Logic Precautions
 The `renderedScript` `useMemo` in `App.tsx` is performance-critical.
