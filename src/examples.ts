@@ -23,13 +23,13 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
       { 
         id: 'intent', 
         title: 'Intent Over Rules', 
-        path: '/example_intent_over_rules_sceneflow.json', 
+        path: '/example_intent_over_rules.json', 
         description: 'The Illusion of Control' 
       },
       { 
-        id: 'mozaic', 
-        title: 'Mozaic', 
-        path: '/example_mozaic.json', 
+        id: 'mosaic', 
+        title: 'Mosaic', 
+        path: '/example_mosaic.json', 
         description: 'Logic of the Grid' 
       },
       { 
