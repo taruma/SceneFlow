@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import YouTube, { YouTubeProps } from 'react-youtube';
-import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book, Target } from 'lucide-react';
+import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book, Target, Info } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { EXAMPLE_SECTIONS } from './examples';
+import { parseScriptWithStaging } from './lib/scriptParser';
+import { StagingModal } from './components/StagingModal';
 
 // Utility to extract YouTube ID from various URL formats
 function extractYoutubeId(url: string) {
@@ -110,6 +112,7 @@ export default function App() {
   const [rawCuesText, setRawCuesText] = useState("");
   const [currentTime, setCurrentTime] = useState(0);
   const [player, setPlayer] = useState<any>(null);
+  const [playerState, setPlayerState] = useState<number>(-1);
   const [selection, setSelection] = useState<{ text: string; start: number; end: number } | null>(null);
   const [newCue, setNewCue] = useState<Partial<Cue>>({
     colorClass: COLORS[0].class,
@@ -139,6 +142,7 @@ export default function App() {
   const [hiddenCueTypes, setHiddenCueTypes] = useState<Set<string>>(new Set());
   const [videoWidth, setVideoWidth] = useState(100); // Percentage of container width
   const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
+  const [activeStaging, setActiveStaging] = useState<{ label: string; content: string } | null>(null);
 
   useEffect(() => {
     const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
@@ -327,11 +331,14 @@ export default function App() {
 
   const onReady: YouTubeProps['onReady'] = (event) => {
     setPlayer(event.target);
+    setPlayerState(event.target.getPlayerState());
   };
 
   const onStateChange: YouTubeProps['onStateChange'] = (event) => {
+    setPlayerState(event.data);
     if (event.data === 1) { // Playing
       startTimer();
+      setActiveStaging(null); // Auto-close staging modal on play
     } else {
       stopTimer();
     }
@@ -667,18 +674,21 @@ export default function App() {
   const renderedScript = useMemo(() => {
     const cues = state.cues || [];
     const scriptText = state.scriptText || "";
-    const lines = scriptText.split('\n');
+    
+    // Parse for staging blocks
+    const { originalLines: lines, stagingLineIndices, stagingMarkers } = parseScriptWithStaging(scriptText);
     
     // Pre-calculate dialogue blocks
     const dialogueInfo = new Array(lines.length).fill(null);
     for (let i = 0; i < lines.length; i++) {
+      if (stagingLineIndices.has(i)) continue;
       const trimmed = lines[i].trim();
       // Rule: ALL CAPS and ends with ":"
       if (trimmed.length > 0 && trimmed === trimmed.toUpperCase() && trimmed.endsWith(':')) {
         const charName = trimmed.slice(0, -1);
         dialogueInfo[i] = { type: 'name', name: charName };
         let j = i + 1;
-        while (j < lines.length && lines[j].trim() !== '') {
+        while (j < lines.length && lines[j].trim() !== '' && !stagingLineIndices.has(j)) {
           dialogueInfo[j] = { type: 'speech', name: charName };
           j++;
         }
@@ -687,10 +697,49 @@ export default function App() {
     }
 
     let currentPos = 0;
-    return lines.map((line, lineIdx) => {
+    const scriptElements: React.ReactNode[] = [];
+
+    lines.forEach((line, lineIdx) => {
       const lineStart = currentPos;
       const lineEnd = currentPos + line.length;
       currentPos += line.length + 1; // +1 for the newline character
+
+      // Check for staging markers at this line
+      if (stagingMarkers[lineIdx]) {
+        const marker = stagingMarkers[lineIdx];
+        scriptElements.push(
+          <div key={`staging-${lineIdx}`} className="hidden lg:flex items-center justify-center gap-2">
+            {marker.blocks.map((block, bIdx) => (
+              <button
+                key={bIdx}
+                onClick={() => {
+                  // Only allow opening if video is paused
+                  if (playerState !== 1) {
+                    setActiveStaging(block);
+                  }
+                }}
+                disabled={playerState === 1}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-1 rounded-full border border-stone-200 bg-white shadow-sm transition-all",
+                  playerState === 1 
+                    ? "opacity-30 cursor-not-allowed" 
+                    : "hover:border-stone-400 hover:shadow-md active:scale-95"
+                )}
+              >
+                <Info size={10} className="text-stone-400" />
+                <span className="text-[9px] font-black uppercase tracking-widest text-stone-500">
+                  {block.label}
+                </span>
+              </button>
+            ))}
+          </div>
+        );
+      }
+
+      // If this line is part of a staging block, we don't render it
+      if (stagingLineIndices.has(lineIdx)) {
+        return;
+      }
 
       const info = dialogueInfo[lineIdx];
       let className = "mb-0.5 text-stone-700 leading-snug";
@@ -705,17 +754,19 @@ export default function App() {
       const isRomanTitle = romanMatch && trimmed === trimmed.toUpperCase() && (lineIdx === lines.length - 1 || lines[lineIdx + 1]?.trim() === '');
       
       if (isSeparator) {
-        return <hr key={lineIdx} className="border-stone-100 mt-10 mb-2 -mx-6 md:-mx-8 lg:-mx-12" />;
+        scriptElements.push(<hr key={lineIdx} className="border-stone-100 mt-10 mb-2 -mx-6 md:-mx-8 lg:-mx-12" />);
+        return;
       }
 
       if (isPartSeparator || isRomanTitle) {
-        return (
+        scriptElements.push(
           <div key={lineIdx} className="flex items-center gap-4 mt-12 mb-2 -mx-6 md:-mx-8 lg:-mx-12 px-6 md:px-8 lg:px-12">
             <div className="h-px bg-stone-200/50 flex-1" />
             <span className="text-[9px] font-black text-stone-400 uppercase tracking-[0.4em] whitespace-nowrap">{trimmed}</span>
             <div className="h-px bg-stone-200/50 flex-1" />
           </div>
         );
+        return;
       }
 
       if (info?.type === 'name') {
@@ -785,11 +836,12 @@ export default function App() {
       }
 
       if (lineCues.length === 0) {
-        return (
+        scriptElements.push(
           <div key={lineIdx} className={cn("whitespace-pre-wrap min-h-[1em]", className)}>
             {info?.type === 'name' ? trimmed.slice(0, -1) : line}
           </div>
         );
+        return;
       }
 
       // Split line into segments based on cue boundaries
@@ -850,7 +902,7 @@ export default function App() {
               } else if (actualCues.length > 1) {
                 setOverlapPicker({
                   isOpen: true,
-                  cues: actualCues,
+                  cues: actualCues as Cue[],
                   position: { x: e.clientX, y: e.clientY }
                 });
               }
@@ -871,13 +923,15 @@ export default function App() {
         );
       }
 
-      return (
+      scriptElements.push(
         <div key={lineIdx} className={cn("whitespace-pre-wrap min-h-[1em]", className)}>
           {segments}
         </div>
       );
     });
-  }, [state.scriptText, state.cues, currentTime, selection, mode, newCue.id, player]);
+
+    return scriptElements;
+  }, [state.scriptText, state.cues, currentTime, selection, mode, newCue.id, player, playerState]);
 
   const canSave = newCue.selectedText && newCue.startTime !== undefined && newCue.endTime !== undefined && newCue.startIndex !== undefined && newCue.endIndex !== undefined;
 
@@ -1598,6 +1652,13 @@ export default function App() {
           </div>
         </div>
       </main>
+
+      <StagingModal
+        isOpen={!!activeStaging}
+        onClose={() => setActiveStaging(null)}
+        label={activeStaging?.label || ""}
+        content={activeStaging?.content || ""}
+      />
 
       {/* Raw Script Modal */}
       {isScriptModalOpen && (
