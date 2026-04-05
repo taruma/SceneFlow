@@ -19,6 +19,9 @@ This project is built with a modern, lightweight, and performant stack designed 
 - **React Hooks**: `useState`, `useEffect`, `useRef`, and `useMemo` for local component state.
 - **LocalStorage**: Used to persist the script text, video ID, and sync cues between browser sessions.
 
+## Analytics & Performance
+- **Vercel Speed Insights**: Integrated to monitor real-time performance and Web Vitals in production.
+
 ## Utilities
 - **Regex-based Parsing**: Custom heuristics for identifying script elements (headings, dialogue, names).
 - **JSON-based Examples**: External JSON files used to load pre-configured script/video pairs.

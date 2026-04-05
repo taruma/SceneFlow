@@ -8,7 +8,11 @@ The app automatically formats raw text into a professional screenplay layout usi
 - **Character Names**: Lines in ALL CAPS ending with a colon (e.g., `JOHN:`) are centered and bolded.
 - **Dialogue**: Lines following a character name are centered and narrowed.
 - **Parentheticals**: Text inside `(...)` is italicized and faded.
-- **Actions**: Standard narrative text is rendered in a serif-like font.
+- **Actions**: Lines in ALL CAPS (no colon) are bolded and uppercase.
+- **Notes**: Text inside `[...]` is rendered in a small monospace font.
+- **Effects**: Lines starting with `SFX:` or `VFX:` are italicized and faded.
+- **Separators**: A line with exactly `---` creates a horizontal divider.
+- **Part/Roman Titles**: Lines like `PART 1` or `I. TITLE` are centered with decorative lines.
 
 ## 2. Staging System
 Special blocks of text wrapped in double brackets `[[STAGING]]` are treated as "off-script" metadata.
