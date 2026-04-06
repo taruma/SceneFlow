@@ -155,6 +155,57 @@ npm run dev
 
 ---
 
+## 📝 Script Formatting Guide
+
+SceneFlow uses a specific set of rules to parse and style your screenplay text. Follow these formatting conventions in the **Edit Raw** mode to ensure your script is rendered correctly.
+
+### Core Elements
+
+| Element | Format | Example |
+|---------|--------|---------|
+| **Scene Heading** | Starts with `INT.` or `EXT.` | `INT. OFFICE - DAY` |
+| **Character Name** | ALL CAPS followed by a colon | `JOHN:` |
+| **Dialogue** | Lines immediately following a character name | `I should go now.` |
+| **Parenthetical** | Text wrapped in parentheses | `(beat)` |
+| **Action** | ALL CAPS line (without colon) | `HE WALKS TO THE WINDOW.` |
+| **Shot/Camera Note** | Text wrapped in square brackets `[...]` | `[SHOT 1: CU - LOW ANGLE]` |
+| **Effect** | Starts with `SFX:` or `VFX:` | `SFX: THUNDER CLAP` |
+| **Separator** | Three dashes on a single line | `---` |
+| **Part Separator** | `PART` followed by a number | `PART 1` |
+| **Roman Title** | Roman numeral + dot + Uppercase Title | `I. THE BEGINNING` |
+
+> **Note on Square Brackets `[...]`**: While styled as technical notes, these are primarily used for shot numbers, shot types, camera angles, and emphasizing specific camera movements or technical instructions within the script.
+
+### Staging Blocks & Auteur Prompting
+
+SceneFlow supports a hierarchical prompt structure called **Auteur Prompting**. While the main view focuses on the **Level 3: Screenplay**, you can use **Staging Blocks** to embed higher-level instructions directly into your project.
+
+- **Level 1: GLOBAL Instruction** — Overarching style, technical parameters, and model-wide rules.
+- **Level 2: Lookbook/Reference** — Visual references, aesthetic guides, and character/environment consistency notes.
+- **Level 3: Screenplay** — The actual script text (the primary content synced to the video).
+
+#### Implementation Example:
+
+```text
+[[STAGING]]
+[[GLOBAL]]
+Cinematic 4k, anamorphic lens, high contrast lighting, 24fps.
+[[/GLOBAL]]
+
+[[LOOKBOOK]]
+Reference: Blade Runner 2049, neon-noir aesthetic, heavy rain.
+[[/LOOKBOOK]]
+[[/STAGING]]
+
+INT. CYBER-CAFE - NIGHT
+...
+```
+
+- **Container**: Wrap metadata in `[[STAGING]]` and `[[/STAGING]]`.
+- **Labels**: Use custom labels like `[[GLOBAL]]` or `[[LOOKBOOK]]` inside the container.
+- **Visibility**: Content inside staging blocks is hidden from the main script view but appears as a "Staging" badge that can be toggled to reveal the underlying prompt levels.
+
+---
 
 ## 📄 License
 
