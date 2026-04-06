@@ -67,46 +67,6 @@ https://github.com/user-attachments/assets/cf3a7fec-2a4b-48d8-9028-245eba49934c
 
 ---
 
-## ✍️ Script Formatting Guide
-
-SceneFlow automatically formats your raw text into a professional screenplay layout based on simple rules:
-
-### Basic Elements
-
-| Element | Rule | Visual Style |
-|---------|------|--------------|
-| **Scene Heading** | Starts with `INT.` or `EXT.` | Bold, uppercase, with background bar |
-| **Character Name** | ALL CAPS followed by a colon (e.g., `JOHN:`) | Centered, bold, uppercase |
-| **Dialogue** | Lines immediately following a character name | Centered, narrowed width |
-| **Parenthetical** | Text wrapped in `(parentheses)` | Italicized, smaller font |
-| **Action** | Lines in ALL CAPS (no colon) | Bold, uppercase |
-| **Note** | Text wrapped in `[brackets]` | Monospace, small, uppercase |
-| **Effect** | Starts with `SFX:` or `VFX:` | Italicized, faded color |
-| **Separator** | A line containing only `---` | Horizontal divider line |
-| **Part Title** | `PART` followed by a number (e.g., `PART 1`) | Centered with horizontal lines |
-| **Roman Title** | Roman numeral followed by text (e.g., `I. THE BEGINNING`) | Centered with horizontal lines |
-
-### 🛠️ Staging System
-
-You can hide technical notes or camera directions behind interactive markers using the staging syntax:
-
-```text
-[[STAGING]]
-[[CAMERA]]
-Low angle shot tracking the character's feet.
-[[/CAMERA]]
-[[LIGHTING]]
-Dim blue light from the left.
-[[/LIGHTING]]
-[[/STAGING]]
-```
-
-- **Hiding**: Text inside `[[STAGING]]` blocks is removed from the main script view.
-- **Markers**: A "STAGING" badge appears at the line where the block was defined.
-- **Modal**: Clicking the badge opens a modal showing the labeled content.
-
----
-
 ## 🎬 Use Cases
 
 ### Evaluating AI-Generated Video
@@ -171,7 +131,6 @@ npm run dev
 2. **Play the Video** — The script will highlight in real-time as the video plays
 3. **Auto-Scroll** — Toggle auto-scroll to follow dialogue automatically
 4. **Filter Cues** — Click cue type buttons to show/hide specific categories
-5. **Share** — Click the "Share" button to copy a direct link to the current library project
 
 ### Edit Mode
 

@@ -8,11 +8,7 @@ The app automatically formats raw text into a professional screenplay layout usi
 - **Character Names**: Lines in ALL CAPS ending with a colon (e.g., `JOHN:`) are centered and bolded.
 - **Dialogue**: Lines following a character name are centered and narrowed.
 - **Parentheticals**: Text inside `(...)` is italicized and faded.
-- **Actions**: Lines in ALL CAPS (no colon) are bolded and uppercase.
-- **Notes**: Text inside `[...]` is rendered in a small monospace font.
-- **Effects**: Lines starting with `SFX:` or `VFX:` are italicized and faded.
-- **Separators**: A line with exactly `---` creates a horizontal divider.
-- **Part/Roman Titles**: Lines like `PART 1` or `I. TITLE` are centered with decorative lines.
+- **Actions**: Standard narrative text is rendered in a serif-like font.
 
 ## 2. Staging System
 Special blocks of text wrapped in double brackets `[[STAGING]]` are treated as "off-script" metadata.
@@ -26,15 +22,13 @@ The core feature of the app is the ability to create "Cues."
 - **Highlighting**: As the video plays, the corresponding text in the script highlights in real-time.
 - **Overlaps**: Multiple cues can overlap on the same text. An indicator (dot) appears in Edit mode to help manage these.
 - **Auto-Scroll**: The script automatically scrolls to keep the active dialogue in view.
-- **URL Sharing**: Share specific library projects via direct links (e.g., `?project=expansion`).
 
 ## 4. Modes
 - **Playback Mode**: A clean, distraction-free view for watching the video and reading the script.
 - **Edit Mode**: An interactive workspace for adjusting cues, editing script text, and managing settings.
 
-## 5. Persistence & Sharing
+## 5. Persistence
 All work is automatically saved to the browser's `localStorage`. Users can also:
 - **Export**: Download the project as a JSON file.
 - **Import**: Upload a previously exported JSON file to resume work.
 - **Library**: Load pre-configured examples from the built-in library.
-- **Share**: Copy a direct link to a specific library example to share with others.
