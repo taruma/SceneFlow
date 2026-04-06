@@ -189,11 +189,11 @@ SceneFlow supports a hierarchical prompt structure called **Auteur Prompting**. 
 ```text
 [[STAGING]]
 [[GLOBAL]]
-Cinematic 4k, anamorphic lens, high contrast lighting, 24fps.
+Generate ...
 [[/GLOBAL]]
 
 [[LOOKBOOK]]
-Reference: Blade Runner 2049, neon-noir aesthetic, heavy rain.
+ESTABLISHING SCENE / CONTINUITY PROTOCOL
 [[/LOOKBOOK]]
 [[/STAGING]]
 
