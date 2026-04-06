@@ -230,6 +230,34 @@ export default function App() {
     }
   }, []);
 
+  // Handle example query parameter on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const exampleId = params.get('example');
+    
+    if (exampleId) {
+      // Find the matching example in EXAMPLE_SECTIONS
+      let foundExample = null;
+      for (const section of EXAMPLE_SECTIONS) {
+        foundExample = section.items.find(item => item.id === exampleId);
+        if (foundExample) break;
+      }
+
+      if (foundExample) {
+        setResetConfirmation({
+          isOpen: true,
+          type: 'example',
+          examplePath: foundExample.path,
+          exampleTitle: foundExample.title,
+        });
+      }
+
+      // Clean up the URL
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, []);
+
   useEffect(() => {
     const handleClickOutside = () => {
       if (overlapPicker.isOpen) setOverlapPicker(prev => ({ ...prev, isOpen: false }));
