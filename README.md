@@ -167,7 +167,8 @@ SceneFlow uses a specific set of rules to parse and style your screenplay text. 
 | **Character Name** | ALL CAPS followed by a colon | `JOHN:` |
 | **Dialogue** | Lines immediately following a character name | `I should go now.` |
 | **Parenthetical** | Text wrapped in parentheses | `(beat)` |
-| **Action** | ALL CAPS line (without colon) | `HE WALKS TO THE WINDOW.` |
+| **Bold Direction** | Single line in ALL CAPS (emphasized) | `HE WALKS TO THE WINDOW.` |
+| **Action** | Mixed case paragraphs (standard) | `He walks slowly to the window, his eyes FIXED on the horizon.` |
 | **Shot/Camera Note** | Text wrapped in square brackets `[...]` | `[SHOT 1: CU - LOW ANGLE]` |
 | **Effect** | Starts with `SFX:` or `VFX:` | `SFX: THUNDER CLAP` |
 | **Separator** | Three dashes on a single line | `---` |
