@@ -3,21 +3,19 @@ import YouTube, { YouTubeProps } from 'react-youtube';
 import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book, Target, Info } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { cn } from './lib/utils';
 import { EXAMPLE_SECTIONS } from './examples';
-import { processScript, type LineType, type ProcessedLine } from './lib/scriptProcessor';
-import { getLineClass, SCRIPT_STYLES } from './lib/scriptStyles';
+import { SCRIPT_STYLES } from './lib/scriptStyles';
 import { StagingModal } from './components/StagingModal';
+import { ScriptPreview } from './components/ScriptPreview';
+import { parseScriptWithStaging } from './lib/scriptParser';
+import { ScriptCue } from './types/script';
 
 // Utility to extract YouTube ID from various URL formats
 function extractYoutubeId(url: string) {
   const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?)|(shorts\/))\??v?=?([^#&?]*).*/;
   const match = url.match(regExp);
   return (match && match[8].length === 11) ? match[8] : url;
-}
-
-// Utility for tailwind classes
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
 }
 
 interface Cue {
@@ -676,210 +674,39 @@ export default function App() {
     const cues = state.cues || [];
     const scriptText = state.scriptText || "";
     
-    // Use the new processor to handle all structural and semantic logic
-    const processedLines = processScript(scriptText);
-    const scriptElements: React.ReactNode[] = [];
+    // Use the parser to get structured blocks for the ScriptPreview component
+    const { blocks } = parseScriptWithStaging(scriptText);
 
-    processedLines.forEach((lineData) => {
-      const { text: line, type, lineIdx, lineStart, lineEnd, isStaging, stagingMarker } = lineData;
-      const trimmed = line.trim();
-
-      // Check for staging markers at this line
-      if (stagingMarker) {
-        scriptElements.push(
-          <div key={`staging-${lineIdx}`} className={SCRIPT_STYLES.stagingContainer}>
-            {stagingMarker.blocks.map((block, bIdx) => (
-              <button
-                key={bIdx}
-                onClick={() => {
-                  if (playerState !== 1) {
-                    setActiveStaging(block);
-                  }
-                }}
-                disabled={playerState === 1}
-                className={cn(
-                  SCRIPT_STYLES.stagingBadgeBase,
-                  playerState === 1 ? SCRIPT_STYLES.stagingBadgeDisabled : SCRIPT_STYLES.stagingBadgeActive
-                )}
-              >
-                <Info size={10} className="text-stone-400" />
-                <span className={SCRIPT_STYLES.stagingBadgeText}>
-                  {block.label}
-                </span>
-              </button>
-            ))}
-          </div>
-        );
-      }
-
-      // If this line is part of a staging block, we don't render it
-      if (isStaging) {
-        return;
-      }
-
-      // Handle special structural elements
-      if (type === 'separator') {
-        scriptElements.push(<hr key={lineIdx} className={SCRIPT_STYLES.separator} />);
-        return;
-      }
-
-      if (type === 'part-separator' || type === 'roman-title') {
-        scriptElements.push(
-          <div key={lineIdx} className={SCRIPT_STYLES.titleContainer}>
-            <div className={SCRIPT_STYLES.titleLine} />
-            <span className={SCRIPT_STYLES.titleText}>{trimmed}</span>
-            <div className={SCRIPT_STYLES.titleLine} />
-          </div>
-        );
-        return;
-      }
-
-      const className = getLineClass(lineData);
-
-      // Filter cues that overlap with this line
-      const lineCues = (mode === 'edit' ? cues : cues.filter(isCueVisible))
-        .filter(cue => cue.startIndex < lineEnd && cue.endIndex > lineStart)
-        .map(cue => {
-          let opacity = 1;
-          if (mode === 'playback') {
-            const typeSettings = state.settings?.[cue.type || ''] || DEFAULT_SETTINGS.general;
-            const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
-            const totalBefore = (typeSettings.before || 0) + (generalSettings.before || 0);
-            const totalAfter = (typeSettings.after || 0) + (generalSettings.after || 0);
-
-            if (currentTime < cue.startTime) {
-              opacity = totalBefore > 0 ? Math.max(0, Math.min(1, (currentTime - (cue.startTime - totalBefore)) / totalBefore)) : 1;
-            } else if (currentTime > cue.endTime) {
-              opacity = totalAfter > 0 ? Math.max(0, Math.min(1, 1 - (currentTime - cue.endTime) / totalAfter)) : 1;
-            }
-          } else {
-            // In edit mode, non-active cues are faded but visible
-            const isActive = currentTime >= cue.startTime && currentTime <= cue.endTime;
-            const isEditing = newCue.id === cue.id;
-            opacity = isEditing ? 1 : (isActive ? 0.8 : 0.4);
+    return (
+      <ScriptPreview
+        blocks={blocks}
+        cues={cues as ScriptCue[]}
+        currentTime={currentTime}
+        isCueVisible={isCueVisible}
+        settings={state.settings}
+        mode={mode}
+        newCueId={newCue.id}
+        selection={selection}
+        playerState={playerState}
+        onStagingClick={setActiveStaging}
+        onCueClick={(segmentCues, e) => {
+          const actualCues = segmentCues.filter(c => c.id !== 'temp-selection');
+          if (actualCues.length === 1) {
+            const cue = actualCues[0];
+            setNewCue(cue as any);
+            setSelection({ text: cue.selectedText, start: cue.startIndex, end: cue.endIndex });
+            if (player) player.seekTo(cue.startTime, true);
+          } else if (actualCues.length > 1) {
+            setOverlapPicker({
+              isOpen: true,
+              cues: actualCues as any[],
+              position: { x: e.clientX, y: e.clientY }
+            });
           }
-          
-          return {
-            ...cue,
-            start: Math.max(0, cue.startIndex - lineStart),
-            end: Math.min(line.length, cue.endIndex - lineStart),
-            opacity
-          };
-        });
-
-      // Add temporary selection if in edit mode
-      if (mode === 'edit' && selection && selection.start < lineEnd && selection.end > lineStart) {
-        lineCues.push({
-          id: 'temp-selection',
-          selectedText: selection.text,
-          startIndex: selection.start,
-          endIndex: selection.end,
-          startTime: 0,
-          endTime: 0,
-          colorClass: '',
-          start: Math.max(0, selection.start - lineStart),
-          end: Math.min(line.length, selection.end - lineStart),
-          opacity: 1
-        } as any);
-      }
-
-      if (lineCues.length === 0) {
-        scriptElements.push(
-          <div key={lineIdx} className={cn("whitespace-pre-wrap min-h-[1em]", className)}>
-            {type === 'name' ? trimmed.slice(0, -1) : line}
-          </div>
-        );
-        return;
-      }
-
-      // Split line into segments based on cue boundaries
-      const points = new Set<number>([0, line.length]);
-      lineCues.forEach(cue => {
-        points.add(cue.start);
-        points.add(cue.end);
-      });
-      const sortedPoints = Array.from(points).sort((a, b) => a - b);
-      
-      const segments: React.ReactNode[] = [];
-      for (let i = 0; i < sortedPoints.length - 1; i++) {
-        const start = sortedPoints[i];
-        const end = sortedPoints[i + 1];
-        const segmentText = line.substring(start, end);
-        const displayValue = (type === 'name' && end === line.length) 
-          ? segmentText.replace(/:$/, '') 
-          : segmentText;
-        const segmentCues = lineCues.filter(c => c.start <= start && c.end >= end);
-
-        if (segmentCues.length === 0) {
-          segments.push(displayValue);
-          continue;
-        }
-
-        // If multiple cues, we pick the most "important" one for the primary color
-        // but we'll indicate overlap visually
-        const isTemp = segmentCues.some(c => c.id === 'temp-selection');
-        const editingCue = segmentCues.find(c => c.id === newCue.id);
-        const primaryCue = editingCue || segmentCues[0];
-        
-        const colorInfo = COLORS.find(c => 
-          c.class === primaryCue.colorClass || 
-          (primaryCue.colorClass && c.class.startsWith(primaryCue.colorClass.split('/')[0]))
-        );
-        
-        const rgb = isTemp ? '191, 219, 254' : (colorInfo?.rgb || '156, 163, 175');
-        const maxOpacity = Math.max(...segmentCues.map(c => (c as any).opacity || 0));
-        const finalOpacity = isTemp ? 0.5 : maxOpacity * 0.5;
-
-        const scrollCue = segmentCues.find(c => c.type === 'dialogue' && c.startIndex === lineStart + start);
-        const idToUse = scrollCue ? `cue-${scrollCue.id}` : (primaryCue.id ? `cue-${primaryCue.id}` : undefined);
-
-        segments.push(
-          <span 
-            key={`${lineIdx}-${start}`}
-            id={idToUse}
-            onClick={(e) => {
-              if (mode !== 'edit' || isTemp) return;
-              e.stopPropagation();
-              
-              const actualCues = segmentCues.filter(c => c.id !== 'temp-selection');
-              if (actualCues.length === 1) {
-                const cue = actualCues[0];
-                setNewCue(cue);
-                setSelection({ text: cue.selectedText, start: cue.startIndex, end: cue.endIndex });
-                if (player) player.seekTo(cue.startTime, true);
-              } else if (actualCues.length > 1) {
-                setOverlapPicker({
-                  isOpen: true,
-                  cues: actualCues as Cue[],
-                  position: { x: e.clientX, y: e.clientY }
-                });
-              }
-            }}
-            className={cn(
-              SCRIPT_STYLES.cueBase,
-              mode === 'edit' && !isTemp && SCRIPT_STYLES.cueEdit,
-              isTemp && SCRIPT_STYLES.cueTemp,
-              editingCue && SCRIPT_STYLES.cueEditing
-            )}
-            style={{ backgroundColor: `rgba(${rgb}, ${finalOpacity})` }}
-          >
-            {displayValue}
-            {segmentCues.length > 1 && mode === 'edit' && !isTemp && (
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-stone-900 rounded-full border border-white shadow-sm z-20" title="Multiple cues overlap here" />
-            )}
-          </span>
-        );
-      }
-
-      scriptElements.push(
-        <div key={lineIdx} className={cn("whitespace-pre-wrap min-h-[1em]", className)}>
-          {segments.length > 0 ? segments : (type === 'name' ? trimmed.slice(0, -1) : line)}
-        </div>
-      );
-    });
-
-    return scriptElements;
-  }, [state.scriptText, state.cues, currentTime, selection, mode, newCue.id, player, playerState]);
+        }}
+      />
+    );
+  }, [state.scriptText, state.cues, state.settings, currentTime, mode, isCueVisible, newCue.id, selection, playerState, player]);
 
   const canSave = newCue.selectedText && newCue.startTime !== undefined && newCue.endTime !== undefined && newCue.startIndex !== undefined && newCue.endIndex !== undefined;
 

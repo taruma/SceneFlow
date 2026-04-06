@@ -26,13 +26,15 @@ The core feature of the app is the ability to create "Cues."
 - **Highlighting**: As the video plays, the corresponding text in the script highlights in real-time.
 - **Overlaps**: Multiple cues can overlap on the same text. An indicator (dot) appears in Edit mode to help manage these.
 - **Auto-Scroll**: The script automatically scrolls to keep the active dialogue in view.
+- **URL Sharing**: Share specific library projects via direct links (e.g., `?project=expansion`).
 
 ## 4. Modes
 - **Playback Mode**: A clean, distraction-free view for watching the video and reading the script.
 - **Edit Mode**: An interactive workspace for adjusting cues, editing script text, and managing settings.
 
-## 5. Persistence
+## 5. Persistence & Sharing
 All work is automatically saved to the browser's `localStorage`. Users can also:
 - **Export**: Download the project as a JSON file.
 - **Import**: Upload a previously exported JSON file to resume work.
 - **Library**: Load pre-configured examples from the built-in library.
+- **Share**: Copy a direct link to a specific library example to share with others.

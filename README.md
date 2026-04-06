@@ -171,6 +171,7 @@ npm run dev
 2. **Play the Video** — The script will highlight in real-time as the video plays
 3. **Auto-Scroll** — Toggle auto-scroll to follow dialogue automatically
 4. **Filter Cues** — Click cue type buttons to show/hide specific categories
+5. **Share** — Click the "Share" button to copy a direct link to the current library project
 
 ### Edit Mode
 
