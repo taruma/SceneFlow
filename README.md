@@ -5,7 +5,7 @@
   
   **Screenplay-to-video synchronization for AI filmmakers.**
   
-  [![Live App](https://img.shields.io/badge/Live_App-Visit_Site-black?style=flat-square&logo=vercel)](http://tarumainfo-sceneflow.vercel.app/)
+  [![Live App](https://img.shields.io/badge/Live_App-Visit_Site-black?style=flat-square&logo=vercel)](https://sceneflow.taruma.my.id/)
   
   <p>
     <strong>Sync screenplays with video. Evaluate AI-generated footage. Analyze script-to-screen fidelity.</strong>
@@ -174,7 +174,7 @@ You can load built-in examples by appending `?example=ID` to the URL.
 You can load any JSON project hosted on a CORS-enabled server by appending `?project=URL`.
 
 **Example:**
-`sceneflow.com/?project=https://raw.githubusercontent.com/user/repo/main/script.json`
+`sceneflow.taruma.my.id/?project=https://raw.githubusercontent.com/user/repo/main/script.json`
 
 > **Note**: The remote server must allow Cross-Origin Resource Sharing (CORS) for the fetch to succeed. GitHub Gist "Raw" links are recommended for sharing.
 
@@ -243,7 +243,7 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 <div align="center">
   <p>
-    <a href="http://tarumainfo-sceneflow.vercel.app/">🌐 Live App</a>
+    <a href="https://sceneflow.taruma.my.id/">🌐 Live App</a>
     ·
     <a href="https://x.com/tarumainfo">@tarumainfo</a>
   </p>
