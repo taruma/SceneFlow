@@ -124,12 +124,15 @@ export default function App() {
   });
   const [resetConfirmation, setResetConfirmation] = useState<{ 
     isOpen: boolean; 
-    type: 'settings' | 'data' | 'blank' | 'example' | null;
+    type: 'settings' | 'data' | 'blank' | 'example' | 'remote' | null;
     examplePath?: string;
     exampleTitle?: string;
+    remoteUrl?: string;
+    error?: string | null;
   }>({
     isOpen: false,
     type: null,
+    error: null,
   });
   const [overlapPicker, setOverlapPicker] = useState<{ isOpen: boolean; cues: Cue[]; position: { x: number; y: number } }>({
     isOpen: false,
@@ -230,10 +233,11 @@ export default function App() {
     }
   }, []);
 
-  // Handle example query parameter on mount
+  // Handle example and project query parameters on mount
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const exampleId = params.get('example');
+    const projectUrl = params.get('project');
     
     if (exampleId) {
       // Find the matching example in EXAMPLE_SECTIONS
@@ -249,9 +253,25 @@ export default function App() {
           type: 'example',
           examplePath: foundExample.path,
           exampleTitle: foundExample.title,
+          error: null,
         });
       }
+    } else if (projectUrl) {
+      // Basic URL validation
+      try {
+        new URL(projectUrl);
+        setResetConfirmation({
+          isOpen: true,
+          type: 'remote',
+          remoteUrl: projectUrl,
+          error: null,
+        });
+      } catch (e) {
+        console.error("Invalid project URL provided in query parameter", projectUrl);
+      }
+    }
 
+    if (exampleId || projectUrl) {
       // Clean up the URL
       const newUrl = window.location.pathname;
       window.history.replaceState({}, '', newUrl);
@@ -291,7 +311,7 @@ export default function App() {
         localStorage.setItem('screenplay_sync_state', JSON.stringify(finalData));
         setMode('playback');
         setCurrentTime(0);
-        setResetConfirmation({ isOpen: false, type: null });
+        setResetConfirmation({ isOpen: false, type: null, error: null });
       })
       .catch(err => {
         console.error("Failed to reset to default script", err);
@@ -309,7 +329,7 @@ export default function App() {
         localStorage.setItem('screenplay_sync_state', JSON.stringify(finalData));
         setMode('edit');
         setCurrentTime(0);
-        setResetConfirmation({ isOpen: false, type: null });
+        setResetConfirmation({ isOpen: false, type: null, error: null });
       })
       .catch(err => {
         console.error("Failed to load blank script", err);
@@ -326,7 +346,7 @@ export default function App() {
         localStorage.setItem('screenplay_sync_state', JSON.stringify(finalData));
         setMode('playback');
         setCurrentTime(0);
-        setResetConfirmation({ isOpen: false, type: null });
+        setResetConfirmation({ isOpen: false, type: null, error: null });
         setIsLibraryOpen(false);
         // Realign cues after loading to ensure indices are correct
         realignCues(finalData);
@@ -334,6 +354,45 @@ export default function App() {
       .catch(err => {
         console.error("Failed to load example", err);
         alert("Failed to load example.");
+      });
+  };
+
+  const [isRemoteLoading, setIsRemoteLoading] = useState(false);
+
+  const loadRemoteProject = (url: string) => {
+    setIsRemoteLoading(true);
+    setResetConfirmation(prev => ({ ...prev, error: null }));
+    
+    fetch(url)
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        // Basic validation
+        if (!data.youtubeId || !data.scriptText) {
+          throw new Error("Invalid project format: missing youtubeId or scriptText");
+        }
+
+        const finalData = { ...data, settings: data.settings || DEFAULT_SETTINGS };
+        setState(finalData);
+        localStorage.setItem('screenplay_sync_state', JSON.stringify(finalData));
+        setMode('playback');
+        setCurrentTime(0);
+        setResetConfirmation({ isOpen: false, type: null, error: null });
+        setIsLibraryOpen(false);
+        // Realign cues after loading
+        realignCues(finalData);
+      })
+      .catch(err => {
+        console.error("Failed to load remote project", err);
+        setResetConfirmation(prev => ({ 
+          ...prev, 
+          error: `${err.message}. This might be due to CORS restrictions if the server doesn't allow cross-origin requests.` 
+        }));
+      })
+      .finally(() => {
+        setIsRemoteLoading(false);
       });
   };
 
@@ -956,7 +1015,7 @@ export default function App() {
         <div className="flex items-center gap-2 lg:gap-4">
           <div className="flex items-center gap-1 lg:gap-1.5 mr-1 xl:mr-2">
             <button 
-              onClick={() => setResetConfirmation({ isOpen: true, type: 'blank' })}
+              onClick={() => setResetConfirmation({ isOpen: true, type: 'blank', error: null })}
               title="New Blank Project"
               className="hidden lg:flex items-center gap-1.5 px-2 py-1.5 xl:px-2.5 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-stone-200 shadow-sm"
             >
@@ -998,7 +1057,8 @@ export default function App() {
                                     isOpen: true, 
                                     type: 'example', 
                                     examplePath: example.path, 
-                                    exampleTitle: example.title 
+                                    exampleTitle: example.title,
+                                    error: null,
                                   });
                                   setIsLibraryOpen(false);
                                 }}
@@ -1816,39 +1876,66 @@ export default function App() {
                 <h3 className="text-lg font-bold text-stone-900">
                   {resetConfirmation.type === 'settings' ? 'Reset Timing Settings?' : 
                    resetConfirmation.type === 'blank' ? 'Load Blank Script?' : 
-                   resetConfirmation.type === 'example' ? `Load "${resetConfirmation.exampleTitle}"?` : 'Reset All Data?'}
+                   resetConfirmation.type === 'example' ? `Load "${resetConfirmation.exampleTitle}"?` : 
+                   resetConfirmation.type === 'remote' ? 'Load Remote Project?' : 'Reset All Data?'}
                 </h3>
                 <p className="text-sm text-stone-500 mt-2">
                   {resetConfirmation.type === 'settings' ? 'This will restore all timing buffers to their factory default values.' : 
                    resetConfirmation.type === 'blank' ? 'This will delete all current cues and start a fresh project.' : 
                    resetConfirmation.type === 'example' ? `This will replace your current script and cues with the "${resetConfirmation.exampleTitle}" demo.` :
+                   resetConfirmation.type === 'remote' ? `This will replace your current project with data from: ${resetConfirmation.remoteUrl}. Only load links from sources you trust.` :
                    'This will delete all cues and restore the original demo script.'}
                 </p>
+
+                {resetConfirmation.error && (
+                  <div className="mt-4 p-4 bg-red-50 border border-red-100 rounded-2xl text-left animate-in slide-in-from-top-2 duration-300">
+                    <div className="flex items-start gap-3">
+                      <div className="mt-0.5 text-red-500">
+                        <Info size={16} />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-xs font-bold text-red-800 uppercase tracking-wider mb-1">Load Error</p>
+                        <p className="text-sm text-red-600 leading-relaxed">{resetConfirmation.error}</p>
+                      </div>
+                      <button 
+                        onClick={() => setResetConfirmation(prev => ({ ...prev, error: null }))}
+                        className="text-red-400 hover:text-red-600 transition-colors"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <button
-                  onClick={() => setResetConfirmation({ isOpen: false, type: null })}
-                  className="px-6 py-3 bg-stone-100 text-stone-600 rounded-xl font-bold hover:bg-stone-200 transition-all active:scale-95"
+                  disabled={isRemoteLoading}
+                  onClick={() => setResetConfirmation({ isOpen: false, type: null, error: null })}
+                  className="px-6 py-3 bg-stone-100 text-stone-600 rounded-xl font-bold hover:bg-stone-200 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
                 <button
+                  disabled={isRemoteLoading}
                   onClick={() => {
                     if (resetConfirmation.type === 'settings') {
                       setState(prev => ({ ...prev, settings: DEFAULT_SETTINGS }));
-                      setResetConfirmation({ isOpen: false, type: null });
+                      setResetConfirmation({ isOpen: false, type: null, error: null });
                     } else if (resetConfirmation.type === 'blank') {
                       loadBlank();
                     } else if (resetConfirmation.type === 'data') {
                       resetState();
                     } else if (resetConfirmation.type === 'example' && resetConfirmation.examplePath) {
                       loadExample(resetConfirmation.examplePath);
+                    } else if (resetConfirmation.type === 'remote' && resetConfirmation.remoteUrl) {
+                      loadRemoteProject(resetConfirmation.remoteUrl);
                     }
                   }}
-                  className="px-6 py-3 bg-stone-900 text-white rounded-xl font-bold hover:bg-stone-800 transition-all active:scale-95 shadow-lg shadow-stone-900/20"
+                  className="px-6 py-3 bg-stone-900 text-white rounded-xl font-bold hover:bg-stone-800 transition-all active:scale-95 shadow-lg shadow-stone-900/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  Confirm
+                  {isRemoteLoading && <Loader2 size={16} className="animate-spin" />}
+                  {resetConfirmation.error ? 'Try Again' : 'Confirm'}
                 </button>
               </div>
             </div>
@@ -1969,7 +2056,7 @@ export default function App() {
 
               <div className="flex items-center justify-between pt-4 border-t border-stone-100">
                 <button 
-                  onClick={() => setResetConfirmation({ isOpen: true, type: 'settings' })}
+                  onClick={() => setResetConfirmation({ isOpen: true, type: 'settings', error: null })}
                   className="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-stone-400 hover:text-red-500 transition-colors flex items-center gap-2"
                 >
                   <RefreshCw size={12} /> Reset to Defaults

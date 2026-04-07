@@ -61,6 +61,7 @@ https://github.com/user-attachments/assets/cf3a7fec-2a4b-48d8-9028-245eba49934c
 ### Data Management
 
 - **Import/Export** — Save and load projects as JSON files
+- **Remote Sharing** — Share projects via URL using query parameters
 - **Raw Editing** — Direct access to screenplay text and cue data
 - **Example Library** — Pre-built demos to get started quickly
 - **Local Storage** — Automatic saving of your work
@@ -152,6 +153,30 @@ npm run dev
 | `Space` | Play / Pause video |
 | `←` Arrow Left | Rewind 5 seconds |
 | `→` Arrow Right | Forward 5 seconds |
+
+---
+
+## 🔗 Sharing & Query Parameters
+
+SceneFlow supports sharing projects directly via URL. When a project is loaded via query parameter, a confirmation dialog will appear to prevent overwriting your current work.
+
+### Loading Examples
+
+You can load built-in examples by appending `?example=ID` to the URL.
+
+- **The Expansion**: `?example=expansion`
+- **Intent Over Rules**: `?example=intent`
+- **Mosaic**: `?example=mosaic`
+- **🐸 Invasion**: `?example=invasion`
+
+### Loading Remote Projects
+
+You can load any JSON project hosted on a CORS-enabled server by appending `?project=URL`.
+
+**Example:**
+`sceneflow.com/?project=https://raw.githubusercontent.com/user/repo/main/script.json`
+
+> **Note**: The remote server must allow Cross-Origin Resource Sharing (CORS) for the fetch to succeed. GitHub Gist "Raw" links are recommended for sharing.
 
 ---
 

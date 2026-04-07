@@ -21,6 +21,7 @@ The "Stage" where everything comes together. It is responsible for:
 - **State Orchestration**: Managing the relationship between the YouTube player and the script preview.
 - **Sync Engine**: Using a `useMemo` hook to calculate which parts of the script should be highlighted based on the current video time.
 - **User Interaction**: Handling text selection, cue creation, and mode switching (Playback vs. Edit).
+- **External Data Integration**: Detecting query parameters (`example`, `project`) on mount and fetching remote JSON data using the Fetch API.
 - **Persistence**: Saving and loading data from `localStorage`.
 
 ## Data Flow Diagram

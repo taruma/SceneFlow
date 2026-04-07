@@ -15,9 +15,11 @@ This project is built with a modern, lightweight, and performant stack designed 
 ## Video Integration
 - **react-youtube**: A thin wrapper around the YouTube IFrame Player API, allowing programmatic control (play, pause, seek) and event monitoring (onStateChange).
 
-## State Management & Persistence
+## Persistence & Data Fetching
 - **React Hooks**: `useState`, `useEffect`, `useRef`, and `useMemo` for local component state.
 - **LocalStorage**: Used to persist the script text, video ID, and sync cues between browser sessions.
+- **Fetch API**: Used to load built-in examples and fetch remote projects via the `project` query parameter.
+- **URLSearchParams**: Used to detect and process query parameters on application mount.
 
 ## Analytics & Performance
 - **Vercel Speed Insights**: Integrated to monitor real-time performance and Web Vitals in production.

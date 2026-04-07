@@ -24,8 +24,9 @@ The `renderedScript` `useMemo` in `App.tsx` is performance-critical.
 - Avoid adding expensive calculations inside the `processedLines.forEach` loop.
 - Ensure that any new interactive elements (like buttons or spans) have a stable `key` based on `lineIdx` or `cue.id`.
 
-## 5. Persistence Safety
-When adding new fields to the application state:
+## 5. Persistence & External Data
+When adding new fields to the application state or modifying data fetching:
 - Update the `AppState` interface in `App.tsx`.
 - Ensure the `INITIAL_STATE` object is updated.
-- Verify that the `useEffect` responsible for `localStorage.setItem` includes the new state field in its dependency array.
+- **Query Parameters**: If adding a new parameter, update the `useEffect` on mount in `App.tsx` and ensure the URL is cleaned up using `window.history.replaceState`.
+- **Remote Fetching**: Use the `loadRemoteProject` function pattern, ensuring `isRemoteLoading` and `resetConfirmation.error` are handled correctly for a consistent UI experience.

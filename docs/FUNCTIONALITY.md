@@ -27,8 +27,12 @@ The core feature of the app is the ability to create "Cues."
 - **Playback Mode**: A clean, distraction-free view for watching the video and reading the script.
 - **Edit Mode**: An interactive workspace for adjusting cues, editing script text, and managing settings.
 
-## 5. Persistence
+## 5. Persistence & Sharing
 All work is automatically saved to the browser's `localStorage`. Users can also:
 - **Export**: Download the project as a JSON file.
 - **Import**: Upload a previously exported JSON file to resume work.
 - **Library**: Load pre-configured examples from the built-in library.
+- **Query Parameters**: Load specific examples or remote projects directly via URL.
+  - `?example=ID`: Loads a built-in example (e.g., `mosaic`, `expansion`).
+  - `?project=URL`: Loads a JSON project from a remote, CORS-enabled server.
+- **Remote Loading**: When loading via URL, a confirmation dialog appears with integrated error handling to prevent accidental data loss and provide feedback on failed fetches.
