@@ -205,7 +205,9 @@ export default function App() {
       if (activeDialogueCue && activeDialogueCue.id !== lastScrolledCueId) {
         const element = document.getElementById(`cue-${activeDialogueCue.id}`);
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(() => {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 50);
           setLastScrolledCueId(activeDialogueCue.id);
         }
       } else if (!activeDialogueCue) {
@@ -1666,7 +1668,7 @@ export default function App() {
             ref={scriptRef}
             onMouseUp={handleSelection}
             className={cn(
-              "flex-1 overflow-y-auto font-serif text-[14px] leading-snug scroll-smooth scrollbar-hide",
+              "flex-1 overflow-y-auto font-serif text-[14px] leading-snug scrollbar-hide",
               mode === 'edit' ? "p-2 md:p-4" : "p-4 lg:p-10"
             )}
           >
@@ -1681,7 +1683,7 @@ export default function App() {
                 <div className="w-2 h-2 rounded-full bg-stone-400 shadow-inner" />
               </div>
               
-              <div className="relative z-10">
+              <div className="relative z-10" style={{ paddingBottom: mode === 'playback' ? '70vh' : '0' }}>
                 {renderedScript}
               </div>
             </div>

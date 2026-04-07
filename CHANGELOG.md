@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Updated Examples**: Revised example script texts and timing for "The Breaking Point" and other built-in scenarios.
 
 ### Fixed
-- **Playback Scrolling**: Prioritizes the most recent dialogue cue for scrolling during playback.
+- **Playback Scrolling**: Prioritizes the most recent dialogue cue for scrolling during playback. Added bottom padding to the script container to ensure the last lines can be vertically centered during auto-scroll.
 - **Segment Identifiers**: Use correct scroll cue ID for segment spans spanning multiple lines in `App.tsx`.
 - **Script Clarifications**: Fixed screenplay terminology in examples (e.g., "ONE-ER" clarification).
 
