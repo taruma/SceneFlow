@@ -674,20 +674,23 @@ export default function App() {
         
         try {
           const regex = new RegExp(regexStr, 'gi');
-
-          // 1. Try match starting from lastIndex
-          regex.lastIndex = lastIndex;
-          let match = regex.exec(actualState.scriptText);
-
-          // 2. If not found, try match from beginning
-          if (!match) {
-            regex.lastIndex = 0;
-            match = regex.exec(actualState.scriptText);
+          const matches: { index: number, length: number }[] = [];
+          let m;
+          while ((m = regex.exec(actualState.scriptText)) !== null) {
+            matches.push({ index: m.index, length: m[0].length });
           }
 
-          if (match) {
-            const newStart = match.index;
-            const newEnd = newStart + match[0].length;
+          if (matches.length > 0) {
+            // Reference point: prefer existing index if valid, otherwise use lastIndex
+            const referenceIndex = (cue.startIndex !== undefined && cue.startIndex >= 0) ? cue.startIndex : lastIndex;
+            
+            // Find the match closest to our reference point
+            const bestMatch = matches.reduce((prev, curr) => {
+              return Math.abs(curr.index - referenceIndex) < Math.abs(prev.index - referenceIndex) ? curr : prev;
+            });
+
+            const newStart = bestMatch.index;
+            const newEnd = newStart + bestMatch.length;
             lastIndex = newEnd;
             alignedCount++;
             return { ...cue, startIndex: newStart, endIndex: newEnd };
@@ -700,15 +703,19 @@ export default function App() {
             const shortEscaped = shortSearch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+').replace(/['’]/g, "['’]");
             const shortRegex = new RegExp(shortEscaped, 'gi');
             
-            shortRegex.lastIndex = lastIndex;
-            let shortMatch = shortRegex.exec(actualState.scriptText);
-            if (!shortMatch) {
-              shortRegex.lastIndex = 0;
-              shortMatch = shortRegex.exec(actualState.scriptText);
+            const shortMatches: { index: number, length: number }[] = [];
+            let sm;
+            while ((sm = shortRegex.exec(actualState.scriptText)) !== null) {
+              shortMatches.push({ index: sm.index, length: sm[0].length });
             }
-            
-            if (shortMatch) {
-              const newStart = shortMatch.index;
+
+            if (shortMatches.length > 0) {
+              const referenceIndex = (cue.startIndex !== undefined && cue.startIndex >= 0) ? cue.startIndex : lastIndex;
+              const bestShortMatch = shortMatches.reduce((prev, curr) => {
+                return Math.abs(curr.index - referenceIndex) < Math.abs(prev.index - referenceIndex) ? curr : prev;
+              });
+
+              const newStart = bestShortMatch.index;
               const newEnd = newStart + searchText.length; // Approximate
               lastIndex = newEnd;
               alignedCount++;
