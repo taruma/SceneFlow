@@ -48,6 +48,12 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         title: 'Volume 1',
         path: '/twm_vol1_the_breaking_point.json',
         description: 'The Breaking Point'
+      },
+      {
+        id: 'twm_vol2',
+        title: 'Volume 2',
+        path: '/twm_vol2_elemental_forces.json',
+        description: 'Elemental Forces'
       }
     ]
   }
