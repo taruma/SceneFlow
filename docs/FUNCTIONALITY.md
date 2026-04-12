@@ -23,8 +23,8 @@ The core feature of the app is the ability to create "Cues."
 - **Overlaps**: Multiple cues can overlap on the same text. An indicator (dot) appears in Edit mode to help manage these.
 - **Alignment**: An "Align" tool automatically fixes script indices if the text is modified. It sorts cues chronologically by time and uses proximity-aware matching to ensure accurate mapping even when identical lines appear multiple times in the script.
 - **Auto-Scroll**: The script automatically scrolls to keep the active cue in view.
-  - **Focus Modes**: Users can choose to follow specific cue types (e.g., only Dialogue or only Camera) or follow all cues.
-  - **Priority Logic**: When multiple cues are active, the system prioritizes Dialogue, followed by Action, then technical cues.
+  - **Focus Modes**: Users can multi-select specific cue types to follow (e.g., only Dialogue and Action).
+  - **Priority Logic**: When multiple cues are active, the system prioritizes the most recently started cue among the selected types.
 
 ## 4. Modes
 - **Playback Mode**: A clean, distraction-free view for watching the video and reading the script.

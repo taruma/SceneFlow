@@ -109,7 +109,7 @@ export default function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
-  const [autoScrollTarget, setAutoScrollTarget] = useState<string>('dialogue');
+  const [autoScrollTargets, setAutoScrollTargets] = useState<string[]>(['dialogue']);
   const [isAutoScrollDropdownOpen, setIsAutoScrollDropdownOpen] = useState(false);
   const [lastScrolledCueId, setLastScrolledCueId] = useState<string | null>(null);
   const [rawCuesText, setRawCuesText] = useState("");
@@ -185,8 +185,8 @@ export default function App() {
   useEffect(() => {
     if (mode === 'playback' && isAutoScrollEnabled) {
       const activeCues = (state.cues || []).filter(c => {
-        // If target is specific, only allow that type. If 'all', allow everything.
-        if (autoScrollTarget !== 'all' && c.type !== autoScrollTarget) return false;
+        // Filter by selected focus types
+        if (!autoScrollTargets.includes(c.type || 'dialogue')) return false;
         
         const typeSettings = state.settings?.[c.type || ''] || DEFAULT_SETTINGS.general;
         const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
@@ -195,29 +195,14 @@ export default function App() {
         return currentTime >= c.startTime - totalBefore && currentTime <= c.endTime + totalAfter;
       });
 
-      // Priority hierarchy for when multiple cues are active
-      const priorityOrder = ['dialogue', 'action', 'camera', 'shot', 'audio', 'vfx', 'transition', 'environment'];
-
       const activeCue = activeCues.length > 0
         ? activeCues.reduce((best, current) => {
             if (!best) return current;
             
-            // 1. If we have a specific target, prioritize by start time
-            if (autoScrollTarget !== 'all') {
-              if (current.startTime > best.startTime) return current;
-              if (current.startTime === best.startTime && (current.startIndex || 0) > (best.startIndex || 0)) return current;
-              return best;
-            }
-
-            // 2. If target is 'all', prioritize by the hierarchy
-            const currentPriority = priorityOrder.indexOf(current.type || 'dialogue');
-            const bestPriority = priorityOrder.indexOf(best.type || 'dialogue');
-            
-            if (currentPriority < bestPriority) return current;
-            if (currentPriority > bestPriority) return best;
-            
-            // 3. If same priority, prioritize by start time
+            // Prioritize by most recent start time (the one that started last)
             if (current.startTime > best.startTime) return current;
+            
+            // If same start time, prioritize by position in script (further down)
             if (current.startTime === best.startTime && (current.startIndex || 0) > (best.startIndex || 0)) return current;
             
             return best;
@@ -236,7 +221,7 @@ export default function App() {
         setLastScrolledCueId(null);
       }
     }
-  }, [currentTime, mode, isAutoScrollEnabled, state.cues, state.settings, lastScrolledCueId, autoScrollTarget]);
+  }, [currentTime, mode, isAutoScrollEnabled, state.cues, state.settings, lastScrolledCueId, autoScrollTargets]);
 
   // Initial load of default data if no local storage
   useEffect(() => {
@@ -1528,44 +1513,53 @@ export default function App() {
                           className="fixed inset-0 z-40" 
                           onClick={() => setIsAutoScrollDropdownOpen(false)} 
                         />
-                        <div className="absolute top-full right-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-stone-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200">
-                          <div className="p-2 bg-stone-50 border-b border-stone-100">
+                        <div className="absolute top-full right-0 mt-2 w-44 bg-white rounded-xl shadow-xl border border-stone-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200">
+                          <div className="p-2 bg-stone-50 border-b border-stone-100 flex items-center justify-between">
                             <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Focus Mode</p>
-                          </div>
-                          <div className="p-1">
-                            <button
+                            <button 
                               onClick={() => {
-                                setAutoScrollTarget('all');
-                                setIsAutoScrollDropdownOpen(false);
+                                const allTypes = COLORS.map(c => c.type);
+                                if (autoScrollTargets.length === allTypes.length) {
+                                  setAutoScrollTargets(['dialogue']);
+                                } else {
+                                  setAutoScrollTargets(allTypes);
+                                }
                               }}
-                              className={cn(
-                                "w-full flex items-center justify-between px-3 py-2 rounded-lg text-[10px] font-bold transition-colors",
-                                autoScrollTarget === 'all' ? "bg-stone-900 text-white" : "text-stone-600 hover:bg-stone-50"
-                              )}
+                              className="text-[8px] font-bold text-blue-500 hover:text-blue-600 uppercase tracking-tighter"
                             >
-                              Follow All
-                              {autoScrollTarget === 'all' && <Check size={10} />}
+                              {autoScrollTargets.length === COLORS.length ? 'Reset' : 'Select All'}
                             </button>
-                            <div className="h-px bg-stone-100 my-1" />
-                            {COLORS.map(color => (
-                              <button
-                                key={color.type}
-                                onClick={() => {
-                                  setAutoScrollTarget(color.type);
-                                  setIsAutoScrollDropdownOpen(false);
-                                }}
-                                className={cn(
-                                  "w-full flex items-center justify-between px-3 py-2 rounded-lg text-[10px] font-bold transition-colors capitalize",
-                                  autoScrollTarget === color.type ? "bg-stone-900 text-white" : "text-stone-600 hover:bg-stone-50"
-                                )}
-                              >
-                                <div className="flex items-center gap-2">
-                                  <div className={cn("w-1.5 h-1.5 rounded-full", color.class)} />
-                                  {color.type}
-                                </div>
-                                {autoScrollTarget === color.type && <Check size={10} />}
-                              </button>
-                            ))}
+                          </div>
+                          <div className="p-1 max-h-64 overflow-y-auto">
+                            {COLORS.map(color => {
+                              const isSelected = autoScrollTargets.includes(color.type);
+                              return (
+                                <button
+                                  key={color.type}
+                                  onClick={() => {
+                                    setAutoScrollTargets(prev => {
+                                      if (isSelected) {
+                                        // Don't allow removing the last one
+                                        if (prev.length === 1) return prev;
+                                        return prev.filter(t => t !== color.type);
+                                      } else {
+                                        return [...prev, color.type];
+                                      }
+                                    });
+                                  }}
+                                  className={cn(
+                                    "w-full flex items-center justify-between px-3 py-2 rounded-lg text-[10px] font-bold transition-colors capitalize",
+                                    isSelected ? "bg-stone-900 text-white" : "text-stone-600 hover:bg-stone-50"
+                                  )}
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <div className={cn("w-1.5 h-1.5 rounded-full", color.class)} />
+                                    {color.type}
+                                  </div>
+                                  {isSelected && <Check size={10} />}
+                                </button>
+                              );
+                            })}
                           </div>
                         </div>
                       </>
