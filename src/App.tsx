@@ -109,6 +109,8 @@ export default function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
+  const [autoScrollTarget, setAutoScrollTarget] = useState<string>('dialogue');
+  const [isAutoScrollDropdownOpen, setIsAutoScrollDropdownOpen] = useState(false);
   const [lastScrolledCueId, setLastScrolledCueId] = useState<string | null>(null);
   const [rawCuesText, setRawCuesText] = useState("");
   const [currentTime, setCurrentTime] = useState(0);
@@ -182,8 +184,10 @@ export default function App() {
   // Auto-scroll logic
   useEffect(() => {
     if (mode === 'playback' && isAutoScrollEnabled) {
-      const activeDialogueCues = (state.cues || []).filter(c => {
-        if (c.type !== 'dialogue') return false;
+      const activeCues = (state.cues || []).filter(c => {
+        // If target is specific, only allow that type. If 'all', allow everything.
+        if (autoScrollTarget !== 'all' && c.type !== autoScrollTarget) return false;
+        
         const typeSettings = state.settings?.[c.type || ''] || DEFAULT_SETTINGS.general;
         const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
         const totalBefore = (typeSettings.before || 0) + (generalSettings.before || 0);
@@ -191,30 +195,48 @@ export default function App() {
         return currentTime >= c.startTime - totalBefore && currentTime <= c.endTime + totalAfter;
       });
 
-      // Prioritize the one that started most recently (highest startTime)
-      // If start times are equal, prioritize the one that appears later in the script (higher index)
-      const activeDialogueCue = activeDialogueCues.length > 0
-        ? activeDialogueCues.reduce((best, current) => {
+      // Priority hierarchy for when multiple cues are active
+      const priorityOrder = ['dialogue', 'action', 'camera', 'shot', 'audio', 'vfx', 'transition', 'environment'];
+
+      const activeCue = activeCues.length > 0
+        ? activeCues.reduce((best, current) => {
             if (!best) return current;
+            
+            // 1. If we have a specific target, prioritize by start time
+            if (autoScrollTarget !== 'all') {
+              if (current.startTime > best.startTime) return current;
+              if (current.startTime === best.startTime && (current.startIndex || 0) > (best.startIndex || 0)) return current;
+              return best;
+            }
+
+            // 2. If target is 'all', prioritize by the hierarchy
+            const currentPriority = priorityOrder.indexOf(current.type || 'dialogue');
+            const bestPriority = priorityOrder.indexOf(best.type || 'dialogue');
+            
+            if (currentPriority < bestPriority) return current;
+            if (currentPriority > bestPriority) return best;
+            
+            // 3. If same priority, prioritize by start time
             if (current.startTime > best.startTime) return current;
             if (current.startTime === best.startTime && (current.startIndex || 0) > (best.startIndex || 0)) return current;
+            
             return best;
           }, null as Cue | null)
         : null;
 
-      if (activeDialogueCue && activeDialogueCue.id !== lastScrolledCueId) {
-        const element = document.getElementById(`cue-${activeDialogueCue.id}`);
+      if (activeCue && activeCue.id !== lastScrolledCueId) {
+        const element = document.getElementById(`cue-${activeCue.id}`);
         if (element) {
           setTimeout(() => {
             element.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }, 50);
-          setLastScrolledCueId(activeDialogueCue.id);
+          setLastScrolledCueId(activeCue.id);
         }
-      } else if (!activeDialogueCue) {
+      } else if (!activeCue) {
         setLastScrolledCueId(null);
       }
     }
-  }, [currentTime, mode, isAutoScrollEnabled, state.cues, state.settings, lastScrolledCueId]);
+  }, [currentTime, mode, isAutoScrollEnabled, state.cues, state.settings, lastScrolledCueId, autoScrollTarget]);
 
   // Initial load of default data if no local storage
   useEffect(() => {
@@ -1467,17 +1489,77 @@ export default function App() {
             <div className="flex items-center gap-2 lg:gap-4">
               {mode === 'playback' && (
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setIsAutoScrollEnabled(!isAutoScrollEnabled)}
-                    className={cn(
-                      "flex items-center gap-1.5 px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border shadow-sm",
-                      isAutoScrollEnabled ? "bg-blue-500 text-white border-blue-600" : "bg-white text-stone-400 border-stone-200 hover:text-stone-600"
+                  <div className="relative flex items-center">
+                    <button
+                      onClick={() => setIsAutoScrollEnabled(!isAutoScrollEnabled)}
+                      className={cn(
+                        "flex items-center gap-1.5 px-2 py-1 rounded-l-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border-y border-l shadow-sm",
+                        isAutoScrollEnabled ? "bg-blue-500 text-white border-blue-600" : "bg-white text-stone-400 border-stone-200 hover:text-stone-600"
+                      )}
+                      title={isAutoScrollEnabled ? "Auto-scroll enabled" : "Auto-scroll disabled"}
+                    >
+                      <Target size={10} className={cn(isAutoScrollEnabled && "animate-pulse")} />
+                      <span className="hidden sm:inline">Auto-Scroll</span>
+                    </button>
+                    <button
+                      onClick={() => setIsAutoScrollDropdownOpen(!isAutoScrollDropdownOpen)}
+                      className={cn(
+                        "px-1 py-1 rounded-r-lg border-y border-r shadow-sm transition-all active:scale-95",
+                        isAutoScrollEnabled ? "bg-blue-600 text-white border-blue-700" : "bg-white text-stone-400 border-stone-200 hover:text-stone-600"
+                      )}
+                    >
+                      <ChevronDown size={10} className={cn("transition-transform duration-200", isAutoScrollDropdownOpen && "rotate-180")} />
+                    </button>
+
+                    {isAutoScrollDropdownOpen && (
+                      <>
+                        <div 
+                          className="fixed inset-0 z-40" 
+                          onClick={() => setIsAutoScrollDropdownOpen(false)} 
+                        />
+                        <div className="absolute top-full right-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-stone-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200">
+                          <div className="p-2 bg-stone-50 border-b border-stone-100">
+                            <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Focus Mode</p>
+                          </div>
+                          <div className="p-1">
+                            <button
+                              onClick={() => {
+                                setAutoScrollTarget('all');
+                                setIsAutoScrollDropdownOpen(false);
+                              }}
+                              className={cn(
+                                "w-full flex items-center justify-between px-3 py-2 rounded-lg text-[10px] font-bold transition-colors",
+                                autoScrollTarget === 'all' ? "bg-stone-900 text-white" : "text-stone-600 hover:bg-stone-50"
+                              )}
+                            >
+                              Follow All
+                              {autoScrollTarget === 'all' && <Check size={10} />}
+                            </button>
+                            <div className="h-px bg-stone-100 my-1" />
+                            {COLORS.map(color => (
+                              <button
+                                key={color.type}
+                                onClick={() => {
+                                  setAutoScrollTarget(color.type);
+                                  setIsAutoScrollDropdownOpen(false);
+                                }}
+                                className={cn(
+                                  "w-full flex items-center justify-between px-3 py-2 rounded-lg text-[10px] font-bold transition-colors capitalize",
+                                  autoScrollTarget === color.type ? "bg-stone-900 text-white" : "text-stone-600 hover:bg-stone-50"
+                                )}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <div className={cn("w-1.5 h-1.5 rounded-full", color.class)} />
+                                  {color.type}
+                                </div>
+                                {autoScrollTarget === color.type && <Check size={10} />}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </>
                     )}
-                    title={isAutoScrollEnabled ? "Auto-scroll enabled" : "Auto-scroll disabled"}
-                  >
-                    <Target size={10} className={cn(isAutoScrollEnabled && "animate-pulse")} />
-                    <span className="hidden sm:inline">Auto-Scroll</span>
-                  </button>
+                  </div>
                   <div className="h-4 w-px bg-stone-200 mx-1 hidden lg:block" />
                   <button 
                     onClick={() => setMode('edit')}

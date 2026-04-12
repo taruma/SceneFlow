@@ -21,7 +21,9 @@ The core feature of the app is the ability to create "Cues."
 - **Creation**: Highlight text in the script and click "Add Cue" to link it to the current video time.
 - **Highlighting**: As the video plays, the corresponding text in the script highlights in real-time.
 - **Overlaps**: Multiple cues can overlap on the same text. An indicator (dot) appears in Edit mode to help manage these.
-- **Auto-Scroll**: The script automatically scrolls to keep the active dialogue in view.
+- **Auto-Scroll**: The script automatically scrolls to keep the active cue in view.
+  - **Focus Modes**: Users can choose to follow specific cue types (e.g., only Dialogue or only Camera) or follow all cues.
+  - **Priority Logic**: When multiple cues are active, the system prioritizes Dialogue, followed by Action, then technical cues.
 
 ## 4. Modes
 - **Playback Mode**: A clean, distraction-free view for watching the video and reading the script.
