@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Auto-Scroll Focus Modes**: Users can now choose which cue types the script preview should follow (Dialogue, Action, Camera, etc., or "Follow All").
 - **Split-Button Control**: Enhanced the Auto-Scroll toggle with a dropdown menu for focus selection.
 - **Priority Hierarchy**: Intelligent auto-scrolling that prioritizes specific cue types when multiple are active simultaneously.
+- **Chronological Alignment**: The "Align" feature now sorts cues by time before processing, ensuring accurate mapping for duplicate lines and a cleaner "Raw" JSON order.
 
 ## [1.1.0] - 2026-04-07
 

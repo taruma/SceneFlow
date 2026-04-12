@@ -659,7 +659,11 @@ export default function App() {
       let lastIndex = 0;
       let alignedCount = 0;
       
-      const updatedCues = (actualState.cues || []).map(cue => {
+      // Sort cues by startTime before aligning to ensure sequential search works correctly
+      // and the final list is chronologically ordered for easier troubleshooting
+      const sortedCues = [...(actualState.cues || [])].sort((a, b) => (a.startTime || 0) - (b.startTime || 0));
+      
+      const updatedCues = sortedCues.map(cue => {
         const searchText = cue.selectedText.trim();
         if (!searchText) return cue;
 
