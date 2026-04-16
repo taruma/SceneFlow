@@ -58,7 +58,7 @@ const DEFAULT_SETTINGS: Record<string, TimingSettings> = {
   general: { before: 0, after: 0 },
   ...Object.fromEntries(COLORS.map(c => [
     c.type, 
-    c.type === 'dialogue' ? { before: 0, after: 0 } : { before: 1, after: 1 }
+    { before: 0, after: 0 }
   ]))
 };
 
@@ -2066,9 +2066,9 @@ export default function App() {
                   </div>
                   <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 ml-1">Global Before (+s)</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 ml-1">Global Before (s)</label>
                       <input 
-                        type="number" step="0.1" min="0"
+                        type="number" step="0.1"
                         value={state.settings?.general?.before ?? 0}
                         onChange={(e) => {
                           const val = parseFloat(e.target.value) || 0;
@@ -2081,9 +2081,9 @@ export default function App() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 ml-1">Global After (+s)</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 ml-1">Global After (s)</label>
                       <input 
-                        type="number" step="0.1" min="0"
+                        type="number" step="0.1"
                         value={state.settings?.general?.after ?? 0}
                         onChange={(e) => {
                           const val = parseFloat(e.target.value) || 0;
@@ -2110,8 +2110,8 @@ export default function App() {
                         <div className="space-y-1">
                           <label className="text-[8px] font-black uppercase tracking-widest text-stone-400">Before (s)</label>
                           <input 
-                            type="number" step="0.1" min="0"
-                            value={state.settings?.[color.type]?.before ?? 1}
+                            type="number" step="0.1"
+                            value={state.settings?.[color.type]?.before ?? 0}
                             onChange={(e) => {
                               const val = parseFloat(e.target.value) || 0;
                               setState(prev => ({
@@ -2125,8 +2125,8 @@ export default function App() {
                         <div className="space-y-1">
                           <label className="text-[8px] font-black uppercase tracking-widest text-stone-400">After (s)</label>
                           <input 
-                            type="number" step="0.1" min="0"
-                            value={state.settings?.[color.type]?.after ?? 2}
+                            type="number" step="0.1"
+                            value={state.settings?.[color.type]?.after ?? 0}
                             onChange={(e) => {
                               const val = parseFloat(e.target.value) || 0;
                               setState(prev => ({
