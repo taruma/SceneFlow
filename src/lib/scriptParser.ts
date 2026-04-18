@@ -34,7 +34,9 @@ export function parseScriptWithStaging(text: string): ParsedScript {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
     
-    if (line === '[[STAGING]]') {
+    const trimmedLine = line.trim();
+
+    if (trimmedLine === '[[STAGING]]') {
       inStaging = true;
       stagingStartIdx = i;
       currentStagingBlocks = [];
@@ -42,17 +44,20 @@ export function parseScriptWithStaging(text: string): ParsedScript {
       continue;
     }
     
-    if (line === '[[/STAGING]]') {
+    if (trimmedLine === '[[/STAGING]]') {
       inStaging = false;
       stagingLineIndices.add(i);
       if (currentStagingBlocks.length > 0) {
-        // Associate this marker with the line BEFORE the staging block
-        // or the line AFTER it ends. Let's use the start index for the badge.
         stagingMarkers[stagingStartIdx] = {
           index: stagingStartIdx,
           blocks: currentStagingBlocks
         };
       }
+      continue;
+    }
+
+    if (/^\[<?\/?[A-Z0-9_\s]+>?\]$/i.test(trimmedLine)) {
+      stagingLineIndices.add(i);
       continue;
     }
     

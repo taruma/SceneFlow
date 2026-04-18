@@ -5,11 +5,15 @@ import { ProcessedLine } from './scriptProcessor';
  * This keeps the styling logic separate from the component structure.
  */
 export function getLineClass(line: ProcessedLine): string {
-  const { type, charName } = line;
+  const { type, charName, isBrief } = line;
   
   // Base style for all lines
   const baseStyle = "whitespace-pre-wrap min-h-[1em] leading-snug";
   
+  if (isBrief) {
+    return `${baseStyle} font-mono text-[12px] text-stone-700 mb-2`;
+  }
+
   switch (type) {
     case 'name':
       return `${baseStyle} text-center font-bold text-stone-900 mb-0.5 tracking-tight uppercase`;

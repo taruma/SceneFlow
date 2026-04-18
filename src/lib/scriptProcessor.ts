@@ -22,6 +22,7 @@ export interface ProcessedLine {
   stagingMarker?: StagingMarker;
   lineStart: number;
   lineEnd: number;
+  isBrief?: boolean;
 }
 
 /**
@@ -34,8 +35,8 @@ export function processScript(scriptText: string): ProcessedLine[] {
   // Pre-calculate dialogue blocks
   const dialogueInfo = new Array(lines.length).fill(null);
   for (let i = 0; i < lines.length; i++) {
-    if (stagingLineIndices.has(i)) continue;
     const trimmed = lines[i].trim();
+    if (stagingLineIndices.has(i) || /^\[<?\/?[A-Z0-9_\s]+>?\]$/.test(trimmed)) continue;
     
     // Rule: ALL CAPS and ends with ":"
     if (trimmed.length > 0 && trimmed === trimmed.toUpperCase() && trimmed.endsWith(':')) {
@@ -52,16 +53,28 @@ export function processScript(scriptText: string): ProcessedLine[] {
 
   const processedLines: ProcessedLine[] = [];
   let currentPos = 0;
+  let inBrief = false;
 
   lines.forEach((line, lineIdx) => {
     const lineStart = currentPos;
     const lineEnd = currentPos + line.length;
     currentPos += line.length + 1; // +1 for the newline character
 
+    const trimmed = line.trim();
+
+    // Check for BRIEF tags - more robust regex
+    if (/^\[<BRIEF>\]$/i.test(trimmed)) {
+      inBrief = true;
+      return; // Skip tag line
+    }
+    if (/^\[<\/BRIEF>\]$/i.test(trimmed)) {
+      inBrief = false;
+      return; // Skip tag line
+    }
+
     const isStaging = stagingLineIndices.has(lineIdx);
     const stagingMarker = stagingMarkers[lineIdx];
     const info = dialogueInfo[lineIdx];
-    const trimmed = line.trim();
     
     let type: LineType = 'default';
     let charName = info?.name;
@@ -104,7 +117,8 @@ export function processScript(scriptText: string): ProcessedLine[] {
       isStaging,
       stagingMarker,
       lineStart,
-      lineEnd
+      lineEnd,
+      isBrief: inBrief
     });
   });
 

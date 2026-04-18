@@ -25,6 +25,11 @@ The core feature of the app is the ability to create "Cues."
 - **Auto-Scroll**: The script automatically scrolls to keep the active cue in view.
   - **Focus Modes**: Users can multi-select specific cue types to follow (e.g., only Dialogue and Action).
   - **Priority Logic**: When multiple cues are active, the system prioritizes the most recently started cue among the selected types.
+- **Creative Briefs**: Use `[<BRIEF>]` and `[</BRIEF>]` tags for technical directives.
+  - **Monospace style**: Distinguishes technical data from script text.
+  - **Step-Formatting**: Every `->` triggers a newline and indentation.
+  - **Anchor Bold**: Brackets `[...]` are automatically bolded within briefs.
+  - **Sync-Ready**: Cues and highlighting remain fully functional inside brief blocks.
 - **Timing Settings**: Fine-tune when highlights appear and disappear.
   - **Offsets**: Supports both positive (extra buffer) and negative (early/shorter appearance) values.
   - **Calculation**: Final visibility = Cue Time ± (Global Offset + Category Offset).

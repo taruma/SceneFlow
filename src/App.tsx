@@ -787,6 +787,31 @@ export default function App() {
     const processedLines = processScript(scriptText);
     const scriptElements: React.ReactNode[] = [];
 
+    const formatBriefSegment = (text: string) => {
+      // 1. Waterfall: replace -> with ->\n    
+      const waterfalled = text.replace(/->/g, "->\n    ");
+      
+      // 2. Bold Anchors: wrap [...] in <b>
+      const result: React.ReactNode[] = [];
+      const regex = /\[([^\]]+)\]/g;
+      let lastIndex = 0;
+      let match;
+      
+      while ((match = regex.exec(waterfalled)) !== null) {
+        if (match.index > lastIndex) {
+          result.push(waterfalled.substring(lastIndex, match.index));
+        }
+        result.push(<b key={match.index}>[{match[1]}]</b>);
+        lastIndex = regex.lastIndex;
+      }
+      
+      if (lastIndex < waterfalled.length) {
+        result.push(waterfalled.substring(lastIndex));
+      }
+      
+      return result.length > 0 ? result : waterfalled;
+    };
+
     processedLines.forEach((lineData) => {
       const { text: line, type, lineIdx, lineStart, lineEnd, isStaging, stagingMarker } = lineData;
       const trimmed = line.trim();
@@ -891,9 +916,12 @@ export default function App() {
       }
 
       if (lineCues.length === 0) {
+        const displayValue = type === 'name' ? trimmed.slice(0, -1) : line;
+        const finalDisplayValue = lineData.isBrief ? formatBriefSegment(displayValue) : displayValue;
+        
         scriptElements.push(
           <div key={lineIdx} className={cn("whitespace-pre-wrap min-h-[1em]", className)}>
-            {type === 'name' ? trimmed.slice(0, -1) : line}
+            {finalDisplayValue}
           </div>
         );
         return;
@@ -915,10 +943,12 @@ export default function App() {
         const displayValue = (type === 'name' && end === line.length) 
           ? segmentText.replace(/:$/, '') 
           : segmentText;
+          
         const segmentCues = lineCues.filter(c => c.start <= start && c.end >= end);
+        const finalDisplayValue = lineData.isBrief ? formatBriefSegment(displayValue) : displayValue;
 
         if (segmentCues.length === 0) {
-          segments.push(displayValue);
+          segments.push(finalDisplayValue);
           continue;
         }
 
@@ -970,7 +1000,7 @@ export default function App() {
             )}
             style={{ backgroundColor: `rgba(${rgb}, ${finalOpacity})` }}
           >
-            {displayValue}
+            {finalDisplayValue}
             {segmentCues.length > 1 && mode === 'edit' && !isTemp && (
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-stone-900 rounded-full border border-white shadow-sm z-20" title="Multiple cues overlap here" />
             )}
