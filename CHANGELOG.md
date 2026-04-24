@@ -14,15 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Bold Anchors**: Automatically bolds text within square brackets `[...]` inside Brief blocks to create visual scanning anchors.
   - **Monospace Typography**: Brief blocks use a technical monospace font to distinguish data from dialogue.
 
-## [1.2.2] - 2026-04-18
-
-### Added
-- **Inline Brief Blocks**: Introduced `[<BRIEF>]`/`[</BRIEF>]` tags for technical directives and scene briefs that remain visible in the script.
-- **Brief Formatting Engine**:
-  - **Waterfall Indentation**: Automatically injects newlines and indents after `->` characters inside Brief blocks for better readability of action flows.
-  - **Bold Anchors**: Automatically bolds text within square brackets `[...]` inside Brief blocks to create visual scanning anchors.
-  - **Monospace Typography**: Brief blocks use a technical monospace font to distinguish data from dialogue.
-
 ## [1.2.1] - 2026-04-16
 
 ### Enhanced
