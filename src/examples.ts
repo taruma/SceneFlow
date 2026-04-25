@@ -54,6 +54,12 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         title: 'Volume 2',
         path: '/twm_vol2_elemental_forces.json',
         description: 'Elemental Forces'
+      },
+      {
+        id: 'twm_vol3',
+        title: 'Volume 3',
+        path: '/twm_vol3_kinetic.json',
+        description: 'Kinetic'
       }
     ]
   }
