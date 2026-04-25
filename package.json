@@ -1,7 +1,7 @@
 {
   "name": "sceneflow",
   "private": true,
-  "version": "1.2.2",
+  "version": "1.2.3",
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import YouTube, { YouTubeProps } from 'react-youtube';
-import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book, Target, Info } from 'lucide-react';
+import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book, Target, Info, Search } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { EXAMPLE_SECTIONS } from './examples';
@@ -120,6 +120,7 @@ export default function App() {
   const [newCue, setNewCue] = useState<Partial<Cue>>({
     colorClass: COLORS[0].class,
   });
+  const [altLocations, setAltLocations] = useState<{start: number, end: number, context: string}[] | null>(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; cue: Cue | null }>({
     isOpen: false,
     cue: null,
@@ -594,12 +595,78 @@ export default function App() {
     
     setSelection(null);
     setNewCue({ colorClass: COLORS[0].class });
+    setAltLocations(null);
     console.log("Cue saved successfully:", cue);
   };
 
   const cancelEdit = () => {
     setSelection(null);
     setNewCue({ colorClass: COLORS[0].class });
+    setAltLocations(null);
+  };
+
+  const findAlternativeLocations = () => {
+    if (!selection?.text) return;
+    
+    const results: {start: number, end: number, context: string}[] = [];
+    const searchText = selection.text.trim();
+    if (!searchText) return;
+
+    // Use same regex logic as realignCues
+    const escapedSearch = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regexStr = escapedSearch.replace(/\s+/g, '\\s+').replace(/['’]/g, "['’]");
+    
+    try {
+      const regex = new RegExp(regexStr, 'gi');
+      let m;
+      while ((m = regex.exec(state.scriptText)) !== null) {
+        const idx = m.index;
+        const matchLen = m[0].length;
+        
+        // Get some context
+        const startContext = Math.max(0, idx - 25);
+        const endContext = Math.min(state.scriptText.length, idx + matchLen + 25);
+        const context = state.scriptText.substring(startContext, endContext).replace(/\n/g, ' ');
+        
+        results.push({
+          start: idx,
+          end: idx + matchLen,
+          context: (startContext > 0 ? '...' : '') + context + (endContext < state.scriptText.length ? '...' : '')
+        });
+        
+        if (results.length > 40) break; // Limit matches
+      }
+      
+      // If no matches found with full text, try the "short match" approach from align
+      if (results.length === 0) {
+        const shortSearch = searchText.substring(0, 15).trim();
+        if (shortSearch.length >= 5) {
+          const shortEscaped = shortSearch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+').replace(/['’]/g, "['’]");
+          const shortRegex = new RegExp(shortEscaped, 'gi');
+          
+          let sm;
+          while ((sm = shortRegex.exec(state.scriptText)) !== null) {
+            const idx = sm.index;
+            const matchLen = sm[0].length;
+            
+            const startContext = Math.max(0, idx - 25);
+            const endContext = Math.min(state.scriptText.length, idx + searchText.length + 25);
+            const context = state.scriptText.substring(startContext, endContext).replace(/\n/g, ' ');
+            
+            results.push({
+              start: idx,
+              end: idx + searchText.length, // Approximate based on original text length
+              context: (startContext > 0 ? '...' : '') + context + (endContext < state.scriptText.length ? '...' : '')
+            });
+            if (results.length > 40) break;
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Regex error in findAlternativeLocations:", e);
+    }
+    
+    setAltLocations(results);
   };
 
   const deleteCue = (id: string) => {
@@ -1640,9 +1707,49 @@ export default function App() {
                       </button>
                     </div>
 
-                    <div className="bg-stone-50 p-3 rounded-xl border border-stone-100">
-                      <p className="text-[10px] text-stone-400 uppercase tracking-widest mb-1">Selected Text</p>
+                    <div className="bg-stone-50 p-3 rounded-xl border border-stone-100 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <p className="text-[10px] text-stone-400 uppercase tracking-widest">Selected Text</p>
+                        <button 
+                          onClick={findAlternativeLocations}
+                          className="flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-stone-400 hover:text-blue-500 transition-colors"
+                        >
+                          <Search size={10} /> {altLocations ? 'Refresh' : 'Find Alternative'}
+                        </button>
+                      </div>
                       <p className="text-xs font-mono line-clamp-1 text-stone-600 italic">"{selection.text}"</p>
+                      
+                      {altLocations && altLocations.length > 1 && (
+                        <div className="pt-2 mt-2 border-t border-stone-200">
+                          <p className="text-[8px] text-stone-400 uppercase tracking-widest mb-1">Alternative Locations ({altLocations.length})</p>
+                          <div className="max-h-24 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
+                            {altLocations.map((loc, i) => {
+                              const isCurrent = loc.start === newCue.startIndex;
+                              return (
+                                <button
+                                  key={i}
+                                  onClick={() => {
+                                    setNewCue(prev => ({ ...prev, startIndex: loc.start, endIndex: loc.end }));
+                                    setSelection(s => s ? { ...s, start: loc.start, end: loc.end } : null);
+                                  }}
+                                  className={cn(
+                                    "w-full text-left p-1.5 rounded text-[9px] font-mono transition-all border",
+                                    isCurrent 
+                                      ? "bg-blue-50 border-blue-200 text-blue-700 font-bold" 
+                                      : "bg-white border-stone-200 text-stone-500 hover:bg-stone-100"
+                                  )}
+                                >
+                                  <div className="flex items-center justify-between mb-0.5">
+                                    <span className="opacity-60 text-[7px]">Offset: {loc.start}</span>
+                                    {isCurrent && <Check size={8} />}
+                                  </div>
+                                  <div className="truncate">{loc.context}</div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

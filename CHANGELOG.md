@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.3] - 2026-04-25
+
+### Added
+- **Alternative Location Finder**: Resolved the "Duplicate Text" issue. When a cue points to text that appears multiple times in the script (e.g., "WIDE SHOT"), you can now click "Find Alternative" in the edit panel to see all occurrences and manually snap the cue to the correct location.
+- **Robust Matching Engine**: Updated the finder to use the same proximity-aware regex logic as the alignment tool. It now handles whitespace variations, different quote types, and provides a "partial match" fallback if the full string isn't found.
+- **Contextual Snippets**: The finder provides text snippets for each match to help identify the correct scene/block.
+
 ## [1.2.2] - 2026-04-18
 
 ### Added
