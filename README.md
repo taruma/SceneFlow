@@ -199,6 +199,7 @@ SceneFlow uses a specific set of rules to parse and style your screenplay text. 
 | **Separator** | Three dashes on a single line | `---` |
 | **Part Separator** | `PART` followed by a number | `PART 1` |
 | **Roman Title** | Roman numeral + dot + Uppercase Title | `I. THE BEGINNING` |
+| **Auteur Brief** | Block wrapped in `[<BRIEF>]` and `[</BRIEF>]` | *See below* |
 
 > **Note on Square Brackets `[...]`**: While styled as technical notes, these are primarily used for shot numbers, shot types, camera angles, and emphasizing specific camera movements or technical instructions within the script.
 
@@ -230,6 +231,28 @@ INT. CYBER-CAFE - NIGHT
 - **Container**: Wrap metadata in `[[STAGING]]` and `[[/STAGING]]`.
 - **Labels**: Use custom labels like `[[GLOBAL]]` or `[[LOOKBOOK]]` inside the container.
 - **Visibility**: Content inside staging blocks is hidden from the main script view but appears as a "Staging" badge that can be toggled to reveal the underlying prompt levels.
+
+### Auteur Brief Prompting (New in v1.2.3)
+
+**Auteur Brief Prompting** is a high-density, concise framework for technical execution. It follows a structured workflow:
+`[INTENT] -> [LOGIC] -> [AESTHETIC] -> [EXECUTION]`
+
+The `[<BRIEF>]` block is specifically optimized for the **[EXECUTION]** phase, providing enhanced readability for rapid technical directives embedded directly into the screenplay flow.
+
+#### Features:
+
+- **Waterfall Indentation**: Using `->` automatically triggers a waterfall layout, ideal for separating different shots or beats within a single sequence.
+- **Bold Anchors**: Technical anchors like `[CAM]`, `[ACT]`, or `[VFX]` are automatically bolded for better scanning.
+- **Monospace Styling**: The entire block uses monospace typography to distinguish technical directives from creative dialogue.
+
+#### Example:
+```text
+[<BRIEF>]
+[CAM: MCU/HANDHELD] Jax stands on a razor-thin jagged edge -> 
+[ACT] Sharp exhale, jaw sets firm -> 
+[AUDIO] Piercing wind whip; rhythmic, heavy breathing
+[</BRIEF>]
+```
 
 ---
 
