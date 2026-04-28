@@ -612,6 +612,20 @@ export default function App() {
     const searchText = selection.text.trim();
     if (!searchText) return;
 
+    // Get excluded ranges (STAGING blocks)
+    const processedLinesForExclusion = processScript(state.scriptText);
+    const excludedRanges = processedLinesForExclusion
+      .filter(line => line.isStaging)
+      .map(line => ({ start: line.lineStart, end: line.lineEnd }));
+
+    const isExcluded = (start: number, end: number) => {
+      return excludedRanges.some(range => 
+        (start >= range.start && start < range.end) || 
+        (end > range.start && end <= range.end) ||
+        (range.start >= start && range.start < end)
+      );
+    };
+
     // Use same regex logic as realignCues
     const escapedSearch = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const regexStr = escapedSearch.replace(/\s+/g, '\\s+').replace(/['’]/g, "['’]");
@@ -623,6 +637,9 @@ export default function App() {
         const idx = m.index;
         const matchLen = m[0].length;
         
+        // Skip if inside a staging block
+        if (isExcluded(idx, idx + matchLen)) continue;
+
         // Get some context
         const startContext = Math.max(0, idx - 25);
         const endContext = Math.min(state.scriptText.length, idx + matchLen + 25);
@@ -649,6 +666,9 @@ export default function App() {
             const idx = sm.index;
             const matchLen = sm[0].length;
             
+            // Skip if inside a staging block
+            if (isExcluded(idx, idx + shortSearch.length)) continue;
+
             const startContext = Math.max(0, idx - 25);
             const endContext = Math.min(state.scriptText.length, idx + searchText.length + 25);
             const context = state.scriptText.substring(startContext, endContext).replace(/\n/g, ' ');
@@ -707,6 +727,20 @@ export default function App() {
     
     console.log("Aligning cues. Manual:", isManual, "Cues count:", (actualState.cues || []).length);
     
+    // Pre-calculate excluded ranges (STAGING blocks)
+    const processedLinesForExclusion = processScript(actualState.scriptText);
+    const excludedRanges = processedLinesForExclusion
+      .filter(line => line.isStaging)
+      .map(line => ({ start: line.lineStart, end: line.lineEnd }));
+
+    const isExcluded = (start: number, end: number) => {
+      return excludedRanges.some(range => 
+        (start >= range.start && start < range.end) || 
+        (end > range.start && end <= range.end) ||
+        (range.start >= start && range.start < end)
+      );
+    };
+
     setTimeout(() => {
       let lastIndex = 0;
       let alignedCount = 0;
@@ -729,7 +763,10 @@ export default function App() {
           const matches: { index: number, length: number }[] = [];
           let m;
           while ((m = regex.exec(actualState.scriptText)) !== null) {
-            matches.push({ index: m.index, length: m[0].length });
+            // Verify if not excluded
+            if (!isExcluded(m.index, m.index + m[0].length)) {
+              matches.push({ index: m.index, length: m[0].length });
+            }
           }
 
           if (matches.length > 0) {
@@ -758,7 +795,10 @@ export default function App() {
             const shortMatches: { index: number, length: number }[] = [];
             let sm;
             while ((sm = shortRegex.exec(actualState.scriptText)) !== null) {
-              shortMatches.push({ index: sm.index, length: sm[0].length });
+              // Verify if not excluded
+              if (!isExcluded(sm.index, sm.index + sm[0].length)) {
+                shortMatches.push({ index: sm.index, length: sm[0].length });
+              }
             }
 
             if (shortMatches.length > 0) {

@@ -232,12 +232,12 @@ INT. CYBER-CAFE - NIGHT
 - **Labels**: Use custom labels like `[[GLOBAL]]` or `[[LOOKBOOK]]` inside the container.
 - **Visibility**: Content inside staging blocks is hidden from the main script view but appears as a "Staging" badge that can be toggled to reveal the underlying prompt levels.
 
-### Auteur Brief Prompting (New in v1.2.3)
+### Auteur Brief Prompting (New in v1.2.4)
 
 **Auteur Brief Prompting** is a high-density, concise framework for technical execution. It follows a structured workflow:
 `[INTENT] -> [LOGIC] -> [AESTHETIC] -> [EXECUTION]`
 
-The `[<BRIEF>]` block is specifically optimized for the **[EXECUTION]** phase, providing enhanced readability for rapid technical directives embedded directly into the screenplay flow.
+The `[<BRIEF>]` block (optimized for the **[EXECUTION]** phase) provides enhanced readability for technical directives. As of v1.2.4, the script's **alignment and search engines** intelligently distinguish between creative content and hidden metadata, ensuring cues never snap to data inside `[[STAGING]]` blocks.
 
 #### Features:
 
