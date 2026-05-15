@@ -232,7 +232,7 @@ INT. CYBER-CAFE - NIGHT
 - **Labels**: Use custom labels like `[[GLOBAL]]` or `[[LOOKBOOK]]` inside the container.
 - **Visibility**: Content inside staging blocks is hidden from the main script view but appears as a "Staging" badge that can be toggled to reveal the underlying prompt levels.
 
-### Auteur Brief Prompting (New in v1.2.4)
+### Auteur Brief Prompting (New in v1.2.5)
 
 **Auteur Brief Prompting** is a high-density, concise framework for technical execution. It follows a structured workflow:
 `[INTENT] -> [LOGIC] -> [AESTHETIC] -> [EXECUTION]`

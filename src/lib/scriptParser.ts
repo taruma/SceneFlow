@@ -57,8 +57,11 @@ export function parseScriptWithStaging(text: string): ParsedScript {
     }
 
     if (/^\[<?\/?[A-Z0-9_\s]+>?\]$/i.test(trimmedLine)) {
-      stagingLineIndices.add(i);
-      continue;
+      // Only hide actual BRIEF tags, allow other [TAGS] to be visible as notes
+      if (/^\[<BRIEF>\]$/i.test(trimmedLine) || /^\[<\/BRIEF>\]$/i.test(trimmedLine)) {
+        stagingLineIndices.add(i);
+        continue;
+      }
     }
     
     if (inStaging) {

@@ -36,7 +36,7 @@ export function processScript(scriptText: string): ProcessedLine[] {
   const dialogueInfo = new Array(lines.length).fill(null);
   for (let i = 0; i < lines.length; i++) {
     const trimmed = lines[i].trim();
-    if (stagingLineIndices.has(i) || /^\[<?\/?[A-Z0-9_\s]+>?\]$/.test(trimmed)) continue;
+    if (stagingLineIndices.has(i) || /^\[<BRIEF>\]$/i.test(trimmed) || /^\[<\/BRIEF>\]$/i.test(trimmed)) continue;
     
     // Rule: ALL CAPS and ends with ":"
     if (trimmed.length > 0 && trimmed === trimmed.toUpperCase() && trimmed.endsWith(':')) {
