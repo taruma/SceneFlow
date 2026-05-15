@@ -1,5 +1,6 @@
 {
   "name": "SceneFlow",
-  "description": "Professional screenplay-to-video synchronization tool for filmmakers and editors.",
+  "description": "SceneFlow bridges the gap between structured screenplays and AI video generation with real-time synchronization, staging blocks, and precision timing controls.",
+  "version": "1.3.0",
   "requestFramePermissions": []
 }

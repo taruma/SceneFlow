@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-05-15
+
+### Added
+- **Official SceneFlow GUIDE**: Released a comprehensive, interactive quick-start guide as the default "Blank" script project.
+- **Library Expansion (The Wanderer Multiverse)**: Added **Volume 4 (Wayfarers)** and **Volume 5 (Fractures)** to the example library, showcasing auteur brief prompting.
+- **Library "Getting Started" Section**: Added a dedicated section in the example library for high-priority tutorials.
+
+### Changed
+- **Rebranded Blank Script**: The initial workspace now serves as a narrative tutorial on "Cinematic Synchronization" and "Auteur Prompting," featuring a complete breakdown of formatting rules and cue management.
+- **Interactive Mosaic Example**: Integrated a deep-dive walkthrough of the "Mosaic" scene within the GUIDE to demonstrate complex staging and dual-character synchronization.
+
 ## [1.2.5] - 2026-05-15
 
 ### Changed

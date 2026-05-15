@@ -41,10 +41,11 @@ The core feature of the app is the ability to create "Cues."
 
 ## 5. Persistence & Sharing
 All work is automatically saved to the browser's `localStorage`. Users can also:
+- **GUIDE (Quick Start)**: Every fresh installation or "Blank" project loads the SceneFlow GUIDE—an interactive tutorial that explains formatting, staging, and cue management through narrative examples.
 - **Export**: Download the project as a JSON file.
 - **Import**: Upload a previously exported JSON file to resume work.
-- **Library**: Load pre-configured examples from the built-in library.
+- **Library**: Load pre-configured examples from the built-in library, including the complete "The Written Motion" (TWM) series (Volumes 1-5) and specialized cinematic walkthroughs.
 - **Query Parameters**: Load specific examples or remote projects directly via URL.
-  - `?example=ID`: Loads a built-in example (e.g., `mosaic`, `expansion`).
+  - `?example=ID`: Loads a built-in example (e.g., `mosaic`, `expansion`, `guide`).
   - `?project=URL`: Loads a JSON project from a remote, CORS-enabled server.
 - **Remote Loading**: When loading via URL, a confirmation dialog appears with integrated error handling to prevent accidental data loss and provide feedback on failed fetches.

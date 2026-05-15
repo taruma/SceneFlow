@@ -11,6 +11,17 @@ export interface ExampleSection {
 }
 
 export const EXAMPLE_SECTIONS: ExampleSection[] = [
+  // {
+  //   label: "Getting Started",
+  //   items: [
+  //     {
+  //       id: 'guide',
+  //       title: 'GUIDE',
+  //       path: '/blank.json',
+  //       description: 'Tutorial & Writing Guide'
+  //     }
+  //   ]
+  // },
   {
     label: "AI Short Film",
     items: [
@@ -60,6 +71,18 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         title: 'Volume 3',
         path: '/twm_vol3_kinetic.json',
         description: 'Kinetic'
+      },
+      {
+        id: 'twm_vol4',
+        title: 'Volume 4',
+        path: '/twm_vol4_wayfarers.json',
+        description: 'Wayfarers'
+      },
+      {
+        id: 'twm_vol5',
+        title: 'Volume 5',
+        path: '/twm_vol5_fractures.json',
+        description: 'Fractures'
       }
     ]
   }

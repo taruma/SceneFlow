@@ -1173,10 +1173,10 @@ export default function App() {
           <div className="flex items-center gap-1 lg:gap-1.5 mr-1 xl:mr-2">
             <button 
               onClick={() => setResetConfirmation({ isOpen: true, type: 'blank', error: null })}
-              title="New Blank Project"
+              title="New Official Guide"
               className="hidden lg:flex items-center gap-1.5 px-2 py-1.5 xl:px-2.5 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-stone-200 shadow-sm"
             >
-              <Plus size={12} /> <span className="hidden xl:inline">Blank</span>
+              <Plus size={12} /> <span className="hidden xl:inline">Guide</span>
             </button>
             
             <div className="relative">
