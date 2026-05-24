@@ -26,6 +26,9 @@ The core feature of the app is the ability to create "Cues."
 - **Auto-Scroll**: The script automatically scrolls to keep the active cue in view.
   - **Focus Modes**: Users can multi-select specific cue types to follow (e.g., only Dialogue and Action).
   - **Priority Logic**: When multiple cues are active, the system prioritizes the most recently started cue among the selected types.
+  - **Enhanced Viewport Alignment**:
+    - **Desktop View**: The screen auto-scrolls to position the active cue slightly above the center (35% from the top of the container) so users can see upcoming lines and surrounding context.
+    - **Mobile/Tablet View**: The screen auto-scrolls to position the active cue directly in the center of the viewport for comfortable reading.
 - **Creative Briefs**: Use `[<BRIEF>]` and `[</BRIEF>]` tags for technical directives.
   - **Monospace style**: Distinguishes technical data from script text.
   - **Step-Formatting**: Every `->` triggers a newline and indentation.

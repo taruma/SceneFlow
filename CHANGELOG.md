@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2026-05-24
+
+### Changed
+- **Responsive Auto-Scroll Alignment**: Replaced standard `scrollIntoView` centering with a precise scroll calculation that positions active cues 35% from the container top on desktop displays (leaving preceding context visible while making upcoming lines easily readable). Tablet/phone displays continue to target native horizontal/vertical centering for maximum mobile screen economy.
+
 ## [1.3.0] - 2026-05-15
 
 ### Added

@@ -212,9 +212,26 @@ export default function App() {
 
       if (activeCue && activeCue.id !== lastScrolledCueId) {
         const element = document.getElementById(`cue-${activeCue.id}`);
-        if (element) {
+        const container = scriptRef.current;
+        if (element && container) {
           setTimeout(() => {
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const containerRect = container.getBoundingClientRect();
+            const elementRect = element.getBoundingClientRect();
+            const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
+            
+            let targetScrollTop;
+            if (isDesktop) {
+              // Position active cue slightly above center (35% from top of script container)
+              targetScrollTop = relativeTop - (containerRect.height * 0.35) + (elementRect.height / 2);
+            } else {
+              // Position active cue exactly in the center for mobile/tablet screens
+              targetScrollTop = relativeTop - (containerRect.height / 2) + (elementRect.height / 2);
+            }
+            
+            container.scrollTo({
+              top: Math.max(0, targetScrollTop),
+              behavior: 'smooth'
+            });
           }, 50);
           setLastScrolledCueId(activeCue.id);
         }
@@ -222,7 +239,7 @@ export default function App() {
         setLastScrolledCueId(null);
       }
     }
-  }, [currentTime, mode, isAutoScrollEnabled, state.cues, state.settings, lastScrolledCueId, autoScrollTargets]);
+  }, [currentTime, mode, isAutoScrollEnabled, state.cues, state.settings, lastScrolledCueId, autoScrollTargets, isDesktop]);
 
   // Initial load of default data if no local storage
   useEffect(() => {
