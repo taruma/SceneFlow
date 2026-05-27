@@ -49,11 +49,11 @@ All work is automatically saved to the browser's `localStorage`. Users can also:
 - **Import**: Upload a previously exported JSON file to resume work.
 - **Library Catalogue**: An immersive, built-in portal containing a fully-categorized selection of pre-configured scripts, interactive examples, and cinematic portfolios:
   - **Category Segments**:
-    - **Featured**: Highly recommended or award-nominated scripts highlighted as core workspace showcases (e.g., *The Expansion*, *Frog Invasion*, *Elemental Forces*, *Fractures*, *Old Growth*, *Forgotten*).
-    - **AI Short Film**: High-concept cinematic narratives demonstrating advanced AI-assisted screenplay layouts (e.g., *The Expansion*, *Intent Over Rules*, *Mosaic*, *Frog Invasion*, *The Distance*).
-    - **The Written Motion (TWM)**: The complete five-volume series (Volumes 1-5, including *The Breaking Point*, *Elemental Forces*, *Kinetic*, *Wayfarers*, *Fractures*) styled with detailed cues and motion directives.
-    - **AI Clips**: Short-form cinematic scripts and dialogue-focused technical vignettes (e.g., *Wild Kinship*, *These Lamps*, *Musical Lipsync*, *Let's Learn VFX*, *Table Four*, *Lucas & Mark*).
-    - **FRAME Series**: An expressive visual compilation demonstrating atmospheric transitions, lighting, and environmental camera techniques (including *Distant*, *Wandering Souls*, *Relics of Time*, *Where Am I?*, *Old Growth*, *Forgotten*, *Samsara*, *Still, Restless*).
+    - **Featured**: Highly recommended scripts highlighted as core workspace showcases (e.g., *The Expansion*, *Afraid*, *Fractures*, *Old Growth*, *Reality-Bending Video*).
+    - **AI Scenes**: High-concept cinematic scenes (e.g., *The Expansion*, *Intent Over Rules*, *Mosaic*, *Frog Invasion*, *The Distance*, *Not About Fish*, *Afraid*).
+    - **The Written Motion (TWM)**: The micro-anthology series (Volumes 1-5, including *The Breaking Point*, *Elemental Forces*, *Kinetic*, *Wayfarers*, *Fractures*) styled with detailed cues and motion directives.
+    - **AI Clips**: Short-form cinematic scripts and dialogue-focused technical vignettes (e.g., *Wild Kinship*, *A Duet of Distance*, *Vibe Shift*, *Reality-Bending Video*, *Table Four*, *Flat Frog Problems*).
+    - **FRAME Series**: An expressive visual exploration demonstrating atmospheric transitions, lighting, and environmental camera techniques (including *Distant*, *Wandering Souls*, *Relics of Time*, *Where Am I?*, *Old Growth*, *Forgotten*, *Samsara*, *Still, Restless*).
   - **Advanced Portal Utilities**:
     - **Dynamic "Featured" Curations**: A curated segment gathering flagged screenplays via simple database/schema properties.
     - **Default Sorting & Interactive Controls**: By default, screenplays are sorted chronologically by release date (newest first). Users can dynamically toggle the sort order or method using a compact UI selector (Latest, Oldest, or Alphabetical A-Z) next to the match count. Restricted/work-in-progress scripts (which do not have playable paths) are always pushed to the bottom of the listings under all sorting configurations to prioritize active content.

@@ -171,12 +171,36 @@ SceneFlow supports sharing projects directly via URL. When a project is loaded v
 
 ### Loading Examples
 
-You can load built-in examples by appending `?example=ID` to the URL.
+You can load any built-in screenplay example directly by appending `?example=ID` to the URL. 
 
-- **The Expansion**: `?example=expansion`
-- **Intent Over Rules**: `?example=intent`
-- **Mosaic**: `?example=mosaic`
-- **🐸 Invasion**: `?example=invasion`
+| Category | Screenplay Title | Query Parameter |
+|----------|------------------|-----------------|
+| **AI Scenes** | The Expansion | `?example=expansion` |
+| | Intent Over Rules | `?example=intent` |
+| | Mosaic | `?example=mosaic` |
+| | 🐸 Frog Invasion | `?example=invasion` |
+| | The Distance | `?example=the_distance` |
+| | Not About Fish | `?example=not_about_fish` |
+| | Afraid | `?example=afraid` |
+| **The Written Motion** | Vol 1: The Breaking Point | `?example=twm_vol1` |
+| | Vol 2: Elemental Forces | `?example=twm_vol2` |
+| | Vol 3: Kinetic | `?example=twm_vol3` |
+| | Vol 4: Wayfarers | `?example=twm_vol4` |
+| | Vol 5: Fractures | `?example=twm_vol5` |
+| **FRAME Series** | FRAME 01: Distant | `?example=frame_01` |
+| | FRAME 02: Wandering Souls | `?example=frame_02` |
+| | FRAME 03: Relics of Time | `?example=frame_03` |
+| | FRAME 04: Where Am I? | `?example=frame_04` |
+| | FRAME 05: Old Growth | `?example=frame_05` |
+| | FRAME 06: Forgotten | `?example=frame_06` |
+| | FRAME 07: Samsara | `?example=frame_07` |
+| | FRAME 08: Still, Restless | `?example=frame_08` |
+| **AI Clips** | Wild Kinship | `?example=wild_kinship` |
+| | A Duet of Distance | `?example=duet_of_distance` |
+| | Vibe Shift | `?example=vibe_shift` |
+| | Reality-Bending Video | `?example=reality_bending` |
+| | Table Four | `?example=table_four` |
+| | Flat Frog Problems | `?example=flat_frog_problems` |
 
 ### Loading Remote Projects
 

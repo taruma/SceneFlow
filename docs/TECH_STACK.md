@@ -10,7 +10,7 @@ This project is built with a modern, lightweight, and performant stack designed 
 - **Tailwind CSS**: Utility-first CSS framework for all styling.
 - **Lucide React**: A comprehensive icon library used for all UI icons.
 - **clsx & tailwind-merge**: Utilities for conditionally applying Tailwind classes without conflicts.
-- **Google Fonts**: Uses "Inter" for UI and "JetBrains Mono" for technical data/notes.
+- **Google Fonts**: Uses "Inter" for standard UI controls, "Libre Baskerville" (serif) for the elegant classic screenplay styling, and "JetBrains Mono" for technical data and monospace Auteur Brief notes.
 
 ## Video Integration
 - **react-youtube**: A thin wrapper around the YouTube IFrame Player API, allowing programmatic control (play, pause, seek) and event monitoring (onStateChange).
