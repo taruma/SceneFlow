@@ -47,7 +47,21 @@ All work is automatically saved to the browser's `localStorage`. Users can also:
 - **GUIDE (Quick Start)**: Every fresh installation or "Blank" project loads the SceneFlow GUIDE—an interactive tutorial that explains formatting, staging, and cue management through narrative examples.
 - **Export**: Download the project as a JSON file.
 - **Import**: Upload a previously exported JSON file to resume work.
-- **Library**: Load pre-configured examples from the built-in library, including the complete "The Written Motion" (TWM) series (Volumes 1-5) and specialized cinematic walkthroughs.
+- **Library Catalogue**: An immersive, built-in portal containing a fully-categorized selection of pre-configured scripts, interactive examples, and cinematic portfolios:
+  - **Category Segments**:
+    - **Featured**: Highly recommended or award-nominated scripts highlighted as core workspace showcases (e.g., *The Expansion*, *Frog Invasion*, *Elemental Forces*, *Fractures*, *Old Growth*, *Forgotten*).
+    - **AI Short Film**: High-concept cinematic narratives demonstrating advanced AI-assisted screenplay layouts (e.g., *The Expansion*, *Intent Over Rules*, *Mosaic*, *Frog Invasion*, *The Distance*).
+    - **The Written Motion (TWM)**: The complete five-volume series (Volumes 1-5, including *The Breaking Point*, *Elemental Forces*, *Kinetic*, *Wayfarers*, *Fractures*) styled with detailed cues and motion directives.
+    - **AI Clips**: Short-form cinematic scripts and dialogue-focused technical vignettes (e.g., *Wild Kinship*, *These Lamps*, *Musical Lipsync*, *Let's Learn VFX*, *Table Four*, *Lucas & Mark*).
+    - **FRAME Series**: An expressive visual compilation demonstrating atmospheric transitions, lighting, and environmental camera techniques (including *Distant*, *Wandering Souls*, *Relics of Time*, *Where Am I?*, *Old Growth*, *Forgotten*, *Samsara*, *Still, Restless*).
+  - **Advanced Portal Utilities**:
+    - **Dynamic "Featured" Curations**: A curated segment gathering flagged screenplays via simple database/schema properties.
+    - **Default Sorting & Interactive Controls**: By default, screenplays are sorted chronologically by release date (newest first). Users can dynamically toggle the sort order or method using a compact UI selector (Latest, Oldest, or Alphabetical A-Z) next to the match count. Restricted/work-in-progress scripts (which do not have playable paths) are always pushed to the bottom of the listings under all sorting configurations to prioritize active content.
+    - **Subtle Visual Highlights**: Featured scripts render with high-contrast amber/gold undertone gradients, stylized glow on mouse hover, dedicated tag layouts, and animated golden sparkle badge indicators both in the Featured tab and their default list sections.
+    - **Real-time Global Search**: Instantly filters across script titles, descriptions, volume indices, release dates, and technical tagging arrays.
+    - **Category Sidebar Navigation**: Reactive navigation featuring custom category symbols (Compass, Film, Notebook, Clapperboard, Book-Open) and automatic category item counters.
+    - **Smart Interface Indicators**: Released screenplays highlight with responsive pointer translations and arrow indicators; draft/experimental scripts display a visual Lock icon and a subdued color scheme to prevent interaction.
+    - **Volume & Tag Badging**: Renders custom metadata badges highlighting release dates, specific volume series, and structural metadata tags (such as `classic auteur`, `visual exploration`, or `nano banana pro`).
 - **Query Parameters**: Load specific examples or remote projects directly via URL.
   - `?example=ID`: Loads a built-in example (e.g., `mosaic`, `expansion`, `guide`).
   - `?project=URL`: Loads a JSON project from a remote, CORS-enabled server.

@@ -66,6 +66,15 @@ https://github.com/user-attachments/assets/cf3a7fec-2a4b-48d8-9028-245eba49934c
 - **Example Library** — Pre-built demos to get started quickly
 - **Local Storage** — Automatic saving of your work
 
+### 📚 Expanded Library Catalogue (v1.4.0)
+
+SceneFlow features a fully redesigned, responsive **Library Catalogue** serving as an interactive hub for screenplays, cinematic series, and AI-generated video examples:
+
+- **Abundant Creative Work** — Loaded with an expanded collection of creative scripts, educational templates, multi-volume episodic series, and rapid concept clips in this version.
+- **Dynamic Sorting & Filtering** — Toggle list sorting chronologically (newest or oldest first) or alphabetically. Features real-time matching against screenplay titles, summaries, volume numbers, and tags.
+- **Cross-Device Fluidity** — Optimized for desktop, tablet, and mobile viewers. Smaller viewports feature adaptive vertical heights, touch-friendly scrolling regions, horizontal-scrolling category navigation, and responsive controls.
+- **Visual Curations** — Highlights premium handpicked scripts with vibrant "Featured" styling, high-contrast badges, custom glowing hover states, and animated markers.
+
 ---
 
 ## 🎬 Use Cases

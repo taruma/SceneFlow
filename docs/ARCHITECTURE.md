@@ -23,6 +23,9 @@ The "Stage" where everything comes together. It is responsible for:
 - **User Interaction**: Handling text selection, cue creation, and mode switching (Playback vs. Edit).
 - **External Data Integration**: Detecting query parameters (`example`, `project`) on mount and fetching remote JSON data using the Fetch API.
 - **Persistence**: Saving and loading data from `localStorage`.
+- **Modular Sub-components**:
+  - **Library Catalogue** (`src/components/LibraryModal.tsx`): Handles categorized navigation, real-time search filtering, tag styling, and modal transition states (powered by static schema collections in `src/examples.ts`).
+  - **Staging Panel** (`src/components/StagingModal.tsx`): Displays isolated staging directives and hidden script metadata (e.g. character directives, technical briefings, and camera directions) in a clean dialog overlay.
 
 ## Data Flow Diagram
 1. **Raw Text** (Input)

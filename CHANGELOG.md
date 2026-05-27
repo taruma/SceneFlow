@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-05-26
+
+### Added
+- **Library Catalogue Optimizations**: Designed a highly polished, fully responsive, and structured library portal built for discovering diverse examples:
+  - **Mobile & Tablet Display Optimization**: Optimized sizes, spacing, and scroll behaviors for mobile and tablet users. Introduced a smooth horizontal-scrolling category navigation bar, responsive dialogue sizing, auto-wrapping sorting selector controls, touch-friendly scroll wrappers, and hid physical keyboard shortcut hints on smaller viewports.
+  - **Dynamic "Featured" Curations**: Highlighted standout screenplays dynamically based on schema properties, emphasizing them with beautiful visual markers, unique hover effects, and special animated badges.
+  - **Chronological Sorting & Controls**: Enabled sorting of lists chronologically (by latest or oldest release dates) or alphabetically. Restricted or draft scripts are automatically pinned at the lowest priority.
+  - **Expanded Library Content**: Shipped with an increased collection of built-in scripts, multi-volume narrative series, and educational templates.
+  - **Real-time Global Search**: Smooth instantaneous scanning across screenplay titles, summaries, series volumes, and custom metadata badges.
+  - **Interactive Staging Overlay**: Integrated an isolated drawer for examining behind-the-scenes camera instructions, prompt hierarchies, and visual styles.
+
+### Changed
+- **Modular Component Separation**: Partitioned the codebase to isolate modal interfaces into `/src/components/LibraryModal.tsx` and `/src/components/StagingModal.tsx` components for improved system testability and cleaner core lifecycle handlers.
+
 ## [1.3.1] - 2026-05-24
 
 ### Changed

@@ -1,0 +1,593 @@
+{
+  "youtubeId": "https://youtu.be/cDspiqfJSDE",
+  "scriptText": "I. PART 1\n\n[[STAGING]]\n[[INTENT]]\nCreate a cinematic mixed-media comedy sequence featuring @Image 1  as Mark, a weary guest in a high-end penthouse, and @Image 2  as Lucas as a 2D-animated fantasy warrior refugee.\n[[/INTENT]]\n[[LOGIC]]\nPrioritize mixed-media integration by adhering the 2D subject to 3D surfaces like the leather sofa. Maintain spatial continuity between Mark’s walking path and the background elements. Ensure dialogue audio contains natural penthouse room acoustics and reverb to avoid a detached studio sound.\n[[/LOGIC]]\n[[AESTHETIC]]\n- Style: 2020s Industrial Chic mixed with Traditional 2D Cel-Animation.\n- Lighting: Warm golden hour amber; soft shadows; orange LED smart-lighting under the sofa.\n- Location: Penthouse with polished concrete floors, dark walnut furniture, and designer lamps.\n- Mark: Wrinkled olive linen shirt; white tank top; charcoal joggers; clear acetate glasses.\n- Lucas: Flat 2D cel-shaded warrior; thick ink outlines; brown travel cloak; rusted sword hilt.\n- Audio: Spatially-anchored dialogue with penthouse reverb; ambient city hum and distant sirens. No Music, Foley/Ambient Only.\n- Key Prop: Circular robot vacuum with a pulsing orange light in the background.\n[[/AESTHETIC]]\n[[/STAGING]]\n\n[<BRIEF>]\n[CAM: MCU] MARK walks through the amber-lit room; his posture slouched from exhaustion. -> [ACT] He moves past a designer lamp toward the sofa. MARK: \"Look, I’m just saying... you gotta stay off the floor.\" -> [AUDIO] Heavy footsteps on concrete; muffled urban drone.\n[CAM: OTS TRACKING] Mark moves past the Cognac leather sofa; revealing LUCAS (2D) stuck to the sofa back. -> [ACT] Lucas slides laterally along the leather like a flat decal; eyes fixed on the ground. MARK (O.S.): \"Evan’s got one of those robot vacuum things and it—\" -> [AUDIO] Diegetic room acoustics.\n[CAM: CU] LUCAS snaps his head toward the floor; his hand gripping the hilt of his sword. -> [ACT] He sharply cuts off Mark’s sentence with a glare. LUCAS: \"It’s a mindless beast, Mark.\" -> [AUDIO] Sharp vocal interruption; slight metallic rattle.\n[CAM: MS] The camera focuses on the ROBOT VACUUM sitting on its dock in the background. -> [ACT] The vacuum pulses a menacing orange light. LUCAS (O.S.): \"I’ve seen its kind. It lacks honor.\" -> [VFX] Glow pulse on the vacuum interface.\n[CAM: WS] MARK arrives at the walnut coffee table. -> [ACT] He begins to sit down; his shoulders slumping as he exhales a long; tired breath. -> [ENV] Golden hour light catches dust motes in the air.\n[</BRIEF>]\n\nII. PART 2\n\n[[STAGING]]\n[[INTENT]]\nCreate a cinematic mixed-media sequence continuing from @Video 1 , featuring @Image 1  as Mark and @Image 2  as Lucas, a 2D-animated fantasy warrior refugee.\n[[/INTENT]]\n[[LOGIC]]\nPrioritize visual continuity by matching all lighting, wardrobe, and environmental details from @Video 1 . Ensure Lucas (2D) realistically distorts his shape as the 3D leather sofa cushion compresses under Mark's weight. Maintain diegetic room acoustics to ensure dialogue feels grounded in the penthouse space.\n[[/LOGIC]]\n[[AESTHETIC]]\n- Reference: Follow @Video 1  for color palette, lighting, and wardrobe.\n- Location: Penthouse living room; exposed industrial ceiling pipes; Cognac leather sofa.\n- Mark: Weary expression; wrinkled olive shirt; white tank top; clear acetate glasses.\n- Lucas: Traditional 2D warrior; flat-adhered to sofa surface; large expressive eyes; tattered cloak.\n- Audio: Diegetic penthouse reverb; heavy leather creak; low-frequency ambient city drone.\n- Spatial Anchor: Mark sits on the left; Lucas lies flat on the right sofa cushion.\n[[/AESTHETIC]]\n[[/STAGING]]\n\n[<BRIEF>]\n[CAM: MS] MARK drops his weight heavily onto the leather sofa. -> [ACT] The cushion sinks deeply; causing LUCAS’S 2D body to stretch and distort as the leather surface pulls downward. -> [AUDIO] Sharp; loud leather creak; heavy thud.\n[CAM: MCU] MARK rubs the bridge of his nose with his thumb and forefinger; his eyes squeezed shut in exhaustion. -> [ACT] He slightly tilts his chin toward the flat warrior. MARK: \"You okay? You’ve been... flat...\" -> [AUDIO] Subtle skin friction; tired exhale.\n[CAM: MCU] LUCAS lies perfectly rigid on the sofa cushion; staring straight up at the industrial pipes on the ceiling. -> [ACT] His large 2D eyes blink slowly; his flat body remains unmoving against the leather. MARK (O.S.): \"like that since I got home.\" -> [ENV] Amber light reflecting off the metallic ceiling pipes.\n[CAM: ECU] Close-up on LUCAS’S face. -> [ACT] His mouth moves with dramatic gravity while his gaze remains fixed upward. LUCAS: \"The physics of this realm are... offensive, Mark.\" -> [AUDIO] Deep; gravelly whisper with diegetic room reverb.\n[CAM: MS] MARK opens his eyes and looks down at the flat warrior. -> [ACT] LUCAS’S eyes shift toward MARK without his head moving. LUCAS (O.S.): \"There is no 'Z-axis' in the Great Marsh.\" -> [VFX] 2D shadow stays locked to the leather grain.\n[CAM: MCU] MARK’s face in profile as he looks down at LUCAS. -> [ACT] His frustrated expression melts; his brow relaxes and his jaw softens into a look of genuine pity. -> [AUDIO] Distant; muffled city siren.\n[</BRIEF>]\n",
+  "cues": [
+    {
+      "id": "cue_1",
+      "type": "shot",
+      "selectedText": "[CAM: MCU]",
+      "startTime": 0,
+      "endTime": 3,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 1251,
+      "endIndex": 1261
+    },
+    {
+      "id": "cue_2",
+      "type": "action",
+      "selectedText": "MARK walks through the amber-lit room; his posture slouched from exhaustion.",
+      "startTime": 0,
+      "endTime": 3,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1262,
+      "endIndex": 1338
+    },
+    {
+      "id": "cue_3",
+      "type": "audio",
+      "selectedText": "Heavy footsteps on concrete; muffled urban drone.",
+      "startTime": 0,
+      "endTime": 3,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 1469,
+      "endIndex": 1518
+    },
+    {
+      "id": "cue_4",
+      "type": "dialogue",
+      "selectedText": "Look, I’m just saying... you gotta stay off the floor.",
+      "startTime": 0,
+      "endTime": 5,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "MARK",
+      "startIndex": 1402,
+      "endIndex": 1456
+    },
+    {
+      "id": "cue_5",
+      "type": "action",
+      "selectedText": "He moves past a designer lamp toward the sofa.",
+      "startTime": 1,
+      "endTime": 3,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1348,
+      "endIndex": 1394
+    },
+    {
+      "id": "cue_6",
+      "type": "camera",
+      "selectedText": "[CAM: OTS TRACKING]",
+      "startTime": 3,
+      "endTime": 6,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 1519,
+      "endIndex": 1538
+    },
+    {
+      "id": "cue_7",
+      "type": "action",
+      "selectedText": "Mark moves past the Cognac leather sofa; revealing LUCAS (2D) stuck to the sofa back.",
+      "startTime": 3,
+      "endTime": 6,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1539,
+      "endIndex": 1624
+    },
+    {
+      "id": "cue_8",
+      "type": "audio",
+      "selectedText": "Diegetic room acoustics.",
+      "startTime": 3,
+      "endTime": 8,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 1798,
+      "endIndex": 1822
+    },
+    {
+      "id": "cue_9",
+      "type": "dialogue",
+      "selectedText": "Evan’s got one of those robot vacuum things and it—",
+      "startTime": 5,
+      "endTime": 8,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "MARK",
+      "startIndex": 1734,
+      "endIndex": 1785
+    },
+    {
+      "id": "cue_10",
+      "type": "shot",
+      "selectedText": "[CAM: CU]",
+      "startTime": 8,
+      "endTime": 10,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 1823,
+      "endIndex": 1832
+    },
+    {
+      "id": "cue_11",
+      "type": "action",
+      "selectedText": "LUCAS snaps his head toward the floor; his hand gripping the hilt of his sword.",
+      "startTime": 8,
+      "endTime": 10,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1833,
+      "endIndex": 1912
+    },
+    {
+      "id": "cue_12",
+      "type": "action",
+      "selectedText": "He sharply cuts off Mark’s sentence with a glare.",
+      "startTime": 8,
+      "endTime": 10,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1922,
+      "endIndex": 1971
+    },
+    {
+      "id": "cue_13",
+      "type": "dialogue",
+      "selectedText": "It’s a mindless beast, Mark.",
+      "startTime": 8,
+      "endTime": 10,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "LUCAS",
+      "startIndex": 1980,
+      "endIndex": 2008
+    },
+    {
+      "id": "cue_14",
+      "type": "audio",
+      "selectedText": "Sharp vocal interruption; slight metallic rattle.",
+      "startTime": 8,
+      "endTime": 10,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 2021,
+      "endIndex": 2070
+    },
+    {
+      "id": "cue_15",
+      "type": "shot",
+      "selectedText": "[CAM: MS]",
+      "startTime": 9,
+      "endTime": 13,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 2071,
+      "endIndex": 2080
+    },
+    {
+      "id": "cue_16",
+      "type": "camera",
+      "selectedText": "The camera focuses on the ROBOT VACUUM sitting on its dock in the background.",
+      "startTime": 9,
+      "endTime": 13,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 2081,
+      "endIndex": 2158
+    },
+    {
+      "id": "cue_17",
+      "type": "action",
+      "selectedText": "The vacuum pulses a menacing orange light.",
+      "startTime": 9,
+      "endTime": 13,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2168,
+      "endIndex": 2210
+    },
+    {
+      "id": "cue_18",
+      "type": "vfx",
+      "selectedText": "Glow pulse on the vacuum interface.",
+      "startTime": 9,
+      "endTime": 13,
+      "colorClass": "bg-cyan-400/50",
+      "speaker": null,
+      "startIndex": 2272,
+      "endIndex": 2307
+    },
+    {
+      "id": "cue_19",
+      "type": "dialogue",
+      "selectedText": "I’ve seen its kind. It lacks honor.",
+      "startTime": 10,
+      "endTime": 14,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "LUCAS",
+      "startIndex": 2226,
+      "endIndex": 2261
+    },
+    {
+      "id": "cue_20",
+      "type": "shot",
+      "selectedText": "[CAM: WS]",
+      "startTime": 13,
+      "endTime": 16,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 2308,
+      "endIndex": 2317
+    },
+    {
+      "id": "cue_21",
+      "type": "action",
+      "selectedText": "MARK arrives at the walnut coffee table.",
+      "startTime": 13,
+      "endTime": 15,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2318,
+      "endIndex": 2358
+    },
+    {
+      "id": "cue_22",
+      "type": "action",
+      "selectedText": "He begins to sit down; his shoulders slumping as he exhales a long; tired breath.",
+      "startTime": 13,
+      "endTime": 16,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2368,
+      "endIndex": 2449
+    },
+    {
+      "id": "cue_23",
+      "type": "environment",
+      "selectedText": "Golden hour light catches dust motes in the air.",
+      "startTime": 13,
+      "endTime": 16,
+      "colorClass": "bg-slate-400/50",
+      "speaker": null,
+      "startIndex": 2459,
+      "endIndex": 2507
+    },
+    {
+      "id": "cue_24",
+      "selectedText": "[CAM: MS]",
+      "startIndex": 3638,
+      "endIndex": 3647,
+      "startTime": 14,
+      "endTime": 16,
+      "colorClass": "bg-purple-400/50",
+      "type": "shot"
+    },
+    {
+      "id": "cue_25",
+      "type": "action",
+      "selectedText": "MARK drops his weight heavily onto the leather sofa.",
+      "startTime": 14,
+      "endTime": 16,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3648,
+      "endIndex": 3700
+    },
+    {
+      "id": "cue_26",
+      "type": "action",
+      "selectedText": "The cushion sinks deeply; causing LUCAS’S 2D body to stretch and distort as the leather surface pulls downward.",
+      "startTime": 14,
+      "endTime": 16,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3710,
+      "endIndex": 3821
+    },
+    {
+      "id": "cue_27",
+      "type": "audio",
+      "selectedText": "Sharp; loud leather creak; heavy thud.",
+      "startTime": 14,
+      "endTime": 16,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3833,
+      "endIndex": 3871
+    },
+    {
+      "id": "cue_28",
+      "type": "shot",
+      "selectedText": "[CAM: MCU]",
+      "startTime": 16,
+      "endTime": 19,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 3872,
+      "endIndex": 3882
+    },
+    {
+      "id": "cue_29",
+      "type": "action",
+      "selectedText": "MARK rubs the bridge of his nose with his thumb and forefinger; his eyes squeezed shut in exhaustion.",
+      "startTime": 16,
+      "endTime": 19,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3883,
+      "endIndex": 3984
+    },
+    {
+      "id": "cue_30",
+      "type": "action",
+      "selectedText": "He slightly tilts his chin toward the flat warrior.",
+      "startTime": 16,
+      "endTime": 19,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3994,
+      "endIndex": 4045
+    },
+    {
+      "id": "cue_31",
+      "type": "dialogue",
+      "selectedText": "You okay? You’ve been... flat...",
+      "startTime": 16,
+      "endTime": 19,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "MARK",
+      "startIndex": 4053,
+      "endIndex": 4085
+    },
+    {
+      "id": "cue_32",
+      "type": "audio",
+      "selectedText": "Subtle skin friction; tired exhale.",
+      "startTime": 16,
+      "endTime": 19,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 4098,
+      "endIndex": 4133
+    },
+    {
+      "id": "cue_33",
+      "type": "shot",
+      "selectedText": "[CAM: MCU]",
+      "startTime": 19,
+      "endTime": 21,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 4134,
+      "endIndex": 4144
+    },
+    {
+      "id": "cue_34",
+      "type": "action",
+      "selectedText": "LUCAS lies perfectly rigid on the sofa cushion; staring straight up at the industrial pipes on the ceiling.",
+      "startTime": 19,
+      "endTime": 21,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4145,
+      "endIndex": 4252
+    },
+    {
+      "id": "cue_35",
+      "type": "action",
+      "selectedText": "His large 2D eyes blink slowly; his flat body remains unmoving against the leather.",
+      "startTime": 19,
+      "endTime": 21,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4262,
+      "endIndex": 4345
+    },
+    {
+      "id": "cue_36",
+      "type": "environment",
+      "selectedText": "Amber light reflecting off the metallic ceiling pipes.",
+      "startTime": 19,
+      "endTime": 21,
+      "colorClass": "bg-slate-400/50",
+      "speaker": null,
+      "startIndex": 4398,
+      "endIndex": 4452
+    },
+    {
+      "id": "cue_37",
+      "type": "dialogue",
+      "selectedText": "like that since I got home.",
+      "startTime": 20,
+      "endTime": 22,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "MARK",
+      "startIndex": 4360,
+      "endIndex": 4387
+    },
+    {
+      "id": "cue_38",
+      "type": "shot",
+      "selectedText": "[CAM: ECU]",
+      "startTime": 21,
+      "endTime": 25,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 4453,
+      "endIndex": 4463
+    },
+    {
+      "id": "cue_39",
+      "type": "action",
+      "selectedText": "His mouth moves with dramatic gravity while his gaze remains fixed upward.",
+      "startTime": 21,
+      "endTime": 25,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4499,
+      "endIndex": 4573
+    },
+    {
+      "id": "cue_40",
+      "type": "dialogue",
+      "selectedText": "The physics of this realm are... offensive, Mark.",
+      "startTime": 21,
+      "endTime": 25,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "LUCAS",
+      "startIndex": 4582,
+      "endIndex": 4631
+    },
+    {
+      "id": "cue_41",
+      "type": "audio",
+      "selectedText": "Deep; gravelly whisper with diegetic room reverb.",
+      "startTime": 21,
+      "endTime": 25,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 4644,
+      "endIndex": 4693
+    },
+    {
+      "id": "cue_42",
+      "type": "shot",
+      "selectedText": "[CAM: MS]",
+      "startTime": 25,
+      "endTime": 28,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 4694,
+      "endIndex": 4703
+    },
+    {
+      "id": "cue_43",
+      "type": "action",
+      "selectedText": "MARK opens his eyes and looks down at the flat warrior.",
+      "startTime": 25,
+      "endTime": 28,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4704,
+      "endIndex": 4759
+    },
+    {
+      "id": "cue_44",
+      "type": "action",
+      "selectedText": "LUCAS’S eyes shift toward MARK without his head moving.",
+      "startTime": 25,
+      "endTime": 28,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4769,
+      "endIndex": 4824
+    },
+    {
+      "id": "cue_45",
+      "type": "dialogue",
+      "selectedText": "There is no 'Z-axis' in the Great Marsh.",
+      "startTime": 25,
+      "endTime": 28,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "LUCAS",
+      "startIndex": 4840,
+      "endIndex": 4880
+    },
+    {
+      "id": "cue_46",
+      "type": "vfx",
+      "selectedText": "2D shadow stays locked to the leather grain.",
+      "startTime": 25,
+      "endTime": 28,
+      "colorClass": "bg-cyan-400/50",
+      "speaker": null,
+      "startIndex": 4891,
+      "endIndex": 4935
+    },
+    {
+      "id": "cue_47",
+      "type": "shot",
+      "selectedText": "[CAM: MCU]",
+      "startTime": 28,
+      "endTime": 30,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 4936,
+      "endIndex": 4946
+    },
+    {
+      "id": "cue_48",
+      "type": "action",
+      "selectedText": "MARK’s face in profile as he looks down at LUCAS.",
+      "startTime": 28,
+      "endTime": 30,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4947,
+      "endIndex": 4996
+    },
+    {
+      "id": "cue_49",
+      "type": "action",
+      "selectedText": "His frustrated expression melts; his brow relaxes and his jaw softens into a look of genuine pity.",
+      "startTime": 28,
+      "endTime": 30,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 5006,
+      "endIndex": 5104
+    },
+    {
+      "id": "cue_50",
+      "type": "audio",
+      "selectedText": "Distant; muffled city siren.",
+      "startTime": 28,
+      "endTime": 30,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 5116,
+      "endIndex": 5144
+    }
+  ],
+  "settings": {
+    "general": {
+      "before": 0.5,
+      "after": 0.5
+    },
+    "dialogue": {
+      "before": 0.2,
+      "after": 1
+    },
+    "action": {
+      "before": 0,
+      "after": 0
+    },
+    "camera": {
+      "before": 0,
+      "after": 0
+    },
+    "shot": {
+      "before": 0,
+      "after": 0
+    },
+    "audio": {
+      "before": 0,
+      "after": 0
+    },
+    "vfx": {
+      "before": 0,
+      "after": 0
+    },
+    "transition": {
+      "before": 0,
+      "after": 0
+    },
+    "environment": {
+      "before": 0,
+      "after": 0
+    }
+  }
+}

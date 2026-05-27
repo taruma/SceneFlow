@@ -7,6 +7,7 @@ import { EXAMPLE_SECTIONS } from './examples';
 import { processScript, type LineType, type ProcessedLine } from './lib/scriptProcessor';
 import { getLineClass, SCRIPT_STYLES } from './lib/scriptStyles';
 import { StagingModal } from './components/StagingModal';
+import { LibraryModal } from './components/LibraryModal';
 
 // Utility to extract YouTube ID from various URL formats
 function extractYoutubeId(url: string) {
@@ -1196,60 +1197,16 @@ export default function App() {
               <Plus size={12} /> <span className="hidden xl:inline">Guide</span>
             </button>
             
-            <div className="relative">
-              <button 
-                onClick={() => setIsLibraryOpen(!isLibraryOpen)}
-                title="Example Library"
-                className={cn(
-                  "flex items-center gap-1 px-1.5 py-1.5 lg:gap-1.5 lg:px-2 xl:px-2.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border shadow-sm",
-                  isLibraryOpen ? "bg-stone-900 text-white border-stone-900" : "bg-white hover:bg-stone-50 text-stone-600 border-stone-200"
-                )}
-              >
-                <Book size={12} /> <span className="hidden xl:inline">Library</span>
-                <ChevronDown size={10} className={cn("transition-transform duration-200", isLibraryOpen && "rotate-180")} />
-              </button>
-              
-              {isLibraryOpen && (
-                <>
-                  <div 
-                    className="fixed inset-0 z-40 bg-stone-900/20 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none" 
-                    onClick={() => setIsLibraryOpen(false)} 
-                  />
-                  <div className="fixed lg:absolute top-1/2 lg:top-full left-1/2 lg:left-auto lg:right-0 -translate-x-1/2 lg:translate-x-0 -translate-y-1/2 lg:translate-y-0 mt-0 lg:mt-2 w-[calc(100%-2rem)] max-w-sm lg:w-64 bg-white rounded-2xl shadow-2xl border border-stone-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 lg:slide-in-from-top-2 duration-200">
-                    <div className="max-h-[70vh] overflow-y-auto scrollbar-hide">
-                      {EXAMPLE_SECTIONS.map((section, sectionIdx) => (
-                        <div key={section.label} className={cn(sectionIdx > 0 && "border-t border-stone-100")}>
-                          <div className="p-3 bg-stone-50/50">
-                            <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest">{section.label}</p>
-                          </div>
-                          <div className="p-1.5">
-                            {section.items.map(example => (
-                              <button
-                                key={example.id}
-                                onClick={() => {
-                                  setResetConfirmation({ 
-                                    isOpen: true, 
-                                    type: 'example', 
-                                    examplePath: example.path, 
-                                    exampleTitle: example.title,
-                                    error: null,
-                                  });
-                                  setIsLibraryOpen(false);
-                                }}
-                                className="w-full flex flex-col items-start gap-0.5 p-2.5 hover:bg-stone-50 rounded-xl transition-colors group text-left"
-                              >
-                                <span className="text-xs font-bold text-stone-900 group-hover:text-stone-900">{example.title}</span>
-                                <span className="text-[10px] text-stone-400 font-medium">{example.description}</span>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </>
+            <button 
+              onClick={() => setIsLibraryOpen(true)}
+              title="Example Library Catalog"
+              className={cn(
+                "flex items-center gap-1 px-1.5 py-1.5 lg:gap-1.5 lg:px-2 xl:px-2.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border shadow-sm",
+                isLibraryOpen ? "bg-stone-900 text-white border-stone-900" : "bg-white hover:bg-stone-50 text-stone-600 border-stone-200"
               )}
-            </div>
+            >
+              <Book size={12} /> <span className="hidden xl:inline">Library</span>
+            </button>
           </div>
 
           <div className="hidden lg:flex items-center gap-2 px-3 xl:px-4 py-2 bg-stone-900 rounded-xl shadow-inner animate-in fade-in zoom-in duration-500">
@@ -1977,6 +1934,20 @@ export default function App() {
         onClose={() => setActiveStaging(null)}
         label={activeStaging?.label || ""}
         content={activeStaging?.content || ""}
+      />
+
+      <LibraryModal
+        isOpen={isLibraryOpen}
+        onClose={() => setIsLibraryOpen(false)}
+        onSelectExample={(path, title) => {
+          setResetConfirmation({ 
+            isOpen: true, 
+            type: 'example', 
+            examplePath: path, 
+            exampleTitle: title,
+            error: null,
+          });
+        }}
       />
 
       {/* Raw Script Modal */}
