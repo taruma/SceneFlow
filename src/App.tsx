@@ -959,7 +959,7 @@ export default function App() {
                   playerState === 1 ? SCRIPT_STYLES.stagingBadgeDisabled : SCRIPT_STYLES.stagingBadgeActive
                 )}
               >
-                <Info size={10} className="text-stone-400" />
+                <Info size={isDesktop ? 10 : 8} className="text-stone-400" />
                 <span className={SCRIPT_STYLES.stagingBadgeText}>
                   {block.label}
                 </span>
@@ -1141,7 +1141,7 @@ export default function App() {
     });
 
     return scriptElements;
-  }, [state.scriptText, state.cues, currentTime, selection, mode, newCue.id, player, playerState]);
+  }, [state.scriptText, state.cues, currentTime, selection, mode, newCue.id, player, playerState, isDesktop]);
 
   const canSave = newCue.selectedText && newCue.startTime !== undefined && newCue.endTime !== undefined && newCue.startIndex !== undefined && newCue.endIndex !== undefined;
 

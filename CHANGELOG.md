@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2026-05-28
+
+### Added
+- **Mobile Staging Overlay Visibility**: Enabled the staging block overlay/badge for mobile and tablet devices, offering access to behind-the-scenes camera staging instructions on all device widths.
+
+### Changed
+- **Adaptive Staging Badge Design**: Tailored the staging block layout specifically for mobile screens to conserve space without impacting structural layouts or desktop styling:
+  - Downscaled the badge font sizes, icon sizes, padding, and gaps on mobile viewports for a compact, neat appearance.
+  - Adjusted mobile container margins to gracefully flow beneath screenplay headings.
+
 ## [1.4.0] - 2026-05-26
 
 ### Added
