@@ -263,6 +263,14 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         description: 'The robot vacuum is officially his archenemy. This 2D frog is definitely not a fan of the third dimension.',
         releaseDate: '2026-04-22',
         tags: ['auteur brief', 'invideo', 'seedance 2.0']
+      },
+      {
+        id: 'the_magic_card',
+        title: 'The Magic Card',
+        path: '/ai_clips_magic_card.json',
+        description: 'The ritual begins by activating an ancient golden seal in the pouring rain and ends with snaring a floating mystical card high above the city.',
+        releaseDate: '2026-06-03',
+        tags: ['auteur brief', 'openart', 'seedance 2.0']
       }
     ]
   }
