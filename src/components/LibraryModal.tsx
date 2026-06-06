@@ -41,7 +41,7 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
   // Get total items counts for badges
   const getCategoryCount = (category: string) => {
     if (category === "All") {
-      return EXAMPLE_SECTIONS.reduce((sum, s) => sum + s.items.length, 0);
+      return EXAMPLE_SECTIONS.filter((s) => !s.hideFromAll).reduce((sum, s) => sum + s.items.length, 0);
     }
     if (category === "Featured") {
       return EXAMPLE_SECTIONS.reduce((sum, s) => sum + s.items.filter((item) => item.featured).length, 0);
@@ -50,8 +50,21 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
     return sec ? sec.items.length : 0;
   };
 
+  const getItemSectionLabel = (itemId: string): string => {
+    const sec = EXAMPLE_SECTIONS.find((s) => s.items.some((item) => item.id === itemId));
+    return sec ? sec.label : "";
+  };
+
   // Filter examples based on search and selected category
-  const filteredSections = (selectedCategory === "Featured"
+  const filteredSections = (selectedCategory === "All"
+    ? [
+        {
+          label: "All Works",
+          icon: "compass",
+          items: EXAMPLE_SECTIONS.filter((s) => !s.hideFromAll).flatMap((s) => s.items),
+        },
+      ]
+    : selectedCategory === "Featured"
     ? [
         {
           label: "Featured Works",
@@ -61,7 +74,7 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
       ]
     : EXAMPLE_SECTIONS.map((section) => {
         // Determine if we should show this section based on category selection
-        const matchesCategory = selectedCategory === "All" || selectedCategory === section.label;
+        const matchesCategory = selectedCategory === section.label;
 
         if (!matchesCategory) {
           return { ...section, items: [] };
@@ -112,28 +125,28 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
   const totalFilteredCount = filteredSections.reduce((sum, s) => sum + s.items.length, 0);
 
   // Helper to assign icons to categories conceptually or from config
-  const getCategoryIcon = (label: string) => {
-    if (label === "All") return <Compass size={14} />;
+  const getCategoryIcon = (label: string, size = 14) => {
+    if (label === "All") return <Compass size={size} />;
     if (label === "Featured" || label === "Featured Works") {
-      return <Sparkles size={14} className="text-amber-500 fill-amber-500/10" />;
+      return <Sparkles size={size} className="text-amber-500 fill-amber-500/10" />;
     }
     const section = EXAMPLE_SECTIONS.find((s) => s.label === label);
     const icon = section?.icon || "";
     switch (icon.toLowerCase()) {
       case "film":
-        return <Film size={14} className="text-amber-500" />;
+        return <Film size={size} className="text-amber-500" />;
       case "notebook":
-        return <Notebook size={14} className="text-emerald-500" />;
+        return <Notebook size={size} className="text-emerald-500" />;
       case "clapperboard":
-        return <Clapperboard size={14} className="text-rose-500" />;
+        return <Clapperboard size={size} className="text-rose-500" />;
       case "bookopen":
       case "book-open":
-        return <BookOpen size={14} className="text-indigo-400" />;
+        return <BookOpen size={size} className="text-indigo-400" />;
       default:
         const cleanLabel = label.toLowerCase();
-        if (cleanLabel.includes("film") || cleanLabel.includes("short") || cleanLabel.includes("scene")) return <Film size={14} className="text-amber-500" />;
-        if (cleanLabel.includes("written") || cleanLabel.includes("motion")) return <Notebook size={14} className="text-emerald-500" />;
-        return <BookOpen size={14} className="text-stone-400" />;
+        if (cleanLabel.includes("film") || cleanLabel.includes("short") || cleanLabel.includes("scene")) return <Film size={size} className="text-amber-500" />;
+        if (cleanLabel.includes("written") || cleanLabel.includes("motion")) return <Notebook size={size} className="text-emerald-500" />;
+        return <BookOpen size={size} className="text-stone-400" />;
     }
   };
 
@@ -306,6 +319,27 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                               }`}
                             >
                               <div className="w-full">
+                                {/* Section Category Indicator Row */}
+                                {(selectedCategory === "All" || selectedCategory === "Featured") && (() => {
+                                  const itemSecLabel = getItemSectionLabel(example.id);
+                                  return (
+                                    <div className={`flex items-center gap-1.5 mb-2 px-2 py-0.5 rounded-md w-fit border transition-all ${
+                                      example.featured
+                                        ? "bg-amber-100/40 border-amber-200/30 text-amber-850"
+                                        : "bg-stone-100/50 border-stone-200/30 text-stone-500"
+                                    }`}>
+                                      <span className="shrink-0 flex items-center justify-center">
+                                        {getCategoryIcon(itemSecLabel, 10)}
+                                      </span>
+                                      <span className={`text-[8.5px] font-black uppercase tracking-[0.12em] ${
+                                        example.featured ? "text-amber-900/80" : "text-stone-500/90"
+                                      }`}>
+                                        {itemSecLabel}
+                                      </span>
+                                    </div>
+                                  );
+                                })()}
+
                                 {/* Top Metadata: Date & Volume indicator */}
                                 <div className="flex flex-wrap items-center gap-1.5 mb-1.5 w-full">
                                   {example.featured && (

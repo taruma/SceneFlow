@@ -13,6 +13,7 @@ export interface ExampleSection {
   label: string;
   icon?: string;
   items: Example[];
+  hideFromAll?: boolean;
 }
 
 export const EXAMPLE_SECTIONS: ExampleSection[] = [
@@ -224,6 +225,7 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
   {
     label: "AI Clips",
     icon: "clapperboard",
+    hideFromAll: true,
     items: [
       {
         id: 'wild_kinship',
