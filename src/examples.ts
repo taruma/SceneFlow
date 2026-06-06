@@ -128,6 +128,16 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         releaseDate: '2026-05-12',
         volume: 'TWM: Volume 5',
         tags: ['auteur brief', 'dreamina', 'seedance 2.0'],
+        featured: false
+      },
+      {
+        id: 'twm_vol6',
+        title: 'Wonder',
+        path: '/twm_vol6_wonder.json',
+        description: 'When a shifting aerial current reveals an uncharted valley, a crew of daring explorers must trust the mystical path to guide their ships home.',
+        releaseDate: '2026-06-01',
+        volume: 'TWM: Volume 6',
+        tags: ['auteur script', 'auteur brief', 'dreamina', 'seedance 2.0'],
         featured: true
       }
     ]
@@ -246,7 +256,7 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         description: "Want to create mind-blowing videos? Here are the best visual effects tricks to completely transform your content.",
         releaseDate: '2026-05-07',
         tags: ['auteur brief', 'dreamina', 'seedance 2.0'],
-        featured: true
+        featured: false
       },
       {
         id: 'table_four',
@@ -271,6 +281,15 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         description: 'The ritual begins by activating an ancient golden seal in the pouring rain and ends with snaring a floating mystical card high above the city.',
         releaseDate: '2026-06-03',
         tags: ['auteur brief', 'openart', 'seedance 2.0']
+      },
+      {
+        id: 'wonder_uncut',
+        title: 'Wonder (Uncut)',
+        path: '/wonder_uncut.json',
+        description: 'Sky-sailing adventurers race glowing sky-whales through a majestic, uncharted valley.',
+        releaseDate: '2026-06-06',
+        tags: ['auteur script', 'auteur brief', 'dreamina', 'seedance 2.0'],
+        featured: true
       }
     ]
   }
