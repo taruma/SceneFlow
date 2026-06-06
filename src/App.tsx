@@ -1731,7 +1731,16 @@ export default function App() {
                           <Search size={10} /> {altLocations ? 'Refresh' : 'Find Alternative'}
                         </button>
                       </div>
-                      <p className="text-xs font-mono line-clamp-1 text-stone-600 italic">"{selection.text}"</p>
+                      <textarea
+                        value={newCue.selectedText || ''}
+                        onChange={(e) => {
+                          const text = e.target.value;
+                          setNewCue(prev => ({ ...prev, selectedText: text }));
+                          setSelection(s => s ? { ...s, text } : { text, start: newCue.startIndex || 0, end: newCue.endIndex || 0 });
+                        }}
+                        className="w-full bg-white border border-stone-200 rounded-lg p-2 text-stone-800 font-mono text-xs min-h-[60px] focus:outline-none focus:ring-1 focus:ring-stone-500 transition-all duration-200 hover:border-stone-300"
+                        placeholder="Edit cue text..."
+                      />
                       
                       {altLocations && altLocations.length > 1 && (
                         <div className="pt-2 mt-2 border-t border-stone-200">

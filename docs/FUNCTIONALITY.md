@@ -22,6 +22,7 @@ The core feature of the app is the ability to create "Cues."
 - **Highlighting**: As the video plays, the corresponding text in the script highlights in real-time.
 - **Overlaps**: Multiple cues can overlap on the same text. An indicator (dot) appears in Edit mode to help manage these.
 - **Alignment**: An "Align" tool automatically fixes script indices if the text is modified.
+- **Manual Cue Text Editing**: Users can manually modify the cue's selected text in the Edit Sync Cue panel via a clean monospace textarea. This facilitates quick textual corrections or alignment tweaks safely without needing to do raw JSON editing, allowing the Align or find alternative matching tools to snap the newly updated selections.
 - **Duplicate Text Resolution**: When multiple identical strings exist in the script (e.g., "WIDE SHOT"), users can use the "Find Alternative" button in the Edit Cue UI to browse all occurrences and snap the cue to the correct one. The system automatically ignores text matches inside `[[STAGING]]` blocks and system tags like `[<BRIEF>]` to ensure alignment only targets visible screenplay content, while allowing functional notes like `[INTENT]` to remain visible.
 - **Auto-Scroll**: The script automatically scrolls to keep the active cue in view.
   - **Focus Modes**: Users can multi-select specific cue types to follow (e.g., only Dialogue and Action).
