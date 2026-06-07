@@ -246,7 +246,7 @@ export default function App() {
   useEffect(() => {
     const saved = localStorage.getItem('screenplay_sync_state');
     if (!saved) {
-      fetch('/example_the_expansion.json')
+      fetch('/examples/example_the_expansion.json')
         .then(res => res.json())
         .then(data => {
           setState(data);
@@ -331,7 +331,7 @@ export default function App() {
   };
 
   const resetState = () => {
-    fetch('/example_the_expansion.json')
+    fetch('/examples/example_the_expansion.json')
       .then(res => res.json())
       .then(data => {
         const finalData = { ...data, settings: data.settings || DEFAULT_SETTINGS };
@@ -349,7 +349,7 @@ export default function App() {
   };
 
   const loadBlank = () => {
-    fetch('/blank.json')
+    fetch('/examples/blank.json')
       .then(res => res.json())
       .then(data => {
         const finalData = { ...data, settings: data.settings || DEFAULT_SETTINGS };
