@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.3] - 2026-06-07
+
+### Added
+- **Global Library Filter Settings**: Added support for `hideFromAll` metadata in example sections within `examples.ts`. This allows specific sections (e.g., "AI Clips") to be kept out of the unified "All Works" view to reduce noise and emphasize high-priority curations like "AI Scenes" and "The Written Motion".
+- **Dynamic Category Badges**: Added contextual section indicators inside screenplay cards in the Library view. These badges dynamically reference which section a screenplay belongs to, complete with matching category-themed icons (e.g., Compass, Notebook, Film) for quick identification.
+
+### Changed
+- **Smart Category Badge Suppression**: Cleaned up the library UI by only showing the section category indicators inside the unified "All" and "Featured" views. The identifier badges are automatically suppressed when browsing specific, individual categories, preventing redundant labels and keeping the interface clean.
+
 ## [1.4.2] - 2026-06-06
 
 ### Added
