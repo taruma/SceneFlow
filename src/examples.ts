@@ -36,7 +36,8 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         path: '/examples/example_intent_over_rules.json',
         description: 'Two mathematicians face the reality of an AI that has evolved past rigid rules into actual reasoning',
         releaseDate: '2026-03-01',
-        tags: ['classic auteur', 'dreamina', 'seedance 2.0']
+        tags: ['classic auteur', 'dreamina', 'seedance 2.0'],
+        featured: true
       },
       {
         id: 'mosaic',
@@ -68,7 +69,7 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         path: '/examples/not_about_fish.json',
         description: 'Every guy has that one friend who takes dream interpretation way too seriously. Robert is definitely not that guy.',
         releaseDate: '2026-05-22',
-        tags: ['auteur brief', 'invideo', 'seedance 2.0', 'AgentOne']
+        tags: ['auteur brief', 'invideo', 'seedance 2.0']
       },
       {
         id: 'afraid',
@@ -76,8 +77,32 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         path: '/examples/afraid.json',
         description: 'She thought their trip to Venice was a perfect fairy tale. She didn\'t know he was carrying a reality-shattering truth the entire time.',
         releaseDate: '2026-05-24',
-        tags: ['auteur brief', 'invideo', 'seedance 2.0', 'AgentOne'],
+        tags: ['auteur brief', 'invideo', 'seedance 2.0'],
         featured: true
+      },
+      {
+        id: 'duet_of_distance',
+        title: 'A Duet of Distance',
+        path: '/examples/duet_of_distance.json',
+        description: 'When traditional elegance meets modern regret on the grandest stage.',
+        releaseDate: '2026-05-04',
+        tags: ['auteur brief', 'dreamina', 'music', 'seedance 2.0']
+      },
+      {
+        id: 'table_four',
+        title: 'Table Four',
+        path: '/examples/table_four.json',
+        description: 'A comforting plate of freshly cut chanterelle pasta brings an unexpected wave of grief and longing.',
+        releaseDate: '2026-04-13',
+        tags: ['classic auteur', 'auteur brief', 'invideo', 'seedance 2.0']
+      },
+      {
+        id: 'flat_frog_problems',
+        title: 'Flat Frog Problems',
+        path: '/examples/flat_frog_problems.json',
+        description: 'The robot vacuum is officially his archenemy. This 2D frog is definitely not a fan of the third dimension.',
+        releaseDate: '2026-04-22',
+        tags: ['auteur brief', 'invideo', 'seedance 2.0']
       },
       {
         id: 'museum',
@@ -138,7 +163,7 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         releaseDate: '2026-05-12',
         volume: 'TWM: Volume 5',
         tags: ['auteur brief', 'dreamina', 'seedance 2.0'],
-        featured: false
+        featured: true
       },
       {
         id: 'twm_vol6',
@@ -227,7 +252,8 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         description: 'A philosophical reflection on human purpose, questioning if our architectural achievements have caused us to forget why we are here.',
         releaseDate: '2026-03-30',
         volume: 'FRAME_08',
-        tags: ['visual poem', 'nano banana pro', 'nano banana 2', 'kling 3.0', 'invideo']
+        tags: ['visual poem', 'nano banana pro', 'nano banana 2', 'kling 3.0', 'invideo'],
+        featured: true
       }
     ]
   },
@@ -245,20 +271,12 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         tags: ['auteur brief', 'openart', 'seedance 2.0']
       },
       {
-        id: 'duet_of_distance',
-        title: 'A Duet of Distance',
-        path: '/examples/duet_of_distance.json',
-        description: 'When traditional elegance meets modern regret on the grandest stage.',
-        releaseDate: '2026-05-04',
-        tags: ['auteur brief', 'dreamina', 'seedance 2.0']
-      },
-      {
         id: 'vibe_shift',
         title: 'Vibe Shift',
         path: '/examples/vibe_shift.json',
         description: 'Late-night neon glows, retro train rides, and a sunset that stands completely still. Experience the ultimate late-night mood shift.',
         releaseDate: '2026-05-05',
-        tags: ['auteur brief', 'dreamina', 'seedance 2.0']
+        tags: ['auteur brief', 'dreamina', 'music', 'seedance 2.0']
       },
       {
         id: 'reality_bending',
@@ -268,22 +286,6 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         releaseDate: '2026-05-07',
         tags: ['auteur brief', 'dreamina', 'seedance 2.0'],
         featured: false
-      },
-      {
-        id: 'table_four',
-        title: 'Table Four',
-        path: '/examples/table_four.json',
-        description: 'A comforting plate of freshly cut chanterelle pasta brings an unexpected wave of grief and longing.',
-        releaseDate: '2026-04-13',
-        tags: ['classic auteur', 'auteur brief', 'invideo', 'seedance 2.0']
-      },
-      {
-        id: 'flat_frog_problems',
-        title: 'Flat Frog Problems',
-        path: '/examples/flat_frog_problems.json',
-        description: 'The robot vacuum is officially his archenemy. This 2D frog is definitely not a fan of the third dimension.',
-        releaseDate: '2026-04-22',
-        tags: ['auteur brief', 'invideo', 'seedance 2.0']
       },
       {
         id: 'the_magic_card',
@@ -298,9 +300,9 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         title: 'Wonder (Uncut)',
         path: '/examples/wonder_uncut.json',
         description: 'Sky-sailing adventurers race glowing sky-whales through a majestic, uncharted valley.',
-        releaseDate: '2026-06-06',
+        releaseDate: '2026-06-01',
         tags: ['auteur script', 'auteur brief', 'dreamina', 'seedance 2.0'],
-        featured: true
+        featured: false
       }
     ]
   }
