@@ -78,6 +78,15 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         releaseDate: '2026-05-24',
         tags: ['auteur brief', 'invideo', 'seedance 2.0', 'AgentOne'],
         featured: true
+      },
+      {
+        id: 'museum',
+        title: 'Museum',
+        path: '/examples/scene_museum.json',
+        description: 'A live-action museum visitor touches a forbidden display, triggering a chaotic sequence that transforms him into a 2D cartoon and then a claymation figure as he frantically flees through the exhibits.',
+        releaseDate: '2026-06-13',
+        tags: ['auteur script', 'auteur brief', 'openart', 'seedance 2.0'],
+        featured: false
       }
     ]
   },
