@@ -1147,9 +1147,17 @@ export default function App() {
 
   if (!isInitialized) {
     return (
-      <div className="h-screen w-full flex flex-col items-center justify-center bg-stone-100 gap-4">
-        <Loader2 className="w-10 h-10 text-stone-400 animate-spin" />
-        <p className="text-stone-500 font-mono text-sm animate-pulse">Initializing SceneFlow...</p>
+      <div className="h-screen w-full flex flex-col items-center justify-center bg-stone-100 gap-6">
+        <img 
+          src="/SCENEFLOW_TAG_B.png" 
+          alt="SceneFlow Logo" 
+          referrerPolicy="no-referrer"
+          className="h-12 lg:h-16 w-auto object-contain animate-pulse selection:bg-transparent pointer-events-none"
+        />
+        <div className="flex items-center gap-2 text-stone-400">
+          <Loader2 className="w-4 h-4 animate-spin text-stone-500" />
+          <p className="text-stone-500 font-mono text-[10px] uppercase tracking-widest font-bold">Initializing System...</p>
+        </div>
       </div>
     );
   }
@@ -1158,33 +1166,16 @@ export default function App() {
     <div className="flex flex-col h-screen bg-stone-100 text-stone-900 font-sans overflow-hidden selection:bg-blue-100">
       {/* Header */}
       <header className={cn(
-        "h-16 border-b border-stone-200 bg-white flex items-center justify-between px-2 lg:px-6 shrink-0 z-40 shadow-sm transition-all",
+        "h-16 border-b border-stone-200 bg-white flex items-center justify-between px-3 lg:px-6 shrink-0 z-40 shadow-sm transition-all",
         mode === 'playback' && "hidden lg:flex"
       )}>
         <div className="flex items-center gap-2 lg:gap-3">
-          <div className="w-8 h-8 lg:w-10 lg:h-10 bg-stone-900 rounded-lg lg:rounded-xl flex items-center justify-center shadow-lg transform -rotate-3">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 lg:w-6 lg:h-6">
-              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-              <polyline points="14 2 14 8 20 8" />
-              <path d="m10 13 3 2-3 2v-4Z" fill="white" />
-            </svg>
-          </div>
-          <div className="hidden lg:block">
-            <h1 className="text-sm lg:text-base xl:text-lg font-black tracking-tight text-stone-900 leading-none uppercase italic">SceneFlow</h1>
-            <div className="flex items-center gap-2 mt-1">
-              <p className="hidden xl:block text-[10px] text-stone-400 uppercase tracking-widest font-bold">Script-to-Video Sync</p>
-              <div className="w-1 h-1 rounded-full bg-stone-200 hidden xl:block" />
-              <a 
-                href="https://x.com/tarumainfo" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-[9px] lg:text-[10px] text-stone-500 font-mono hover:underline decoration-stone-400 underline-offset-2"
-              >
-                <span className="hidden sm:inline xl:hidden">by @tarumainfo</span>
-                <span className="hidden xl:inline">by Taruma Sakti</span>
-              </a>
-            </div>
-          </div>
+          <img 
+            src="/SCENEFLOW_TAG_B.png" 
+            alt="SceneFlow Logo" 
+            referrerPolicy="no-referrer"
+            className="h-8 lg:h-9 w-auto object-contain selection:bg-transparent pointer-events-none"
+          />
         </div>
         
         <div className="flex items-center gap-2 lg:gap-4">
