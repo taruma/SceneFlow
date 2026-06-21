@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/favicon.svg" alt="SceneFlow Logo" width="80" height="80">
+  <img src="public/SCENEFLOW_TAG_B.png" alt="SceneFlow Logo" height="80">
   
   # SceneFlow
   
@@ -182,11 +182,17 @@ You can load any built-in screenplay example directly by appending `?example=ID`
 | | The Distance | `?example=the_distance` |
 | | Not About Fish | `?example=not_about_fish` |
 | | Afraid | `?example=afraid` |
+| | A Duet of Distance | `?example=duet_of_distance` |
+| | Table Four | `?example=table_four` |
+| | Flat Frog Problems | `?example=flat_frog_problems` |
+| | Museum | `?example=museum` |
 | **The Written Motion** | Vol 1: The Breaking Point | `?example=twm_vol1` |
 | | Vol 2: Elemental Forces | `?example=twm_vol2` |
 | | Vol 3: Kinetic | `?example=twm_vol3` |
 | | Vol 4: Wayfarers | `?example=twm_vol4` |
 | | Vol 5: Fractures | `?example=twm_vol5` |
+| | Vol 6: Wonder | `?example=twm_vol6` |
+| | Vol 7: What We Leave | `?example=twm_vol7` |
 | **FRAME Series** | FRAME 01: Distant | `?example=frame_01` |
 | | FRAME 02: Wandering Souls | `?example=frame_02` |
 | | FRAME 03: Relics of Time | `?example=frame_03` |
@@ -195,12 +201,6 @@ You can load any built-in screenplay example directly by appending `?example=ID`
 | | FRAME 06: Forgotten | `?example=frame_06` |
 | | FRAME 07: Samsara | `?example=frame_07` |
 | | FRAME 08: Still, Restless | `?example=frame_08` |
-| **AI Clips** | Wild Kinship | `?example=wild_kinship` |
-| | A Duet of Distance | `?example=duet_of_distance` |
-| | Vibe Shift | `?example=vibe_shift` |
-| | Reality-Bending Video | `?example=reality_bending` |
-| | Table Four | `?example=table_four` |
-| | Flat Frog Problems | `?example=flat_frog_problems` |
 
 ### Loading Remote Projects
 

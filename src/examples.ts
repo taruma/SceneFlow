@@ -69,7 +69,8 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         path: '/examples/not_about_fish.json',
         description: 'Every guy has that one friend who takes dream interpretation way too seriously. Robert is definitely not that guy.',
         releaseDate: '2026-05-22',
-        tags: ['auteur brief', 'invideo', 'seedance 2.0']
+        tags: ['auteur brief', 'invideo', 'seedance 2.0'],
+        featured: true
       },
       {
         id: 'afraid',
@@ -102,7 +103,8 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         path: '/examples/flat_frog_problems.json',
         description: 'The robot vacuum is officially his archenemy. This 2D frog is definitely not a fan of the third dimension.',
         releaseDate: '2026-04-22',
-        tags: ['auteur brief', 'invideo', 'seedance 2.0']
+        tags: ['auteur brief', 'invideo', 'seedance 2.0'],
+        featured: true
       },
       {
         id: 'museum',
@@ -163,7 +165,7 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         releaseDate: '2026-05-12',
         volume: 'TWM: Volume 5',
         tags: ['auteur brief', 'dreamina', 'seedance 2.0'],
-        featured: true
+        featured: false
       },
       {
         id: 'twm_vol6',
@@ -173,6 +175,16 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         releaseDate: '2026-06-01',
         volume: 'TWM: Volume 6',
         tags: ['auteur script', 'auteur brief', 'dreamina', 'seedance 2.0'],
+        featured: true
+      },
+      {
+        id: 'twm_vol7',
+        title: 'What We Leave',
+        path: '/examples/twm_vol7_what_we_leave.json',
+        description: 'We break the same hearts in different rooms, hoping for a different silence.',
+        releaseDate: '2026-06-10',
+        volume: 'TWM: Volume 7',
+        tags: ['auteur script', 'dreamina', 'seedance 2.0'],
         featured: true
       }
     ]
