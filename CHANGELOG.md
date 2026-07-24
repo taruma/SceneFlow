@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **Component & Utility Modularization**: Extracted inline JSX components and shared utilities from `App.tsx` into dedicated modules for improved maintainability and separation of concerns:
-  - New components: `InitializingScreen`, `YoutubeSourceInput`, `ScriptManagementBar`, `RawScriptModal`, `RawCuesModal`, `OverlapPicker`, `DeleteConfirmationModal`
+  - New components: `InitializingScreen`, `YoutubeSourceInput`, `ScriptManagementBar`, `RawScriptModal`, `RawCuesModal`, `OverlapPicker`, `DeleteConfirmationModal`, `ResetConfirmationModal`, `TimingSettingsModal`
   - New utility module: `src/lib/utils.ts` containing `cn` (Tailwind class merging) and `extractYoutubeId` (YouTube URL parsing), previously inline in `App.tsx`
   - Moved `Cue` interface from `App.tsx` to `src/types/script.ts` and added a public `export type { Cue }` re-export, making it accessible to all component modules
 

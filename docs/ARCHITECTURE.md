@@ -38,6 +38,8 @@ The "Stage" where everything comes together. It is responsible for:
   - **Raw Cues Modal** (`src/components/RawCuesModal.tsx`): Full-screen dialog for editing cue data in raw JSON format.
   - **Overlap Picker** (`src/components/OverlapPicker.tsx`): Floating context menu allowing users to select among multiple overlapping cues at the same script position.
   - **Delete Confirmation Modal** (`src/components/DeleteConfirmationModal.tsx`): Confirmation dialog with cue content preview before permanent deletion.
+  - **Reset Confirmation Modal** (`src/components/ResetConfirmationModal.tsx`): Confirmation dialog for destructive actions (resetting timing settings, loading blank scripts, loading examples, and loading remote projects), with integrated error state display.
+  - **Timing Settings Modal** (`src/components/TimingSettingsModal.tsx`): Full-screen configuration panel for per-category timing buffers (before/after offsets), including a global master offset and individual category adjustments with reset-to-defaults functionality.
 - **Type Definitions** (`src/types/script.ts`): Provides the `ScriptBlock` and `ScriptBlockType` type system used by the block-level parser, as well as the `Cue` interface used for sync cue data across all components.
 - **Shared Utilities** (`src/lib/utils.ts`): Provides `cn` (Tailwind class merging via `clsx` + `tailwind-merge`) and `extractYoutubeId` (YouTube URL → video ID parsing), consumed by `App.tsx` and component modules.
 
