@@ -114,6 +114,15 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         releaseDate: '2026-06-13',
         tags: ['auteur script', 'auteur brief', 'openart', 'seedance 2.0'],
         featured: false
+      },
+      {
+        id: 'scene_still_here',
+        title: 'Still Here',
+        path: '/examples/scene_still_here.json',
+        description: 'An endless climb into a blinding fog forces a broken survivor to confront the true weight of living.',
+        releaseDate: '2026-07-17',
+        tags: ['auteur script', 'openart', 'seedance 2.0'],
+        featured: false
       }
     ]
   },
