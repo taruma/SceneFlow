@@ -1,36 +1,22 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import YouTube, { YouTubeProps } from 'react-youtube';
 import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book, Target, Info, Search } from 'lucide-react';
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
 import { EXAMPLE_SECTIONS } from './examples';
 import { processScript, type LineType, type ProcessedLine } from './lib/scriptProcessor';
 import { getLineClass, SCRIPT_STYLES } from './lib/scriptStyles';
 import { StagingModal } from './components/StagingModal';
 import { LibraryModal } from './components/LibraryModal';
+import { InitializingScreen } from './components/InitializingScreen';
+import { YoutubeSourceInput } from './components/YoutubeSourceInput';
+import { ScriptManagementBar } from './components/ScriptManagementBar';
+import { RawScriptModal } from './components/RawScriptModal';
+import { RawCuesModal } from './components/RawCuesModal';
+import { OverlapPicker } from './components/OverlapPicker';
+import { DeleteConfirmationModal } from './components/DeleteConfirmationModal';
+import { cn, extractYoutubeId } from './lib/utils';
+import { type Cue } from './types/script';
 
-// Utility to extract YouTube ID from various URL formats
-function extractYoutubeId(url: string) {
-  const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?)|(shorts\/))\??v?=?([^#&?]*).*/;
-  const match = url.match(regExp);
-  return (match && match[8].length === 11) ? match[8] : url;
-}
-
-// Utility for tailwind classes
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
-interface Cue {
-  id: string;
-  selectedText: string;
-  startIndex: number;
-  endIndex: number;
-  startTime: number;
-  endTime: number;
-  colorClass: string;
-  type?: string;
-}
+export type { Cue };
 
 interface TimingSettings {
   before: number;
@@ -1146,20 +1132,7 @@ export default function App() {
   const canSave = newCue.selectedText && newCue.startTime !== undefined && newCue.endTime !== undefined && newCue.startIndex !== undefined && newCue.endIndex !== undefined;
 
   if (!isInitialized) {
-    return (
-      <div className="h-screen w-full flex flex-col items-center justify-center bg-stone-100 gap-6">
-        <img 
-          src="/SCENEFLOW_TAG_B.png" 
-          alt="SceneFlow Logo" 
-          referrerPolicy="no-referrer"
-          className="h-12 lg:h-16 w-auto object-contain animate-pulse selection:bg-transparent pointer-events-none"
-        />
-        <div className="flex items-center gap-2 text-stone-400">
-          <Loader2 className="w-4 h-4 animate-spin text-stone-500" />
-          <p className="text-stone-500 font-mono text-[10px] uppercase tracking-widest font-bold">Initializing System...</p>
-        </div>
-      </div>
-    );
+    return <InitializingScreen />;
   }
 
   return (
@@ -1273,40 +1246,12 @@ export default function App() {
         >
           {/* YouTube Source Input - Not Sticky in Edit Mode */}
           {mode === 'edit' && (
-            <div className="space-y-3 mb-8 animate-in fade-in slide-in-from-top-2 duration-500">
-              <div className="flex items-center justify-between px-1">
-                <label className="text-[10px] uppercase tracking-[0.2em] text-stone-400 font-black flex items-center gap-2">
-                  <Video size={12} /> YouTube Source
-                  <div className={cn(
-                    "w-2 h-2 rounded-full transition-all duration-500",
-                    player ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]" : "bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.4)]"
-                  )} />
-                </label>
-                {state.youtubeId && extractYoutubeId(state.youtubeId) !== state.youtubeId && (
-                  <span className="text-[9px] font-mono text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">
-                    ID: {extractYoutubeId(state.youtubeId)}
-                  </span>
-                )}
-              </div>
-              <div className="relative group">
-                <input
-                  type="text"
-                  value={state.youtubeId}
-                  onChange={(e) => setState(prev => ({ ...prev, youtubeId: e.target.value }))}
-                  className="w-full pl-10 pr-10 py-3 bg-stone-50 border border-stone-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-stone-900/5 focus:border-stone-300 transition-all font-mono text-sm"
-                  placeholder="Paste YouTube URL or Video ID"
-                />
-                <Video size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 group-focus-within:text-stone-600 transition-colors" />
-                {state.youtubeId && (
-                  <button 
-                    onClick={() => setState(prev => ({ ...prev, youtubeId: '' }))}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-300 hover:text-stone-600 transition-colors"
-                  >
-                    <X size={16} />
-                  </button>
-                )}
-              </div>
-            </div>
+            <YoutubeSourceInput
+              youtubeId={state.youtubeId}
+              onChange={(value) => setState(prev => ({ ...prev, youtubeId: value }))}
+              onClear={() => setState(prev => ({ ...prev, youtubeId: '' }))}
+              hasPlayer={!!player}
+            />
           )}
 
           {/* Video Player Section - Sticky in Edit Mode */}
@@ -1437,29 +1382,10 @@ export default function App() {
 
           {/* Script Management Section - Only in Edit Mode */}
           {mode === 'edit' && (
-            <section className="animate-in fade-in duration-500 mb-10">
-              <div className="flex items-center justify-between bg-stone-50 border border-stone-200 rounded-2xl px-4 py-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center border border-stone-100 shadow-sm">
-                    <FileText size={14} className="text-stone-400" />
-                  </div>
-                  <div>
-                    <h2 className="text-[10px] font-black uppercase tracking-[0.1em] text-stone-400 leading-none mb-1">Screenplay Data</h2>
-                    <p className="text-[10px] font-bold text-stone-600 leading-none">
-                      {state.scriptText.split('\n').length} lines loaded
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button 
-                    onClick={() => setIsScriptModalOpen(true)}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-stone-200 shadow-sm"
-                  >
-                    <Edit2 size={10} /> Edit Raw
-                  </button>
-                </div>
-              </div>
-            </section>
+            <ScriptManagementBar
+              lineCount={state.scriptText.split('\n').length}
+              onOpenRawScriptModal={() => setIsScriptModalOpen(true)}
+            />
           )}
 
           {/* Edit Mode Controls - Moved Cue Creation to Right Panel */}
@@ -1951,172 +1877,43 @@ export default function App() {
       />
 
       {/* Raw Script Modal */}
-      {isScriptModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-            <div className="p-8 lg:p-10 space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-stone-100 rounded-2xl flex items-center justify-center border border-stone-200">
-                    <FileText size={24} className="text-stone-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-stone-900">Raw Screenplay</h3>
-                    <p className="text-xs text-stone-400 uppercase tracking-[0.2em] font-black">Initial Input & Bulk Edit</p>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => setIsScriptModalOpen(false)}
-                  className="p-3 hover:bg-stone-100 rounded-full transition-colors active:scale-90"
-                >
-                  <X size={24} className="text-stone-400" />
-                </button>
-              </div>
-              
-              <textarea
-                value={state.scriptText}
-                onChange={(e) => setState(prev => ({ ...prev, scriptText: e.target.value }))}
-                className="w-full h-96 px-6 py-5 bg-stone-50 border border-stone-200 rounded-3xl focus:outline-none focus:ring-4 focus:ring-stone-900/5 transition-all font-mono text-sm resize-none leading-relaxed"
-                placeholder="Paste your screenplay here..."
-              />
+      <RawScriptModal
+        isOpen={isScriptModalOpen}
+        onClose={() => setIsScriptModalOpen(false)}
+        scriptText={state.scriptText}
+        onChangeScriptText={(text) => setState(prev => ({ ...prev, scriptText: text }))}
+      />
 
-              <div className="flex justify-end gap-3 pt-2">
-                <button
-                  onClick={() => setIsScriptModalOpen(false)}
-                  className="px-10 py-4 bg-stone-900 text-white rounded-2xl font-bold hover:bg-stone-800 transition-all active:scale-95 shadow-lg shadow-stone-900/20"
-                >
-                  Done
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
       {/* Raw Cues Modal */}
-      {isCuesModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-            <div className="p-8 lg:p-10 space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100 shadow-sm">
-                    <Clock size={20} className="text-blue-500" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-black uppercase tracking-widest text-stone-900">Edit Raw Cues</h2>
-                    <p className="text-xs font-bold text-stone-400 uppercase tracking-widest">JSON Format</p>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => setIsCuesModalOpen(false)}
-                  className="p-3 hover:bg-stone-100 rounded-2xl text-stone-400 transition-colors"
-                >
-                  <X size={24} />
-                </button>
-              </div>
+      <RawCuesModal
+        isOpen={isCuesModalOpen}
+        onClose={() => setIsCuesModalOpen(false)}
+        rawCuesText={rawCuesText}
+        onChangeRawCuesText={setRawCuesText}
+        onSave={saveRawCues}
+      />
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400 ml-1">JSON Data</label>
-                <textarea
-                  value={rawCuesText}
-                  onChange={(e) => setRawCuesText(e.target.value)}
-                  className="w-full h-[400px] bg-stone-50 border-2 border-stone-100 rounded-3xl p-6 font-mono text-xs text-stone-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none"
-                  placeholder='[ { "id": "...", "selectedText": "...", "startTime": 0, "endTime": 10, ... } ]'
-                />
-              </div>
-
-              <div className="flex gap-4 pt-2">
-                <button
-                  onClick={() => setIsCuesModalOpen(false)}
-                  className="flex-1 py-4 bg-stone-100 hover:bg-stone-200 text-stone-600 rounded-2xl text-xs font-black uppercase tracking-widest transition-all active:scale-95"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={saveRawCues}
-                  className="flex-1 py-4 bg-blue-500 hover:bg-blue-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-blue-500/20"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
       {/* Overlap Picker Menu */}
-      {overlapPicker.isOpen && (
-        <div 
-          className="fixed z-[100] bg-white border border-stone-200 rounded-xl shadow-2xl p-1.5 min-w-[160px] animate-in zoom-in-95 duration-200"
-          style={{ left: overlapPicker.position.x, top: overlapPicker.position.y }}
-        >
-          <div className="px-3 py-2 border-b border-stone-100 mb-1">
-            <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Select Cue to Edit</p>
-          </div>
-          {overlapPicker.cues.map(cue => (
-            <button
-              key={cue.id}
-              onClick={() => {
-                setNewCue(cue);
-                setSelection({ text: cue.selectedText, start: cue.startIndex, end: cue.endIndex });
-                if (player) player.seekTo(cue.startTime, true);
-                setOverlapPicker({ ...overlapPicker, isOpen: false });
-              }}
-              className="w-full flex items-center gap-3 px-3 py-2 hover:bg-stone-50 rounded-lg transition-colors text-left group"
-            >
-              <div className={cn("w-2 h-2 rounded-full", cue.colorClass)} />
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">{cue.type}</p>
-                <p className="text-[9px] text-stone-400 font-mono italic truncate">"{cue.selectedText}"</p>
-              </div>
-            </button>
-          ))}
-          <button 
-            onClick={() => setOverlapPicker({ ...overlapPicker, isOpen: false })}
-            className="w-full mt-1 px-3 py-1.5 text-[10px] font-bold text-stone-400 hover:text-stone-600 hover:bg-stone-50 rounded-lg transition-all text-center"
-          >
-            Cancel
-          </button>
-        </div>
-      )}
+      <OverlapPicker
+        isOpen={overlapPicker.isOpen}
+        position={overlapPicker.position}
+        cues={overlapPicker.cues}
+        onSelectCue={(cue) => {
+          setNewCue(cue);
+          setSelection({ text: cue.selectedText, start: cue.startIndex, end: cue.endIndex });
+          if (player) player.seekTo(cue.startTime, true);
+          setOverlapPicker({ ...overlapPicker, isOpen: false });
+        }}
+        onClose={() => setOverlapPicker({ ...overlapPicker, isOpen: false })}
+      />
 
       {/* Delete Confirmation Modal */}
-      {deleteConfirmation.isOpen && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-stone-900/40 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-stone-200">
-            <div className="p-8 space-y-6 text-center">
-              <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto border border-red-100">
-                <Trash2 size={24} className="text-red-500" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-stone-900">Delete Sync Cue?</h3>
-                <p className="text-sm text-stone-500 mt-2">This action cannot be undone. Are you sure you want to remove this cue?</p>
-              </div>
-              
-              {deleteConfirmation.cue && (
-                <div className="bg-stone-50 p-4 rounded-2xl border border-stone-100 text-left">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-stone-400 mb-1">Cue Content</p>
-                  <p className="text-xs italic text-stone-600 line-clamp-2">"{deleteConfirmation.cue.selectedText}"</p>
-                </div>
-              )}
-
-              <div className="grid grid-cols-2 gap-3 pt-2">
-                <button
-                  onClick={() => setDeleteConfirmation({ isOpen: false, cue: null })}
-                  className="px-6 py-3 bg-stone-100 text-stone-600 rounded-xl font-bold hover:bg-stone-200 transition-all active:scale-95"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={confirmDelete}
-                  className="px-6 py-3 bg-red-500 text-white rounded-xl font-bold hover:bg-red-600 transition-all active:scale-95 shadow-lg shadow-red-500/20"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <DeleteConfirmationModal
+        isOpen={deleteConfirmation.isOpen}
+        cue={deleteConfirmation.cue}
+        onClose={() => setDeleteConfirmation({ isOpen: false, cue: null })}
+        onConfirm={confirmDelete}
+      />
 
       {/* General Reset Confirmation Modal */}
       {resetConfirmation.isOpen && (

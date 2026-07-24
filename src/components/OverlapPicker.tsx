@@ -1,0 +1,51 @@
+import React from 'react';
+import { cn } from '../lib/utils';
+import { Cue } from '../types/script';
+
+interface OverlapPickerProps {
+  isOpen: boolean;
+  position: { x: number; y: number };
+  cues: Cue[];
+  onSelectCue: (cue: Cue) => void;
+  onClose: () => void;
+}
+
+export function OverlapPicker({
+  isOpen,
+  position,
+  cues,
+  onSelectCue,
+  onClose,
+}: OverlapPickerProps) {
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      className="fixed z-[100] bg-white border border-stone-200 rounded-xl shadow-2xl p-1.5 min-w-[160px] animate-in zoom-in-95 duration-200"
+      style={{ left: position.x, top: position.y }}
+    >
+      <div className="px-3 py-2 border-b border-stone-100 mb-1">
+        <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Select Cue to Edit</p>
+      </div>
+      {cues.map(cue => (
+        <button
+          key={cue.id}
+          onClick={() => onSelectCue(cue)}
+          className="w-full flex items-center gap-3 px-3 py-2 hover:bg-stone-50 rounded-lg transition-colors text-left group"
+        >
+          <div className={cn("w-2 h-2 rounded-full", cue.colorClass)} />
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">{cue.type}</p>
+            <p className="text-[9px] text-stone-400 font-mono italic truncate">"{cue.selectedText}"</p>
+          </div>
+        </button>
+      ))}
+      <button 
+        onClick={onClose}
+        className="w-full mt-1 px-3 py-1.5 text-[10px] font-bold text-stone-400 hover:text-stone-600 hover:bg-stone-50 rounded-lg transition-all text-center"
+      >
+        Cancel
+      </button>
+    </div>
+  );
+}

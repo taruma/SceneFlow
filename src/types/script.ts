@@ -19,3 +19,15 @@ export interface ScriptBlock {
   endIndex: number;
   metadata?: any;
 }
+
+export interface Cue {
+  id: string;
+  selectedText: string;
+  startIndex: number;
+  endIndex: number;
+  startTime: number;
+  endTime: number;
+  colorClass: string;
+  type?: string;
+}
+
