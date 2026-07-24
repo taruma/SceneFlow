@@ -3,13 +3,14 @@
 This project is built with a modern, lightweight, and performant stack designed for real-time video synchronization and text processing.
 
 ## Core Framework
-- **React 18**: Used for UI components and state management.
+- **React 19**: Used for UI components and state management.
 - **Vite**: The build tool and development server, providing fast HMR and optimized production builds.
 
 ## Styling & UI
 - **Tailwind CSS**: Utility-first CSS framework for all styling.
 - **Lucide React**: A comprehensive icon library used for all UI icons.
 - **clsx & tailwind-merge**: Utilities for conditionally applying Tailwind classes without conflicts.
+- **motion**: Animation library (formerly Framer Motion) used for modal transitions, overlays, and interactive UI animations.
 - **Google Fonts**: Uses "Inter" for standard UI controls, "Libre Baskerville" (serif) for the elegant classic screenplay styling, and "JetBrains Mono" for technical data and monospace Auteur Brief notes.
 
 ## Video Integration
@@ -23,7 +24,9 @@ This project is built with a modern, lightweight, and performant stack designed 
 
 ## Analytics & Performance
 - **Vercel Speed Insights**: Integrated to monitor real-time performance and Web Vitals in production.
+- **Vercel Analytics**: Integrated for audience analytics and traffic insights in production.
 
 ## Utilities
 - **Regex-based Parsing**: Custom heuristics for identifying script elements (headings, dialogue, names).
 - **JSON-based Examples**: External JSON files used to load pre-configured script/video pairs.
+- **dotenv**: Environment variable management for local and server-side configuration.

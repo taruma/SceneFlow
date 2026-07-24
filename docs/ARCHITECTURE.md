@@ -2,13 +2,18 @@
 
 The project follows a modular 3-layer architecture to separate script processing logic from UI rendering.
 
-## 1. Logic Layer (`src/lib/scriptProcessor.ts`)
+## 1. Logic Layer (`src/lib/scriptProcessor.ts` and `src/lib/scriptParser.ts`)
 The "Brain" of the application. It is responsible for:
 - **Scanning raw text**: Iterating through the script line-by-line.
-- **Semantic Detection**: Using regex and heuristics to classify lines as `heading`, `name`, `speech`, `action`, `note`, `effect`, or `separator`.
+- **Semantic Detection**: Using regex and heuristics to classify lines as `heading`, `name`, `speech`, `action`, `note`, `effect`, `separator`, `part-separator`, `roman-title`, `parenthetical`, or `default`.
 - **Dialogue Context**: Identifying which character is speaking and linking their name to the subsequent speech blocks.
 - **Position Mapping**: Calculating the exact start and end character indices for every line to ensure sync cues remain accurate.
 - **Staging Extraction**: Identifying `[[STAGING]]` blocks and extracting them into interactive markers.
+- **Brief Block Detection**: Recognizing `[<BRIEF>]` and `[</BRIEF>]` tagged blocks for technical directives with monospace styling.
+
+The `scriptParser.ts` sub-module provides:
+- **Staging Block Parsing** (`parseScriptWithStaging`): Extracts `[[STAGING]]` blocks and their `[[LABEL]]`...`[[/LABEL]]` sub-blocks, returning a map of staging markers and line indices to hide.
+- **Block-Level Parsing** (`parseScriptToBlocks`): Converts raw text into structured `ScriptBlock` objects with types defined in `src/types/script.ts`.
 
 ## 2. Visuals Layer (`src/lib/scriptStyles.ts`)
 The "Designer" of the application. It is responsible for:
@@ -26,10 +31,12 @@ The "Stage" where everything comes together. It is responsible for:
 - **Modular Sub-components**:
   - **Library Catalogue** (`src/components/LibraryModal.tsx`): Handles categorized navigation, real-time search filtering, tag styling, and modal transition states (powered by static schema collections in `src/examples.ts`).
   - **Staging Panel** (`src/components/StagingModal.tsx`): Displays isolated staging directives and hidden script metadata (e.g. character directives, technical briefings, and camera directions) in a clean dialog overlay.
+- **Type Definitions** (`src/types/script.ts`): Provides the `ScriptBlock` and `ScriptBlockType` type system used by the block-level parser.
 
 ## Data Flow Diagram
 1. **Raw Text** (Input)
-2. → `scriptProcessor.ts` (Parses into `ProcessedLine[]`)
-3. → `App.tsx` (Combines with `Cues[]` and `currentTime`)
-4. → `scriptStyles.ts` (Applies CSS classes)
-5. → **Interactive UI** (Output)
+2. → `scriptParser.ts` (`parseScriptWithStaging` extracts staging blocks and markers)
+3. → `scriptProcessor.ts` (`processScript` parses into `ProcessedLine[]`)
+4. → `App.tsx` (Combines with `Cues[]` and `currentTime`)
+5. → `scriptStyles.ts` (Applies CSS classes)
+6. → **Interactive UI** (Output)

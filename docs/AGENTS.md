@@ -7,6 +7,7 @@ If you need to add a new line type (e.g., `LYRICS` or `TRANSITION`):
 1.  Add the new type to the `LineType` enum in `src/lib/scriptProcessor.ts`.
 2.  Update the `processScript` function with the regex/logic to detect this new type.
 3.  Add the corresponding Tailwind classes to the `switch` statement in `src/lib/scriptStyles.ts`.
+4.  If the new type also applies at the block level, add it to the `ScriptBlockType` union in `src/types/script.ts` and update the detection logic in `parseScriptToBlocks` within `src/lib/scriptParser.ts`.
 
 ## 2. Modifying Styles
 **DO NOT** add hardcoded Tailwind classes directly into `App.tsx` for script elements.
@@ -27,6 +28,6 @@ The `renderedScript` `useMemo` in `App.tsx` is performance-critical.
 ## 5. Persistence & External Data
 When adding new fields to the application state or modifying data fetching:
 - Update the `AppState` interface in `App.tsx`.
-- Ensure the `INITIAL_STATE` object is updated.
+- Ensure the default values are handled in the `useState` lazy initializer (which loads from `localStorage` with fallback defaults).
 - **Query Parameters**: If adding a new parameter, update the `useEffect` on mount in `App.tsx` and ensure the URL is cleaned up using `window.history.replaceState`.
 - **Remote Fetching**: Use the `loadRemoteProject` function pattern, ensuring `isRemoteLoading` and `resetConfirmation.error` are handled correctly for a consistent UI experience.
