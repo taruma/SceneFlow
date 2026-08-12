@@ -1611,11 +1611,20 @@ export default function App() {
                   </div>
                   <div className="h-4 w-px bg-stone-200 mx-1 hidden lg:block" />
                   <button 
-                    onClick={() => setMode('edit')}
-                    className="lg:hidden flex items-center gap-1 px-2 py-1 bg-stone-100 rounded text-[10px] font-bold text-stone-600"
+                    onClick={() => setIsLibraryOpen(true)}
+                    className="lg:hidden flex items-center gap-1 px-2 py-1 bg-stone-100 hover:bg-stone-200 rounded text-[10px] font-bold text-stone-700 transition-colors"
                   >
-                    <Edit2 size={10} /> Edit
+                    <Book size={10} /> Library
                   </button>
+                  <a 
+                    href="https://ko-fi.com/tarumainfo"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Support on Ko-fi"
+                    className="lg:hidden flex items-center justify-center px-1.5 py-1 bg-[#FF5E5B] hover:bg-[#e04e4b] text-white rounded transition-colors"
+                  >
+                    <Coffee size={10} />
+                  </a>
                 </div>
               )}
               <div className={cn(
