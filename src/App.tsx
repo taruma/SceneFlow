@@ -1306,7 +1306,7 @@ export default function App() {
             </div>
             
             <div className={cn(
-              "aspect-video bg-stone-900 overflow-hidden shadow-2xl ring-1 ring-stone-200 relative group transition-all duration-500 origin-top-left pointer-events-auto",
+              "aspect-video bg-black overflow-hidden shadow-2xl ring-1 ring-stone-900/10 relative group transition-all duration-500 origin-top-left pointer-events-auto",
               mode === 'edit' ? "rounded-3xl" : "rounded-none lg:rounded-3xl",
               mode === 'edit' && leftPanelScroll > 80 && "w-1/2 rounded-2xl shadow-2xl scale-90 -translate-y-2"
             )}
@@ -1328,7 +1328,8 @@ export default function App() {
                 }}
                 onReady={onReady}
                 onStateChange={onStateChange}
-                className="w-full h-full"
+                className="w-full h-full bg-black"
+                iframeClassName="w-full h-full block border-0 bg-black"
               />
             </div>
             
