@@ -6,6 +6,7 @@ import { processScript, type LineType, type ProcessedLine } from './lib/scriptPr
 import { getLineClass, SCRIPT_STYLES } from './lib/scriptStyles';
 import { StagingModal } from './components/StagingModal';
 import { LibraryModal } from './components/LibraryModal';
+import { MobileLibraryModal } from './components/MobileLibraryModal';
 import { InitializingScreen } from './components/InitializingScreen';
 import { YoutubeSourceInput } from './components/YoutubeSourceInput';
 import { ScriptManagementBar } from './components/ScriptManagementBar';
@@ -1888,6 +1889,20 @@ export default function App() {
       />
 
       <LibraryModal
+        isOpen={isLibraryOpen}
+        onClose={() => setIsLibraryOpen(false)}
+        onSelectExample={(path, title) => {
+          setResetConfirmation({ 
+            isOpen: true, 
+            type: 'example', 
+            examplePath: path, 
+            exampleTitle: title,
+            error: null,
+          });
+        }}
+      />
+
+      <MobileLibraryModal
         isOpen={isLibraryOpen}
         onClose={() => setIsLibraryOpen(false)}
         onSelectExample={(path, title) => {
