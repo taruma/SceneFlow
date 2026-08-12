@@ -28,7 +28,7 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         description: 'An astrophysicist uses the principles of cosmic expansion to physically map the growing, unbridgeable distance between himself and the world around him.',
         releaseDate: '2026-03-03',
         tags: ['classic auteur', 'dreamina', 'seedance 2.0'],
-        featured: true
+        featured: false
       },
       {
         id: 'intent',
@@ -37,7 +37,7 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         description: 'Two mathematicians face the reality of an AI that has evolved past rigid rules into actual reasoning',
         releaseDate: '2026-03-01',
         tags: ['classic auteur', 'dreamina', 'seedance 2.0'],
-        featured: true
+        featured: false
       },
       {
         id: 'mosaic',
@@ -70,7 +70,7 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         description: 'Every guy has that one friend who takes dream interpretation way too seriously. Robert is definitely not that guy.',
         releaseDate: '2026-05-22',
         tags: ['auteur brief', 'invideo', 'seedance 2.0'],
-        featured: true
+        featured: false
       },
       {
         id: 'afraid',
@@ -79,7 +79,7 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         description: 'She thought their trip to Venice was a perfect fairy tale. She didn\'t know he was carrying a reality-shattering truth the entire time.',
         releaseDate: '2026-05-24',
         tags: ['auteur brief', 'invideo', 'seedance 2.0'],
-        featured: true
+        featured: false
       },
       {
         id: 'duet_of_distance',
@@ -104,7 +104,7 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         description: 'The robot vacuum is officially his archenemy. This 2D frog is definitely not a fan of the third dimension.',
         releaseDate: '2026-04-22',
         tags: ['auteur brief', 'invideo', 'seedance 2.0'],
-        featured: true
+        featured: false
       },
       {
         id: 'museum',
@@ -123,6 +123,15 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         releaseDate: '2026-07-17',
         tags: ['auteur script', 'openart', 'seedance 2.0'],
         featured: false
+      },
+      {
+        id: 'scene_frequency',
+        title: 'Frequency Over Force',
+        path: '/examples/scene_frequency.json',
+        description: 'As a mathematician vents his frustration over a failing model, his mentor introduces a ticking metronome to reveal a fundamental truth.',
+        releaseDate: '2026-08-08',
+        tags: ['auteur script', 'seedance 2.5'],
+        featured: true
       }
     ]
   },
@@ -184,7 +193,7 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         releaseDate: '2026-06-01',
         volume: 'TWM: Volume 6',
         tags: ['auteur script', 'auteur brief', 'dreamina', 'seedance 2.0'],
-        featured: true
+        featured: false
       },
       {
         id: 'twm_vol7',
@@ -274,7 +283,7 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         releaseDate: '2026-03-30',
         volume: 'FRAME_08',
         tags: ['visual poem', 'nano banana pro', 'nano banana 2', 'kling 3.0', 'invideo'],
-        featured: true
+        featured: false
       }
     ]
   },

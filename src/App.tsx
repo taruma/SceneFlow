@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import YouTube, { YouTubeProps } from 'react-youtube';
-import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book, Target, Info, Search } from 'lucide-react';
+import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book, Target, Info, Search, FolderOpen, Heart, Coffee } from 'lucide-react';
 import { EXAMPLE_SECTIONS } from './examples';
 import { processScript, type LineType, type ProcessedLine } from './lib/scriptProcessor';
 import { getLineClass, SCRIPT_STYLES } from './lib/scriptStyles';
@@ -1173,6 +1173,16 @@ export default function App() {
             >
               <Book size={12} /> <span className="hidden xl:inline">Library</span>
             </button>
+
+            <a 
+              href="https://ko-fi.com/tarumainfo"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Support on Ko-fi"
+              className="flex items-center gap-1 px-1.5 py-1.5 lg:gap-1.5 lg:px-2 xl:px-2.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 bg-[#FF5E5B] hover:bg-[#e04e4b] text-white shadow-sm"
+            >
+              <Coffee size={12} /> <span className="hidden xl:inline">Support</span>
+            </a>
           </div>
 
           <div className="hidden lg:flex items-center gap-2 px-3 xl:px-4 py-2 bg-stone-900 rounded-xl shadow-inner animate-in fade-in zoom-in duration-500">
@@ -1216,16 +1226,20 @@ export default function App() {
           
           <div className="hidden lg:block h-8 w-px bg-stone-200 mx-2" />
           
-          <div className="hidden lg:flex gap-1">
-            <label className="cursor-pointer flex items-center gap-1.5 px-2 py-1.5 xl:px-2.5 text-[10px] font-black uppercase tracking-widest text-stone-600 hover:bg-stone-50 rounded-lg transition-all border border-transparent hover:border-stone-200">
-              <Upload size={14} /> <span className="hidden xl:inline">Open Sync</span>
+          <div className="flex items-center gap-1">
+            <label
+              title="Open Sync (.json)"
+              className="cursor-pointer p-2 rounded-lg text-stone-500 hover:text-stone-800 bg-white hover:bg-stone-50 border border-stone-200 shadow-sm transition-all active:scale-95 flex items-center justify-center"
+            >
+              <FolderOpen size={18} />
               <input type="file" accept=".json" onChange={importJson} className="hidden" />
             </label>
             <button
               onClick={exportJson}
-              className="flex items-center gap-1.5 px-2 py-1.5 xl:px-2.5 text-[10px] font-black uppercase tracking-widest text-stone-600 hover:bg-stone-50 rounded-lg transition-all border border-transparent hover:border-stone-200"
+              title="Save Sync (.json)"
+              className="p-2 rounded-lg text-stone-500 hover:text-stone-800 bg-white hover:bg-stone-50 border border-stone-200 shadow-sm transition-all active:scale-95 flex items-center justify-center"
             >
-              <Download size={14} /> <span className="hidden xl:inline">Save Sync</span>
+              <Download size={18} />
             </button>
           </div>
         </div>
@@ -1509,8 +1523,8 @@ export default function App() {
             mode === 'playback' ? "h-12 sticky top-0 shadow-sm" : "h-16"
           )}>
             <div className="flex items-center gap-2 lg:gap-3">
-              <FileText size={16} className="text-stone-400" />
-              <span className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-stone-400">Script Preview</span>
+              <FileText size={16} className="text-stone-400 shrink-0" />
+              <span className="hidden sm:inline text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-stone-400">Script Preview</span>
             </div>
             <div className="flex items-center gap-2 lg:gap-4">
               {mode === 'playback' && (
@@ -1605,7 +1619,7 @@ export default function App() {
                 </div>
               )}
               <div className={cn(
-                "px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest",
+                "hidden sm:block px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest",
                 mode === 'edit' ? "bg-amber-100 text-amber-600" : "bg-blue-100 text-blue-600"
               )}>
                 {mode === 'edit' ? 'Edit' : 'Playback'}
