@@ -37,13 +37,13 @@ export function ResetConfirmationModal({
           <div>
             <h3 className="text-lg font-bold text-stone-900">
               {resetConfirmation.type === 'settings' ? 'Reset Timing Settings?' : 
-               resetConfirmation.type === 'blank' ? 'Load Blank Script?' : 
+               resetConfirmation.type === 'blank' ? 'Load Guide Script?' : 
                resetConfirmation.type === 'example' ? `Load "${resetConfirmation.exampleTitle}"?` : 
                resetConfirmation.type === 'remote' ? 'Load Remote Project?' : 'Reset All Data?'}
             </h3>
             <p className="text-sm text-stone-500 mt-2">
               {resetConfirmation.type === 'settings' ? 'This will restore all timing buffers to their factory default values.' : 
-               resetConfirmation.type === 'blank' ? 'This will delete all current cues and start a fresh project.' : 
+               resetConfirmation.type === 'blank' ? 'This will load the official guide script and formatting reference in playback mode.' : 
                resetConfirmation.type === 'example' ? `This will replace your current script and cues with the "${resetConfirmation.exampleTitle}" demo.` :
                resetConfirmation.type === 'remote' ? `This will replace your current project with data from: ${resetConfirmation.remoteUrl}. Only load links from sources you trust.` :
                'This will delete all cues and restore the original demo script.'}

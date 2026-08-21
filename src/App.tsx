@@ -344,9 +344,11 @@ export default function App() {
         const finalData = { ...data, settings: data.settings || DEFAULT_SETTINGS };
         setState(finalData);
         localStorage.setItem('screenplay_sync_state', JSON.stringify(finalData));
-        setMode('edit');
+        setMode('playback');
         setCurrentTime(0);
         setResetConfirmation({ isOpen: false, type: null, error: null });
+        // Realign cues after loading to ensure indices are correct
+        realignCues(finalData);
       })
       .catch(err => {
         console.error("Failed to load blank script", err);
