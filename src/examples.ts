@@ -295,7 +295,7 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
       {
         id: 'wild_kinship',
         title: 'Wild Kinship',
-        path: '/examples/wild_kinship.json',
+        path: '/examples/ai_clips/wild_kinship.json',
         description: 'Through every dimension, every danger, and every heartbreak—we run together.',
         releaseDate: '2026-04-25',
         tags: ['auteur brief', 'openart', 'seedance 2.0']
@@ -303,7 +303,7 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
       {
         id: 'vibe_shift',
         title: 'Vibe Shift',
-        path: '/examples/vibe_shift.json',
+        path: '/examples/ai_clips/vibe_shift.json',
         description: 'Late-night neon glows, retro train rides, and a sunset that stands completely still. Experience the ultimate late-night mood shift.',
         releaseDate: '2026-05-05',
         tags: ['auteur brief', 'dreamina', 'music', 'seedance 2.0']
@@ -311,7 +311,7 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
       {
         id: 'reality_bending',
         title: "Reality-Bending Video",
-        path: '/examples/reality_bending.json',
+        path: '/examples/ai_clips/reality_bending.json',
         description: "Want to create mind-blowing videos? Here are the best visual effects tricks to completely transform your content.",
         releaseDate: '2026-05-07',
         tags: ['auteur brief', 'dreamina', 'seedance 2.0'],
@@ -320,7 +320,7 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
       {
         id: 'the_magic_card',
         title: 'The Magic Card',
-        path: '/examples/ai_clips_magic_card.json',
+        path: '/examples/ai_clips/ai_clips_magic_card.json',
         description: 'The ritual begins by activating an ancient golden seal in the pouring rain and ends with snaring a floating mystical card high above the city.',
         releaseDate: '2026-06-03',
         tags: ['auteur brief', 'openart', 'seedance 2.0']
@@ -328,7 +328,7 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
       {
         id: 'wonder_uncut',
         title: 'Wonder (Uncut)',
-        path: '/examples/wonder_uncut.json',
+        path: '/examples/ai_clips/wonder_uncut.json',
         description: 'Sky-sailing adventurers race glowing sky-whales through a majestic, uncharted valley.',
         releaseDate: '2026-06-01',
         tags: ['auteur script', 'auteur brief', 'dreamina', 'seedance 2.0'],
