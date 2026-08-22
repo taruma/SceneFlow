@@ -11,7 +11,7 @@ export function getLineClass(line: ProcessedLine): string {
   const baseStyle = "whitespace-pre-wrap min-h-[1em] leading-snug";
   
   if (isBrief) {
-    return `${baseStyle} font-mono text-[12px] text-stone-700 mb-2`;
+    return `${baseStyle} font-mono text-[12px] border border-dashed border-stone-300/30 dark:border-stone-700/30 rounded px-3 py-2 my-2`;
   }
 
   switch (type) {

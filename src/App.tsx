@@ -903,9 +903,17 @@ export default function App() {
     const processedLines = processScript(scriptText);
     const scriptElements: React.ReactNode[] = [];
 
-    const formatBriefSegment = (text: string) => {
-      // 1. Waterfall: replace -> with ->\n    
-      const waterfalled = text.replace(/->/g, "->\n    ");
+    const formatBriefSegment = (text: string, isLineStart = false) => {
+      // 1. Waterfall: replace -> with \n    -> 
+      let waterfalled = text.replace(/[ \t]*->[ \t]*/g, "\n    -> ");
+      
+      // If at the start of the line or segment, avoid creating an unnecessary blank line at top
+      if (isLineStart) {
+        waterfalled = waterfalled.replace(/^\n\s*-> /, "    -> ");
+      }
+
+      // Clean up any double newlines created if the raw text already had \n before ->
+      waterfalled = waterfalled.replace(/\n\s*\n\s*-> /g, "\n    -> ");
       
       // 2. Bold Anchors: wrap [...] in <b>
       const result: React.ReactNode[] = [];
@@ -1033,7 +1041,7 @@ export default function App() {
 
       if (lineCues.length === 0) {
         const displayValue = type === 'name' ? trimmed.slice(0, -1) : line;
-        const finalDisplayValue = lineData.isBrief ? formatBriefSegment(displayValue) : displayValue;
+        const finalDisplayValue = lineData.isBrief ? formatBriefSegment(displayValue, true) : displayValue;
         
         scriptElements.push(
           <div key={lineIdx} className={cn("whitespace-pre-wrap min-h-[1em]", className)}>
@@ -1061,7 +1069,7 @@ export default function App() {
           : segmentText;
           
         const segmentCues = lineCues.filter(c => c.start <= start && c.end >= end);
-        const finalDisplayValue = lineData.isBrief ? formatBriefSegment(displayValue) : displayValue;
+        const finalDisplayValue = lineData.isBrief ? formatBriefSegment(displayValue, start === 0) : displayValue;
 
         if (segmentCues.length === 0) {
           segments.push(finalDisplayValue);

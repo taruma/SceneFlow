@@ -109,6 +109,11 @@ export function processScript(scriptText: string): ProcessedLine[] {
       }
     }
 
+    // If inside a brief block and the line is empty/whitespace, skip it so we don't render empty ghost cards
+    if (inBrief && trimmed === '') {
+      return;
+    }
+
     processedLines.push({
       text: line,
       type,
