@@ -1667,9 +1667,9 @@ export default function App() {
                   {mode === 'edit' ? 'Edit' : 'Playback'}
                 </div>
 
-                {/* Page Width Preset Selector (Playback mode only) */}
+                {/* Page Width Preset Selector (Playback mode on Desktop only) */}
                 {mode === 'playback' && (
-                  <div className="relative flex items-center">
+                  <div className="relative hidden lg:flex items-center">
                     <button
                       id="script-preview-width-control"
                       onClick={() => setIsWidthDropdownOpen(!isWidthDropdownOpen)}
@@ -1682,7 +1682,7 @@ export default function App() {
                       title={`Script Width: ${SCRIPT_WIDTH_PRESETS.find(p => p.id === scriptWidthPreset)?.label || 'Standard'}`}
                     >
                       <MoveHorizontal size={11} className="text-stone-400 shrink-0" />
-                      <span className="hidden md:inline font-mono text-[9px] uppercase tracking-wider text-stone-500 font-semibold">
+                      <span className="font-mono text-[9px] uppercase tracking-wider text-stone-500 font-semibold">
                         {SCRIPT_WIDTH_PRESETS.find(p => p.id === scriptWidthPreset)?.label}
                       </span>
                       <ChevronDown size={10} className={cn("text-stone-400 transition-transform duration-200", isWidthDropdownOpen && "rotate-180")} />
