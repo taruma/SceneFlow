@@ -1,9 +1,17 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import YouTube, { YouTubeProps } from 'react-youtube';
-import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book, Target, Info, Search, FolderOpen, Heart, Coffee, MoveHorizontal } from 'lucide-react';
+import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book, Target, Info, Search, FolderOpen, Heart, Coffee, MoveHorizontal, Palette } from 'lucide-react';
 import { EXAMPLE_SECTIONS } from './examples';
 import { processScript, type LineType, type ProcessedLine } from './lib/scriptProcessor';
-import { getLineClass, SCRIPT_STYLES } from './lib/scriptStyles';
+import { 
+  getLineClass, 
+  getScriptThemeStyles, 
+  getScriptTheme, 
+  DEFAULT_SCRIPT_THEME_ID, 
+  type ScriptThemeId,
+  getCueColorForTheme,
+  CUE_THEME_COLORS
+} from './lib/scriptStyles';
 import { StagingModal } from './components/StagingModal';
 import { LibraryModal } from './components/LibraryModal';
 import { MobileLibraryModal } from './components/MobileLibraryModal';
@@ -16,6 +24,7 @@ import { OverlapPicker } from './components/OverlapPicker';
 import { DeleteConfirmationModal } from './components/DeleteConfirmationModal';
 import { ResetConfirmationModal } from './components/ResetConfirmationModal';
 import { TimingSettingsModal } from './components/TimingSettingsModal';
+import { ScriptColorModal } from './components/ScriptColorModal';
 import { cn, extractYoutubeId } from './lib/utils';
 import { type Cue } from './types/script';
 
@@ -158,6 +167,16 @@ export default function App() {
     return 'standard';
   });
   const [isWidthDropdownOpen, setIsWidthDropdownOpen] = useState(false);
+  const [scriptThemeId, setScriptThemeId] = useState<ScriptThemeId>(() => {
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem('sceneflow_script_theme');
+      if (saved) {
+        return saved as ScriptThemeId;
+      }
+    }
+    return DEFAULT_SCRIPT_THEME_ID;
+  });
+  const [isColorModalOpen, setIsColorModalOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
   const [activeStaging, setActiveStaging] = useState<{ label: string; content: string } | null>(null);
 
@@ -918,6 +937,7 @@ export default function App() {
   const renderedScript = useMemo(() => {
     const cues = state.cues || [];
     const scriptText = state.scriptText || "";
+    const themeStyles = getScriptThemeStyles(scriptThemeId);
     
     // Use the new processor to handle all structural and semantic logic
     const processedLines = processScript(scriptText);
@@ -963,7 +983,7 @@ export default function App() {
       // Check for staging markers at this line
       if (stagingMarker) {
         scriptElements.push(
-          <div key={`staging-${lineIdx}`} className={SCRIPT_STYLES.stagingContainer}>
+          <div key={`staging-${lineIdx}`} className={themeStyles.stagingContainer}>
             {stagingMarker.blocks.map((block, bIdx) => (
               <button
                 key={bIdx}
@@ -974,12 +994,12 @@ export default function App() {
                 }}
                 disabled={playerState === 1}
                 className={cn(
-                  SCRIPT_STYLES.stagingBadgeBase,
-                  playerState === 1 ? SCRIPT_STYLES.stagingBadgeDisabled : SCRIPT_STYLES.stagingBadgeActive
+                  themeStyles.stagingBadgeBase,
+                  playerState === 1 ? themeStyles.stagingBadgeDisabled : themeStyles.stagingBadgeActive
                 )}
               >
-                <Info size={isDesktop ? 10 : 8} className="text-stone-400" />
-                <span className={SCRIPT_STYLES.stagingBadgeText}>
+                <Info size={isDesktop ? 10 : 8} className={themeStyles.stagingBadgeIcon} />
+                <span className={themeStyles.stagingBadgeText}>
                   {block.label}
                 </span>
               </button>
@@ -995,22 +1015,22 @@ export default function App() {
 
       // Handle special structural elements
       if (type === 'separator') {
-        scriptElements.push(<hr key={lineIdx} className={SCRIPT_STYLES.separator} />);
+        scriptElements.push(<hr key={lineIdx} className={themeStyles.separator} />);
         return;
       }
 
       if (type === 'part-separator' || type === 'roman-title') {
         scriptElements.push(
-          <div key={lineIdx} className={SCRIPT_STYLES.titleContainer}>
-            <div className={SCRIPT_STYLES.titleLine} />
-            <span className={SCRIPT_STYLES.titleText}>{trimmed}</span>
-            <div className={SCRIPT_STYLES.titleLine} />
+          <div key={lineIdx} className={themeStyles.titleContainer}>
+            <div className={themeStyles.titleLine} />
+            <span className={themeStyles.titleText}>{trimmed}</span>
+            <div className={themeStyles.titleLine} />
           </div>
         );
         return;
       }
 
-      const className = getLineClass(lineData);
+      const className = getLineClass(lineData, scriptThemeId);
 
       // Filter cues that overlap with this line
       const lineCues = (mode === 'edit' ? cues : cues.filter(isCueVisible))
@@ -1102,14 +1122,14 @@ export default function App() {
         const editingCue = segmentCues.find(c => c.id === newCue.id);
         const primaryCue = editingCue || segmentCues[0];
         
-        const colorInfo = COLORS.find(c => 
-          c.class === primaryCue.colorClass || 
-          (primaryCue.colorClass && c.class.startsWith(primaryCue.colorClass.split('/')[0]))
-        );
+        const activeTheme = getScriptTheme(scriptThemeId);
+        const themedColor = getCueColorForTheme(primaryCue.type || primaryCue.colorClass || '', scriptThemeId);
         
-        const rgb = isTemp ? '191, 219, 254' : (colorInfo?.rgb || '156, 163, 175');
+        const rgb = isTemp 
+          ? (activeTheme.isDark ? '56, 189, 248' : (activeTheme.category === 'warm' ? '120, 160, 200' : '191, 219, 254')) 
+          : themedColor.rgb;
         const maxOpacity = Math.max(...segmentCues.map(c => (c as any).opacity || 0));
-        const finalOpacity = isTemp ? 0.5 : maxOpacity * 0.5;
+        const finalOpacity = isTemp ? (activeTheme.isDark ? 0.4 : 0.5) : maxOpacity * themedColor.baseOpacity;
 
         const scrollCue = segmentCues.find(c => c.type === 'dialogue' && c.startIndex === lineStart + start);
         const idToUse = scrollCue ? `cue-${scrollCue.id}` : (primaryCue.id ? `cue-${primaryCue.id}` : undefined);
@@ -1137,12 +1157,20 @@ export default function App() {
               }
             }}
             className={cn(
-              SCRIPT_STYLES.cueBase,
-              mode === 'edit' && !isTemp && SCRIPT_STYLES.cueEdit,
-              isTemp && SCRIPT_STYLES.cueTemp,
-              editingCue && SCRIPT_STYLES.cueEditing
+              themeStyles.cueBase,
+              mode === 'edit' && !isTemp && themeStyles.cueEdit,
+              isTemp && themeStyles.cueTemp,
+              editingCue && themeStyles.cueEditing,
+              themedColor.textColorClass
             )}
-            style={{ backgroundColor: `rgba(${rgb}, ${finalOpacity})` }}
+            style={{ 
+              backgroundColor: `rgba(${rgb}, ${finalOpacity})`,
+              ...(activeTheme.isDark && finalOpacity > 0.08 ? {
+                boxShadow: primaryCue.type === 'dialogue'
+                  ? `0 0 0 1px rgba(253, 224, 71, 0.45), 0 0 6px rgba(253, 224, 71, 0.18)`
+                  : `0 0 1px rgba(${rgb}, 0.6)`
+              } : {})
+            }}
           >
             {finalDisplayValue}
             {segmentCues.length > 1 && mode === 'edit' && !isTemp && (
@@ -1160,7 +1188,7 @@ export default function App() {
     });
 
     return scriptElements;
-  }, [state.scriptText, state.cues, currentTime, selection, mode, newCue.id, player, playerState, isDesktop]);
+  }, [state.scriptText, state.cues, currentTime, selection, mode, newCue.id, player, playerState, isDesktop, scriptThemeId]);
 
   const canSave = newCue.selectedText && newCue.startTime !== undefined && newCue.endTime !== undefined && newCue.startIndex !== undefined && newCue.endIndex !== undefined;
 
@@ -1242,6 +1270,20 @@ export default function App() {
             </button>
           </div>
           
+          <div className="relative hidden lg:block">
+            <button
+              id="script-theme-header-button"
+              onClick={() => setIsColorModalOpen(true)}
+              className={cn(
+                "p-2 rounded-lg transition-all border shadow-sm active:scale-95 flex items-center justify-center",
+                isColorModalOpen ? "bg-stone-900 text-white border-stone-900" : "bg-white text-stone-500 hover:text-stone-700 border-stone-200"
+              )}
+              title="Script Color & Theme Presets"
+            >
+              <Palette size={18} />
+            </button>
+          </div>
+
           <div className="relative hidden lg:block">
             <button
               onClick={() => setIsSettingsOpen(true)}
@@ -1379,6 +1421,7 @@ export default function App() {
                   {COLORS.map(color => {
                     const isActive = activeCueTypes.has(color.type);
                     const isHidden = hiddenCueTypes.has(color.type);
+                    const themed = getCueColorForTheme(color.type, scriptThemeId);
                     return (
                       <button
                         key={color.type}
@@ -1392,9 +1435,15 @@ export default function App() {
                         )}
                       >
                         {isActive && !isHidden && (
-                          <span className={cn("absolute inset-0 opacity-30 animate-pulse", color.class)} />
+                          <span 
+                            className="absolute inset-0 opacity-30 animate-pulse" 
+                            style={{ backgroundColor: `rgb(${themed.rgb})` }}
+                          />
                         )}
-                        <div className={cn("w-2 h-2 rounded-full shrink-0", isHidden ? "bg-stone-200" : color.class)} />
+                        <div 
+                          className="w-2 h-2 rounded-full shrink-0" 
+                          style={{ backgroundColor: isHidden ? undefined : `rgb(${themed.rgb})` }} 
+                        />
                         {color.type}
                       </button>
                     );
@@ -1405,19 +1454,25 @@ export default function App() {
                   {(state.cues || []).filter(isCueVisible).sort((a, b) => {
                     const order = COLORS.map(c => c.type);
                     return order.indexOf(a.type || 'dialogue') - order.indexOf(b.type || 'dialogue');
-                  }).map(cue => (
-                    <div key={cue.id} className="p-4 bg-stone-50 border border-stone-200 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 relative overflow-hidden">
-                      <div className={cn("w-1.5 h-8 rounded-full shrink-0", cue.colorClass)} />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-serif italic text-stone-700 line-clamp-2">"{cue.selectedText}"</p>
-                        {cue.type && (
-                          <span className="absolute top-1 right-2 text-[8px] font-black uppercase tracking-widest text-stone-300">
-                            {cue.type}
-                          </span>
-                        )}
+                  }).map(cue => {
+                    const themed = getCueColorForTheme(cue.type || cue.colorClass || '', scriptThemeId);
+                    return (
+                      <div key={cue.id} className="p-4 bg-stone-50 border border-stone-200 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 relative overflow-hidden">
+                        <div 
+                          className="w-1.5 h-8 rounded-full shrink-0" 
+                          style={{ backgroundColor: `rgb(${themed.rgb})` }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-serif italic text-stone-700 line-clamp-2">"{cue.selectedText}"</p>
+                          {cue.type && (
+                            <span className="absolute top-1 right-2 text-[8px] font-black uppercase tracking-widest text-stone-300">
+                              {cue.type}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                   {(state.cues || []).filter(isCueVisible).length === 0 && (
                     <div className="h-32 border-2 border-dashed border-stone-100 rounded-3xl flex items-center justify-center">
                       <p className="text-xs text-stone-300 italic">No active highlights at this time</p>
@@ -1935,23 +1990,29 @@ export default function App() {
 
                     <div className="flex items-center justify-between pt-1">
                       <div className="flex flex-wrap gap-1.5">
-                        {COLORS.map(color => (
-                          <button
-                            key={color.class}
-                            onClick={() => setNewCue(prev => ({ ...prev, colorClass: color.class }))}
-                            title={color.type}
-                            className={cn(
-                              "px-2 py-1 rounded-md transition-all border text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5",
-                              color.class,
-                              newCue.colorClass === color.class 
-                                ? "border-stone-900 scale-105 shadow-sm opacity-100" 
-                                : "border-transparent opacity-40 hover:opacity-80"
-                            )}
-                          >
-                            <div className="w-1.5 h-1.5 rounded-full bg-stone-900/20" />
-                            {color.type}
-                          </button>
-                        ))}
+                        {COLORS.map(color => {
+                          const themed = getCueColorForTheme(color.type, scriptThemeId);
+                          const isSelected = newCue.colorClass === color.class;
+                          return (
+                            <button
+                              key={color.class}
+                              onClick={() => setNewCue(prev => ({ ...prev, colorClass: color.class, type: color.type }))}
+                              title={color.type}
+                              className={cn(
+                                "px-2 py-1 rounded-md transition-all border text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5",
+                                isSelected 
+                                  ? "border-stone-900 scale-105 shadow-sm opacity-100 bg-white font-bold" 
+                                  : "border-stone-200 bg-stone-50 opacity-70 hover:opacity-100 hover:bg-white"
+                              )}
+                            >
+                              <div 
+                                className="w-2 h-2 rounded-full shrink-0" 
+                                style={{ backgroundColor: `rgb(${themed.rgb})` }} 
+                              />
+                              {color.type}
+                            </button>
+                          );
+                        })}
                       </div>
                       <div className="flex items-center gap-2">
                         {newCue.id && (
@@ -1992,7 +2053,11 @@ export default function App() {
             )}
           >
             <div className={cn(
-              "mx-auto bg-white shadow-lg ring-1 ring-stone-200 min-h-full rounded-sm relative transition-all duration-300",
+              "mx-auto min-h-full rounded-sm relative transition-all duration-300",
+              getScriptTheme(scriptThemeId).paperBg,
+              getScriptTheme(scriptThemeId).paperBorder,
+              getScriptTheme(scriptThemeId).paperShadow,
+              getScriptTheme(scriptThemeId).textColor,
               mode === 'edit' 
                 ? "max-w-xl p-6 md:p-8" 
                 : cn(
@@ -2000,11 +2065,11 @@ export default function App() {
                     "p-8 lg:p-12"
                   )
             )}>
-              {/* Page punch holes effect - even more subtle */}
-              <div className="absolute left-2 top-12 flex flex-col gap-8 opacity-5">
-                <div className="w-2 h-2 rounded-full bg-stone-400 shadow-inner" />
-                <div className="w-2 h-2 rounded-full bg-stone-400 shadow-inner" />
-                <div className="w-2 h-2 rounded-full bg-stone-400 shadow-inner" />
+              {/* Page punch holes effect */}
+              <div className="absolute left-2 top-12 flex flex-col gap-8 opacity-20">
+                <div className={cn("w-2 h-2 rounded-full shadow-inner", getScriptTheme(scriptThemeId).punchHoleBg)} />
+                <div className={cn("w-2 h-2 rounded-full shadow-inner", getScriptTheme(scriptThemeId).punchHoleBg)} />
+                <div className={cn("w-2 h-2 rounded-full shadow-inner", getScriptTheme(scriptThemeId).punchHoleBg)} />
               </div>
               
               <div className="relative z-10" style={{ paddingBottom: mode === 'playback' ? '70vh' : '0' }}>
@@ -2130,6 +2195,19 @@ export default function App() {
             },
           }));
         }}
+      />
+      {/* Script Color & Theme Modal */}
+      <ScriptColorModal
+        isOpen={isColorModalOpen}
+        onClose={() => setIsColorModalOpen(false)}
+        currentThemeId={scriptThemeId}
+        onSelectTheme={(themeId) => {
+          setScriptThemeId(themeId);
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('sceneflow_script_theme', themeId);
+          }
+        }}
+        cueTypes={COLORS}
       />
     </div>
   );
