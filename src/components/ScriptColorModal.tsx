@@ -292,7 +292,7 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                   <div className="p-3 bg-stone-50 border border-stone-200 rounded-xl flex items-center justify-between">
                     <div>
                       <p className="text-xs font-bold text-stone-800">BRIEF Macro-States</p>
-                      <p className="text-[10px] text-stone-400 font-mono">Dashed card & anchor badges</p>
+                      <p className="text-[10px] text-stone-400 font-mono">Dashed card border</p>
                     </div>
                     <div className={cn(
                       "px-2.5 py-1 rounded-md border border-dashed text-[9px] font-mono flex items-center gap-1",
@@ -300,14 +300,7 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                       currentTheme.briefBorder,
                       currentTheme.textColor
                     )}>
-                      <span className={cn(
-                        "px-1 py-0.2 rounded text-[8px] font-bold border",
-                        currentTheme.briefBadgeBg,
-                        currentTheme.briefBadgeBorder,
-                        currentTheme.briefBadgeText
-                      )}>
-                        [CAM]
-                      </span>
+                      <b>[CAM]</b>
                       <span>SHOT 01</span>
                     </div>
                   </div>
