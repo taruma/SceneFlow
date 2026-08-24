@@ -29,6 +29,11 @@ export interface ScriptTheme {
   stagingBadgeIcon: string;
   punchHoleBg: string;
   isDark: boolean;
+  briefBg: string;
+  briefBorder: string;
+  briefBadgeBg: string;
+  briefBadgeBorder: string;
+  briefBadgeText: string;
 }
 
 export const SCRIPT_THEMES: Record<ScriptThemeId, ScriptTheme> = {
@@ -53,6 +58,11 @@ export const SCRIPT_THEMES: Record<ScriptThemeId, ScriptTheme> = {
     stagingBadgeIcon: 'text-stone-400',
     punchHoleBg: 'bg-stone-400',
     isDark: false,
+    briefBg: 'bg-stone-50/50',
+    briefBorder: 'border-stone-300/70',
+    briefBadgeBg: 'bg-stone-200/60',
+    briefBadgeBorder: 'border-stone-300/60',
+    briefBadgeText: 'text-stone-800',
   },
   'parchment-warm': {
     id: 'parchment-warm',
@@ -75,6 +85,11 @@ export const SCRIPT_THEMES: Record<ScriptThemeId, ScriptTheme> = {
     stagingBadgeIcon: 'text-[#9c8973]',
     punchHoleBg: 'bg-[#a3927e]',
     isDark: false,
+    briefBg: 'bg-[#f4efe4]/60',
+    briefBorder: 'border-[#d8ccba]',
+    briefBadgeBg: 'bg-[#e8dfd1]',
+    briefBadgeBorder: 'border-[#cfc3b2]',
+    briefBadgeText: 'text-[#4e3f31]',
   },
   'midnight-slate': {
     id: 'midnight-slate',
@@ -97,6 +112,11 @@ export const SCRIPT_THEMES: Record<ScriptThemeId, ScriptTheme> = {
     stagingBadgeIcon: 'text-stone-400',
     punchHoleBg: 'bg-stone-700',
     isDark: true,
+    briefBg: 'bg-[#202025]/60',
+    briefBorder: 'border-stone-700/80',
+    briefBadgeBg: 'bg-stone-800',
+    briefBadgeBorder: 'border-stone-600/70',
+    briefBadgeText: 'text-stone-200',
   },
   'oled-black': {
     id: 'oled-black',
@@ -119,6 +139,11 @@ export const SCRIPT_THEMES: Record<ScriptThemeId, ScriptTheme> = {
     stagingBadgeIcon: 'text-neutral-400',
     punchHoleBg: 'bg-neutral-800',
     isDark: true,
+    briefBg: 'bg-[#111111]/80',
+    briefBorder: 'border-neutral-800',
+    briefBadgeBg: 'bg-neutral-900',
+    briefBadgeBorder: 'border-neutral-700',
+    briefBadgeText: 'text-neutral-200',
   },
   'cyber-matrix': {
     id: 'cyber-matrix',
@@ -141,6 +166,11 @@ export const SCRIPT_THEMES: Record<ScriptThemeId, ScriptTheme> = {
     stagingBadgeIcon: 'text-slate-400',
     punchHoleBg: 'bg-slate-700',
     isDark: true,
+    briefBg: 'bg-[#131d35]/60',
+    briefBorder: 'border-slate-700/80',
+    briefBadgeBg: 'bg-slate-800',
+    briefBadgeBorder: 'border-slate-600/70',
+    briefBadgeText: 'text-slate-200',
   },
   'retro-newspaper': {
     id: 'retro-newspaper',
@@ -163,6 +193,11 @@ export const SCRIPT_THEMES: Record<ScriptThemeId, ScriptTheme> = {
     stagingBadgeIcon: 'text-[#8a877f]',
     punchHoleBg: 'bg-[#b8b3a7]',
     isDark: false,
+    briefBg: 'bg-[#eae6dc]/60',
+    briefBorder: 'border-[#d2ccc0]',
+    briefBadgeBg: 'bg-[#ded8cc]',
+    briefBadgeBorder: 'border-[#c6bfb0]',
+    briefBadgeText: 'text-[#383630]',
   }
 };
 
@@ -257,9 +292,7 @@ export function getLineClass(line: ProcessedLine, themeId: ScriptThemeId = 'stud
   const baseStyle = "whitespace-pre-wrap min-h-[1em] leading-snug";
   
   if (isBrief) {
-    return `${baseStyle} font-mono text-[12px] border border-dashed ${
-      theme.isDark ? 'border-stone-700/50' : 'border-stone-300/40'
-    } rounded px-3 py-2 my-2 ${theme.textColor}`;
+    return `${baseStyle} font-mono text-[12px] border border-dashed rounded-lg px-3.5 py-2.5 my-2.5 transition-colors ${theme.briefBorder} ${theme.briefBg} ${theme.textColor}`;
   }
 
   switch (type) {
@@ -312,6 +345,7 @@ export function getScriptThemeStyles(themeId: ScriptThemeId = 'studio-light') {
     stagingBadgeDisabled: "opacity-30 cursor-not-allowed",
     stagingBadgeText: `text-[7.5px] lg:text-[9px] font-black uppercase tracking-wider lg:tracking-widest ${theme.stagingBadgeText}`,
     stagingBadgeIcon: theme.stagingBadgeIcon,
+    briefBadge: `border ${theme.briefBadgeBg} ${theme.briefBadgeBorder} ${theme.briefBadgeText}`,
     cueBase: `transition-all duration-300 rounded-sm px-0.5 relative group ${theme.textColor}`,
     cueEdit: theme.isDark 
       ? "cursor-pointer hover:ring-1 hover:ring-stone-500" 

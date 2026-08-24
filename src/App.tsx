@@ -955,7 +955,7 @@ export default function App() {
       // Clean up any double newlines created if the raw text already had \n before ->
       waterfalled = waterfalled.replace(/\n\s*\n\s*-> /g, "\n    -> ");
       
-      // 2. Bold Anchors: wrap [...] in <b>
+      // 2. Anchors: wrap [...] with theme-aware styled badges
       const result: React.ReactNode[] = [];
       const regex = /\[([^\]]+)\]/g;
       let lastIndex = 0;
@@ -965,7 +965,17 @@ export default function App() {
         if (match.index > lastIndex) {
           result.push(waterfalled.substring(lastIndex, match.index));
         }
-        result.push(<b key={match.index}>[{match[1]}]</b>);
+        result.push(
+          <span 
+            key={match.index} 
+            className={cn(
+              "inline-flex items-center px-1 py-0.5 rounded text-[10.5px] font-bold font-mono tracking-wider shadow-2xs mx-0.5",
+              themeStyles.briefBadge
+            )}
+          >
+            [{match[1]}]
+          </span>
+        );
         lastIndex = regex.lastIndex;
       }
       
