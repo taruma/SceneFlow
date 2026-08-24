@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import YouTube, { YouTubeProps } from 'react-youtube';
-import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book, Target, Info, Search, FolderOpen, Heart, Coffee } from 'lucide-react';
+import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book, Target, Info, Search, FolderOpen, Heart, Coffee, MoveHorizontal } from 'lucide-react';
 import { EXAMPLE_SECTIONS } from './examples';
 import { processScript, type LineType, type ProcessedLine } from './lib/scriptProcessor';
 import { getLineClass, SCRIPT_STYLES } from './lib/scriptStyles';
@@ -51,6 +51,16 @@ const DEFAULT_SETTINGS: Record<string, TimingSettings> = {
     { before: 0, after: 0 }
   ]))
 };
+
+const SCRIPT_WIDTH_PRESETS = [
+  { id: 'narrow', label: 'Narrow', widthClass: 'max-w-sm', desc: '384px • Focused column' },
+  { id: 'compact', label: 'Compact', widthClass: 'max-w-md', desc: '448px • Snug reading' },
+  { id: 'standard', label: 'Standard', widthClass: 'max-w-xl', desc: '576px • Default screenplay' },
+  { id: 'wide', label: 'Wide', widthClass: 'max-w-3xl', desc: '768px • Spacious view' },
+  { id: 'full', label: 'Expanded', widthClass: 'max-w-5xl', desc: '1024px • Full page' },
+] as const;
+
+export type ScriptWidthPresetId = typeof SCRIPT_WIDTH_PRESETS[number]['id'];
 
 const generateId = () => {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -138,6 +148,16 @@ export default function App() {
   const [leftPanelScroll, setLeftPanelScroll] = useState(0);
   const [hiddenCueTypes, setHiddenCueTypes] = useState<Set<string>>(new Set());
   const [videoWidth, setVideoWidth] = useState(100); // Percentage of container width
+  const [scriptWidthPreset, setScriptWidthPreset] = useState<ScriptWidthPresetId>(() => {
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem('sceneflow_script_width_preset');
+      if (saved && SCRIPT_WIDTH_PRESETS.some(p => p.id === saved)) {
+        return saved as ScriptWidthPresetId;
+      }
+    }
+    return 'standard';
+  });
+  const [isWidthDropdownOpen, setIsWidthDropdownOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
   const [activeStaging, setActiveStaging] = useState<{ label: string; content: string } | null>(null);
 
@@ -1639,11 +1659,109 @@ export default function App() {
                   </a>
                 </div>
               )}
-              <div className={cn(
-                "hidden sm:block px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest",
-                mode === 'edit' ? "bg-amber-100 text-amber-600" : "bg-blue-100 text-blue-600"
-              )}>
-                {mode === 'edit' ? 'Edit' : 'Playback'}
+              <div className="flex items-center gap-1.5">
+                <div className={cn(
+                  "hidden sm:block px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest",
+                  mode === 'edit' ? "bg-amber-100 text-amber-600" : "bg-blue-100 text-blue-600"
+                )}>
+                  {mode === 'edit' ? 'Edit' : 'Playback'}
+                </div>
+
+                {/* Page Width Preset Selector (Playback mode only) */}
+                {mode === 'playback' && (
+                  <div className="relative flex items-center">
+                    <button
+                      id="script-preview-width-control"
+                      onClick={() => setIsWidthDropdownOpen(!isWidthDropdownOpen)}
+                      className={cn(
+                        "flex items-center gap-1 px-2 py-0.5 rounded-lg border text-[10px] font-bold tracking-tight transition-all active:scale-95 shadow-sm",
+                        isWidthDropdownOpen 
+                          ? "bg-stone-900 text-white border-stone-900" 
+                          : "bg-white text-stone-600 border-stone-200 hover:text-stone-900 hover:border-stone-300"
+                      )}
+                      title={`Script Width: ${SCRIPT_WIDTH_PRESETS.find(p => p.id === scriptWidthPreset)?.label || 'Standard'}`}
+                    >
+                      <MoveHorizontal size={11} className="text-stone-400 shrink-0" />
+                      <span className="hidden md:inline font-mono text-[9px] uppercase tracking-wider text-stone-500 font-semibold">
+                        {SCRIPT_WIDTH_PRESETS.find(p => p.id === scriptWidthPreset)?.label}
+                      </span>
+                      <ChevronDown size={10} className={cn("text-stone-400 transition-transform duration-200", isWidthDropdownOpen && "rotate-180")} />
+                    </button>
+
+                    {isWidthDropdownOpen && (
+                      <>
+                        <div 
+                          className="fixed inset-0 z-40" 
+                          onClick={() => setIsWidthDropdownOpen(false)} 
+                        />
+                        <div className="absolute top-full right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-stone-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200">
+                          <div className="p-2.5 bg-stone-50 border-b border-stone-100 flex items-center justify-between">
+                            <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Script Width</p>
+                            <span className="text-[8px] font-mono text-stone-400 font-medium">5 Presets</span>
+                          </div>
+                          <div className="p-1.5 space-y-0.5">
+                            {SCRIPT_WIDTH_PRESETS.map((preset, index) => {
+                              const isSelected = scriptWidthPreset === preset.id;
+                              const isDefault = preset.id === 'standard';
+                              return (
+                                <button
+                                  key={preset.id}
+                                  id={`script-width-preset-${preset.id}`}
+                                  onClick={() => {
+                                    setScriptWidthPreset(preset.id);
+                                    if (typeof localStorage !== 'undefined') {
+                                      localStorage.setItem('sceneflow_script_width_preset', preset.id);
+                                    }
+                                    setIsWidthDropdownOpen(false);
+                                  }}
+                                  className={cn(
+                                    "w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left transition-colors group",
+                                    isSelected 
+                                      ? "bg-stone-900 text-white" 
+                                      : "text-stone-700 hover:bg-stone-100"
+                                  )}
+                                >
+                                  <div className="flex items-center gap-2">
+                                    {/* Visual width representation bars */}
+                                    <div className="w-8 flex items-center justify-center">
+                                      <div 
+                                        className={cn(
+                                          "h-1.5 rounded-full transition-all",
+                                          isSelected ? "bg-white" : "bg-stone-300 group-hover:bg-stone-500"
+                                        )}
+                                        style={{ width: `${30 + index * 16}%` }}
+                                      />
+                                    </div>
+                                    <div className="flex flex-col">
+                                      <div className="flex items-center gap-1.5">
+                                        <span className="text-[11px] font-bold leading-none">{preset.label}</span>
+                                        {isDefault && (
+                                          <span className={cn(
+                                            "text-[8px] px-1 py-0.2 rounded font-medium",
+                                            isSelected ? "bg-stone-800 text-stone-300" : "bg-stone-200 text-stone-600"
+                                          )}>
+                                            Default
+                                          </span>
+                                        )}
+                                      </div>
+                                      <span className={cn(
+                                        "text-[9px] font-mono leading-tight mt-0.5",
+                                        isSelected ? "text-stone-300" : "text-stone-400"
+                                      )}>
+                                        {preset.desc}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  {isSelected && <Check size={12} className="shrink-0 ml-2" />}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="lg:hidden flex items-center gap-1 px-2 py-1 bg-stone-900 rounded-lg shadow-inner">
                 <span className="text-[8px] font-black text-stone-500 uppercase">Time</span>
@@ -1874,8 +1992,13 @@ export default function App() {
             )}
           >
             <div className={cn(
-              "max-w-xl mx-auto bg-white shadow-lg ring-1 ring-stone-200 min-h-full rounded-sm relative",
-              mode === 'edit' ? "p-6 md:p-8" : "p-8 lg:p-12"
+              "mx-auto bg-white shadow-lg ring-1 ring-stone-200 min-h-full rounded-sm relative transition-all duration-300",
+              mode === 'edit' 
+                ? "max-w-xl p-6 md:p-8" 
+                : cn(
+                    SCRIPT_WIDTH_PRESETS.find(p => p.id === scriptWidthPreset)?.widthClass || "max-w-xl",
+                    "p-8 lg:p-12"
+                  )
             )}>
               {/* Page punch holes effect - even more subtle */}
               <div className="absolute left-2 top-12 flex flex-col gap-8 opacity-5">
