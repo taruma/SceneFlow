@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import YouTube, { YouTubeProps } from 'react-youtube';
-import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book, Target, Info, Search, FolderOpen, Heart, Coffee, MoveHorizontal, Palette } from 'lucide-react';
+import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book, Target, Info, Search, FolderOpen, Heart, Coffee, MoveHorizontal, AlignVerticalJustifyCenter, Palette } from 'lucide-react';
 import { EXAMPLE_SECTIONS } from './examples';
 import { processScript, type LineType, type ProcessedLine } from './lib/scriptProcessor';
 import { 
@@ -70,6 +70,14 @@ const SCRIPT_WIDTH_PRESETS = [
 ] as const;
 
 export type ScriptWidthPresetId = typeof SCRIPT_WIDTH_PRESETS[number]['id'];
+
+const SCROLL_FOCUS_PRESETS = [
+  { id: 'top', label: 'Top (35%)', shortLabel: 'Top', ratio: 0.35, desc: '35% from top • Anticipation' },
+  { id: 'center', label: 'Center (50%)', shortLabel: 'Center', ratio: 0.50, desc: '50% viewport • Balanced' },
+  { id: 'bottom', label: 'Bottom (35%)', shortLabel: 'Bottom', ratio: 0.65, desc: '35% from bottom • Reflection' },
+] as const;
+
+export type ScrollFocusPresetId = typeof SCROLL_FOCUS_PRESETS[number]['id'];
 
 const generateId = () => {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -167,6 +175,16 @@ export default function App() {
     return 'standard';
   });
   const [isWidthDropdownOpen, setIsWidthDropdownOpen] = useState(false);
+  const [scrollFocusPreset, setScrollFocusPreset] = useState<ScrollFocusPresetId>(() => {
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem('sceneflow_scroll_focus_preset');
+      if (saved && SCROLL_FOCUS_PRESETS.some(p => p.id === saved)) {
+        return saved as ScrollFocusPresetId;
+      }
+    }
+    return 'top';
+  });
+  const [isScrollFocusDropdownOpen, setIsScrollFocusDropdownOpen] = useState(false);
   const [scriptThemeId, setScriptThemeId] = useState<ScriptThemeId>(() => {
     if (typeof localStorage !== 'undefined') {
       const saved = localStorage.getItem('sceneflow_script_theme');
@@ -179,6 +197,33 @@ export default function App() {
   const [isColorModalOpen, setIsColorModalOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
   const [activeStaging, setActiveStaging] = useState<{ label: string; content: string } | null>(null);
+
+  const applyScrollFocus = (presetId: ScrollFocusPresetId) => {
+    setScrollFocusPreset(presetId);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('sceneflow_scroll_focus_preset', presetId);
+    }
+    setIsScrollFocusDropdownOpen(false);
+
+    // If there is an active cue element, immediately adjust scroll position smoothly
+    if (lastScrolledCueId && scriptRef.current) {
+      const element = document.getElementById(`cue-${lastScrolledCueId}`);
+      const container = scriptRef.current;
+      if (element && container) {
+        const containerRect = container.getBoundingClientRect();
+        const elementRect = element.getBoundingClientRect();
+        const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
+        const preset = SCROLL_FOCUS_PRESETS.find(p => p.id === presetId) || SCROLL_FOCUS_PRESETS[0];
+        const targetScrollTop = isDesktop
+          ? relativeTop - (containerRect.height * preset.ratio) + (elementRect.height / 2)
+          : relativeTop - (containerRect.height / 2) + (elementRect.height / 2);
+        container.scrollTo({
+          top: Math.max(0, targetScrollTop),
+          behavior: 'smooth'
+        });
+      }
+    }
+  };
 
   useEffect(() => {
     const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
@@ -248,10 +293,11 @@ export default function App() {
             const elementRect = element.getBoundingClientRect();
             const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
             
+            const focusPreset = SCROLL_FOCUS_PRESETS.find(p => p.id === scrollFocusPreset) || SCROLL_FOCUS_PRESETS[0];
             let targetScrollTop;
             if (isDesktop) {
-              // Position active cue slightly above center (35% from top of script container)
-              targetScrollTop = relativeTop - (containerRect.height * 0.35) + (elementRect.height / 2);
+              // Position active cue based on user-selected focus line preset (default 35% from top)
+              targetScrollTop = relativeTop - (containerRect.height * focusPreset.ratio) + (elementRect.height / 2);
             } else {
               // Position active cue exactly in the center for mobile/tablet screens
               targetScrollTop = relativeTop - (containerRect.height / 2) + (elementRect.height / 2);
@@ -268,7 +314,7 @@ export default function App() {
         setLastScrolledCueId(null);
       }
     }
-  }, [currentTime, mode, isAutoScrollEnabled, state.cues, state.settings, lastScrolledCueId, autoScrollTargets, isDesktop]);
+  }, [currentTime, mode, isAutoScrollEnabled, state.cues, state.settings, lastScrolledCueId, autoScrollTargets, isDesktop, scrollFocusPreset]);
 
   // Initial load of default data if no local storage
   useEffect(() => {
@@ -1785,6 +1831,110 @@ export default function App() {
                                           isSelected ? "bg-white" : "bg-stone-300 group-hover:bg-stone-500"
                                         )}
                                         style={{ width: `${30 + index * 16}%` }}
+                                      />
+                                    </div>
+                                    <div className="flex flex-col">
+                                      <div className="flex items-center gap-1.5">
+                                        <span className="text-[11px] font-bold leading-none">{preset.label}</span>
+                                        {isDefault && (
+                                          <span className={cn(
+                                            "text-[8px] px-1 py-0.2 rounded font-medium",
+                                            isSelected ? "bg-stone-800 text-stone-300" : "bg-stone-200 text-stone-600"
+                                          )}>
+                                            Default
+                                          </span>
+                                        )}
+                                      </div>
+                                      <span className={cn(
+                                        "text-[9px] font-mono leading-tight mt-0.5",
+                                        isSelected ? "text-stone-300" : "text-stone-400"
+                                      )}>
+                                        {preset.desc}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  {isSelected && <Check size={12} className="shrink-0 ml-2" />}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {/* Scroll Focus Line Selector (Playback mode on Desktop only) */}
+                {mode === 'playback' && (
+                  <div className="relative hidden lg:flex items-center">
+                    <button
+                      id="script-preview-scroll-focus-control"
+                      onClick={() => setIsScrollFocusDropdownOpen(!isScrollFocusDropdownOpen)}
+                      className={cn(
+                        "flex items-center gap-1 px-2 py-0.5 rounded-lg border text-[10px] font-bold tracking-tight transition-all active:scale-95 shadow-sm",
+                        isScrollFocusDropdownOpen 
+                          ? "bg-stone-900 text-white border-stone-900" 
+                          : "bg-white text-stone-600 border-stone-200 hover:text-stone-900 hover:border-stone-300"
+                      )}
+                      title={`Scroll Focus Position: ${SCROLL_FOCUS_PRESETS.find(p => p.id === scrollFocusPreset)?.label || 'Top (35%)'}`}
+                    >
+                      <AlignVerticalJustifyCenter size={11} className="text-stone-400 shrink-0" />
+                      <span className="font-mono text-[9px] uppercase tracking-wider text-stone-500 font-semibold">
+                        {SCROLL_FOCUS_PRESETS.find(p => p.id === scrollFocusPreset)?.shortLabel}
+                      </span>
+                      <ChevronDown size={10} className={cn("text-stone-400 transition-transform duration-200", isScrollFocusDropdownOpen && "rotate-180")} />
+                    </button>
+
+                    {isScrollFocusDropdownOpen && (
+                      <>
+                        <div 
+                          className="fixed inset-0 z-40" 
+                          onClick={() => setIsScrollFocusDropdownOpen(false)} 
+                        />
+                        <div className="absolute top-full right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-stone-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200">
+                          <div className="p-2.5 bg-stone-50 border-b border-stone-100 flex items-center justify-between">
+                            <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Focus Line</p>
+                            <span className="text-[8px] font-mono text-stone-400 font-medium">Viewport Focus</span>
+                          </div>
+                          <div className="p-1.5 space-y-0.5">
+                            {SCROLL_FOCUS_PRESETS.map((preset) => {
+                              const isSelected = scrollFocusPreset === preset.id;
+                              const isDefault = preset.id === 'top';
+                              return (
+                                <button
+                                  key={preset.id}
+                                  id={`script-scroll-focus-${preset.id}`}
+                                  onClick={() => applyScrollFocus(preset.id)}
+                                  className={cn(
+                                    "w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left transition-colors group",
+                                    isSelected 
+                                      ? "bg-stone-900 text-white" 
+                                      : "text-stone-700 hover:bg-stone-100"
+                                  )}
+                                >
+                                  <div className="flex items-center gap-2">
+                                    {/* Visual vertical position representation bar */}
+                                    <div className={cn(
+                                      "w-4 h-6 rounded border flex flex-col justify-between p-0.5 transition-all shrink-0",
+                                      isSelected ? "border-stone-700 bg-stone-800" : "border-stone-200 bg-stone-50 group-hover:border-stone-300"
+                                    )}>
+                                      <div 
+                                        className={cn(
+                                          "w-full h-1 rounded-sm transition-all",
+                                          preset.id === 'top' ? (isSelected ? "bg-amber-400" : "bg-blue-500") : "opacity-0"
+                                        )} 
+                                      />
+                                      <div 
+                                        className={cn(
+                                          "w-full h-1 rounded-sm transition-all",
+                                          preset.id === 'center' ? (isSelected ? "bg-amber-400" : "bg-blue-500") : "opacity-0"
+                                        )} 
+                                      />
+                                      <div 
+                                        className={cn(
+                                          "w-full h-1 rounded-sm transition-all",
+                                          preset.id === 'bottom' ? (isSelected ? "bg-amber-400" : "bg-blue-500") : "opacity-0"
+                                        )} 
                                       />
                                     </div>
                                     <div className="flex flex-col">
