@@ -1,17 +1,9 @@
 import React from 'react';
 import { Settings, X, RefreshCw } from 'lucide-react';
 import { cn } from '../lib/utils';
+import type { TimingSettings, ColorCategory } from '../types/script';
 
-export interface TimingSettings {
-  before: number;
-  after: number;
-}
-
-export interface ColorCategory {
-  type: string;
-  class: string;
-  rgb?: string;
-}
+export type { TimingSettings, ColorCategory };
 
 interface TimingSettingsModalProps {
   isOpen: boolean;

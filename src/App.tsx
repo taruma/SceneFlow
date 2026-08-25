@@ -25,66 +25,26 @@ import { DeleteConfirmationModal } from './components/DeleteConfirmationModal';
 import { ResetConfirmationModal } from './components/ResetConfirmationModal';
 import { TimingSettingsModal } from './components/TimingSettingsModal';
 import { ScriptColorModal } from './components/ScriptColorModal';
-import { cn, extractYoutubeId } from './lib/utils';
-import { type Cue } from './types/script';
+import { cn, extractYoutubeId, generateId } from './lib/utils';
+import type { 
+  Cue, 
+  TimingSettings, 
+  AppState, 
+  ScriptWidthPresetId, 
+  ScrollFocusPresetId,
+  TextSelection,
+  DeleteConfirmationState,
+  ResetConfirmationState,
+  OverlapPickerState
+} from './types/script';
+import { 
+  COLORS, 
+  DEFAULT_SETTINGS, 
+  SCRIPT_WIDTH_PRESETS, 
+  SCROLL_FOCUS_PRESETS 
+} from './constants/script';
 
-export type { Cue };
-
-interface TimingSettings {
-  before: number;
-  after: number;
-}
-
-interface AppState {
-  youtubeId: string;
-  scriptText: string;
-  cues: Cue[];
-  settings?: Record<string, TimingSettings>;
-}
-
-const COLORS = [
-  { type: 'dialogue', class: 'bg-yellow-400/50', rgb: '250, 204, 21' },
-  { type: 'action', class: 'bg-blue-400/50', rgb: '96, 165, 250' },
-  { type: 'camera', class: 'bg-green-400/50', rgb: '74, 222, 128' },
-  { type: 'shot', class: 'bg-purple-400/50', rgb: '192, 132, 252' },
-  { type: 'audio', class: 'bg-orange-400/50', rgb: '251, 146, 60' },
-  { type: 'vfx', class: 'bg-cyan-400/50', rgb: '34, 211, 238' },
-  { type: 'transition', class: 'bg-pink-400/50', rgb: '244, 114, 182' },
-  { type: 'environment', class: 'bg-slate-400/50', rgb: '148, 163, 184' },
-];
-
-const DEFAULT_SETTINGS: Record<string, TimingSettings> = {
-  general: { before: 0, after: 0 },
-  ...Object.fromEntries(COLORS.map(c => [
-    c.type, 
-    { before: 0, after: 0 }
-  ]))
-};
-
-const SCRIPT_WIDTH_PRESETS = [
-  { id: 'narrow', label: 'Narrow', widthClass: 'max-w-sm', desc: '384px • Focused column' },
-  { id: 'compact', label: 'Compact', widthClass: 'max-w-md', desc: '448px • Snug reading' },
-  { id: 'standard', label: 'Standard', widthClass: 'max-w-xl', desc: '576px • Default screenplay' },
-  { id: 'wide', label: 'Wide', widthClass: 'max-w-3xl', desc: '768px • Spacious view' },
-  { id: 'full', label: 'Expanded', widthClass: 'max-w-5xl', desc: '1024px • Full page' },
-] as const;
-
-export type ScriptWidthPresetId = typeof SCRIPT_WIDTH_PRESETS[number]['id'];
-
-const SCROLL_FOCUS_PRESETS = [
-  { id: 'top', label: 'Top (35%)', shortLabel: 'Top', ratio: 0.35, desc: '35% from top • Anticipation' },
-  { id: 'center', label: 'Center (50%)', shortLabel: 'Center', ratio: 0.50, desc: '50% viewport • Balanced' },
-  { id: 'bottom', label: 'Bottom (35%)', shortLabel: 'Bottom', ratio: 0.65, desc: '35% from bottom • Reflection' },
-] as const;
-
-export type ScrollFocusPresetId = typeof SCROLL_FOCUS_PRESETS[number]['id'];
-
-const generateId = () => {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID();
-  }
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-};
+export type { Cue, TimingSettings, AppState, ScriptWidthPresetId, ScrollFocusPresetId };
 
 export default function App() {
   const [state, setState] = useState<AppState>(() => {
@@ -131,29 +91,22 @@ export default function App() {
   const [currentTime, setCurrentTime] = useState(0);
   const [player, setPlayer] = useState<any>(null);
   const [playerState, setPlayerState] = useState<number>(-1);
-  const [selection, setSelection] = useState<{ text: string; start: number; end: number } | null>(null);
+  const [selection, setSelection] = useState<TextSelection | null>(null);
   const [newCue, setNewCue] = useState<Partial<Cue>>({
     type: 'dialogue',
     colorClass: COLORS[0].class,
   });
   const [altLocations, setAltLocations] = useState<{start: number, end: number, context: string}[] | null>(null);
-  const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; cue: Cue | null }>({
+  const [deleteConfirmation, setDeleteConfirmation] = useState<DeleteConfirmationState>({
     isOpen: false,
     cue: null,
   });
-  const [resetConfirmation, setResetConfirmation] = useState<{ 
-    isOpen: boolean; 
-    type: 'settings' | 'data' | 'blank' | 'example' | 'remote' | null;
-    examplePath?: string;
-    exampleTitle?: string;
-    remoteUrl?: string;
-    error?: string | null;
-  }>({
+  const [resetConfirmation, setResetConfirmation] = useState<ResetConfirmationState>({
     isOpen: false,
     type: null,
     error: null,
   });
-  const [overlapPicker, setOverlapPicker] = useState<{ isOpen: boolean; cues: Cue[]; position: { x: number; y: number } }>({
+  const [overlapPicker, setOverlapPicker] = useState<OverlapPickerState>({
     isOpen: false,
     cues: [],
     position: { x: 0, y: 0 },
