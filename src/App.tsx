@@ -98,11 +98,9 @@ export default function App() {
           youtubeId: parsed.youtubeId || 'dQw4w9WgXcQ',
           scriptText: parsed.scriptText || '',
           cues: Array.isArray(parsed.cues) ? parsed.cues.map((c: any) => {
-            if (!c.type && c.colorClass) {
-              const colorInfo = COLORS.find(col => col.class === c.colorClass);
-              return { ...c, type: colorInfo?.type || 'dialogue' };
-            }
-            return c;
+            const cueType = c.type || (c.colorClass ? COLORS.find(col => col.class === c.colorClass)?.type : 'dialogue') || 'dialogue';
+            const colorClass = c.colorClass || COLORS.find(col => col.type === cueType)?.class || COLORS[0].class;
+            return { ...c, type: cueType, colorClass };
           }) : [],
           settings: parsed.settings || DEFAULT_SETTINGS,
         };
@@ -135,6 +133,7 @@ export default function App() {
   const [playerState, setPlayerState] = useState<number>(-1);
   const [selection, setSelection] = useState<{ text: string; start: number; end: number } | null>(null);
   const [newCue, setNewCue] = useState<Partial<Cue>>({
+    type: 'dialogue',
     colorClass: COLORS[0].class,
   });
   const [altLocations, setAltLocations] = useState<{start: number, end: number, context: string}[] | null>(null);
@@ -664,7 +663,9 @@ export default function App() {
       return;
     }
 
-    const colorInfo = COLORS.find(c => c.class === (newCue.colorClass || COLORS[0].class));
+    const cueType = newCue.type || (newCue.colorClass ? COLORS.find(c => c.class === newCue.colorClass)?.type : 'dialogue') || 'dialogue';
+    const colorClass = newCue.colorClass || COLORS.find(c => c.type === cueType)?.class || COLORS[0].class;
+
     const cue: Cue = {
       id: newCue.id || generateId(),
       selectedText: newCue.selectedText,
@@ -672,8 +673,8 @@ export default function App() {
       endIndex: newCue.endIndex!,
       startTime: newCue.startTime,
       endTime: newCue.endTime,
-      colorClass: newCue.colorClass || COLORS[0].class,
-      type: colorInfo?.type || 'dialogue',
+      colorClass: colorClass,
+      type: cueType,
     };
 
     setState(prev => {
@@ -688,14 +689,14 @@ export default function App() {
     });
     
     setSelection(null);
-    setNewCue({ colorClass: COLORS[0].class });
+    setNewCue({ type: 'dialogue', colorClass: COLORS[0].class });
     setAltLocations(null);
     console.log("Cue saved successfully:", cue);
   };
 
   const cancelEdit = () => {
     setSelection(null);
-    setNewCue({ colorClass: COLORS[0].class });
+    setNewCue({ type: 'dialogue', colorClass: COLORS[0].class });
     setAltLocations(null);
   };
 
@@ -1191,7 +1192,9 @@ export default function App() {
               const actualCues = segmentCues.filter(c => c.id !== 'temp-selection');
               if (actualCues.length === 1) {
                 const cue = actualCues[0];
-                setNewCue(cue);
+                const cueType = cue.type || (cue.colorClass ? COLORS.find(c => c.class === cue.colorClass)?.type : 'dialogue') || 'dialogue';
+                const colorClass = cue.colorClass || COLORS.find(c => c.type === cueType)?.class || COLORS[0].class;
+                setNewCue({ ...cue, type: cueType, colorClass });
                 setSelection({ text: cue.selectedText, start: cue.startIndex, end: cue.endIndex });
                 if (player) player.seekTo(cue.startTime, true);
               } else if (actualCues.length > 1) {
@@ -1592,12 +1595,16 @@ export default function App() {
                     ))}
                   </div>
                 </div>
-                <div className="grid gap-3">
-                   {(state.cues || []).map(cue => (
+                 <div className="grid gap-3">
+                   {(state.cues || []).map(cue => {
+                    const cueType = cue.type || (cue.colorClass ? COLORS.find(c => c.class === cue.colorClass)?.type : 'dialogue') || 'dialogue';
+                    const colorClass = cue.colorClass || COLORS.find(c => c.type === cueType)?.class || COLORS[0].class;
+                    const themed = getCueColorForTheme(cueType, scriptThemeId);
+                    return (
                     <div 
                       key={cue.id} 
                       onClick={() => {
-                        setNewCue(cue);
+                        setNewCue({ ...cue, type: cueType, colorClass });
                         setSelection({ text: cue.selectedText, start: cue.startIndex, end: cue.endIndex });
                         if (player) player.seekTo(cue.startTime, true);
                       }}
@@ -1607,11 +1614,21 @@ export default function App() {
                       )}
                     >
                       <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <div className={cn("w-1.5 h-10 rounded-full shrink-0", cue.colorClass)} />
+                        <div 
+                          className="w-1.5 h-10 rounded-full shrink-0" 
+                          style={{ backgroundColor: `rgb(${themed.rgb})` }} 
+                        />
                         <div className="flex flex-col flex-1 min-w-0">
-                          {cue.type && (
-                            <span className={cn("text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md w-fit mb-1", cue.colorClass, "bg-opacity-20 text-stone-600")}>
-                              {cue.type}
+                          {cueType && (
+                            <span 
+                              className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md w-fit mb-1 border"
+                              style={{ 
+                                backgroundColor: `rgba(${themed.rgb}, 0.15)`,
+                                borderColor: `rgba(${themed.rgb}, 0.3)`,
+                                color: themed.textColorClass.includes('text-amber-100') ? '#b45309' : undefined
+                              }}
+                            >
+                              {cueType}
                             </span>
                           )}
                           <span className="text-sm font-bold text-stone-800 italic leading-tight break-words">"{cue.selectedText}"</span>
@@ -1634,7 +1651,7 @@ export default function App() {
                         </button>
                       </div>
                     </div>
-                  ))}
+                  );})}
                   {(state.cues || []).length === 0 && (
                     <div className="text-center py-12 border-2 border-dashed border-stone-100 rounded-[2rem] bg-stone-50/50">
                       <p className="text-sm text-stone-400 font-medium italic">No cues created yet.</p>
@@ -2142,7 +2159,7 @@ export default function App() {
                       <div className="flex flex-wrap gap-1.5">
                         {COLORS.map(color => {
                           const themed = getCueColorForTheme(color.type, scriptThemeId);
-                          const isSelected = newCue.colorClass === color.class;
+                          const isSelected = newCue.type ? newCue.type === color.type : newCue.colorClass === color.class;
                           return (
                             <button
                               key={color.class}
@@ -2151,7 +2168,7 @@ export default function App() {
                               className={cn(
                                 "px-2 py-1 rounded-md transition-all border text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5",
                                 isSelected 
-                                  ? "border-stone-900 scale-105 shadow-sm opacity-100 bg-white font-bold" 
+                                  ? "border-stone-900 scale-105 shadow-sm opacity-100 bg-white font-bold ring-1 ring-stone-900" 
                                   : "border-stone-200 bg-stone-50 opacity-70 hover:opacity-100 hover:bg-white"
                               )}
                             >
@@ -2288,7 +2305,9 @@ export default function App() {
         position={overlapPicker.position}
         cues={overlapPicker.cues}
         onSelectCue={(cue) => {
-          setNewCue(cue);
+          const cueType = cue.type || (cue.colorClass ? COLORS.find(c => c.class === cue.colorClass)?.type : 'dialogue') || 'dialogue';
+          const colorClass = cue.colorClass || COLORS.find(c => c.type === cueType)?.class || COLORS[0].class;
+          setNewCue({ ...cue, type: cueType, colorClass });
           setSelection({ text: cue.selectedText, start: cue.startIndex, end: cue.endIndex });
           if (player) player.seekTo(cue.startTime, true);
           setOverlapPicker({ ...overlapPicker, isOpen: false });

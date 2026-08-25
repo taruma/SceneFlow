@@ -27,7 +27,7 @@ export interface Cue {
   endIndex: number;
   startTime: number;
   endTime: number;
-  colorClass: string;
+  colorClass?: string;
   type?: string;
 }
 
