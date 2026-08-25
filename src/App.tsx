@@ -1342,7 +1342,7 @@ export default function App() {
               )}
               title="Timing Settings"
             >
-              <Settings size={18} />
+              <Clock size={18} />
             </button>
           </div>
           
