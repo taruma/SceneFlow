@@ -111,7 +111,7 @@ export default function App() {
       }
     }
     return {
-      youtubeId: '', // Will be loaded from example_the_expansion.json
+      youtubeId: '', // Will be loaded from scene_frequency.json
       scriptText: '',
       cues: [],
       settings: DEFAULT_SETTINGS,
@@ -320,7 +320,7 @@ export default function App() {
   useEffect(() => {
     const saved = localStorage.getItem('screenplay_sync_state');
     if (!saved) {
-      fetch('/examples/example_the_expansion.json')
+      fetch('/examples/scene_frequency.json')
         .then(res => res.json())
         .then(data => {
           setState(data);
@@ -405,7 +405,7 @@ export default function App() {
   };
 
   const resetState = () => {
-    fetch('/examples/example_the_expansion.json')
+    fetch('/examples/scene_frequency.json')
       .then(res => res.json())
       .then(data => {
         const finalData = { ...data, settings: data.settings || DEFAULT_SETTINGS };
