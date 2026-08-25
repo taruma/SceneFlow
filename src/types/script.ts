@@ -94,3 +94,11 @@ export interface OverlapPickerState {
   position: { x: number; y: number };
 }
 
+export interface AlternativeLocation {
+  start: number;
+  end: number;
+  context: string;
+}
+
+export type AppMode = 'playback' | 'edit';
+

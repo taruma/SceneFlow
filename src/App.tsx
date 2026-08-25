@@ -37,7 +37,9 @@ import type {
   TextSelection,
   DeleteConfirmationState,
   ResetConfirmationState,
-  OverlapPickerState
+  OverlapPickerState,
+  AlternativeLocation,
+  AppMode
 } from './types/script';
 import { 
   COLORS, 
@@ -45,8 +47,17 @@ import {
   SCRIPT_WIDTH_PRESETS, 
   SCROLL_FOCUS_PRESETS 
 } from './constants/script';
+import {
+  findTextInScript,
+  findAlternativeLocations as searchAlternativeLocations,
+  realignCuesList,
+  isCueActive,
+  calculateCuePlaybackOpacity,
+  exportStateToJsonFile,
+  validateImportedScriptJson
+} from './lib/cueUtils';
 
-export type { Cue, TimingSettings, AppState, ScriptWidthPresetId, ScrollFocusPresetId };
+export type { Cue, TimingSettings, AppState, ScriptWidthPresetId, ScrollFocusPresetId, AlternativeLocation, AppMode };
 
 export default function App() {
   const [activeStaging, setActiveStaging] = useState<{ label: string; content: string } | null>(null);
@@ -183,11 +194,7 @@ export default function App() {
   const activeCueTypes = useMemo(() => {
     const active = new Set<string>();
     (state.cues || []).forEach(c => {
-      const typeSettings = state.settings?.[c.type || ''] || DEFAULT_SETTINGS.general;
-      const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
-      const totalBefore = (typeSettings.before || 0) + (generalSettings.before || 0);
-      const totalAfter = (typeSettings.after || 0) + (generalSettings.after || 0);
-      if (currentTime >= c.startTime - totalBefore && currentTime <= c.endTime + totalAfter) {
+      if (isCueActive(c, currentTime, state.settings)) {
         active.add(c.type || 'dialogue');
       }
     });
@@ -203,12 +210,7 @@ export default function App() {
       const activeCues = (state.cues || []).filter(c => {
         // Filter by selected focus types
         if (!autoScrollTargets.includes(c.type || 'dialogue')) return false;
-        
-        const typeSettings = state.settings?.[c.type || ''] || DEFAULT_SETTINGS.general;
-        const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
-        const totalBefore = (typeSettings.before || 0) + (generalSettings.before || 0);
-        const totalAfter = (typeSettings.after || 0) + (generalSettings.after || 0);
-        return currentTime >= c.startTime - totalBefore && currentTime <= c.endTime + totalAfter;
+        return isCueActive(c, currentTime, state.settings);
       });
 
       const activeCue = activeCues.length > 0
@@ -388,11 +390,7 @@ export default function App() {
 
   const isCueVisible = (c: Cue) => {
     if (hiddenCueTypes.has(c.type || 'dialogue')) return false;
-    const typeSettings = state.settings?.[c.type || ''] || DEFAULT_SETTINGS.general;
-    const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
-    const totalBefore = (typeSettings.before || 0) + (generalSettings.before || 0);
-    const totalAfter = (typeSettings.after || 0) + (generalSettings.after || 0);
-    return currentTime >= c.startTime - totalBefore && currentTime <= c.endTime + totalAfter;
+    return isCueActive(c, currentTime, state.settings);
   };
 
   useEffect(() => {
@@ -445,29 +443,7 @@ export default function App() {
     console.log("Selection captured:", text);
 
     const fullText = state.scriptText;
-    
-    // Try exact match first
-    let startIndex = fullText.indexOf(text);
-    
-    // If not found, try matching with normalized whitespace and quotes
-    if (startIndex === -1) {
-      const normalizedSearch = text.replace(/\s+/g, ' ').replace(/['’]/g, "'").trim();
-      const normalizedFull = fullText.replace(/\s+/g, ' ').replace(/['’]/g, "'");
-      const normIndex = normalizedFull.indexOf(normalizedSearch);
-      
-      if (normIndex !== -1) {
-        // Fallback to regex search for more flexibility
-        const escaped = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+').replace(/['’]/g, "['’]");
-        const regex = new RegExp(escaped, 'gi');
-        const match = regex.exec(fullText);
-        if (match) {
-          startIndex = match.index;
-        } else {
-          // Last resort: case-insensitive search
-          startIndex = fullText.toLowerCase().indexOf(text.toLowerCase().trim());
-        }
-      }
-    }
+    const startIndex = findTextInScript(fullText, text);
     
     if (startIndex !== -1) {
       console.log("Text found in script at index:", startIndex);
@@ -533,85 +509,7 @@ export default function App() {
 
   const findAlternativeLocations = () => {
     if (!selection?.text) return;
-    
-    const results: {start: number, end: number, context: string}[] = [];
-    const searchText = selection.text.trim();
-    if (!searchText) return;
-
-    // Get excluded ranges (STAGING blocks)
-    const processedLinesForExclusion = processScript(state.scriptText);
-    const excludedRanges = processedLinesForExclusion
-      .filter(line => line.isStaging)
-      .map(line => ({ start: line.lineStart, end: line.lineEnd }));
-
-    const isExcluded = (start: number, end: number) => {
-      return excludedRanges.some(range => 
-        (start >= range.start && start < range.end) || 
-        (end > range.start && end <= range.end) ||
-        (range.start >= start && range.start < end)
-      );
-    };
-
-    // Use same regex logic as realignCues
-    const escapedSearch = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regexStr = escapedSearch.replace(/\s+/g, '\\s+').replace(/['’]/g, "['’]");
-    
-    try {
-      const regex = new RegExp(regexStr, 'gi');
-      let m;
-      while ((m = regex.exec(state.scriptText)) !== null) {
-        const idx = m.index;
-        const matchLen = m[0].length;
-        
-        // Skip if inside a staging block
-        if (isExcluded(idx, idx + matchLen)) continue;
-
-        // Get some context
-        const startContext = Math.max(0, idx - 25);
-        const endContext = Math.min(state.scriptText.length, idx + matchLen + 25);
-        const context = state.scriptText.substring(startContext, endContext).replace(/\n/g, ' ');
-        
-        results.push({
-          start: idx,
-          end: idx + matchLen,
-          context: (startContext > 0 ? '...' : '') + context + (endContext < state.scriptText.length ? '...' : '')
-        });
-        
-        if (results.length > 40) break; // Limit matches
-      }
-      
-      // If no matches found with full text, try the "short match" approach from align
-      if (results.length === 0) {
-        const shortSearch = searchText.substring(0, 15).trim();
-        if (shortSearch.length >= 5) {
-          const shortEscaped = shortSearch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+').replace(/['’]/g, "['’]");
-          const shortRegex = new RegExp(shortEscaped, 'gi');
-          
-          let sm;
-          while ((sm = shortRegex.exec(state.scriptText)) !== null) {
-            const idx = sm.index;
-            const matchLen = sm[0].length;
-            
-            // Skip if inside a staging block
-            if (isExcluded(idx, idx + shortSearch.length)) continue;
-
-            const startContext = Math.max(0, idx - 25);
-            const endContext = Math.min(state.scriptText.length, idx + searchText.length + 25);
-            const context = state.scriptText.substring(startContext, endContext).replace(/\n/g, ' ');
-            
-            results.push({
-              start: idx,
-              end: idx + searchText.length, // Approximate based on original text length
-              context: (startContext > 0 ? '...' : '') + context + (endContext < state.scriptText.length ? '...' : '')
-            });
-            if (results.length > 40) break;
-          }
-        }
-      }
-    } catch (e) {
-      console.error("Regex error in findAlternativeLocations:", e);
-    }
-    
+    const results = searchAlternativeLocations(state.scriptText, selection.text);
     setAltLocations(results);
   };
 
@@ -652,101 +550,9 @@ export default function App() {
     const delay = isManual ? 600 : 0;
     
     console.log("Aligning cues. Manual:", isManual, "Cues count:", (actualState.cues || []).length);
-    
-    // Pre-calculate excluded ranges (STAGING blocks)
-    const processedLinesForExclusion = processScript(actualState.scriptText);
-    const excludedRanges = processedLinesForExclusion
-      .filter(line => line.isStaging)
-      .map(line => ({ start: line.lineStart, end: line.lineEnd }));
-
-    const isExcluded = (start: number, end: number) => {
-      return excludedRanges.some(range => 
-        (start >= range.start && start < range.end) || 
-        (end > range.start && end <= range.end) ||
-        (range.start >= start && range.start < end)
-      );
-    };
 
     setTimeout(() => {
-      let lastIndex = 0;
-      let alignedCount = 0;
-      
-      // Sort cues by startTime before aligning to ensure sequential search works correctly
-      // and the final list is chronologically ordered for easier troubleshooting
-      const sortedCues = [...(actualState.cues || [])].sort((a, b) => (a.startTime || 0) - (b.startTime || 0));
-      
-      const updatedCues = sortedCues.map(cue => {
-        const searchText = cue.selectedText.trim();
-        if (!searchText) return cue;
-
-        // Escape special characters for regex
-        const escapedSearch = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        // Replace any whitespace with \s+ and quotes with a character class
-        const regexStr = escapedSearch.replace(/\s+/g, '\\s+').replace(/['’]/g, "['’]");
-        
-        try {
-          const regex = new RegExp(regexStr, 'gi');
-          const matches: { index: number, length: number }[] = [];
-          let m;
-          while ((m = regex.exec(actualState.scriptText)) !== null) {
-            // Verify if not excluded
-            if (!isExcluded(m.index, m.index + m[0].length)) {
-              matches.push({ index: m.index, length: m[0].length });
-            }
-          }
-
-          if (matches.length > 0) {
-            // Reference point: prefer existing index if valid, otherwise use lastIndex
-            const referenceIndex = (cue.startIndex !== undefined && cue.startIndex >= 0) ? cue.startIndex : lastIndex;
-            
-            // Find the match closest to our reference point
-            const bestMatch = matches.reduce((prev, curr) => {
-              return Math.abs(curr.index - referenceIndex) < Math.abs(prev.index - referenceIndex) ? curr : prev;
-            });
-
-            const newStart = bestMatch.index;
-            const newEnd = newStart + bestMatch.length;
-            lastIndex = newEnd;
-            alignedCount++;
-            return { ...cue, startIndex: newStart, endIndex: newEnd };
-          }
-          
-          // 3. Last resort: try matching just the first 15 characters if the full text is not found
-          // (Useful if the script text was edited significantly)
-          const shortSearch = searchText.substring(0, 15).trim();
-          if (shortSearch.length >= 5) {
-            const shortEscaped = shortSearch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+').replace(/['’]/g, "['’]");
-            const shortRegex = new RegExp(shortEscaped, 'gi');
-            
-            const shortMatches: { index: number, length: number }[] = [];
-            let sm;
-            while ((sm = shortRegex.exec(actualState.scriptText)) !== null) {
-              // Verify if not excluded
-              if (!isExcluded(sm.index, sm.index + sm[0].length)) {
-                shortMatches.push({ index: sm.index, length: sm[0].length });
-              }
-            }
-
-            if (shortMatches.length > 0) {
-              const referenceIndex = (cue.startIndex !== undefined && cue.startIndex >= 0) ? cue.startIndex : lastIndex;
-              const bestShortMatch = shortMatches.reduce((prev, curr) => {
-                return Math.abs(curr.index - referenceIndex) < Math.abs(prev.index - referenceIndex) ? curr : prev;
-              });
-
-              const newStart = bestShortMatch.index;
-              const newEnd = newStart + searchText.length; // Approximate
-              lastIndex = newEnd;
-              alignedCount++;
-              return { ...cue, startIndex: newStart, endIndex: newEnd };
-            }
-          }
-        } catch (e) {
-          console.error("Regex error during alignment:", e);
-        }
-
-        console.warn(`Could not align cue: "${searchText}"`);
-        return cue;
-      });
+      const { updatedCues, alignedCount } = realignCuesList(actualState.cues, actualState.scriptText);
       
       setState(prev => ({ ...prev, cues: updatedCues }));
       setIsAligning(false);
@@ -760,13 +566,7 @@ export default function App() {
   };
 
   const exportJson = () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "screenplay_sync.json");
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
+    exportStateToJsonFile(state);
   };
 
   const importJson = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -776,20 +576,7 @@ export default function App() {
     reader.onload = (event) => {
       try {
         const json = JSON.parse(event.target?.result as string);
-        
-        // Basic validation to prevent crashes
-        const validatedJson = {
-          youtubeId: json.youtubeId || 'dQw4w9WgXcQ',
-          scriptText: json.scriptText || '',
-          cues: Array.isArray(json.cues) ? json.cues.map((c: any) => {
-            if (!c.type && c.colorClass) {
-              const colorInfo = COLORS.find(col => col.class === c.colorClass);
-              return { ...c, type: colorInfo?.type || 'dialogue' };
-            }
-            return c;
-          }) : [],
-          settings: json.settings || DEFAULT_SETTINGS,
-        };
+        const validatedJson = validateImportedScriptJson(json);
 
         setState(validatedJson);
         // Automatically trigger alignment after import
@@ -916,16 +703,7 @@ export default function App() {
         .map(cue => {
           let opacity = 1;
           if (mode === 'playback') {
-            const typeSettings = state.settings?.[cue.type || ''] || DEFAULT_SETTINGS.general;
-            const generalSettings = state.settings?.['general'] || DEFAULT_SETTINGS.general;
-            const totalBefore = (typeSettings.before || 0) + (generalSettings.before || 0);
-            const totalAfter = (typeSettings.after || 0) + (generalSettings.after || 0);
-
-            if (currentTime < cue.startTime) {
-              opacity = totalBefore > 0 ? Math.max(0, Math.min(1, (currentTime - (cue.startTime - totalBefore)) / totalBefore)) : 1;
-            } else if (currentTime > cue.endTime) {
-              opacity = totalAfter > 0 ? Math.max(0, Math.min(1, 1 - (currentTime - cue.endTime) / totalAfter)) : 1;
-            }
+            opacity = calculateCuePlaybackOpacity(cue, currentTime, state.settings);
           } else {
             // In edit mode, non-active cues are faded but visible
             const isActive = currentTime >= cue.startTime && currentTime <= cue.endTime;
