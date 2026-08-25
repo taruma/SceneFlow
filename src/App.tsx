@@ -28,6 +28,11 @@ import { ScriptColorModal } from './components/ScriptColorModal';
 import { cn, extractYoutubeId, generateId } from './lib/utils';
 import { useScriptStorage } from './hooks/useScriptStorage';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
+import { useScriptPreferences } from './hooks/useScriptPreferences';
+import { useAutoScroll } from './hooks/useAutoScroll';
+import { useCueEditor } from './hooks/useCueEditor';
+import { useCueAlignment } from './hooks/useCueAlignment';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import type { 
   Cue, 
   TimingSettings, 
@@ -48,9 +53,6 @@ import {
   SCROLL_FOCUS_PRESETS 
 } from './constants/script';
 import {
-  findTextInScript,
-  findAlternativeLocations as searchAlternativeLocations,
-  realignCuesList,
   isCueActive,
   calculateCuePlaybackOpacity,
   exportStateToJsonFile,
@@ -61,6 +63,16 @@ export type { Cue, TimingSettings, AppState, ScriptWidthPresetId, ScrollFocusPre
 
 export default function App() {
   const [activeStaging, setActiveStaging] = useState<{ label: string; content: string } | null>(null);
+  const [mode, setMode] = useState<AppMode>('playback');
+  const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
+  const [isCuesModalOpen, setIsCuesModalOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+  const [rawCuesText, setRawCuesText] = useState("");
+  const [leftPanelScroll, setLeftPanelScroll] = useState(0);
+
+  const scriptRef = useRef<HTMLDivElement>(null);
+  const leftPanelRef = useRef<HTMLDivElement>(null);
 
   const {
     state,
@@ -90,106 +102,87 @@ export default function App() {
     onPlay: () => setActiveStaging(null),
   });
 
-  const [mode, setMode] = useState<'playback' | 'edit'>('playback');
-  const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
-  const [isCuesModalOpen, setIsCuesModalOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
-  const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
-  const [autoScrollTargets, setAutoScrollTargets] = useState<string[]>(['dialogue']);
-  const [isAutoScrollDropdownOpen, setIsAutoScrollDropdownOpen] = useState(false);
-  const [lastScrolledCueId, setLastScrolledCueId] = useState<string | null>(null);
-  const [rawCuesText, setRawCuesText] = useState("");
-  const [selection, setSelection] = useState<TextSelection | null>(null);
-  const [newCue, setNewCue] = useState<Partial<Cue>>({
-    type: 'dialogue',
-    colorClass: COLORS[0].class,
-  });
-  const [altLocations, setAltLocations] = useState<{start: number, end: number, context: string}[] | null>(null);
-  const [deleteConfirmation, setDeleteConfirmation] = useState<DeleteConfirmationState>({
-    isOpen: false,
-    cue: null,
-  });
-  const [resetConfirmation, setResetConfirmation] = useState<ResetConfirmationState>({
-    isOpen: false,
-    type: null,
-    error: null,
-  });
-  const [overlapPicker, setOverlapPicker] = useState<OverlapPickerState>({
-    isOpen: false,
-    cues: [],
-    position: { x: 0, y: 0 },
+  const {
+    videoWidth,
+    setVideoWidth,
+    scriptWidthPreset,
+    setScriptWidthPreset,
+    isWidthDropdownOpen,
+    setIsWidthDropdownOpen,
+    scrollFocusPreset,
+    setScrollFocusPreset,
+    isScrollFocusDropdownOpen,
+    setIsScrollFocusDropdownOpen,
+    scriptThemeId,
+    setScriptThemeId,
+    isColorModalOpen,
+    setIsColorModalOpen,
+    hiddenCueTypes,
+    toggleCueTypeVisibility,
+  } = useScriptPreferences();
+
+  const { isDesktop } = useKeyboardShortcuts({
+    player,
+    togglePlayPause,
+    jumpBy,
+    disabled: isScriptModalOpen || isCuesModalOpen,
   });
 
-  const [isAligning, setIsAligning] = useState(false);
-  const [alignSuccess, setAlignSuccess] = useState(false);
-  const [leftPanelScroll, setLeftPanelScroll] = useState(0);
-  const [hiddenCueTypes, setHiddenCueTypes] = useState<Set<string>>(new Set());
-  const [videoWidth, setVideoWidth] = useState(100); // Percentage of container width
-  const [scriptWidthPreset, setScriptWidthPreset] = useState<ScriptWidthPresetId>(() => {
-    if (typeof localStorage !== 'undefined') {
-      const saved = localStorage.getItem('sceneflow_script_width_preset');
-      if (saved && SCRIPT_WIDTH_PRESETS.some(p => p.id === saved)) {
-        return saved as ScriptWidthPresetId;
-      }
-    }
-    return 'standard';
+  const {
+    isAutoScrollEnabled,
+    setIsAutoScrollEnabled,
+    autoScrollTargets,
+    setAutoScrollTargets,
+    isAutoScrollDropdownOpen,
+    setIsAutoScrollDropdownOpen,
+    applyScrollFocus,
+  } = useAutoScroll({
+    scriptRef,
+    cues: state.cues,
+    settings: state.settings,
+    currentTime,
+    mode,
+    isDesktop,
+    scrollFocusPreset,
+    onScrollFocusChange: setScrollFocusPreset,
   });
-  const [isWidthDropdownOpen, setIsWidthDropdownOpen] = useState(false);
-  const [scrollFocusPreset, setScrollFocusPreset] = useState<ScrollFocusPresetId>(() => {
-    if (typeof localStorage !== 'undefined') {
-      const saved = localStorage.getItem('sceneflow_scroll_focus_preset');
-      if (saved && SCROLL_FOCUS_PRESETS.some(p => p.id === saved)) {
-        return saved as ScrollFocusPresetId;
-      }
-    }
-    return 'top';
+
+  const {
+    selection,
+    setSelection,
+    newCue,
+    setNewCue,
+    altLocations,
+    setAltLocations,
+    deleteConfirmation,
+    setDeleteConfirmation,
+    resetConfirmation,
+    setResetConfirmation,
+    overlapPicker,
+    setOverlapPicker,
+    handleSelection,
+    saveCue,
+    cancelEdit,
+    findAlternativeLocations,
+    deleteCue,
+    confirmDelete,
+    selectCueForEdit,
+  } = useCueEditor({
+    scriptText: state.scriptText,
+    cues: state.cues,
+    setState,
+    mode,
+    player,
   });
-  const [isScrollFocusDropdownOpen, setIsScrollFocusDropdownOpen] = useState(false);
-  const [scriptThemeId, setScriptThemeId] = useState<ScriptThemeId>(() => {
-    if (typeof localStorage !== 'undefined') {
-      const saved = localStorage.getItem('sceneflow_script_theme');
-      if (saved) {
-        return saved as ScriptThemeId;
-      }
-    }
-    return DEFAULT_SCRIPT_THEME_ID;
+
+  const {
+    isAligning,
+    alignSuccess,
+    realignCues,
+  } = useCueAlignment({
+    state,
+    setState,
   });
-  const [isColorModalOpen, setIsColorModalOpen] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
-
-  const applyScrollFocus = (presetId: ScrollFocusPresetId) => {
-    setScrollFocusPreset(presetId);
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('sceneflow_scroll_focus_preset', presetId);
-    }
-    setIsScrollFocusDropdownOpen(false);
-
-    // If there is an active cue element, immediately adjust scroll position smoothly
-    if (lastScrolledCueId && scriptRef.current) {
-      const element = document.getElementById(`cue-${lastScrolledCueId}`);
-      const container = scriptRef.current;
-      if (element && container) {
-        const containerRect = container.getBoundingClientRect();
-        const elementRect = element.getBoundingClientRect();
-        const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
-        const preset = SCROLL_FOCUS_PRESETS.find(p => p.id === presetId) || SCROLL_FOCUS_PRESETS[0];
-        const targetScrollTop = isDesktop
-          ? relativeTop - (containerRect.height * preset.ratio) + (elementRect.height / 2)
-          : relativeTop - (containerRect.height / 2) + (elementRect.height / 2);
-        container.scrollTo({
-          top: Math.max(0, targetScrollTop),
-          behavior: 'smooth'
-        });
-      }
-    }
-  };
-
-  useEffect(() => {
-    const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const activeCueTypes = useMemo(() => {
     const active = new Set<string>();
@@ -200,64 +193,6 @@ export default function App() {
     });
     return active;
   }, [state.cues, state.settings, currentTime]);
-
-  const scriptRef = useRef<HTMLDivElement>(null);
-  const leftPanelRef = useRef<HTMLDivElement>(null);
-
-  // Auto-scroll logic
-  useEffect(() => {
-    if (mode === 'playback' && isAutoScrollEnabled) {
-      const activeCues = (state.cues || []).filter(c => {
-        // Filter by selected focus types
-        if (!autoScrollTargets.includes(c.type || 'dialogue')) return false;
-        return isCueActive(c, currentTime, state.settings);
-      });
-
-      const activeCue = activeCues.length > 0
-        ? activeCues.reduce((best, current) => {
-            if (!best) return current;
-            
-            // Prioritize by most recent start time (the one that started last)
-            if (current.startTime > best.startTime) return current;
-            
-            // If same start time, prioritize by position in script (further down)
-            if (current.startTime === best.startTime && (current.startIndex || 0) > (best.startIndex || 0)) return current;
-            
-            return best;
-          }, null as Cue | null)
-        : null;
-
-      if (activeCue && activeCue.id !== lastScrolledCueId) {
-        const element = document.getElementById(`cue-${activeCue.id}`);
-        const container = scriptRef.current;
-        if (element && container) {
-          setTimeout(() => {
-            const containerRect = container.getBoundingClientRect();
-            const elementRect = element.getBoundingClientRect();
-            const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
-            
-            const focusPreset = SCROLL_FOCUS_PRESETS.find(p => p.id === scrollFocusPreset) || SCROLL_FOCUS_PRESETS[0];
-            let targetScrollTop;
-            if (isDesktop) {
-              // Position active cue based on user-selected focus line preset (default 35% from top)
-              targetScrollTop = relativeTop - (containerRect.height * focusPreset.ratio) + (elementRect.height / 2);
-            } else {
-              // Position active cue exactly in the center for mobile/tablet screens
-              targetScrollTop = relativeTop - (containerRect.height / 2) + (elementRect.height / 2);
-            }
-            
-            container.scrollTo({
-              top: Math.max(0, targetScrollTop),
-              behavior: 'smooth'
-            });
-          }, 50);
-          setLastScrolledCueId(activeCue.id);
-        }
-      } else if (!activeCue) {
-        setLastScrolledCueId(null);
-      }
-    }
-  }, [currentTime, mode, isAutoScrollEnabled, state.cues, state.settings, lastScrolledCueId, autoScrollTargets, isDesktop, scrollFocusPreset]);
 
   // Handle example and project query parameters on mount
   useEffect(() => {
@@ -303,14 +238,6 @@ export default function App() {
       window.history.replaceState({}, '', newUrl);
     }
   }, []);
-
-  useEffect(() => {
-    const handleClickOutside = () => {
-      if (overlapPicker.isOpen) setOverlapPicker(prev => ({ ...prev, isOpen: false }));
-    };
-    window.addEventListener('click', handleClickOutside);
-    return () => window.removeEventListener('click', handleClickOutside);
-  }, [overlapPicker.isOpen]);
 
   const saveRawCues = () => {
     try {
@@ -376,193 +303,9 @@ export default function App() {
     }
   };
 
-  const toggleCueTypeVisibility = (type: string) => {
-    setHiddenCueTypes(prev => {
-      const next = new Set(prev);
-      if (next.has(type)) {
-        next.delete(type);
-      } else {
-        next.add(type);
-      }
-      return next;
-    });
-  };
-
   const isCueVisible = (c: Cue) => {
     if (hiddenCueTypes.has(c.type || 'dialogue')) return false;
     return isCueActive(c, currentTime, state.settings);
-  };
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't trigger shortcuts if user is typing in an input or textarea
-      if (
-        document.activeElement?.tagName === 'INPUT' ||
-        document.activeElement?.tagName === 'TEXTAREA' ||
-        isScriptModalOpen ||
-        isCuesModalOpen
-      ) {
-        return;
-      }
-
-      if (!player) return;
-
-      switch (e.code) {
-        case 'Space':
-          e.preventDefault();
-          togglePlayPause();
-          break;
-        case 'ArrowLeft':
-          e.preventDefault();
-          jumpBy(-5);
-          break;
-        case 'ArrowRight':
-          e.preventDefault();
-          jumpBy(5);
-          break;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [player, isScriptModalOpen, isCuesModalOpen, togglePlayPause, jumpBy]);
-
-  // Handle text selection in Edit Mode
-  const handleSelection = () => {
-    if (mode !== 'edit') return;
-    const sel = window.getSelection();
-    
-    if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
-      if (overlapPicker.isOpen) setOverlapPicker(prev => ({ ...prev, isOpen: false }));
-      return;
-    }
-
-    const text = sel.toString();
-    if (!text.trim()) return;
-
-    console.log("Selection captured:", text);
-
-    const fullText = state.scriptText;
-    const startIndex = findTextInScript(fullText, text);
-    
-    if (startIndex !== -1) {
-      console.log("Text found in script at index:", startIndex);
-      const actualText = fullText.substring(startIndex, startIndex + text.length);
-      setSelection({
-        text: actualText,
-        start: startIndex,
-        end: startIndex + text.length,
-      });
-      setNewCue(prev => ({
-        ...prev,
-        selectedText: actualText,
-        startIndex: startIndex,
-        endIndex: startIndex + text.length,
-      }));
-    } else {
-      console.warn("Text not found in raw scriptText. Selection might span across complex formatting or have different whitespace.");
-    }
-  };
-
-  const saveCue = () => {
-    if (!newCue.selectedText || newCue.startTime === undefined || newCue.endTime === undefined) {
-      console.error("Cannot save cue: missing data", newCue);
-      return;
-    }
-
-    const cueType = newCue.type || (newCue.colorClass ? COLORS.find(c => c.class === newCue.colorClass)?.type : 'dialogue') || 'dialogue';
-    const colorClass = newCue.colorClass || COLORS.find(c => c.type === cueType)?.class || COLORS[0].class;
-
-    const cue: Cue = {
-      id: newCue.id || generateId(),
-      selectedText: newCue.selectedText,
-      startIndex: newCue.startIndex!,
-      endIndex: newCue.endIndex!,
-      startTime: newCue.startTime,
-      endTime: newCue.endTime,
-      colorClass: colorClass,
-      type: cueType,
-    };
-
-    setState(prev => {
-      const existingIdx = (prev.cues || []).findIndex(c => c.id === cue.id);
-      let newCues = [...(prev.cues || [])];
-      if (existingIdx >= 0) {
-        newCues[existingIdx] = cue;
-      } else {
-        newCues.push(cue);
-      }
-      return { ...prev, cues: newCues };
-    });
-    
-    setSelection(null);
-    setNewCue({ type: 'dialogue', colorClass: COLORS[0].class });
-    setAltLocations(null);
-    console.log("Cue saved successfully:", cue);
-  };
-
-  const cancelEdit = () => {
-    setSelection(null);
-    setNewCue({ type: 'dialogue', colorClass: COLORS[0].class });
-    setAltLocations(null);
-  };
-
-  const findAlternativeLocations = () => {
-    if (!selection?.text) return;
-    const results = searchAlternativeLocations(state.scriptText, selection.text);
-    setAltLocations(results);
-  };
-
-  const deleteCue = (id: string) => {
-    const cueToDelete = (state.cues || []).find(c => c.id === id);
-    if (cueToDelete) {
-      setDeleteConfirmation({ isOpen: true, cue: cueToDelete });
-    }
-  };
-
-  const confirmDelete = () => {
-    if (deleteConfirmation.cue) {
-      const id = deleteConfirmation.cue.id;
-      setState(prev => ({
-        ...prev,
-        cues: (prev.cues || []).filter(c => c.id !== id),
-      }));
-      if (newCue.id === id) {
-        cancelEdit();
-      }
-      setDeleteConfirmation({ isOpen: false, cue: null });
-    }
-  };
-
-  const realignCues = (targetState?: AppState) => {
-    // If targetState is an event (from onClick), ignore it
-    const actualState = (targetState && typeof targetState === 'object' && 'cues' in targetState) ? (targetState as AppState) : state;
-    
-    if (!actualState || !actualState.cues || actualState.cues.length === 0) {
-      console.warn("No cues to realign");
-      return;
-    }
-    
-    setIsAligning(true);
-    
-    // Use a small delay for visual feedback if it's a manual click
-    const isManual = !targetState || !('cues' in targetState);
-    const delay = isManual ? 600 : 0;
-    
-    console.log("Aligning cues. Manual:", isManual, "Cues count:", (actualState.cues || []).length);
-
-    setTimeout(() => {
-      const { updatedCues, alignedCount } = realignCuesList(actualState.cues, actualState.scriptText);
-      
-      setState(prev => ({ ...prev, cues: updatedCues }));
-      setIsAligning(false);
-      
-      if (isManual) {
-        setAlignSuccess(true);
-        setTimeout(() => setAlignSuccess(false), 2000);
-      }
-      console.log(`Cues realigned: ${alignedCount} of ${actualState.cues.length} updated.`);
-    }, delay);
   };
 
   const exportJson = () => {
@@ -800,12 +543,7 @@ export default function App() {
               
               const actualCues = segmentCues.filter(c => c.id !== 'temp-selection');
               if (actualCues.length === 1) {
-                const cue = actualCues[0];
-                const cueType = cue.type || (cue.colorClass ? COLORS.find(c => c.class === cue.colorClass)?.type : 'dialogue') || 'dialogue';
-                const colorClass = cue.colorClass || COLORS.find(c => c.type === cueType)?.class || COLORS[0].class;
-                setNewCue({ ...cue, type: cueType, colorClass });
-                setSelection({ text: cue.selectedText, start: cue.startIndex, end: cue.endIndex });
-                if (player) player.seekTo(cue.startTime, true);
+                selectCueForEdit(actualCues[0]);
               } else if (actualCues.length > 1) {
                 setOverlapPicker({
                   isOpen: true,
@@ -1212,11 +950,7 @@ export default function App() {
                     return (
                     <div 
                       key={cue.id} 
-                      onClick={() => {
-                        setNewCue({ ...cue, type: cueType, colorClass });
-                        setSelection({ text: cue.selectedText, start: cue.startIndex, end: cue.endIndex });
-                        if (player) player.seekTo(cue.startTime, true);
-                      }}
+                      onClick={() => selectCueForEdit(cue)}
                       className={cn(
                         "flex items-center justify-between p-4 bg-stone-50 border rounded-2xl group hover:bg-white hover:shadow-md transition-all relative overflow-hidden cursor-pointer",
                         newCue.id === cue.id ? "border-stone-900 ring-1 ring-stone-900 bg-white shadow-md" : "border-stone-200"
@@ -1914,11 +1648,7 @@ export default function App() {
         position={overlapPicker.position}
         cues={overlapPicker.cues}
         onSelectCue={(cue) => {
-          const cueType = cue.type || (cue.colorClass ? COLORS.find(c => c.class === cue.colorClass)?.type : 'dialogue') || 'dialogue';
-          const colorClass = cue.colorClass || COLORS.find(c => c.type === cueType)?.class || COLORS[0].class;
-          setNewCue({ ...cue, type: cueType, colorClass });
-          setSelection({ text: cue.selectedText, start: cue.startIndex, end: cue.endIndex });
-          if (player) player.seekTo(cue.startTime, true);
+          selectCueForEdit(cue);
           setOverlapPicker({ ...overlapPicker, isOpen: false });
         }}
         onClose={() => setOverlapPicker({ ...overlapPicker, isOpen: false })}
