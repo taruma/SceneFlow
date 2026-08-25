@@ -26,6 +26,8 @@ import { ResetConfirmationModal } from './components/ResetConfirmationModal';
 import { TimingSettingsModal } from './components/TimingSettingsModal';
 import { ScriptColorModal } from './components/ScriptColorModal';
 import { cn, extractYoutubeId, generateId } from './lib/utils';
+import { useScriptStorage } from './hooks/useScriptStorage';
+import { useYouTubePlayer } from './hooks/useYouTubePlayer';
 import type { 
   Cue, 
   TimingSettings, 
@@ -47,36 +49,35 @@ import {
 export type { Cue, TimingSettings, AppState, ScriptWidthPresetId, ScrollFocusPresetId };
 
 export default function App() {
-  const [state, setState] = useState<AppState>(() => {
-    // Try to load from localStorage
-    const saved = localStorage.getItem('screenplay_sync_state');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        // Ensure it has required properties
-        return {
-          youtubeId: parsed.youtubeId || 'dQw4w9WgXcQ',
-          scriptText: parsed.scriptText || '',
-          cues: Array.isArray(parsed.cues) ? parsed.cues.map((c: any) => {
-            const cueType = c.type || (c.colorClass ? COLORS.find(col => col.class === c.colorClass)?.type : 'dialogue') || 'dialogue';
-            const colorClass = c.colorClass || COLORS.find(col => col.type === cueType)?.class || COLORS[0].class;
-            return { ...c, type: cueType, colorClass };
-          }) : [],
-          settings: parsed.settings || DEFAULT_SETTINGS,
-        };
-      } catch (e) {
-        console.error("Failed to parse saved state", e);
-      }
-    }
-    return {
-      youtubeId: '', // Will be loaded from scene_frequency.json
-      scriptText: '',
-      cues: [],
-      settings: DEFAULT_SETTINGS,
-    };
-  });
+  const [activeStaging, setActiveStaging] = useState<{ label: string; content: string } | null>(null);
 
-  const [isInitialized, setIsInitialized] = useState(false);
+  const {
+    state,
+    setState,
+    isInitialized,
+    isRemoteLoading,
+    resetToDefault,
+    loadBlank: loadBlankStorage,
+    loadExample: loadExampleStorage,
+    loadRemoteProject: loadRemoteProjectStorage,
+  } = useScriptStorage();
+
+  const {
+    player,
+    playerState,
+    currentTime,
+    setCurrentTime,
+    onReady,
+    onStateChange,
+    seekTo,
+    playVideo,
+    pauseVideo,
+    togglePlayPause,
+    jumpBy,
+  } = useYouTubePlayer({
+    youtubeId: state.youtubeId,
+    onPlay: () => setActiveStaging(null),
+  });
 
   const [mode, setMode] = useState<'playback' | 'edit'>('playback');
   const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
@@ -88,9 +89,6 @@ export default function App() {
   const [isAutoScrollDropdownOpen, setIsAutoScrollDropdownOpen] = useState(false);
   const [lastScrolledCueId, setLastScrolledCueId] = useState<string | null>(null);
   const [rawCuesText, setRawCuesText] = useState("");
-  const [currentTime, setCurrentTime] = useState(0);
-  const [player, setPlayer] = useState<any>(null);
-  const [playerState, setPlayerState] = useState<number>(-1);
   const [selection, setSelection] = useState<TextSelection | null>(null);
   const [newCue, setNewCue] = useState<Partial<Cue>>({
     type: 'dialogue',
@@ -148,7 +146,6 @@ export default function App() {
   });
   const [isColorModalOpen, setIsColorModalOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
-  const [activeStaging, setActiveStaging] = useState<{ label: string; content: string } | null>(null);
 
   const applyScrollFocus = (presetId: ScrollFocusPresetId) => {
     setScrollFocusPreset(presetId);
@@ -199,14 +196,6 @@ export default function App() {
 
   const scriptRef = useRef<HTMLDivElement>(null);
   const leftPanelRef = useRef<HTMLDivElement>(null);
-  const timerRef = useRef<number | null>(null);
-
-  // Save to localStorage on state change
-  useEffect(() => {
-    if (isInitialized) {
-      localStorage.setItem('screenplay_sync_state', JSON.stringify(state));
-    }
-  }, [state, isInitialized]);
 
   // Auto-scroll logic
   useEffect(() => {
@@ -268,25 +257,6 @@ export default function App() {
     }
   }, [currentTime, mode, isAutoScrollEnabled, state.cues, state.settings, lastScrolledCueId, autoScrollTargets, isDesktop, scrollFocusPreset]);
 
-  // Initial load of default data if no local storage
-  useEffect(() => {
-    const saved = localStorage.getItem('screenplay_sync_state');
-    if (!saved) {
-      fetch('/examples/scene_frequency.json')
-        .then(res => res.json())
-        .then(data => {
-          setState(data);
-          setIsInitialized(true);
-        })
-        .catch(err => {
-          console.error("Failed to load default script", err);
-          setIsInitialized(true);
-        });
-    } else {
-      setIsInitialized(true);
-    }
-  }, []);
-
   // Handle example and project query parameters on mount
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -340,11 +310,6 @@ export default function App() {
     return () => window.removeEventListener('click', handleClickOutside);
   }, [overlapPicker.isOpen]);
 
-  // YouTube Player Event Handlers
-  useEffect(() => {
-    setPlayer(null);
-  }, [state.youtubeId]);
-
   const saveRawCues = () => {
     try {
       const parsedCues = JSON.parse(rawCuesText);
@@ -356,100 +321,57 @@ export default function App() {
     }
   };
 
-  const resetState = () => {
-    fetch('/examples/scene_frequency.json')
-      .then(res => res.json())
-      .then(data => {
-        const finalData = { ...data, settings: data.settings || DEFAULT_SETTINGS };
-        setState(finalData);
-        localStorage.setItem('screenplay_sync_state', JSON.stringify(finalData));
-        setMode('playback');
-        setCurrentTime(0);
-        setResetConfirmation({ isOpen: false, type: null, error: null });
-      })
-      .catch(err => {
-        console.error("Failed to reset to default script", err);
-        localStorage.removeItem('screenplay_sync_state');
-        window.location.reload();
-      });
+  const resetState = async () => {
+    try {
+      await resetToDefault();
+      setMode('playback');
+      setCurrentTime(0);
+      setResetConfirmation({ isOpen: false, type: null, error: null });
+    } catch (err) {
+      console.error("Failed to reset to default script", err);
+    }
   };
 
-  const loadBlank = () => {
-    fetch('/examples/blank.json')
-      .then(res => res.json())
-      .then(data => {
-        const finalData = { ...data, settings: data.settings || DEFAULT_SETTINGS };
-        setState(finalData);
-        localStorage.setItem('screenplay_sync_state', JSON.stringify(finalData));
-        setMode('playback');
-        setCurrentTime(0);
-        setResetConfirmation({ isOpen: false, type: null, error: null });
-        // Realign cues after loading to ensure indices are correct
-        realignCues(finalData);
-      })
-      .catch(err => {
-        console.error("Failed to load blank script", err);
-        alert("Failed to load blank script.");
-      });
+  const loadBlank = async () => {
+    try {
+      const finalData = await loadBlankStorage();
+      setMode('playback');
+      setCurrentTime(0);
+      setResetConfirmation({ isOpen: false, type: null, error: null });
+      realignCues(finalData);
+    } catch (err) {
+      alert("Failed to load blank script.");
+    }
   };
 
-  const loadExample = (path: string) => {
-    fetch(path)
-      .then(res => res.json())
-      .then(data => {
-        const finalData = { ...data, settings: data.settings || DEFAULT_SETTINGS };
-        setState(finalData);
-        localStorage.setItem('screenplay_sync_state', JSON.stringify(finalData));
-        setMode('playback');
-        setCurrentTime(0);
-        setResetConfirmation({ isOpen: false, type: null, error: null });
-        setIsLibraryOpen(false);
-        // Realign cues after loading to ensure indices are correct
-        realignCues(finalData);
-      })
-      .catch(err => {
-        console.error("Failed to load example", err);
-        alert("Failed to load example.");
-      });
+  const loadExample = async (path: string) => {
+    try {
+      const finalData = await loadExampleStorage(path);
+      setMode('playback');
+      setCurrentTime(0);
+      setResetConfirmation({ isOpen: false, type: null, error: null });
+      setIsLibraryOpen(false);
+      realignCues(finalData);
+    } catch (err) {
+      alert("Failed to load example.");
+    }
   };
 
-  const [isRemoteLoading, setIsRemoteLoading] = useState(false);
-
-  const loadRemoteProject = (url: string) => {
-    setIsRemoteLoading(true);
+  const loadRemoteProject = async (url: string) => {
     setResetConfirmation(prev => ({ ...prev, error: null }));
-    
-    fetch(url)
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        return res.json();
-      })
-      .then(data => {
-        // Basic validation
-        if (!data.youtubeId || !data.scriptText) {
-          throw new Error("Invalid project format: missing youtubeId or scriptText");
-        }
-
-        const finalData = { ...data, settings: data.settings || DEFAULT_SETTINGS };
-        setState(finalData);
-        localStorage.setItem('screenplay_sync_state', JSON.stringify(finalData));
-        setMode('playback');
-        setCurrentTime(0);
-        setResetConfirmation({ isOpen: false, type: null, error: null });
-        setIsLibraryOpen(false);
-        // Realign cues after loading
-        realignCues(finalData);
-      })
-      .catch(err => {
-        console.error("Failed to load remote project", err);
-        setResetConfirmation(prev => ({ 
-          ...prev, 
-          error: `${err.message}. This might be due to CORS restrictions if the server doesn't allow cross-origin requests.` 
-        }));
-      })
-      .finally(() => {
-        setIsRemoteLoading(false);
-      });
+    try {
+      const finalData = await loadRemoteProjectStorage(url);
+      setMode('playback');
+      setCurrentTime(0);
+      setResetConfirmation({ isOpen: false, type: null, error: null });
+      setIsLibraryOpen(false);
+      realignCues(finalData);
+    } catch (err: any) {
+      setResetConfirmation(prev => ({
+        ...prev,
+        error: err.message,
+      }));
+    }
   };
 
   const toggleCueTypeVisibility = (type: string) => {
@@ -473,41 +395,6 @@ export default function App() {
     return currentTime >= c.startTime - totalBefore && currentTime <= c.endTime + totalAfter;
   };
 
-  const onReady: YouTubeProps['onReady'] = (event) => {
-    setPlayer(event.target);
-    setPlayerState(event.target.getPlayerState());
-  };
-
-  const onStateChange: YouTubeProps['onStateChange'] = (event) => {
-    setPlayerState(event.data);
-    if (event.data === 1) { // Playing
-      startTimer();
-      setActiveStaging(null); // Auto-close staging modal on play
-    } else {
-      stopTimer();
-    }
-  };
-
-  const startTimer = () => {
-    if (timerRef.current) return;
-    timerRef.current = window.setInterval(() => {
-      if (player) {
-        setCurrentTime(player.getCurrentTime());
-      }
-    }, 100);
-  };
-
-  const stopTimer = () => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-  };
-
-  useEffect(() => {
-    return () => stopTimer();
-  }, [player]);
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't trigger shortcuts if user is typing in an input or textarea
@@ -525,31 +412,22 @@ export default function App() {
       switch (e.code) {
         case 'Space':
           e.preventDefault();
-          const playerState = player.getPlayerState();
-          if (playerState === 1) { // Playing
-            player.pauseVideo();
-          } else {
-            player.playVideo();
-          }
+          togglePlayPause();
           break;
         case 'ArrowLeft':
           e.preventDefault();
-          const backTime = Math.max(0, player.getCurrentTime() - 5);
-          player.seekTo(backTime, true);
-          setCurrentTime(backTime);
+          jumpBy(-5);
           break;
         case 'ArrowRight':
           e.preventDefault();
-          const forwardTime = player.getCurrentTime() + 5;
-          player.seekTo(forwardTime, true);
-          setCurrentTime(forwardTime);
+          jumpBy(5);
           break;
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [player, isScriptModalOpen, isCuesModalOpen]);
+  }, [player, isScriptModalOpen, isCuesModalOpen, togglePlayPause, jumpBy]);
 
   // Handle text selection in Edit Mode
   const handleSelection = () => {
