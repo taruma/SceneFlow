@@ -22,6 +22,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - *Center (50%)* — balanced midpoint alignment.
   - *Bottom (35%)* — positions the active line lower for reflection reading.
   - Switching presets immediately re-scrolls to the current active cue for instant feedback; preference persists to `localStorage`.
+- **Custom React Hook Architecture**: Extracted application business logic, playback controls, and editor state from `App.tsx` into a modular suite of seven custom hooks in `src/hooks/`:
+  - `useScriptStorage` — encapsulates state initialization, initial default script loading (`scene_frequency.json`), `localStorage` persistence (`screenplay_sync_state`), starter blank script loading (`blank.json`), and CORS-aware remote project loading (`?project=URL`) with error handling.
+  - `useYouTubePlayer` — encapsulates YouTube IFrame Player instance binding, playback state synchronization, a 100ms interval timer for high-frequency time tracking (`currentTime`), and video transport actions (`playVideo`, `pauseVideo`, `togglePlayPause`, `seekTo`, `jumpBy`).
+  - `useScriptPreferences` — manages reading-column width presets, auto-scroll focus anchor presets, script theme selection, and cue category visibility filtering with automatic `localStorage` synchronization (`sceneflow_script_theme`, `sceneflow_script_width_preset`, `sceneflow_scroll_focus_preset`).
+  - `useAutoScroll` — manages real-time screenplay auto-scrolling during playback, active cue selection (prioritizing newest start time and script position), multi-target type filtering, and smooth ratio-based viewport alignment (desktop configurable anchor vs mobile center alignment).
+  - `useCueEditor` — encapsulates cue authoring, range selection, in-place text editing, duplicate occurrence lookup, cue deletion with confirmation dialogs, and video timeline seeking.
+  - `useCueAlignment` — manages automated and manual cue realignment against edited screenplay text with visual status indicators (`isAligning`, `alignSuccess`).
+  - `useKeyboardShortcuts` — handles global playback hotkeys (Space for play/pause, ArrowLeft/Right for 5s jumps) with input element gating, modal bypass, and responsive desktop layout detection.
+- **Dedicated Cue Utilities Module (`src/lib/cueUtils.ts`)**: Extracted core cue processing, alignment, search, and validation logic into pure functions:
+  - `findAlternativeLocations` — proximity-aware regex search returning all matching text occurrences with surrounding 25-character context snippets while skipping hidden `[[STAGING]]` blocks.
+  - `realignCuesList` — chronological cue alignment engine that recalculates character offset boundaries (`startIndex`, `endIndex`) against updated script text using proximity matching and fallback heuristics while excluding staging blocks.
+  - `getCueTimingOffsets` — aggregates per-type and global lead-in/tail-out timing offsets.
+  - `isCueActive` — high-frequency check determining if a cue falls within the active playback time window.
+  - `calculateCuePlaybackOpacity` — calculates dynamic fade-in and fade-out opacity values during playback offsets.
+  - `exportStateToJsonFile` — triggers client-side formatted JSON state downloads.
+  - `validateImportedScriptJson` — validates, normalizes, and injects default fallbacks for imported project files.
+- **Centralized Script Constants (`src/constants/script.ts`)**: Created a dedicated module consolidating immutable application constants:
+  - `COLORS` — eight standardized cue element categories with types, RGB color strings, and fallback classes.
+  - `DEFAULT_SETTINGS` — baseline timing configurations for general and cue-specific offsets (`before: 0, after: 0`).
+  - `SCRIPT_WIDTH_PRESETS` — configuration for the five reading width presets (`narrow`, `compact`, `standard`, `wide`, `full`).
+  - `SCROLL_FOCUS_PRESETS` — configuration for the three auto-scroll anchor presets (`top`, `center`, `bottom`).
+- **Comprehensive Domain Types (`src/types/script.ts`)**: Consolidated domain interfaces and state definitions:
+  - Added `TimingSettings`, `ColorCategory`, `AppState`, `ScriptWidthPresetId`, `ScriptWidthPreset`, `ScrollFocusPresetId`, `ScrollFocusPreset`, `TextSelection`, `DeleteConfirmationState`, `ResetConfirmationState`, `OverlapPickerState`, `AlternativeLocation`, and `AppMode`.
+- **Standalone ID Generator**: Extracted `generateId()` utility in `src/lib/utils.ts` utilizing `crypto.randomUUID()` with fallback generation for consistent entity identifiers.
 - **Mobile-Responsive Library Modal**: Designed a purpose-built `MobileLibraryModal` component tailored for smaller screens, providing a native-feeling category browsing experience distinct from the desktop `LibraryModal`. The desktop and mobile modals are mutually exclusive based on viewport width.
 - **Ko-fi Support Link**: Added a Ko-fi donation link (`https://ko-fi.com/tarumainfo`) with a themed coffee icon to the mobile header, alongside a Library access button for consistent discoverability across devices.
 - **Vercel Analytics Integration**: Integrated `@vercel/analytics` to capture and report audience traffic insights in production, complementing the existing Vercel Speed Insights for Web Vitals tracking.
@@ -47,11 +71,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Custom Dark Scrollbar Styling**: Added a dedicated `.custom-dark-scrollbar` CSS utility for dark-themed modals, providing a styled scrollbar (thin, with `stone-900` track and `stone-700` thumb) that matches the dark modal aesthetic on desktop browsers.
 
 ### Changed
-- **Component & Utility Modularization**: Extracted inline JSX components and shared utilities from `App.tsx` into dedicated modules for improved maintainability and separation of concerns:
-  - Eleven new components: `InitializingScreen`, `YoutubeSourceInput`, `ScriptManagementBar`, `RawScriptModal`, `RawCuesModal`, `OverlapPicker`, `DeleteConfirmationModal`, `ResetConfirmationModal`, `TimingSettingsModal`, `ScriptColorModal`, and `MobileLibraryModal`.
-  - New utility module: `src/lib/utils.ts` containing `cn` (Tailwind class merging via `clsx`/`tailwind-merge`) and `extractYoutubeId` (YouTube URL parsing), previously inline in `App.tsx`.
-  - Moved `Cue` interface from `App.tsx` to `src/types/script.ts` and added a public `export type { Cue }` re-export, making it accessible to all component modules.
-  - `TimingSettingsModal` extracted the entire timing configuration panel (before/after sliders per cue category) into its own component with typed props.
+- **Architectural Modernization & App.tsx Refactoring**: Deconstructed the monolithic `App.tsx` into a lightweight orchestrator by delegating state, side effects, and domain logic to the custom hook suite and 13 modular sub-components:
+  - Sub-components: `InitializingScreen`, `YoutubeSourceInput`, `ScriptManagementBar`, `RawScriptModal`, `RawCuesModal`, `OverlapPicker`, `DeleteConfirmationModal`, `ResetConfirmationModal`, `TimingSettingsModal`, `ScriptColorModal`, `LibraryModal`, `MobileLibraryModal`, and `StagingModal`.
+  - New utility modules: `src/lib/cueUtils.ts` (cue processing, alignment, active states, JSON import/export) and `src/lib/utils.ts` (`cn`, `extractYoutubeId`, `generateId`).
+  - Clear separation of concerns between presentation layer, state management layer, and persistence/transport layer.
+  - Updated `TimingSettingsModal` to consume centralized types and constants directly from `types/script.ts` and `constants/script.ts`.
 - **Cue Type & Color Normalization**: Refactored cue state management to standardize the relationship between cue `type` and `colorClass`:
   - Made `colorClass` optional on the `Cue` interface; styles are now dynamically derived from the `type` field using `getCueColorForTheme()`, which resolves theme-appropriate RGB colors.
   - Updated cue creation workflow to default `type` to `'dialogue'` and derive `colorClass` bidirectionally — if only `colorClass` is present, the type is inferred; if only `type` is present, the correct color class is assigned.
@@ -78,11 +102,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Demoted several items from `featured: true` to `false` (The Expansion, Intent Over Rules, Reality-Bending Video, Afraid, Not About Fish, Duet of Distance, Still Restless) to refresh the featured curation.
   - Added `music` tag to *Vibe Shift* and *A Duet of Distance*.
   - Cleaned up inconsistent tag metadata across the library.
-- **Updated Documentation**: Refreshed project documentation to reflect all architectural and stack changes:
-  - `docs/AGENTS.md` — added guidance for block-level type registration in `scriptParser.ts`.
-  - `docs/ARCHITECTURE.md` — documented new components (`MobileLibraryModal`, `ScriptColorModal`, `TimingSettingsModal`), theme engine, width/scroll presets, and the dark scrollbar utility.
-  - `docs/FUNCTIONALITY.md` — expanded the library catalogue section with FRAME Series entries, hideFromAll filtering, and adaptive section badges.
-  - `docs/TECH_STACK.md` — updated React version to 19, added `motion` animation library and `@vercel/analytics`, documented font changes (`Libre Baskerville` for screenplay body, `Inter` for UI, `JetBrains Mono` for monospace), and added `dotenv`.
+- **Comprehensive Documentation Synchronization**: Refreshed and synchronized project documentation across `docs/` and `README.md` to reflect all architectural, stack, and domain model changes:
+  - `docs/AGENTS.md` — added guidance for block-level type registration in `scriptParser.ts` (`LineType` union additions), theme extensions, `CUE_THEME_COLORS` calibration across palettes, `localStorage` key mappings, and component communication patterns.
+  - `docs/ARCHITECTURE.md` — documented 3-layer system architecture (Presentation Layer with 13 modular sub-components, State & Processing Layer, Persistence & Transport Layer), custom hooks suite, ASCII data flow diagrams, theme engine, width/scroll presets, and the dark scrollbar utility.
+  - `docs/FUNCTIONALITY.md` — expanded library catalogue section with FRAME Series entries, hideFromAll filtering, adaptive section badges, 6 script themes, reading width and focus presets, and in-place cue editing.
+  - `docs/TECH_STACK.md` — updated React version to 19, TypeScript to 5.8, Vite to 6, Tailwind CSS to v4 with `@theme` variables (`--font-sans`, `--font-serif`, `--font-mono`), Motion animation library (`motion/react`), Lucide React, and `@vercel/analytics` / `@vercel/speed-insights`.
   - `README.md` — replaced SVG logo reference with PNG, expanded the example loading table with all 20+ examples categorized by section, and updated the query parameter documentation.
 
 ### Fixed
