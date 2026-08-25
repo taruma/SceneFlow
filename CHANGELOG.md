@@ -5,37 +5,90 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.5.0-dev] - Unreleased
+
+### Added
+- **Script Theme System**: Introduced a customizable theme engine for the script viewer, allowing users to toggle between six distinct visual presets via the new `ScriptColorModal` component:
+  - Three light/warm themes: *Studio Crisp* (default), *Warm Parchment* (sepia-toned), *Retro Newspaper* (high-contrast print).
+  - Three dark themes: *Midnight Slate* (refined dark), *OLED Black* (pure black for power-saving displays), *Cyber Matrix* (neon-accented terminal aesthetic).
+  - Each theme provides a complete styling package covering paper surface, borders, shadows, headers, separators, staging badges, punch holes, brief cards, and cue highlight spectrums — all dynamically applied through `getScriptThemeStyles()` and `getCueColorForTheme()` in `scriptStyles.ts`.
+  - The theme modal includes a live preview inspector comparing theme properties side-by-side and a full eight-category cue highlight spectrum rendered per theme.
+  - Theme preference persists to `localStorage` and can be reset to default with a single click.
+- **Configurable Screenplay Width Presets**: Added five adjustable reading-column widths for the script preview panel in playback mode, selectable via a desktop-only dropdown:
+  - *Narrow* (384px), *Compact* (448px), *Standard* (576px, default), *Wide* (768px), and *Expanded* (1024px).
+  - Preference persists to `localStorage` and each preset includes a descriptive label visible in the dropdown.
+- **Scroll Focus Alignment Presets**: Added three configurable auto-scroll anchor positions during playback, controlling where the active cue line rests vertically within the viewport:
+  - *Top (35%)* — positions the active line near the top for anticipation reading.
+  - *Center (50%)* — balanced midpoint alignment.
+  - *Bottom (35%)* — positions the active line lower for reflection reading.
+  - Switching presets immediately re-scrolls to the current active cue for instant feedback; preference persists to `localStorage`.
+- **Mobile-Responsive Library Modal**: Designed a purpose-built `MobileLibraryModal` component tailored for smaller screens, providing a native-feeling category browsing experience distinct from the desktop `LibraryModal`. The desktop and mobile modals are mutually exclusive based on viewport width.
+- **Ko-fi Support Link**: Added a Ko-fi donation link (`https://ko-fi.com/tarumainfo`) with a themed coffee icon to the mobile header, alongside a Library access button for consistent discoverability across devices.
+- **Vercel Analytics Integration**: Integrated `@vercel/analytics` to capture and report audience traffic insights in production, complementing the existing Vercel Speed Insights for Web Vitals tracking.
+- **Manual Cue Text Editing**: Designed and integrated a monospace textarea inside the Edit Sync Cue panel allowing users to directly edit a cue's selected text in-place. This provides a clean way to perform manual key-value corrections or alignment adjustments without raw JSON editing, integrating seamlessly with the Align and Find Alternative engines.
+- **Mobile Staging Overlay Visibility**: Enabled the staging block overlay and badge for mobile and tablet devices, offering access to behind-the-scenes camera staging instructions on all device widths.
+- **Global Library Filter Settings**: Added support for `hideFromAll` metadata in example sections within `examples.ts`. This allows specific sections (e.g., "AI Clips") to be kept out of the unified "All Works" view to reduce noise and emphasize high-priority curations like "AI Scenes" and "The Written Motion".
+- **Dynamic Category Badges**: Added contextual section indicators inside screenplay cards in the Library view. These badges dynamically reference which section a screenplay belongs to, complete with matching category-themed icons (e.g., Compass, Notebook, Film) for quick identification. Badges are automatically suppressed when browsing within their own specific category to prevent redundant labeling.
+- **Expanded Example Library**: Added seven new screenplay examples across multiple categories:
+  - *Scene Frequency* — a full-featured guide script showcasing timing cues and staging blocks, now the default example loaded on first visit.
+  - *Museum* — a live-action-to-2D-animation transformation scene set in a gallery environment.
+  - *Still Here* — an atmospheric narrative scene with layered environmental cues.
+  - *The Magic Card* — a ritualistic cinematic clip involving golden seals and floating mystical cards.
+  - *Wonder (Volume 6)* — the sixth installment of "The Written Motion" series, in both edited and uncut versions.
+  - *What We Leave (Volume 7)* — the seventh installment of "The Written Motion" series.
+  - *A Duet of Distance* — a music-driven piece exploring the tension between tradition and regret.
+  - Reorganized *Table Four* and *Flat Frog Problems* out of the AI Clips section and into the Auteur Scene & Brief section to better reflect their production complexity.
+  - Reclassified *Duet of Distance* from AI Clips to Auteur Scene & Brief and added a `music` tag.
+- **Branded Loading & Initialization Screen**: Replaced the generic spinner with a branded `InitializingScreen` component displaying the SceneFlow logo (`SCENEFLOW_TAG_B.png`) with a subtle pulse animation and monospace status text, providing a polished first-load experience.
+- **Application Icons & PWA Assets**: Added a complete set of favicon and PWA (Progressive Web App) assets for improved cross-browser compatibility and "Add to Home Screen" support:
+  - `favicon.ico` (multi-resolution ICO), `favicon-16x16.png`, `favicon-32x32.png`, `apple-touch-icon.png` (180×180), `android-chrome-192x192.png`, and `android-chrome-512x512.png`.
+  - `site.webmanifest` with standalone display mode, theme color, and icon definitions.
+  - Updated `index.html` to reference all icon formats and the web manifest.
+- **Custom Dark Scrollbar Styling**: Added a dedicated `.custom-dark-scrollbar` CSS utility for dark-themed modals, providing a styled scrollbar (thin, with `stone-900` track and `stone-700` thumb) that matches the dark modal aesthetic on desktop browsers.
 
 ### Changed
 - **Component & Utility Modularization**: Extracted inline JSX components and shared utilities from `App.tsx` into dedicated modules for improved maintainability and separation of concerns:
-  - New components: `InitializingScreen`, `YoutubeSourceInput`, `ScriptManagementBar`, `RawScriptModal`, `RawCuesModal`, `OverlapPicker`, `DeleteConfirmationModal`, `ResetConfirmationModal`, `TimingSettingsModal`
-  - New utility module: `src/lib/utils.ts` containing `cn` (Tailwind class merging) and `extractYoutubeId` (YouTube URL parsing), previously inline in `App.tsx`
-  - Moved `Cue` interface from `App.tsx` to `src/types/script.ts` and added a public `export type { Cue }` re-export, making it accessible to all component modules
-
-## [1.4.3] - 2026-06-07
-
-### Added
-- **Global Library Filter Settings**: Added support for `hideFromAll` metadata in example sections within `examples.ts`. This allows specific sections (e.g., "AI Clips") to be kept out of the unified "All Works" view to reduce noise and emphasize high-priority curations like "AI Scenes" and "The Written Motion".
-- **Dynamic Category Badges**: Added contextual section indicators inside screenplay cards in the Library view. These badges dynamically reference which section a screenplay belongs to, complete with matching category-themed icons (e.g., Compass, Notebook, Film) for quick identification.
-
-### Changed
-- **Smart Category Badge Suppression**: Cleaned up the library UI by only showing the section category indicators inside the unified "All" and "Featured" views. The identifier badges are automatically suppressed when browsing specific, individual categories, preventing redundant labels and keeping the interface clean.
-
-## [1.4.2] - 2026-06-06
-
-### Added
-- **Manual Cue Text Editing**: Designed and integrated a monospace textarea inside the Edit Sync Cue panel allowing users to directly edit a cue's selected text in-place. This provides a clean way to perform manual key-value corrections or alignment adjustments without raw JSON editing, integrating seamlessly with the Align and Find Alternative engines.
-
-## [1.4.1] - 2026-05-28
-
-### Added
-- **Mobile Staging Overlay Visibility**: Enabled the staging block overlay/badge for mobile and tablet devices, offering access to behind-the-scenes camera staging instructions on all device widths.
-
-### Changed
+  - Eleven new components: `InitializingScreen`, `YoutubeSourceInput`, `ScriptManagementBar`, `RawScriptModal`, `RawCuesModal`, `OverlapPicker`, `DeleteConfirmationModal`, `ResetConfirmationModal`, `TimingSettingsModal`, `ScriptColorModal`, and `MobileLibraryModal`.
+  - New utility module: `src/lib/utils.ts` containing `cn` (Tailwind class merging via `clsx`/`tailwind-merge`) and `extractYoutubeId` (YouTube URL parsing), previously inline in `App.tsx`.
+  - Moved `Cue` interface from `App.tsx` to `src/types/script.ts` and added a public `export type { Cue }` re-export, making it accessible to all component modules.
+  - `TimingSettingsModal` extracted the entire timing configuration panel (before/after sliders per cue category) into its own component with typed props.
+- **Cue Type & Color Normalization**: Refactored cue state management to standardize the relationship between cue `type` and `colorClass`:
+  - Made `colorClass` optional on the `Cue` interface; styles are now dynamically derived from the `type` field using `getCueColorForTheme()`, which resolves theme-appropriate RGB colors.
+  - Updated cue creation workflow to default `type` to `'dialogue'` and derive `colorClass` bidirectionally — if only `colorClass` is present, the type is inferred; if only `type` is present, the correct color class is assigned.
+  - Migrated all cue rendering (sidebar list, inline script segments, type-selector buttons) from static Tailwind color classes to dynamic inline `style` attributes using theme-resolved RGB values, ensuring consistency across the six script themes.
+- **Brief Block Rendering Enhancements**: Improved the visual presentation and parsing of Auteur Brief segments:
+  - Added intelligent waterfall formatting that converts `->` sequences into indented hierarchical lines, with special handling to prevent blank leading lines at segment boundaries.
+  - Suppressed rendering of empty whitespace lines within brief blocks via `scriptProcessor.ts`, eliminating ghost empty cards.
+  - Applied styled card containers to brief segments with theme-aware backgrounds, borders, and badge styling for clearer visual hierarchy.
+- **Anchor Badge Simplification**: Simplified inline anchor rendering (`[...]` brackets) from styled span badges to standard `<b>` bold text, reducing visual complexity while preserving emphasis. (Styled badges were temporarily implemented then replaced with the simpler bold approach for cleaner readability.)
 - **Adaptive Staging Badge Design**: Tailored the staging block layout specifically for mobile screens to conserve space without impacting structural layouts or desktop styling:
   - Downscaled the badge font sizes, icon sizes, padding, and gaps on mobile viewports for a compact, neat appearance.
   - Adjusted mobile container margins to gracefully flow beneath screenplay headings.
+  - Updated the staging container to use `flex-wrap` for responsive badge overflow handling.
+- **Example Data Reorganization**: Moved all JSON example files from the root `public/` directory into dedicated subdirectories:
+  - Standard examples into `public/examples/`.
+  - AI clip-specific examples into `public/examples/ai_clips/`.
+  - Updated all path references in `examples.ts` and application logic accordingly.
+- **Guide Script Replacement**: Renamed the "blank" starter script to "guide script" (`blank.json`) to better reflect its role as an instructional reference. The guide script now defaults to playback mode on load and automatically re-aligns cues.
+- **Default Example Update**: Changed the default example project from "The Expansion" to "Scene Frequency" (`scene_frequency`), providing a more comprehensive guide script on first visit.
+- **Video Player Styling**: Refined the visual appearance of the YouTube video container by updating background colors and adjusting iframe framing for a more polished, edge-to-edge presentation.
+- **Settings Icon Update**: Replaced the generic settings gear icon with a Clock icon (`Clock` from lucide-react) to better represent the timing-focused nature of the settings panel.
+- **Mobile Header Enhancements**: Replaced the mobile edit-mode toggle with a Library access button (`Book` icon) and a Ko-fi support link (`Coffee` icon), providing quicker navigation and community support access on small screens. The mode indicator badge ("Playback" / "Edit") is now hidden on mobile to conserve header space.
+- **Updated Example Metadata**: Revised tags, featured flags, and release dates across the example catalogue:
+  - Demoted several items from `featured: true` to `false` (The Expansion, Intent Over Rules, Reality-Bending Video, Afraid, Not About Fish, Duet of Distance, Still Restless) to refresh the featured curation.
+  - Added `music` tag to *Vibe Shift* and *A Duet of Distance*.
+  - Cleaned up inconsistent tag metadata across the library.
+- **Updated Documentation**: Refreshed project documentation to reflect all architectural and stack changes:
+  - `docs/AGENTS.md` — added guidance for block-level type registration in `scriptParser.ts`.
+  - `docs/ARCHITECTURE.md` — documented new components (`MobileLibraryModal`, `ScriptColorModal`, `TimingSettingsModal`), theme engine, width/scroll presets, and the dark scrollbar utility.
+  - `docs/FUNCTIONALITY.md` — expanded the library catalogue section with FRAME Series entries, hideFromAll filtering, and adaptive section badges.
+  - `docs/TECH_STACK.md` — updated React version to 19, added `motion` animation library and `@vercel/analytics`, documented font changes (`Libre Baskerville` for screenplay body, `Inter` for UI, `JetBrains Mono` for monospace), and added `dotenv`.
+  - `README.md` — replaced SVG logo reference with PNG, expanded the example loading table with all 20+ examples categorized by section, and updated the query parameter documentation.
+
+### Fixed
+- **Mobile Script Width Selector**: Hid the page width preset dropdown on non-desktop screens to prevent UI crowding and improve layout flow for mobile staging badges.
+- **Brief Block Empty Line Filtering**: Empty or whitespace-only lines inside brief blocks are now filtered out during script processing, preventing ghost empty cards from rendering in the script view.
+- **Waterfall Formatting Edge Cases**: Improved the `formatBriefSegment` function to correctly handle `->` sequences at line starts without introducing unintended blank leading lines, and cleaned up double-newline artifacts from raw text that already contained line breaks before waterfall markers.
 
 ## [1.4.0] - 2026-05-26
 
