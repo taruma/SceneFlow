@@ -1,77 +1,207 @@
 # Functionality
 
-SceneFlow is a specialized tool for synchronizing video playback with a written script.
+SceneFlow is a specialized workspace for synchronizing video playback with written screenplays, evaluating AI video model fidelity, and analyzing script-to-screen prompt adherence.
 
-## 1. Script Parsing
-The app automatically formats raw text into a professional screenplay layout using the following heuristics:
-- **Scene Headings**: Lines starting with `INT.` or `EXT.` are bolded and given a gray background.
-- **Character Names**: Lines in ALL CAPS ending with a colon (e.g., `JOHN:`) are centered and bolded.
-- **Dialogue**: Lines following a character name are centered and narrowed.
-- **Parentheticals**: Text inside `(...)` is italicized and faded (both within dialogue blocks and standalone).
-- **Actions**: Standard narrative text is rendered in bold weight.
-- **Effects**: Lines starting with `SFX:` or `VFX:` are italicized and faded.
-- **Notes**: Text wrapped in square brackets `[...]` is rendered in monospace uppercase.
-- **Separators**: Lines containing exactly `---` are rendered as horizontal dividers.
-- **Part Separators**: Lines matching `PART N` format are rendered with decorative title styling.
-- **Roman Titles**: Uppercase lines starting with a Roman numeral followed by a period (e.g., `IV. THE AWAKENING`) are rendered with a title divider layout.
-- **Briefs**: Text between `[<BRIEF>]` and `[</BRIEF>]` tags is rendered in monospace with special formatting (step-indentation via `->`, bolded `[...]` anchors).
+---
 
-## 2. Staging System
-Special blocks of text wrapped in double brackets `[[STAGING]]` are treated as "off-script" metadata.
-- **Hiding**: These blocks are removed from the main script flow to keep it clean.
-- **Markers**: A floating "STAGING" badge is placed at the line where the block was found.
-- **Modal**: Clicking the badge opens a modal containing the hidden text (e.g., camera directions, lighting notes).
+## 1. Screenplay Parsing & Formatting Heuristics
+
+SceneFlow parses raw screenplay text into structured layouts using deterministic heuristics and regex:
+
+| Element | Heuristic / Pattern | Styling & Layout |
+|---|---|---|
+| **Scene Heading** | Starts with `INT.` or `EXT.` (case-insensitive) | Bold uppercase, theme-calibrated heading background and border padding |
+| **Character Name** | Line in ALL CAPS ending with a colon (`JOHN:`) | Centered, bold uppercase with tracking |
+| **Dialogue** | Spoken lines following a character name | Centered, narrowed reading column (75% width) |
+| **Parenthetical** | Enclosed in `(...)` within dialogue or standalone | Italicized, subdued text color |
+| **Action** | ALL CAPS single line or standard narrative paragraphs | Bold emphasis for short beats, standard serif body for descriptions |
+| **Effects** | Starts with `SFX:` or `VFX:` | Italicized, subdued text color |
+| **Notes / Shots** | Enclosed in square brackets `[...]` | Monospace uppercase technical style |
+| **Separators** | Line containing exactly `---` | Themed horizontal dividing rule |
+| **Part Separators** | Matches `PART N` format | Themed centered title divider with flanking accent lines |
+| **Roman Titles** | Roman numeral prefix (e.g., `IV. THE AWAKENING`) | Themed title divider with uppercase spacing |
+| **Brief Blocks** | Enclosed between `[<BRIEF>]` and `[</BRIEF>]` | Monospace technical card with border, waterfall indentation, and bold anchors |
+
+### Auteur Brief Formatting Engine
+- **Waterfall Indentation**: Sequences containing `->` automatically trigger hierarchical line breaks with indentation (`    -> `), preventing blank leading lines.
+- **Bold Anchors**: Bracketed tags like `[CAM]`, `[ACT]`, or `[VFX]` are automatically wrapped in `<b>` bold text for scanning.
+- **Ghost Line Suppression**: Empty or whitespace-only lines inside brief blocks are filtered out during script processing.
+
+---
+
+## 2. Staging System (Auteur Prompting)
+
+Special blocks wrapped in `[[STAGING]]...[[/STAGING]]` hold multi-level prompt directives (e.g., `[[GLOBAL]]`, `[[LOOKBOOK]]`, `[[CAMERA]]`):
+
+- **Visual Hiding**: Content inside staging blocks is excluded from the main screenplay flow.
+- **Interactive Badges**: A responsive `STAGING: LABEL` pill badge appears on the line where the staging block was declared.
+- **Staging Modal**: Clicking a staging badge opens a monospace modal displaying the hidden technical directives. Badges are disabled during active video playback, and any open staging modal automatically closes upon video play.
+- **Mobile Adaptation**: Staging badge sizes, padding, and gaps scale down dynamically on mobile viewports for compact wrapping.
+
+---
 
 ## 3. Syncing System (Cues)
-The core feature of the app is the ability to create "Cues."
-- **Creation**: Highlight text in the script and click "Add Cue" to link it to the current video time.
-- **Highlighting**: As the video plays, the corresponding text in the script highlights in real-time.
-- **Overlaps**: Multiple cues can overlap on the same text. An indicator (dot) appears in Edit mode to help manage these.
-- **Alignment**: An "Align" tool automatically fixes script indices if the text is modified.
-- **Manual Cue Text Editing**: Users can manually modify the cue's selected text in the Edit Sync Cue panel via a clean monospace textarea. This facilitates quick textual corrections or alignment tweaks safely without needing to do raw JSON editing, allowing the Align or find alternative matching tools to snap the newly updated selections.
-- **Duplicate Text Resolution**: When multiple identical strings exist in the script (e.g., "WIDE SHOT"), users can use the "Find Alternative" button in the Edit Cue UI to browse all occurrences and snap the cue to the correct one. The system automatically ignores text matches inside `[[STAGING]]` blocks and system tags like `[<BRIEF>]` to ensure alignment only targets visible screenplay content, while allowing functional notes like `[INTENT]` to remain visible.
-- **Auto-Scroll**: The script automatically scrolls to keep the active cue in view.
-  - **Focus Modes**: Users can multi-select specific cue types to follow (e.g., only Dialogue and Action).
-  - **Priority Logic**: When multiple cues are active, the system prioritizes the most recently started cue among the selected types.
-  - **Enhanced Viewport Alignment**:
-    - **Desktop View**: The screen auto-scrolls to position the active cue slightly above the center (35% from the top of the container) so users can see upcoming lines and surrounding context.
-    - **Mobile/Tablet View**: The screen auto-scrolls to position the active cue directly in the center of the viewport for comfortable reading.
-- **Creative Briefs**: Use `[<BRIEF>]` and `[</BRIEF>]` tags for technical directives.
-  - **Monospace style**: Distinguishes technical data from script text.
-  - **Step-Formatting**: Every `->` triggers a newline and indentation.
-  - **Anchor Bold**: Brackets `[...]` are automatically bolded within briefs.
-  - **Sync-Ready**: Cues and highlighting remain fully functional inside brief blocks.
-- **Timing Settings**: Fine-tune when highlights appear and disappear.
-  - **Offsets**: Supports both positive (extra buffer) and negative (early/shorter appearance) values.
-  - **Calculation**: Final visibility = Cue Time ± (Global Offset + Category Offset).
 
-## 4. Modes
-- **Playback Mode**: A clean, distraction-free view for watching the video and reading the script.
-- **Edit Mode**: An interactive workspace for adjusting cues, editing script text, and managing settings.
+Cues link specific text segments in the screenplay to video playback timestamps.
 
-## 5. Persistence & Sharing
-All work is automatically saved to the browser's `localStorage`. Users can also:
-- **GUIDE (Quick Start)**: Every fresh installation or "Blank" project loads the SceneFlow GUIDE—an interactive tutorial that explains formatting, staging, and cue management through narrative examples.
-- **Export**: Download the project as a JSON file.
-- **Import**: Upload a previously exported JSON file to resume work.
-- **Library Catalogue**: An immersive, built-in portal containing a fully-categorized selection of pre-configured scripts, interactive examples, and cinematic portfolios:
-  - **Category Segments**:
-    - **Featured**: Highly recommended scripts highlighted as core workspace showcases (e.g., *The Expansion*, *Afraid*, *Fractures*, *Old Growth*, *Reality-Bending Video*).
-    - **AI Scenes**: High-concept cinematic scenes (e.g., *The Expansion*, *Intent Over Rules*, *Mosaic*, *Frog Invasion*, *The Distance*, *Not About Fish*, *Afraid*).
-    - **The Written Motion (TWM)**: The micro-anthology series (Volumes 1-5, including *The Breaking Point*, *Elemental Forces*, *Kinetic*, *Wayfarers*, *Fractures*) styled with detailed cues and motion directives.
-    - **AI Clips**: Short-form cinematic scripts and dialogue-focused technical vignettes (e.g., *Wild Kinship*, *A Duet of Distance*, *Vibe Shift*, *Reality-Bending Video*, *Table Four*, *Flat Frog Problems*).
-    - **FRAME Series**: An expressive visual exploration demonstrating atmospheric transitions, lighting, and environmental camera techniques (including *Distant*, *Wandering Souls*, *Relics of Time*, *Where Am I?*, *Old Growth*, *Forgotten*, *Samsara*, *Still, Restless*).
-  - **Advanced Portal Utilities**:
-    - **Unified All Works Filtering**: The parameter `hideFromAll: boolean` configured in `examples.ts` excludes specific sections (e.g., "AI Clips") from populating the unified "All Works" list. This aligns the user interface with visitor priority, highlighting complex scenes first while keeping the catalog clean.
-    - **Adaptive Section Badges**: Custom source category badges (complete with matching themed icons and micro typography) are added to screenplay cards. These are contextually displayed when viewing aggregated lists (such as "All" or "Featured") and dynamically suppressed within specific sections to guarantee visual cleanliness without duplicate labels.
-    - **Dynamic "Featured" Curations**: A curated segment gathering flagged screenplays via simple database/schema properties.
-    - **Default Sorting & Interactive Controls**: By default, screenplays are sorted chronologically by release date (newest first). Users can dynamically toggle the sort order or method using a compact UI selector (Latest, Oldest, or Alphabetical A-Z) next to the match count. Restricted/work-in-progress scripts (which do not have playable paths) are always pushed to the bottom of the listings under all sorting configurations to prioritize active content.
-    - **Subtle Visual Highlights**: Featured scripts render with high-contrast amber/gold undertone gradients, stylized glow on mouse hover, dedicated tag layouts, and animated golden sparkle badge indicators both in the Featured tab and their default list sections.
-    - **Real-time Global Search**: Instantly filters across script titles, descriptions, volume indices, release dates, and technical tagging arrays.
-    - **Category Sidebar Navigation**: Reactive navigation featuring custom category symbols (Compass, Film, Notebook, Clapperboard, Book-Open) and automatic category item counters.
-    - **Smart Interface Indicators**: Released screenplays highlight with responsive pointer translations and arrow indicators; draft/experimental scripts display a visual Lock icon and a subdued color scheme to prevent interaction.
-    - **Volume & Tag Badging**: Renders custom metadata badges highlighting release dates, specific volume series, and structural metadata tags (such as `classic auteur`, `visual exploration`, or `nano banana pro`).
-- **Query Parameters**: Load specific examples or remote projects directly via URL.
-  - `?example=ID`: Loads a built-in example (e.g., `mosaic`, `expansion`, `guide`).
-  - `?project=URL`: Loads a JSON project from a remote, CORS-enabled server.
-- **Remote Loading**: When loading via URL, a confirmation dialog appears with integrated error handling to prevent accidental data loss and provide feedback on failed fetches.
+### Cue Categories & Themes
+Supports eight color-coded cue categories, each calibrated with theme-specific RGB values:
+1. 🟡 **Dialogue**: Spoken character dialogue.
+2. 🔵 **Action**: Physical action beats and actor movements.
+3. 🟢 **Camera**: Camera moves, gimbal directions, and framing.
+4. 🟣 **Shot**: Shot scale descriptions (CU, WIDE, OTS, ESTABLISHING).
+5. 🟠 **Audio**: Sound effects, foley, and soundtrack cues.
+6. 🔷 **VFX**: Visual effects and CGI instructions.
+7. 🩷 **Transition**: Scene cuts, dissolves, and pacing transitions.
+8. ⚪ **Environment**: Atmospheric lighting and weather conditions.
+
+### Cue Creation & In-Place Text Editing
+- **Creation**: In Edit Mode, highlight text in the script preview to populate the "New Sync Cue" panel with calculated start and end character offsets.
+- **Timestamp Capture**: Click the `Clock` button next to Start/End Time to snap directly to the player's current video time, or input manual values.
+- **Manual Monospace Textarea**: Users can directly edit a cue's selected text in-place within the Edit Sync Cue panel. This allows safe text corrections without manual JSON editing while preserving character synchronization.
+- **Duplicate Text & Alternative Location Finder**: When a phrase appears multiple times (e.g., `WIDE SHOT`), clicking "Find Alternative" scans the screenplay and presents a contextual list of all occurrences with character offsets and text snippets for instant snapping. Hidden `[[STAGING]]` block ranges are strictly excluded from search matches.
+
+### Overlap Management
+Multiple cues can span the same character ranges. In Edit Mode, overlapping regions display an indicator dot. Clicking an overlapping segment opens the floating `OverlapPicker` context menu to select which cue to inspect or edit.
+
+### Chronological Proximity Alignment (`realignCues`)
+When script text is edited or pasted, the "Align" tool sorts cues chronologically by time and uses proximity-aware regex matching to re-anchor cue indices to the nearest logical position, falling back to a 15-character prefix search if major edits occurred.
+
+---
+
+## 4. Auto-Scroll & Viewport Alignment Engine
+
+During video playback, the script auto-scrolls to follow active dialogue and narrative cues.
+
+### Multi-Select Focus Modes
+Users can choose which cue categories trigger auto-scrolling via the "Focus Mode" dropdown:
+- Defaults to tracking `dialogue`.
+- Can be multi-selected to follow any combination (e.g., `dialogue` + `action` + `camera`).
+- Features quick "Select All" and "Reset" toggles.
+
+### Priority Resolution Logic
+When multiple cues are active simultaneously:
+1. Prioritizes the cue with the **most recent start time**.
+2. If start times match, prioritizes the cue situated **furthest down** in the screenplay text.
+
+### Viewport Scroll Focus Alignment Presets (Desktop)
+Controls where the active cue line settles vertically within the reading container:
+- **Top (35%)**: Positions the active line 35% from the top of the container, leaving upcoming lines visible for anticipation reading (Default).
+- **Center (50%)**: Positions the active line at the balanced midpoint.
+- **Bottom (35%)**: Positions the active line 35% from the bottom (65% ratio) for reflection reading.
+- Switching presets immediately recalculates and smoothly scrolls to the active cue element; preferences persist in `localStorage`.
+- Mobile and tablet viewports use native viewport centering for screen economy.
+
+---
+
+## 5. Script Viewer Customization & Themes
+
+### 6-Theme Script Engine
+Users can toggle between six visual themes via the `ScriptColorModal`:
+- **Light & Warm Themes**:
+  - *Studio Crisp*: Neutral stone paper with crisp contrast (Default).
+  - *Warm Parchment*: Vintage sepia-toned typewriter paper.
+  - *Newsprint (Retro Newspaper)*: High-contrast vintage gray newsprint for daytime reading.
+- **Dark Themes**:
+  - *Midnight Slate*: Refined dark slate for low-light environments.
+  - *OLED Blackout*: Pure black (`#000000`) for power efficiency and high-contrast glow.
+  - *Navy Slate (Cyber Matrix)*: Deep navy-tinted dark paper with atmospheric glow.
+- **Theme Modal Tabs**:
+  - **Theme Presets Tab**: Shows side-by-side cards with live mini paper previews (heading banner, script text line, staging pill, and cue highlight chips).
+  - **Element Inspector Tab**: Displays active paper and structural tokens alongside the full 8-category highlight spectrum.
+  - Includes a single-click "Reset" button to restore the default *Studio Crisp* theme.
+
+### Configurable Screenplay Width Presets (Desktop Playback)
+Selectable via a dropdown in the script preview header:
+- *Narrow*: 384px (`max-w-sm`) — Focused reading column.
+- *Compact*: 448px (`max-w-md`) — Snug reading view.
+- *Standard*: 576px (`max-w-xl`) — Default classic screenplay width.
+- *Wide*: 768px (`max-w-3xl`) — Spacious dual-column feel.
+- *Expanded*: 1024px (`max-w-5xl`) — Full page layout.
+- Width preference is saved to `localStorage` and hidden on mobile screens.
+
+### Video Player Sizing Slider
+Desktop playback mode includes a range slider (40% to 100%) to scale video preview width seamlessly.
+
+---
+
+## 6. Timing Settings & Buffer Engine
+
+Fine-tunes highlight visibility timing before and after actual cue timestamps:
+- **General Master Offset**: Global `before` and `after` buffers applied across all cue categories.
+- **Category-Specific Offsets**: Individual `before` and `after` buffers for each of the 8 cue types.
+- **Negative Offsets**: Supports negative values to display highlights earlier or end them sooner.
+- **Formula**: `Effective Visibility Window = [StartTime - (GlobalBefore + CategoryBefore), EndTime + (GlobalAfter + CategoryAfter)]`.
+- Reset button restores all timing settings to `0.0s` defaults.
+
+---
+
+## 7. Persistence, Sharing, & Library Catalogue
+
+### Local Persistence
+All project states (`screenplay_sync_state`), theme preferences (`sceneflow_script_theme`), width presets (`sceneflow_script_width_preset`), and scroll focus settings (`sceneflow_scroll_focus_preset`) persist in `localStorage`.
+
+### Default Project & Quick Start Guide
+- Fresh visits default to loading the **Scene Frequency** (`scene_frequency.json`) guide script.
+- Clicking the header **Guide** button loads the official instructional tutorial (`blank.json`) in playback mode.
+
+### Export & Import
+- **Export**: Downloads current project as a JSON bundle containing `youtubeId`, `scriptText`, `cues`, and `settings`.
+- **Import**: Uploads any valid SceneFlow JSON file and triggers automatic cue realignment.
+
+### Query Parameters
+- `?example=ID`: Loads any built-in example from the catalogue (e.g., `?example=mosaic`, `?example=twm_vol1`, `?example=scene_frequency`).
+- `?project=URL`: Fetches a JSON project from a CORS-enabled remote server.
+- All query-based loads prompt a confirmation modal with error reporting before replacing the workspace.
+
+### Library Catalogue (Desktop & Mobile)
+An interactive catalogue featuring 25+ curated screenplays organized into 4 distinct sections:
+
+1. **AI Scenes**:
+   - *Frequency Over Force* (`scene_frequency`, Default Example)
+   - *The Expansion* (`expansion`)
+   - *Intent Over Rules* (`intent`)
+   - *Mosaic* (`mosaic`)
+   - *🐸 Frog Invasion* (`invasion`)
+   - *The Distance* (`the_distance`)
+   - *Not About Fish* (`not_about_fish`)
+   - *Afraid* (`afraid`)
+   - *A Duet of Distance* (`duet_of_distance`)
+   - *Table Four* (`table_four`)
+   - *Flat Frog Problems* (`flat_frog_problems`)
+   - *Museum* (`museum`)
+   - *Still Here* (`scene_still_here`)
+
+2. **The Written Motion (TWM Anthology)**:
+   - *Volume 1: The Breaking Point* (`twm_vol1`)
+   - *Volume 2: Elemental Forces* (`twm_vol2`)
+   - *Volume 3: Kinetic* (`twm_vol3`)
+   - *Volume 4: Wayfarers* (`twm_vol4`)
+   - *Volume 5: Fractures* (`twm_vol5`)
+   - *Volume 6: Wonder* (`twm_vol6`)
+   - *Volume 7: What We Leave* (`twm_vol7`)
+
+3. **FRAME Series**:
+   - *FRAME 01: Distant* (`frame_01`)
+   - *FRAME 02: Wandering Souls* (`frame_02`)
+   - *FRAME 03: Relics of Time* (`frame_03`)
+   - *FRAME 04: Where Am I?* (`frame_04`)
+   - *FRAME 05: Old Growth* (`frame_05`, Featured)
+   - *FRAME 06: Forgotten* (`frame_06`)
+   - *FRAME 07: Samsara* (`frame_07`)
+   - *FRAME 08: Still, Restless* (`frame_08`)
+
+4. **AI Clips**:
+   - *Wild Kinship* (`wild_kinship`)
+   - *Vibe Shift* (`vibe_shift`)
+   - *Reality-Bending Video* (`reality_bending`)
+   - *The Magic Card* (`the_magic_card`)
+   - *Wonder (Uncut)* (`wonder_uncut`)
+
+#### Catalogue Features
+- **`hideFromAll` Filtering**: Excludes high-density vignettes (e.g., AI Clips) from populating the unified "All Works" view.
+- **Contextual Section Badges**: Displays source category badges on cards in aggregated views ("All Works", "Featured Works") and suppresses them within category-specific views.
+- **Sorting Controls**: Toggle lists by "Latest" (newest release date), "Oldest", or "A-Z" alphabetical order. Inactive/draft scripts are automatically placed at the bottom.
+- **Dual Modal Architecture**: Full modal dialog on desktop viewports (`LibraryModal`), touch-friendly bottom-sheet drawer on mobile viewports (`MobileLibraryModal`).
+- **Community Support**: Direct Ko-fi donation link (`https://ko-fi.com/tarumainfo`) integrated into desktop and mobile headers.
+
