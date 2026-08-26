@@ -8,12 +8,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.1.0-dev] - Unreleased
 
 ### Added
-- **Semantic CSS Token System (`src/index.css`)**: Established global semantic CSS custom properties (`--app-bg`, `--surface`, `--surface-subtle`, `--surface-hover`, `--surface-dark`, `--border-main`, `--border-subtle`, `--text-main`, `--text-muted`, `--text-faint`, `--overlay-bg`, `--overlay-heavy`, `--color-support`) integrated natively into Tailwind CSS v4's `@theme` directive.
-- **Structured App Shell Design Tokens (`src/styles/tokens/ui.ts`)**: Expanded and categorized `UI_TOKENS` into semantic groups covering `layout` (header shells, panel bases, section titles), `modal` containers and overlays, `button` variants (action pills, support pills, header controls), `input` fields, `badge` counter tags, `panel` containers (interactive and active cards), and `swatch` items.
+- **Visual System Token Harmonization (`src/styles/tokens/ui.ts` & `src/index.css`)**:
+  - Expanded and centralized `UI_TOKENS` into standard design token groups covering:
+    - **`layout`**: App header, script headers (playback & edit modes), panel frames, and section titles.
+    - **`modal`**: Overlays (`overlay`, `overlayHeavy`, `overlayHighZ`), responsive modal containers (`containerSm`, `containerMd`, `containerLg`, `containerXl`, `containerLibrary`, `containerStaging`), standard headers (`header`, `headerSubtle`), footers, and padding tokens (`dialogPad`, `bodyPad`).
+    - **`dropdown`**: Focus mode and width/scroll preset dropdown menus (`menu`, `menuWide`), dropdown headers, header titles, items, and active item highlights.
+    - **`button`**: Primary, primary blue, secondary, secondary wide, danger, header icon action buttons (`headerIconButton`, `headerIconButtonActive`), mode switchers (`modeSwitchContainer`, `modeSwitchActive`, `modeSwitchInactive`), sort toggles (`sortButtonActive`, `sortButtonInactive`), action pills, support pills, and close buttons (`iconClose`, `iconCloseSquare`, `iconCloseSm`).
+    - **`input`**: Search inputs, multiline textareas, code textareas, number boxes, and label tokens.
+    - **`panel`**: Data banners, cards, interactive cue cards (`cardInteractive`, `cardInteractiveActive`), empty placeholders, and legend containers (`legendContainer`).
+    - **`badge`**: Counter tags, timestamp pills, and header current time badges (`currentTimePill`).
+- **Comprehensive CSS Palette Variables (`src/index.css`)**:
+  - Defined semantic CSS custom properties (`--app-bg`, `--surface`, `--surface-subtle`, `--surface-muted`, `--surface-hover`, `--surface-dark`, `--border-main`, `--border-subtle`, `--border-subtle-trans`, `--text-main`, `--text-body`, `--text-muted`, `--text-faint`, `--text-placeholder`, `--overlay-bg`, `--overlay-heavy`, `--color-support`, `--color-support-hover`) mapped directly into Tailwind CSS v4's `@theme` directive.
 
 ### Changed
-- **Streamlined App Shell Components**: Refactored `AppHeader`, `ScriptHeaderControls`, `TimelineCuesPanel`, `ActiveHighlightsPanel`, `StagingModal`, and `App.tsx` layout containers to consume centralized semantic tokens, ensuring 100% visual parity and responsive integrity across both desktop and mobile viewports.
-- **Strict Theme Scope Isolation**: Maintained complete separation between the script reading canvas tokens (`themes.ts`, `cues.ts`, `typography.ts`) and the outer App Shell tokens (`ui.ts`, `index.css`), preparing the application for future independent light/dark mode toggling without visual coupling.
+- **Component Design Token Alignment**:
+  - Refactored all application shell components to consistently consume centralized `UI_TOKENS` rather than ad-hoc inline classes:
+    - [`AppHeader.tsx`](file:///e:/_github/Screenplay-Sync/src/components/AppHeader.tsx) — aligned mode switcher, header action icon buttons, and Current Time badge.
+    - [`ScriptHeaderControls.tsx`](file:///e:/_github/Screenplay-Sync/src/components/ScriptHeaderControls.tsx) — aligned Auto-Scroll focus, Script Width, and Scroll Focus dropdown menus.
+    - [`LibraryModal.tsx`](file:///e:/_github/Screenplay-Sync/src/components/LibraryModal.tsx) — aligned modal frame container, header, search bar, and sort selector buttons.
+    - [`StagingModal.tsx`](file:///e:/_github/Screenplay-Sync/src/components/StagingModal.tsx) — aligned modal container, header, and footer controls.
+    - [`CueEditorForm.tsx`](file:///e:/_github/Screenplay-Sync/src/components/CueEditorForm.tsx) — aligned editor container, empty selection placeholder, and input labels.
+    - [`ActiveHighlightsPanel.tsx`](file:///e:/_github/Screenplay-Sync/src/components/ActiveHighlightsPanel.tsx) — aligned section titles, category filters, and empty highlight state.
+    - [`TimelineCuesPanel.tsx`](file:///e:/_github/Screenplay-Sync/src/components/TimelineCuesPanel.tsx) — aligned section titles, cue category legend container, and interactive cards.
+    - [`TimingSettingsModal.tsx`](file:///e:/_github/Screenplay-Sync/src/components/TimingSettingsModal.tsx) — aligned heavy backdrop overlay and dialog container.
+- **Zero Visual Regression**: Preserved exact color, spacing, radius, shadow, and typography fidelity across desktop and mobile viewports.
+- **Strict Theme Scope Isolation**: Maintained complete separation between the Screenplay Paper Canvas engine (`themes.ts`, `cues.ts`, `typography.ts`, `helpers.ts`) and the outer App Shell Chrome (`ui.ts`, `index.css`), preparing the application for seamless dark/light mode toggling.
 
 ## [2.0.0] - 2026-08-26
 
