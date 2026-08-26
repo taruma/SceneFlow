@@ -1,15 +1,7 @@
 import React from 'react';
 import { RefreshCw, Info, X, Loader2 } from 'lucide-react';
 import { UI_TOKENS } from '../styles/tokens/ui';
-
-export interface ResetConfirmationState {
-  isOpen: boolean;
-  type: 'settings' | 'data' | 'blank' | 'example' | 'remote' | null;
-  examplePath?: string;
-  exampleTitle?: string;
-  remoteUrl?: string;
-  error?: string | null;
-}
+import type { ResetConfirmationState } from '../types/script';
 
 interface ResetConfirmationModalProps {
   resetConfirmation: ResetConfirmationState;

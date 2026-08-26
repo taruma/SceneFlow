@@ -1,7 +1,6 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X } from "lucide-react";
-import { UI_TOKENS } from "../styles/tokens/ui";
 
 interface StagingModalProps {
   isOpen: boolean;

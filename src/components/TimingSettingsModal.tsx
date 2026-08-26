@@ -4,8 +4,6 @@ import { cn } from '../lib/utils';
 import type { TimingSettings, ColorCategory } from '../types/script';
 import { UI_TOKENS } from '../styles/tokens/ui';
 
-export type { TimingSettings, ColorCategory };
-
 interface TimingSettingsModalProps {
   isOpen: boolean;
   settings?: Record<string, TimingSettings>;

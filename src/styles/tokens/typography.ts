@@ -75,8 +75,3 @@ export function getScriptThemeStyles(themeId: ScriptThemeId = 'studio-light') {
       : "ring-2 ring-stone-900 ring-inset z-10 shadow-sm"
   };
 }
-
-/**
- * Backward compatibility static styles.
- */
-export const SCRIPT_STYLES = getScriptThemeStyles('studio-light');

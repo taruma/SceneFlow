@@ -1,16 +1,13 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import YouTube, { YouTubeProps } from 'react-youtube';
+import YouTube from 'react-youtube';
 import { Video, Info } from 'lucide-react';
 import { EXAMPLE_SECTIONS } from './examples';
-import { processScript, type LineType, type ProcessedLine } from './lib/scriptProcessor';
+import { processScript } from './lib/scriptProcessor';
 import { 
   getLineClass, 
   getScriptThemeStyles, 
   getScriptTheme, 
-  DEFAULT_SCRIPT_THEME_ID, 
-  type ScriptThemeId,
-  getCueColorForTheme,
-  CUE_THEME_COLORS
+  getCueColorForTheme 
 } from './lib/scriptStyles';
 import { StagingModal } from './components/StagingModal';
 import { LibraryModal } from './components/LibraryModal';
@@ -30,7 +27,7 @@ import { ActiveHighlightsPanel } from './components/ActiveHighlightsPanel';
 import { TimelineCuesPanel } from './components/TimelineCuesPanel';
 import { ScriptHeaderControls } from './components/ScriptHeaderControls';
 import { CueEditorForm } from './components/CueEditorForm';
-import { cn, extractYoutubeId, generateId } from './lib/utils';
+import { cn, extractYoutubeId } from './lib/utils';
 import { useScriptStorage } from './hooks/useScriptStorage';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
 import { useScriptPreferences } from './hooks/useScriptPreferences';
@@ -39,24 +36,11 @@ import { useAutoScroll } from './hooks/useAutoScroll';
 import { useCueEditor } from './hooks/useCueEditor';
 import { useCueAlignment } from './hooks/useCueAlignment';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import type { 
-  Cue, 
-  TimingSettings, 
-  AppState, 
-  ScriptWidthPresetId, 
-  ScrollFocusPresetId,
-  TextSelection,
-  DeleteConfirmationState,
-  ResetConfirmationState,
-  OverlapPickerState,
-  AlternativeLocation,
-  AppMode
-} from './types/script';
+import type { Cue, AppMode } from './types/script';
 import { 
   COLORS, 
   DEFAULT_SETTINGS, 
-  SCRIPT_WIDTH_PRESETS, 
-  SCROLL_FOCUS_PRESETS 
+  SCRIPT_WIDTH_PRESETS 
 } from './constants/script';
 import {
   sanitizeCues,
@@ -65,8 +49,6 @@ import {
   exportStateToJsonFile,
   validateImportedScriptJson
 } from './lib/cueUtils';
-
-export type { Cue, TimingSettings, AppState, ScriptWidthPresetId, ScrollFocusPresetId, AlternativeLocation, AppMode };
 
 export default function App() {
   const [activeStaging, setActiveStaging] = useState<{ label: string; content: string } | null>(null);
@@ -99,9 +81,6 @@ export default function App() {
     setCurrentTime,
     onReady,
     onStateChange,
-    seekTo,
-    playVideo,
-    pauseVideo,
     togglePlayPause,
     jumpBy,
   } = useYouTubePlayer({
@@ -128,7 +107,7 @@ export default function App() {
     toggleCueTypeVisibility,
   } = useScriptPreferences();
 
-  const { theme: activeTheme, resolveCueColor } = useScriptTheme(scriptThemeId);
+  const { theme: activeTheme } = useScriptTheme(scriptThemeId);
 
   const { isDesktop } = useKeyboardShortcuts({
     player,
@@ -162,7 +141,6 @@ export default function App() {
     newCue,
     setNewCue,
     altLocations,
-    setAltLocations,
     deleteConfirmation,
     setDeleteConfirmation,
     resetConfirmation,
@@ -339,16 +317,6 @@ export default function App() {
     };
     reader.readAsText(file);
   };
-
-  // Debugging state changes
-  useEffect(() => {
-    console.log("Current App State:", {
-      mode,
-      cuesCount: state?.cues?.length || 0,
-      hasSelection: !!selection,
-      currentTime
-    });
-  }, [mode, state?.cues?.length, selection, currentTime]);
 
   // Rendering the screenplay with highlights
   const renderedScript = useMemo(() => {
@@ -950,7 +918,6 @@ export default function App() {
             localStorage.setItem('sceneflow_script_theme', themeId);
           }
         }}
-        cueTypes={COLORS}
       />
     </div>
   );
