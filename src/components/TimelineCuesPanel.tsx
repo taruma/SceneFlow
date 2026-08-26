@@ -4,6 +4,7 @@ import { Cue } from '../types/script';
 import { COLORS } from '../constants/script';
 import { useScriptTheme } from '../hooks/useScriptTheme';
 import { cn } from '../lib/utils';
+import { UI_TOKENS } from '../styles/tokens/ui';
 
 interface TimelineCuesPanelProps {
   cues: Cue[];
@@ -36,7 +37,7 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
       <div className="space-y-4">
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-stone-400">Timeline Cues</h3>
+            <h3 className={UI_TOKENS.layout.sectionTitle}>Timeline Cues</h3>
             <div className="flex items-center gap-2">
               <button
                 onClick={onOpenRawCuesModal}
@@ -67,7 +68,7 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
                   {alignSuccess ? 'Aligned' : 'Align'}
                 </button>
               )}
-              <span className="text-[10px] font-bold text-stone-300 bg-stone-100 px-2 py-0.5 rounded uppercase">
+              <span className={UI_TOKENS.badge.counterFaint}>
                 {cueList.length} total
               </span>
             </div>
@@ -92,10 +93,7 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
               <div 
                 key={cue.id ? `timeline-${cue.id}-${idx}` : `timeline-idx-${idx}`} 
                 onClick={() => onSelectCue(cue)}
-                className={cn(
-                  "flex items-center justify-between p-4 bg-stone-50 border rounded-2xl group hover:bg-white hover:shadow-md transition-all relative overflow-hidden cursor-pointer",
-                  selectedCueId === cue.id ? "border-stone-900 ring-1 ring-stone-900 bg-white shadow-md" : "border-stone-200"
-                )}
+                className={selectedCueId === cue.id ? UI_TOKENS.panel.cardInteractiveActive : UI_TOKENS.panel.cardInteractive}
               >
                 <div className="flex items-center gap-4 flex-1 min-w-0">
                   <div 
@@ -117,9 +115,9 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
                     )}
                     <span className="text-sm font-bold text-stone-800 italic leading-tight break-words">"{cue.selectedText}"</span>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[10px] font-mono font-bold text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded">{cue.startTime.toFixed(1)}s</span>
+                      <span className={UI_TOKENS.badge.timeTag}>{cue.startTime.toFixed(1)}s</span>
                       <div className="w-2 h-px bg-stone-200" />
-                      <span className="text-[10px] font-mono font-bold text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded">{cue.endTime.toFixed(1)}s</span>
+                      <span className={UI_TOKENS.badge.timeTag}>{cue.endTime.toFixed(1)}s</span>
                     </div>
                   </div>
                 </div>
@@ -138,7 +136,7 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
             );
           })}
           {cueList.length === 0 && (
-            <div className="text-center py-12 border-2 border-dashed border-stone-100 rounded-[2rem] bg-stone-50/50">
+            <div className={UI_TOKENS.panel.emptyPlaceholder}>
               <p className="text-sm text-stone-400 font-medium italic">No cues created yet.</p>
             </div>
           )}

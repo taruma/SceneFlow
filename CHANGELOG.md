@@ -5,7 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0-dev] - Unreleased
+## [2.1.0-dev] - Unreleased
+
+### Added
+- **Semantic CSS Token System (`src/index.css`)**: Established global semantic CSS custom properties (`--app-bg`, `--surface`, `--surface-subtle`, `--surface-hover`, `--surface-dark`, `--border-main`, `--border-subtle`, `--text-main`, `--text-muted`, `--text-faint`, `--overlay-bg`, `--overlay-heavy`, `--color-support`) integrated natively into Tailwind CSS v4's `@theme` directive.
+- **Structured App Shell Design Tokens (`src/styles/tokens/ui.ts`)**: Expanded and categorized `UI_TOKENS` into semantic groups covering `layout` (header shells, panel bases, section titles), `modal` containers and overlays, `button` variants (action pills, support pills, header controls), `input` fields, `badge` counter tags, `panel` containers (interactive and active cards), and `swatch` items.
+
+### Changed
+- **Streamlined App Shell Components**: Refactored `AppHeader`, `ScriptHeaderControls`, `TimelineCuesPanel`, `ActiveHighlightsPanel`, `StagingModal`, and `App.tsx` layout containers to consume centralized semantic tokens, ensuring 100% visual parity and responsive integrity across both desktop and mobile viewports.
+- **Strict Theme Scope Isolation**: Maintained complete separation between the script reading canvas tokens (`themes.ts`, `cues.ts`, `typography.ts`) and the outer App Shell tokens (`ui.ts`, `index.css`), preparing the application for future independent light/dark mode toggling without visual coupling.
+
+## [2.0.0] - 2026-08-26
 
 ### Added
 - **Script Theme System**: Introduced a customizable theme engine for the script viewer, allowing users to toggle between six distinct visual presets via the new `ScriptColorModal` component:

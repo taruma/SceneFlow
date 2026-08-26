@@ -12,6 +12,7 @@ import {
 import { COLORS, SCRIPT_WIDTH_PRESETS, SCROLL_FOCUS_PRESETS } from '../constants/script';
 import { ScriptWidthPresetId, ScrollFocusPresetId } from '../types/script';
 import { cn } from '../lib/utils';
+import { UI_TOKENS } from '../styles/tokens/ui';
 
 interface ScriptHeaderControlsProps {
   mode: 'playback' | 'edit';
@@ -53,13 +54,10 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
   currentTime,
 }) => {
   return (
-    <div className={cn(
-      "h-16 border-b border-stone-200 flex items-center justify-between px-4 lg:px-8 bg-white shrink-0 z-20",
-      mode === 'playback' ? "h-12 sticky top-0 shadow-sm" : "h-16"
-    )}>
+    <div className={mode === 'playback' ? UI_TOKENS.layout.scriptHeaderPlayback : UI_TOKENS.layout.scriptHeader}>
       <div className="flex items-center gap-2 lg:gap-3">
         <FileText size={16} className="text-stone-400 shrink-0" />
-        <span className="hidden sm:inline text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-stone-400">Script Preview</span>
+        <span className={cn("hidden sm:inline", UI_TOKENS.layout.sectionTitleMini)}>Script Preview</span>
       </div>
       <div className="flex items-center gap-2 lg:gap-4">
         {mode === 'playback' && (

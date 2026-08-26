@@ -4,6 +4,7 @@ import { Cue } from '../types/script';
 import { COLORS } from '../constants/script';
 import { useScriptTheme } from '../hooks/useScriptTheme';
 import { cn } from '../lib/utils';
+import { UI_TOKENS } from '../styles/tokens/ui';
 
 interface ActiveHighlightsPanelProps {
   cues: Cue[];
@@ -28,10 +29,10 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
   return (
     <div className="hidden lg:flex flex-col flex-1 mt-10 animate-in fade-in slide-in-from-left-4 duration-700">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-stone-400 flex items-center gap-2">
+        <h3 className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-2")}>
           <Video size={14} /> Active Highlights
         </h3>
-        <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-2 py-0.5 rounded uppercase">
+        <span className={UI_TOKENS.badge.counter}>
           {visibleCues.length} active
         </span>
       </div>
@@ -77,7 +78,7 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
         }).map((cue, idx) => {
           const themed = resolveCueColor(cue.type || cue.colorClass || '');
           return (
-            <div key={cue.id ? `highlight-${cue.id}-${idx}` : `highlight-idx-${idx}`} className="p-4 bg-stone-50 border border-stone-200 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 relative overflow-hidden">
+            <div key={cue.id ? `highlight-${cue.id}-${idx}` : `highlight-idx-${idx}`} className={cn(UI_TOKENS.panel.card, "flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 relative overflow-hidden")}>
               <div 
                 className="w-1.5 h-8 rounded-full shrink-0" 
                 style={{ backgroundColor: `rgb(${themed.rgb})` }}

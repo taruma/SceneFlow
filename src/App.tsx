@@ -28,6 +28,7 @@ import { TimelineCuesPanel } from './components/TimelineCuesPanel';
 import { ScriptHeaderControls } from './components/ScriptHeaderControls';
 import { CueEditorForm } from './components/CueEditorForm';
 import { cn, extractYoutubeId } from './lib/utils';
+import { UI_TOKENS } from './styles/tokens/ui';
 import { useScriptStorage } from './hooks/useScriptStorage';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
 import { useScriptPreferences } from './hooks/useScriptPreferences';
@@ -596,7 +597,8 @@ export default function App() {
           ref={leftPanelRef}
           onScroll={(e) => setLeftPanelScroll(e.currentTarget.scrollTop)}
           className={cn(
-            "flex flex-col border-stone-200 bg-white transition-all duration-500",
+            UI_TOKENS.layout.leftPanelBase,
+            "transition-all duration-500",
             mode === 'edit' 
               ? "w-full lg:w-1/2 border-r p-4 lg:p-10 overflow-y-auto scrollbar-hide" 
               : "w-full lg:w-1/2 border-r p-0 lg:p-10 gap-0 lg:gap-6 lg:overflow-y-auto scrollbar-hide sticky top-0 z-30 shadow-md lg:shadow-none"
@@ -715,7 +717,7 @@ export default function App() {
 
         {/* Right Panel: The Screenplay */}
         <div className={cn(
-          "bg-stone-50 flex flex-col overflow-hidden relative transition-all duration-500",
+          UI_TOKENS.layout.rightPanelBase,
           mode === 'edit' ? "hidden lg:flex w-full lg:w-1/2 h-full" : "w-full lg:w-1/2 flex-1"
         )}>
           <ScriptHeaderControls

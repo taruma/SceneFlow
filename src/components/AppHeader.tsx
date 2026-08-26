@@ -1,6 +1,7 @@
 import React from 'react';
 import { Plus, Book, Coffee, Play, Edit2, Palette, Clock, FolderOpen, Download } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { UI_TOKENS } from '../styles/tokens/ui';
 
 interface AppHeaderProps {
   mode: 'playback' | 'edit';
@@ -34,7 +35,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   return (
     <header
       className={cn(
-        "h-16 border-b border-stone-200 bg-white flex items-center justify-between px-3 lg:px-6 shrink-0 z-40 shadow-sm transition-all",
+        UI_TOKENS.layout.appHeader,
         mode === 'playback' && "hidden lg:flex"
       )}
     >
@@ -52,7 +53,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           <button
             onClick={onOpenGuide}
             title="New Official Guide"
-            className="hidden lg:flex items-center gap-1.5 px-2 py-1.5 xl:px-2.5 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-stone-200 shadow-sm"
+            className={cn("hidden lg:flex", UI_TOKENS.button.actionPill, "px-2 py-1.5 xl:px-2.5")}
           >
             <Plus size={12} /> <span className="hidden xl:inline">Guide</span>
           </button>
@@ -61,8 +62,8 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             onClick={() => setIsLibraryOpen(true)}
             title="Example Library Catalog"
             className={cn(
-              "flex items-center gap-1 px-1.5 py-1.5 lg:gap-1.5 lg:px-2 xl:px-2.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border shadow-sm",
-              isLibraryOpen ? "bg-stone-900 text-white border-stone-900" : "bg-white hover:bg-stone-50 text-stone-600 border-stone-200"
+              "px-1.5 py-1.5 lg:px-2 xl:px-2.5",
+              isLibraryOpen ? UI_TOKENS.button.actionPillActive : UI_TOKENS.button.actionPill
             )}
           >
             <Book size={12} /> <span className="hidden xl:inline">Library</span>
@@ -73,7 +74,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             target="_blank"
             rel="noopener noreferrer"
             title="Support on Ko-fi"
-            className="flex items-center gap-1 px-1.5 py-1.5 lg:gap-1.5 lg:px-2 xl:px-2.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 bg-[#FF5E5B] hover:bg-[#e04e4b] text-white shadow-sm"
+            className={UI_TOKENS.button.supportPill}
           >
             <Coffee size={12} /> <span className="hidden xl:inline">Support</span>
           </a>
