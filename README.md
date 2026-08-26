@@ -20,7 +20,7 @@ https://github.com/user-attachments/assets/e2469136-4224-4192-affc-d19d7e403f74
 
 **SceneFlow** is a tool that syncs screenplays with video content, letting you see which parts of your script appear on screen in real-time.
 
-Built for evaluating how AI video models (like Seedance 2.0) visualize screenplay prompts, it helps you compare script instructions against what was actually generated — useful for assessing prompt adherence and iterating on your screenplay prompts.
+Built for evaluating how AI video models visualize screenplay prompts, it helps you compare script instructions against what was actually generated — useful for assessing prompt adherence and iterating on your screenplay prompts.
 
 ### What It Does
 
@@ -66,14 +66,29 @@ https://github.com/user-attachments/assets/cf3a7fec-2a4b-48d8-9028-245eba49934c
 - **Example Library** — Pre-built demos to get started quickly
 - **Local Storage** — Automatic saving of your work
 
-### 📚 Expanded Library Catalogue (v1.4.0)
+### Script Viewer Customization
+
+- **Theme Presets** — 6 visual themes: Studio Crisp, Warm Parchment, Midnight Slate, OLED Black, Cyber Matrix, Retro Newspaper
+- **Width Presets** — 5 reading column widths from Narrow (384px) to Expanded (1024px)
+- **Scroll Focus** — 3 viewport alignment anchors (Top, Center, Bottom) for auto-scroll positioning
+- **In-Place Cue Editing** — Edit cue text directly without touching raw JSON
+
+### Platform
+
+- **Mobile-Responsive** — Distinct library modals for desktop and mobile with adaptive staging badges
+- **Vercel Analytics** — Audience traffic insights and real-time Web Vitals monitoring
+- **PWA-Ready** — Web manifest and icon suite for standalone app installation
+
+### 📚 Expanded Library Catalogue
 
 SceneFlow features a fully redesigned, responsive **Library Catalogue** serving as an interactive hub for screenplays, cinematic series, and AI-generated video examples:
 
-- **Abundant Creative Work** — Loaded with an expanded collection of creative scripts, educational templates, multi-volume episodic series, and rapid concept clips in this version.
-- **Dynamic Sorting & Filtering** — Toggle list sorting chronologically (newest or oldest first) or alphabetically. Features real-time matching against screenplay titles, summaries, volume numbers, and tags.
-- **Cross-Device Fluidity** — Optimized for desktop, tablet, and mobile viewers. Smaller viewports feature adaptive vertical heights, touch-friendly scrolling regions, horizontal-scrolling category navigation, and responsive controls.
-- **Visual Curations** — Highlights premium handpicked scripts with vibrant "Featured" styling, high-contrast badges, custom glowing hover states, and animated markers.
+- **Dynamic Sorting & Filtering** — Toggle by newest, oldest, or A-Z with real-time search across titles, descriptions, tags, and volumes.
+- **Cross-Device Fluidity** — Full modal dialog on desktop; touch-friendly bottom-sheet drawer on mobile.
+- **Category Navigation** — Browse by AI Scenes, The Written Motion, FRAME Series, and AI Clips with contextual section badges.
+- **Featured Curations** — Handpicked standout scripts surfaced at the top.
+
+→ See the full list in **[SceneFlow Catalogue](SCENEFLOW_CATALOGUE.md)** — all 33 sceneflows with IDs, dates, and video models.
 
 ---
 
@@ -90,14 +105,7 @@ SceneFlow helps you see how well an AI model followed your screenplay prompt:
 
 ### Example Projects
 
-All examples use continuous takes (oners) to showcase Seedance 2.0's ability to generate unbroken, flowing sequences:
-
-| Project | Description |
-|---------|-------------|
-| **The Expansion** | Two minds drift apart in a single, unbroken shot of calculated separation |
-| **Intent Over Rules** | A continuous confrontation on breaking the rules that bind intelligence |
-| **Mozaic** | One continuous walk through the logic of how machines see |
-| **🐸 Invasion** | An unbroken descent into content moderation chaos |
+Browse all 33 sceneflows in the **[SceneFlow Catalogue](SCENEFLOW_CATALOGUE.md)** — organized by AI Scenes, The Written Motion, FRAME Series, and AI Clips, each with shareable `?example=` IDs.
 
 ---
 
@@ -173,34 +181,7 @@ SceneFlow supports sharing projects directly via URL. When a project is loaded v
 
 You can load any built-in screenplay example directly by appending `?example=ID` to the URL. 
 
-| Category | Screenplay Title | Query Parameter |
-|----------|------------------|-----------------|
-| **AI Scenes** | The Expansion | `?example=expansion` |
-| | Intent Over Rules | `?example=intent` |
-| | Mosaic | `?example=mosaic` |
-| | 🐸 Frog Invasion | `?example=invasion` |
-| | The Distance | `?example=the_distance` |
-| | Not About Fish | `?example=not_about_fish` |
-| | Afraid | `?example=afraid` |
-| | A Duet of Distance | `?example=duet_of_distance` |
-| | Table Four | `?example=table_four` |
-| | Flat Frog Problems | `?example=flat_frog_problems` |
-| | Museum | `?example=museum` |
-| **The Written Motion** | Vol 1: The Breaking Point | `?example=twm_vol1` |
-| | Vol 2: Elemental Forces | `?example=twm_vol2` |
-| | Vol 3: Kinetic | `?example=twm_vol3` |
-| | Vol 4: Wayfarers | `?example=twm_vol4` |
-| | Vol 5: Fractures | `?example=twm_vol5` |
-| | Vol 6: Wonder | `?example=twm_vol6` |
-| | Vol 7: What We Leave | `?example=twm_vol7` |
-| **FRAME Series** | FRAME 01: Distant | `?example=frame_01` |
-| | FRAME 02: Wandering Souls | `?example=frame_02` |
-| | FRAME 03: Relics of Time | `?example=frame_03` |
-| | FRAME 04: Where Am I? | `?example=frame_04` |
-| | FRAME 05: Old Growth | `?example=frame_05` |
-| | FRAME 06: Forgotten | `?example=frame_06` |
-| | FRAME 07: Samsara | `?example=frame_07` |
-| | FRAME 08: Still, Restless | `?example=frame_08` |
+See the **[SceneFlow Catalogue](SCENEFLOW_CATALOGUE.md)** for the complete ID-to-title reference across all four sections.
 
 ### Loading Remote Projects
 
@@ -265,7 +246,7 @@ INT. CYBER-CAFE - NIGHT
 - **Labels**: Use custom labels like `[[GLOBAL]]` or `[[LOOKBOOK]]` inside the container.
 - **Visibility**: Content inside staging blocks is hidden from the main script view but appears as a "Staging" badge that can be toggled to reveal the underlying prompt levels.
 
-### Auteur Brief Prompting (New in v1.2.5)
+### Auteur Brief Prompting
 
 **Auteur Brief Prompting** is a high-density, concise framework for technical execution. It follows a structured workflow:
 `[INTENT] -> [LOGIC] -> [AESTHETIC] -> [EXECUTION]`
