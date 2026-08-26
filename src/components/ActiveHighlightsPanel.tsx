@@ -2,7 +2,7 @@ import React from 'react';
 import { Video } from 'lucide-react';
 import { Cue } from '../types/script';
 import { COLORS } from '../constants/script';
-import { getCueColorForTheme } from '../lib/scriptStyles';
+import { useScriptTheme } from '../hooks/useScriptTheme';
 import { cn } from '../lib/utils';
 
 interface ActiveHighlightsPanelProps {
@@ -22,6 +22,7 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
   toggleCueTypeVisibility,
   scriptThemeId,
 }) => {
+  const { resolveCueColor } = useScriptTheme(scriptThemeId as any);
   const visibleCues = (cues || []).filter(isCueVisible);
 
   return (
@@ -40,7 +41,7 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
         {COLORS.map(color => {
           const isActive = activeCueTypes.has(color.type);
           const isHidden = hiddenCueTypes.has(color.type);
-          const themed = getCueColorForTheme(color.type, scriptThemeId);
+          const themed = resolveCueColor(color.type);
           return (
             <button
               key={color.type}
@@ -74,7 +75,7 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
           const order = COLORS.map(c => c.type);
           return order.indexOf(a.type || 'dialogue') - order.indexOf(b.type || 'dialogue');
         }).map((cue, idx) => {
-          const themed = getCueColorForTheme(cue.type || cue.colorClass || '', scriptThemeId);
+          const themed = resolveCueColor(cue.type || cue.colorClass || '');
           return (
             <div key={cue.id ? `highlight-${cue.id}-${idx}` : `highlight-idx-${idx}`} className="p-4 bg-stone-50 border border-stone-200 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 relative overflow-hidden">
               <div 

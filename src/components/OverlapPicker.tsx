@@ -1,7 +1,7 @@
 import React from 'react';
-import { cn } from '../lib/utils';
 import { Cue } from '../types/script';
 import { getCueColorForTheme } from '../lib/scriptStyles';
+import { UI_TOKENS } from '../styles/tokens/ui';
 
 interface OverlapPickerProps {
   isOpen: boolean;
@@ -22,7 +22,7 @@ export function OverlapPicker({
 
   return (
     <div 
-      className="fixed z-[100] bg-white border border-stone-200 rounded-xl shadow-2xl p-1.5 min-w-[160px] animate-in zoom-in-95 duration-200"
+      className={UI_TOKENS.modal.popover}
       style={{ left: position.x, top: position.y }}
     >
       <div className="px-3 py-2 border-b border-stone-100 mb-1">
@@ -56,4 +56,3 @@ export function OverlapPicker({
     </div>
   );
 }
-

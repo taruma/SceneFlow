@@ -1,5 +1,6 @@
 import React from 'react';
 import { FileText, Edit2 } from 'lucide-react';
+import { UI_TOKENS } from '../styles/tokens/ui';
 
 interface ScriptManagementBarProps {
   lineCount: number;
@@ -9,9 +10,9 @@ interface ScriptManagementBarProps {
 export function ScriptManagementBar({ lineCount, onOpenRawScriptModal }: ScriptManagementBarProps) {
   return (
     <section className="animate-in fade-in duration-500 mb-10">
-      <div className="flex items-center justify-between bg-stone-50 border border-stone-200 rounded-2xl px-4 py-3">
+      <div className={UI_TOKENS.panel.banner}>
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center border border-stone-100 shadow-sm">
+          <div className={UI_TOKENS.iconWrapper.smBox}>
             <FileText size={14} className="text-stone-400" />
           </div>
           <div>
@@ -24,7 +25,7 @@ export function ScriptManagementBar({ lineCount, onOpenRawScriptModal }: ScriptM
         <div className="flex items-center gap-2">
           <button 
             onClick={onOpenRawScriptModal}
-            className="flex items-center gap-2 px-3 py-1.5 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-stone-200 shadow-sm"
+            className={UI_TOKENS.button.actionPill}
           >
             <Edit2 size={10} /> Edit Raw
           </button>

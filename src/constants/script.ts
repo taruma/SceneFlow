@@ -1,15 +1,7 @@
-import type { ColorCategory, TimingSettings, ScriptWidthPreset, ScrollFocusPreset } from '../types/script';
+import type { TimingSettings, ScriptWidthPreset, ScrollFocusPreset } from '../types/script';
+import { COLORS } from '../styles/tokens/cues';
 
-export const COLORS: ColorCategory[] = [
-  { type: 'dialogue', class: 'bg-yellow-400/50', rgb: '250, 204, 21' },
-  { type: 'action', class: 'bg-blue-400/50', rgb: '96, 165, 250' },
-  { type: 'camera', class: 'bg-green-400/50', rgb: '74, 222, 128' },
-  { type: 'shot', class: 'bg-purple-400/50', rgb: '192, 132, 252' },
-  { type: 'audio', class: 'bg-orange-400/50', rgb: '251, 146, 60' },
-  { type: 'vfx', class: 'bg-cyan-400/50', rgb: '34, 211, 238' },
-  { type: 'transition', class: 'bg-pink-400/50', rgb: '244, 114, 182' },
-  { type: 'environment', class: 'bg-slate-400/50', rgb: '148, 163, 184' },
-];
+export { COLORS };
 
 export const DEFAULT_SETTINGS: Record<string, TimingSettings> = {
   general: { before: 0, after: 0 },

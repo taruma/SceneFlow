@@ -2,7 +2,7 @@ import React from 'react';
 import { Edit2, Plus, Search, Check, Clock, Trash2 } from 'lucide-react';
 import { Cue } from '../types/script';
 import { COLORS } from '../constants/script';
-import { getCueColorForTheme } from '../lib/scriptStyles';
+import { useScriptTheme } from '../hooks/useScriptTheme';
 import { cn } from '../lib/utils';
 
 interface CueEditorFormProps {
@@ -36,6 +36,8 @@ export const CueEditorForm: React.FC<CueEditorFormProps> = ({
   scriptThemeId,
   player,
 }) => {
+  const { resolveCueColor } = useScriptTheme(scriptThemeId as any);
+
   return (
     <div className="bg-white border-b border-stone-200 p-4 lg:p-6 shrink-0 z-10 shadow-sm animate-in slide-in-from-top duration-500">
       <div className="max-w-xl mx-auto">
@@ -201,7 +203,7 @@ export const CueEditorForm: React.FC<CueEditorFormProps> = ({
             <div className="flex items-center justify-between pt-1">
               <div className="flex flex-wrap gap-1.5">
                 {COLORS.map(color => {
-                  const themed = getCueColorForTheme(color.type, scriptThemeId);
+                  const themed = resolveCueColor(color.type);
                   const isSelected = newCue.type ? newCue.type === color.type : newCue.colorClass === color.class;
                   return (
                     <button

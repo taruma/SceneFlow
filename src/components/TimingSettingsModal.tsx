@@ -2,6 +2,7 @@ import React from 'react';
 import { Settings, X, RefreshCw } from 'lucide-react';
 import { cn } from '../lib/utils';
 import type { TimingSettings, ColorCategory } from '../types/script';
+import { UI_TOKENS } from '../styles/tokens/ui';
 
 export type { TimingSettings, ColorCategory };
 
@@ -26,11 +27,11 @@ export function TimingSettingsModal({
 
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-stone-200">
+      <div className={UI_TOKENS.modal.containerLg}>
         <div className="p-8 lg:p-10 space-y-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-stone-900 rounded-2xl flex items-center justify-center shadow-lg shadow-stone-900/20">
+              <div className={UI_TOKENS.iconWrapper.dark}>
                 <Settings size={24} className="text-white" />
               </div>
               <div>
@@ -40,7 +41,7 @@ export function TimingSettingsModal({
             </div>
             <button 
               onClick={onClose}
-              className="p-3 hover:bg-stone-100 rounded-2xl text-stone-400 transition-colors"
+              className={UI_TOKENS.button.iconCloseSquare}
             >
               <X size={24} />
             </button>
@@ -58,7 +59,7 @@ export function TimingSettingsModal({
               </div>
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 ml-1">Global Before (s)</label>
+                  <label className={UI_TOKENS.input.label}>Global Before (s)</label>
                   <input 
                     type="number" step="0.1"
                     value={settings?.general?.before ?? 0}
@@ -66,11 +67,11 @@ export function TimingSettingsModal({
                       const val = parseFloat(e.target.value) || 0;
                       onUpdateSetting('general', 'before', val);
                     }}
-                    className="w-full bg-white border-2 border-blue-100 rounded-2xl px-4 py-3 text-sm font-mono focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all"
+                    className={UI_TOKENS.input.numberBoxLg}
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 ml-1">Global After (s)</label>
+                  <label className={UI_TOKENS.input.label}>Global After (s)</label>
                   <input 
                     type="number" step="0.1"
                     value={settings?.general?.after ?? 0}
@@ -78,7 +79,7 @@ export function TimingSettingsModal({
                       const val = parseFloat(e.target.value) || 0;
                       onUpdateSetting('general', 'after', val);
                     }}
-                    className="w-full bg-white border-2 border-blue-100 rounded-2xl px-4 py-3 text-sm font-mono focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all"
+                    className={UI_TOKENS.input.numberBoxLg}
                   />
                 </div>
               </div>
@@ -94,7 +95,7 @@ export function TimingSettingsModal({
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="space-y-1">
-                      <label className="text-[8px] font-black uppercase tracking-widest text-stone-400">Before (s)</label>
+                      <label className={UI_TOKENS.input.labelMini}>Before (s)</label>
                       <input 
                         type="number" step="0.1"
                         value={settings?.[color.type]?.before ?? 0}
@@ -102,11 +103,11 @@ export function TimingSettingsModal({
                           const val = parseFloat(e.target.value) || 0;
                           onUpdateSetting(color.type, 'before', val);
                         }}
-                        className="w-full bg-white border border-stone-200 rounded-xl px-2 py-1.5 text-[10px] font-mono focus:outline-none focus:ring-2 focus:ring-stone-900/5"
+                        className={UI_TOKENS.input.numberBox}
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[8px] font-black uppercase tracking-widest text-stone-400">After (s)</label>
+                      <label className={UI_TOKENS.input.labelMini}>After (s)</label>
                       <input 
                         type="number" step="0.1"
                         value={settings?.[color.type]?.after ?? 0}
@@ -114,7 +115,7 @@ export function TimingSettingsModal({
                           const val = parseFloat(e.target.value) || 0;
                           onUpdateSetting(color.type, 'after', val);
                         }}
-                        className="w-full bg-white border border-stone-200 rounded-xl px-2 py-1.5 text-[10px] font-mono focus:outline-none focus:ring-2 focus:ring-stone-900/5"
+                        className={UI_TOKENS.input.numberBox}
                       />
                     </div>
                   </div>
@@ -132,7 +133,7 @@ export function TimingSettingsModal({
             </button>
             <button
               onClick={onClose}
-              className="px-10 py-4 bg-stone-900 text-white rounded-2xl font-bold hover:bg-stone-800 transition-all active:scale-95 shadow-lg shadow-stone-900/20"
+              className={UI_TOKENS.button.primary}
             >
               Save & Close
             </button>

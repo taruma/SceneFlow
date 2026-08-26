@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { X, Check, Palette, RotateCcw, Sparkles, Sun, Moon, Coffee, Eye, Layers, Type } from 'lucide-react';
-import { SCRIPT_THEMES, getCueColorForTheme, CUE_THEME_COLORS, type ScriptThemeId, type ScriptTheme } from '../lib/scriptStyles';
+import React, { useState } from 'react';
+import { Sparkles, Check, RotateCcw, X, Moon, Sun, Coffee, Eye, Layers, Palette } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { SCRIPT_THEMES, getCueColorForTheme, CUE_THEME_COLORS, type ScriptThemeId, type ScriptTheme } from '../lib/scriptStyles';
+import { UI_TOKENS } from '../styles/tokens/ui';
 
 interface ScriptColorModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentThemeId: ScriptThemeId;
   onSelectTheme: (themeId: ScriptThemeId) => void;
-  cueTypes?: { type: string; class: string; rgb: string }[];
 }
 
 const PREVIEW_CUE_CHIPS = [
-  { name: 'Dialogue', type: 'dialogue' },
-  { name: 'Action', type: 'action' },
-  { name: 'Camera', type: 'camera' },
-  { name: 'VFX', type: 'vfx' },
+  { type: 'dialogue', name: 'Dialogue' },
+  { type: 'action', name: 'Action' },
+  { type: 'camera', name: 'Camera' },
+  { type: 'shot', name: 'Shot' },
+  { type: 'audio', name: 'Audio' },
 ];
 
 export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
@@ -23,50 +24,35 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
   onClose,
   currentThemeId,
   onSelectTheme,
-  cueTypes = []
 }) => {
   const [activeTab, setActiveTab] = useState<'presets' | 'inspector'>('presets');
-
-  // Handle ESC key to close
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   const currentTheme = SCRIPT_THEMES[currentThemeId] || SCRIPT_THEMES['studio-light'];
-  const themeList = Object.values(SCRIPT_THEMES);
+  const themeList: ScriptTheme[] = Object.values(SCRIPT_THEMES);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div 
-        className="fixed inset-0" 
-        onClick={onClose} 
-        aria-hidden="true" 
-      />
-      
+    <div className={UI_TOKENS.modal.overlayHeavy}>
       <div 
         id="script-color-modal"
-        className="bg-white rounded-2xl shadow-2xl border border-stone-200 max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden relative z-10 animate-in zoom-in-95 duration-200"
+        className={UI_TOKENS.modal.containerXl}
       >
         {/* Modal Header */}
-        <div className="p-4 sm:p-5 border-b border-stone-100 flex items-center justify-between bg-stone-50/80 shrink-0">
+        <div className="p-4 sm:p-6 border-b border-stone-100 flex items-center justify-between bg-stone-50/50 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-stone-900 text-white flex items-center justify-center shadow-sm">
+            <div className="w-9 h-9 rounded-xl bg-stone-900 text-white flex items-center justify-center shadow-xs">
               <Palette size={18} />
             </div>
             <div>
-              <h2 className="text-base font-bold text-stone-900 tracking-tight flex items-center gap-2">
-                Script Paper & Color Presets
-              </h2>
-              <p className="text-xs text-stone-500">
-                Customize the reading surface, borders, headers, and highlights.
+              <h3 className="font-bold text-stone-900 text-base flex items-center gap-2">
+                Screenplay Visual Themes
+                <span className="text-[10px] font-mono font-normal uppercase tracking-wider bg-stone-200/70 text-stone-600 px-2 py-0.5 rounded-full">
+                  6 Presets
+                </span>
+              </h3>
+              <p className="text-xs text-stone-500 mt-0.5">
+                Switch screenplay canvas textures, typography contrast, and adaptive cue highlight palettes.
               </p>
             </div>
           </div>
@@ -132,7 +118,7 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                       className={cn(
                         "relative flex flex-col text-left rounded-xl p-3.5 transition-all duration-200 border-2 group",
                         isSelected
-                          ? "border-stone-900 shadow-md ring-2 ring-stone-900/10 bg-white"
+                          ? UI_TOKENS.swatch.cardSelected + " bg-white"
                           : "border-stone-200/80 hover:border-stone-300 hover:shadow-xs bg-white"
                       )}
                     >

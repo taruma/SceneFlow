@@ -1,6 +1,7 @@
 import React from 'react';
 import { Video, X } from 'lucide-react';
 import { cn, extractYoutubeId } from '../lib/utils';
+import { UI_TOKENS } from '../styles/tokens/ui';
 
 interface YoutubeSourceInputProps {
   youtubeId: string;
@@ -38,7 +39,7 @@ export function YoutubeSourceInput({
           type="text"
           value={youtubeId}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full pl-10 pr-10 py-3 bg-stone-50 border border-stone-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-stone-900/5 focus:border-stone-300 transition-all font-mono text-sm"
+          className={UI_TOKENS.input.baseText}
           placeholder="Paste YouTube URL or Video ID"
         />
         <Video size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 group-focus-within:text-stone-600 transition-colors" />

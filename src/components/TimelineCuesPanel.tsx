@@ -2,7 +2,7 @@ import React from 'react';
 import { Edit2, RefreshCw, Check, Loader2, Trash2 } from 'lucide-react';
 import { Cue } from '../types/script';
 import { COLORS } from '../constants/script';
-import { getCueColorForTheme } from '../lib/scriptStyles';
+import { useScriptTheme } from '../hooks/useScriptTheme';
 import { cn } from '../lib/utils';
 
 interface TimelineCuesPanelProps {
@@ -28,6 +28,7 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
   isAligning,
   alignSuccess,
 }) => {
+  const { resolveCueColor } = useScriptTheme(scriptThemeId as any);
   const cueList = cues || [];
 
   return (
@@ -86,7 +87,7 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
         <div className="grid gap-3">
           {cueList.map((cue, idx) => {
             const cueType = cue.type || (cue.colorClass ? COLORS.find(c => c.class === cue.colorClass)?.type : 'dialogue') || 'dialogue';
-            const themed = getCueColorForTheme(cueType, scriptThemeId);
+            const themed = resolveCueColor(cueType);
             return (
               <div 
                 key={cue.id ? `timeline-${cue.id}-${idx}` : `timeline-idx-${idx}`} 
