@@ -88,7 +88,7 @@ SceneFlow features a fully redesigned, responsive **Library Catalogue** serving 
 - **Category Navigation** — Browse by AI Scenes, The Written Motion, FRAME Series, and AI Clips with contextual section badges.
 - **Featured Curations** — Handpicked standout scripts surfaced at the top.
 
-→ See the full list in **[SceneFlow Catalogue](SCENEFLOW_CATALOGUE.md)** — all 33 sceneflows with IDs, dates, and video models.
+→ See the full list in **[SceneFlow Catalogue](SCENEFLOW_CATALOGUE.md)** — all 34 sceneflows with IDs, dates, and video models.
 
 ---
 

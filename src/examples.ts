@@ -132,6 +132,15 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         releaseDate: '2026-08-08',
         tags: ['auteur script', 'seedance 2.5'],
         featured: true
+      },
+      {
+        id: 'scene_entropy',
+        title: 'Entropy',
+        path: '/examples/scene_entropy.json',
+        description: 'A single drop of milk in a glass of iced coffee mirrors a lifetime of divergent paths. When every variable in an equation is accounted for, why does the outcome still fracture?',
+        releaseDate: '2026-08-09',
+        tags: ['auteur script', 'seedance 2.5'],
+        featured: false
       }
     ]
   },

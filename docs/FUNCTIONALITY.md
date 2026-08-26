@@ -160,6 +160,7 @@ An interactive catalogue featuring 30+ curated screenplays organized into 4 dist
 
 1. **AI Scenes**:
    - *Frequency Over Force* (`scene_frequency`, Default Example)
+   - *Entropy* (`scene_entropy`)
    - *The Expansion* (`expansion`)
    - *Intent Over Rules* (`intent`)
    - *Mosaic* (`mosaic`)
