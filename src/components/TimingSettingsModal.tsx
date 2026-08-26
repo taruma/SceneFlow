@@ -24,7 +24,7 @@ export function TimingSettingsModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+    <div className={UI_TOKENS.modal.overlayHeavy}>
       <div className={UI_TOKENS.modal.containerLg}>
         <div className="p-8 lg:p-10 space-y-8">
           <div className="flex items-center justify-between">

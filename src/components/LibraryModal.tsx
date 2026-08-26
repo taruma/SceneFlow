@@ -2,6 +2,7 @@ import * as React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Search, BookOpen, Film, Notebook, Compass, ArrowUpRight, Lock, Clapperboard, Sparkles } from "lucide-react";
 import { EXAMPLE_SECTIONS, Example } from "../examples";
+import { UI_TOKENS } from "../styles/tokens/ui";
 
 function formatDateString(dateStr?: string): string {
   if (!dateStr) return "";
@@ -169,10 +170,10 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 15 }}
             transition={{ type: "spring", duration: 0.4 }}
-            className="relative w-full max-w-4xl h-[92vh] sm:h-[85vh] md:h-[80vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-stone-200"
+            className={UI_TOKENS.modal.containerLibrary}
           >
             {/* Header: Title & Close Button */}
-            <div className="flex items-center justify-between px-4 py-3.5 md:px-5 md:py-4 border-b border-stone-100 bg-stone-50/70">
+            <div className={UI_TOKENS.modal.header}>
               <div className="flex items-center gap-2.5">
                 <div className="p-1.5 bg-stone-900 text-white rounded-lg">
                   <BookOpen size={14} />
@@ -186,7 +187,7 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
               </div>
               <button
                 onClick={onClose}
-                className="p-1.5 hover:bg-stone-200 active:scale-95 rounded-full transition-all text-stone-400 hover:text-stone-600"
+                className={UI_TOKENS.button.iconCloseSm}
                 aria-label="Close modal"
               >
                 <X size={16} />
@@ -202,7 +203,7 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search scripts, themes, volumes..."
-                  className="w-full pl-9 pr-8 py-2 bg-stone-100 hover:bg-stone-50 focus:bg-white text-xs text-stone-800 placeholder-stone-400 rounded-xl border border-transparent focus:border-stone-200 shadow-inner focus:shadow-none transition-all outline-none"
+                  className={UI_TOKENS.input.search}
                 />
                 {searchQuery && (
                   <button
@@ -220,8 +221,8 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                     onClick={() => setSortBy("newest")}
                     className={`flex-1 sm:flex-initial text-center px-3 py-1.5 md:px-2.5 md:py-1 text-[10px] md:text-[9px] font-bold tracking-wider uppercase rounded-lg transition-all ${
                       sortBy === "newest"
-                        ? "bg-white text-stone-900 shadow-sm"
-                        : "text-stone-400 hover:text-stone-700"
+                        ? UI_TOKENS.button.sortButtonActive
+                        : UI_TOKENS.button.sortButtonInactive
                     }`}
                   >
                     Latest
@@ -230,8 +231,8 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                     onClick={() => setSortBy("oldest")}
                     className={`flex-1 sm:flex-initial text-center px-3 py-1.5 md:px-2.5 md:py-1 text-[10px] md:text-[9px] font-bold tracking-wider uppercase rounded-lg transition-all ${
                       sortBy === "oldest"
-                        ? "bg-white text-stone-900 shadow-sm"
-                        : "text-stone-400 hover:text-stone-700"
+                        ? UI_TOKENS.button.sortButtonActive
+                        : UI_TOKENS.button.sortButtonInactive
                     }`}
                   >
                     Oldest
@@ -240,8 +241,8 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                     onClick={() => setSortBy("alphabetical")}
                     className={`flex-1 sm:flex-initial text-center px-3 py-1.5 md:px-2.5 md:py-1 text-[10px] md:text-[9px] font-bold tracking-wider uppercase rounded-lg transition-all ${
                       sortBy === "alphabetical"
-                        ? "bg-white text-stone-900 shadow-sm"
-                        : "text-stone-400 hover:text-stone-700"
+                        ? UI_TOKENS.button.sortButtonActive
+                        : UI_TOKENS.button.sortButtonInactive
                     }`}
                   >
                     A-Z

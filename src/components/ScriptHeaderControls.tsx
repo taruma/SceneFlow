@@ -90,9 +90,9 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                     className="fixed inset-0 z-40" 
                     onClick={() => setIsAutoScrollDropdownOpen(false)} 
                   />
-                  <div className="absolute top-full right-0 mt-2 w-44 bg-white rounded-xl shadow-xl border border-stone-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200">
-                    <div className="p-2 bg-stone-50 border-b border-stone-100 flex items-center justify-between">
-                      <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Focus Mode</p>
+                  <div className={UI_TOKENS.dropdown.menu}>
+                    <div className={UI_TOKENS.dropdown.header}>
+                      <p className={UI_TOKENS.dropdown.headerText}>Focus Mode</p>
                       <button 
                         onClick={() => {
                           const allTypes = COLORS.map(c => c.type);
@@ -153,7 +153,7 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
               target="_blank"
               rel="noopener noreferrer"
               title="Support on Ko-fi"
-              className="lg:hidden flex items-center justify-center px-1.5 py-1 bg-[#FF5E5B] hover:bg-[#e04e4b] text-white rounded transition-colors"
+              className={UI_TOKENS.button.supportPill}
             >
               <Coffee size={10} />
             </a>
@@ -194,9 +194,9 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                     className="fixed inset-0 z-40" 
                     onClick={() => setIsWidthDropdownOpen(false)} 
                   />
-                  <div className="absolute top-full right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-stone-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200">
-                    <div className="p-2.5 bg-stone-50 border-b border-stone-100 flex items-center justify-between">
-                      <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Script Width</p>
+                  <div className={UI_TOKENS.dropdown.menuWide}>
+                    <div className={UI_TOKENS.dropdown.header}>
+                      <p className={UI_TOKENS.dropdown.headerText}>Script Width</p>
                       <span className="text-[8px] font-mono text-stone-400 font-medium">5 Presets</span>
                     </div>
                     <div className="p-1.5 space-y-0.5">
@@ -289,9 +289,9 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                     className="fixed inset-0 z-40" 
                     onClick={() => setIsScrollFocusDropdownOpen(false)} 
                   />
-                  <div className="absolute top-full right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-stone-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200">
-                    <div className="p-2.5 bg-stone-50 border-b border-stone-100 flex items-center justify-between">
-                      <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Focus Line</p>
+                  <div className={UI_TOKENS.dropdown.menuWide}>
+                    <div className={UI_TOKENS.dropdown.header}>
+                      <p className={UI_TOKENS.dropdown.headerText}>Focus Line</p>
                       <span className="text-[8px] font-mono text-stone-400 font-medium">Viewport Focus</span>
                     </div>
                     <div className="p-1.5 space-y-0.5">

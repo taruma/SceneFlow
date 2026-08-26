@@ -80,17 +80,17 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           </a>
         </div>
 
-        <div className="hidden lg:flex items-center gap-2 px-3 xl:px-4 py-2 bg-stone-900 rounded-xl shadow-inner animate-in fade-in zoom-in duration-500">
+        <div className={UI_TOKENS.badge.currentTimePill}>
           <span className="hidden xl:inline text-[10px] font-black text-stone-500 uppercase tracking-widest">Current Time</span>
           <span className="text-base xl:text-lg font-mono font-bold text-white w-12 xl:w-16 text-right">{currentTime.toFixed(1)}s</span>
         </div>
 
-        <div className="flex bg-stone-100 p-0.5 lg:p-1 rounded-lg lg:rounded-xl ring-1 ring-stone-200 scale-90 xl:scale-100">
+        <div className={UI_TOKENS.button.modeSwitchContainer}>
           <button
             onClick={() => setMode('playback')}
             className={cn(
               "px-2 lg:px-3 xl:px-5 py-1.5 lg:py-2 rounded-lg text-[10px] lg:text-xs xl:text-sm font-semibold transition-all flex items-center gap-1 lg:gap-2",
-              mode === 'playback' ? "bg-white shadow-md text-stone-900" : "text-stone-500 hover:text-stone-700"
+              mode === 'playback' ? UI_TOKENS.button.modeSwitchActive : UI_TOKENS.button.modeSwitchInactive
             )}
           >
             <Play size={12} className={mode === 'playback' ? "fill-current" : ""} /> Playback
@@ -99,7 +99,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             onClick={() => setMode('edit')}
             className={cn(
               "px-2 lg:px-3 xl:px-5 py-1.5 lg:py-2 rounded-lg text-[10px] lg:text-xs xl:text-sm font-semibold transition-all flex items-center gap-1 lg:gap-2",
-              mode === 'edit' ? "bg-white shadow-md text-stone-900" : "text-stone-500 hover:text-stone-700"
+              mode === 'edit' ? UI_TOKENS.button.modeSwitchActive : UI_TOKENS.button.modeSwitchInactive
             )}
           >
             <Edit2 size={12} /> Edit
@@ -110,10 +110,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           <button
             id="script-theme-header-button"
             onClick={() => setIsColorModalOpen(true)}
-            className={cn(
-              "p-2 rounded-lg transition-all border shadow-sm active:scale-95 flex items-center justify-center",
-              isColorModalOpen ? "bg-stone-900 text-white border-stone-900" : "bg-white text-stone-500 hover:text-stone-700 border-stone-200"
-            )}
+            className={isColorModalOpen ? UI_TOKENS.button.headerIconButtonActive : UI_TOKENS.button.headerIconButton}
             title="Script Color & Theme Presets"
           >
             <Palette size={18} />
@@ -123,10 +120,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
         <div className="relative hidden lg:block">
           <button
             onClick={() => setIsSettingsOpen(true)}
-            className={cn(
-              "p-2 rounded-lg transition-all border shadow-sm active:scale-95",
-              isSettingsOpen ? "bg-stone-900 text-white border-stone-900" : "bg-white text-stone-500 hover:text-stone-700 border-stone-200"
-            )}
+            className={isSettingsOpen ? UI_TOKENS.button.headerIconButtonActive : UI_TOKENS.button.headerIconButton}
             title="Timing Settings"
           >
             <Clock size={18} />
@@ -138,7 +132,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
         <div className="flex items-center gap-1">
           <label
             title="Open Sync (.json)"
-            className="cursor-pointer p-2 rounded-lg text-stone-500 hover:text-stone-800 bg-white hover:bg-stone-50 border border-stone-200 shadow-sm transition-all active:scale-95 flex items-center justify-center"
+            className={cn("cursor-pointer", UI_TOKENS.button.headerIconButton)}
           >
             <FolderOpen size={18} />
             <input type="file" accept=".json" onChange={importJson} className="hidden" />
@@ -146,7 +140,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           <button
             onClick={exportJson}
             title="Save Sync (.json)"
-            className="p-2 rounded-lg text-stone-500 hover:text-stone-800 bg-white hover:bg-stone-50 border border-stone-200 shadow-sm transition-all active:scale-95 flex items-center justify-center"
+            className={UI_TOKENS.button.headerIconButton}
           >
             <Download size={18} />
           </button>

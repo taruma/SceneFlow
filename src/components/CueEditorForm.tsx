@@ -4,6 +4,7 @@ import { Cue } from '../types/script';
 import { COLORS } from '../constants/script';
 import { useScriptTheme } from '../hooks/useScriptTheme';
 import { cn } from '../lib/utils';
+import { UI_TOKENS } from '../styles/tokens/ui';
 
 interface CueEditorFormProps {
   newCue: Partial<Cue>;
@@ -42,7 +43,7 @@ export const CueEditorForm: React.FC<CueEditorFormProps> = ({
     <div className="bg-white border-b border-stone-200 p-4 lg:p-6 shrink-0 z-10 shadow-sm animate-in slide-in-from-top duration-500">
       <div className="max-w-xl mx-auto">
         {!selection ? (
-          <div className="py-4 text-center border-2 border-dashed border-stone-100 rounded-2xl bg-stone-50/50">
+          <div className={UI_TOKENS.panel.emptyPlaceholder}>
             <p className="text-xs text-stone-400 font-medium italic">Highlight text in the script below to create a sync cue.</p>
           </div>
         ) : (

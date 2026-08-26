@@ -95,7 +95,7 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
           );
         })}
         {visibleCues.length === 0 && (
-          <div className="h-32 border-2 border-dashed border-stone-100 rounded-3xl flex items-center justify-center">
+          <div className={cn(UI_TOKENS.panel.emptyPlaceholder, "py-8")}>
             <p className="text-xs text-stone-300 italic">No active highlights at this time</p>
           </div>
         )}

@@ -75,7 +75,7 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
           </div>
 
           {/* Legend */}
-          <div className="flex flex-wrap gap-2 p-3 bg-stone-50 border border-stone-200 rounded-2xl">
+          <div className={UI_TOKENS.panel.legendContainer}>
             {COLORS.map(color => (
               <div key={color.type} className="flex items-center gap-1.5">
                 <div className={cn("w-2.5 h-2.5 rounded-full", color.class)} />
