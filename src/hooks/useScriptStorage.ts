@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { AppState, Cue } from '../types/script';
-import { COLORS, DEFAULT_SETTINGS } from '../constants/script';
+import type { AppState } from '../types/script';
+import { DEFAULT_SETTINGS } from '../constants/script';
+import { sanitizeCues } from '../lib/cueUtils';
 
 export function useScriptStorage() {
   const [state, setState] = useState<AppState>(() => {
@@ -12,11 +13,7 @@ export function useScriptStorage() {
           return {
             youtubeId: parsed.youtubeId || 'dQw4w9WgXcQ',
             scriptText: parsed.scriptText || '',
-            cues: Array.isArray(parsed.cues) ? parsed.cues.map((c: any) => {
-              const cueType = c.type || (c.colorClass ? COLORS.find(col => col.class === c.colorClass)?.type : 'dialogue') || 'dialogue';
-              const colorClass = c.colorClass || COLORS.find(col => col.type === cueType)?.class || COLORS[0].class;
-              return { ...c, type: cueType, colorClass };
-            }) : [],
+            cues: sanitizeCues(parsed.cues),
             settings: parsed.settings || DEFAULT_SETTINGS,
           };
         } catch (e) {
@@ -42,7 +39,12 @@ export function useScriptStorage() {
       fetch('/examples/scene_frequency.json')
         .then(res => res.json())
         .then(data => {
-          setState(data);
+          const sanitizedData = {
+            ...data,
+            cues: sanitizeCues(data.cues),
+            settings: data.settings || DEFAULT_SETTINGS
+          };
+          setState(sanitizedData);
           setIsInitialized(true);
         })
         .catch(err => {
@@ -65,7 +67,11 @@ export function useScriptStorage() {
     try {
       const res = await fetch('/examples/scene_frequency.json');
       const data = await res.json();
-      const finalData = { ...data, settings: data.settings || DEFAULT_SETTINGS };
+      const finalData = { 
+        ...data, 
+        cues: sanitizeCues(data.cues),
+        settings: data.settings || DEFAULT_SETTINGS 
+      };
       setState(finalData);
       localStorage.setItem('screenplay_sync_state', JSON.stringify(finalData));
       return finalData;
@@ -81,7 +87,11 @@ export function useScriptStorage() {
     try {
       const res = await fetch('/examples/blank.json');
       const data = await res.json();
-      const finalData = { ...data, settings: data.settings || DEFAULT_SETTINGS };
+      const finalData = { 
+        ...data, 
+        cues: sanitizeCues(data.cues),
+        settings: data.settings || DEFAULT_SETTINGS 
+      };
       setState(finalData);
       localStorage.setItem('screenplay_sync_state', JSON.stringify(finalData));
       return finalData;
@@ -95,7 +105,11 @@ export function useScriptStorage() {
     try {
       const res = await fetch(path);
       const data = await res.json();
-      const finalData = { ...data, settings: data.settings || DEFAULT_SETTINGS };
+      const finalData = { 
+        ...data, 
+        cues: sanitizeCues(data.cues),
+        settings: data.settings || DEFAULT_SETTINGS 
+      };
       setState(finalData);
       localStorage.setItem('screenplay_sync_state', JSON.stringify(finalData));
       return finalData;
@@ -114,7 +128,11 @@ export function useScriptStorage() {
       if (!data.youtubeId || !data.scriptText) {
         throw new Error("Invalid project format: missing youtubeId or scriptText");
       }
-      const finalData = { ...data, settings: data.settings || DEFAULT_SETTINGS };
+      const finalData = { 
+        ...data, 
+        cues: sanitizeCues(data.cues),
+        settings: data.settings || DEFAULT_SETTINGS 
+      };
       setState(finalData);
       localStorage.setItem('screenplay_sync_state', JSON.stringify(finalData));
       return finalData;

@@ -1,6 +1,33 @@
 import type { Cue, TimingSettings, AppState, AlternativeLocation } from '../types/script';
 import { COLORS, DEFAULT_SETTINGS } from '../constants/script';
 import { processScript } from './scriptProcessor';
+import { generateId } from './utils';
+
+/**
+ * Sanitizes and deduplicates cue IDs to guarantee unique React keys and identifiers.
+ */
+export function sanitizeCues(cues: any[]): Cue[] {
+  if (!Array.isArray(cues)) return [];
+  const seenIds = new Set<string>();
+
+  return cues.map((c, index) => {
+    let id = c?.id ? String(c.id).trim() : '';
+    if (!id || seenIds.has(id)) {
+      id = id ? `${id}_dup_${index}_${generateId().slice(0, 6)}` : `cue_${index}_${generateId().slice(0, 6)}`;
+    }
+    seenIds.add(id);
+
+    const cueType = c?.type || (c?.colorClass ? COLORS.find(col => col.class === c.colorClass)?.type : 'dialogue') || 'dialogue';
+    const colorClass = c?.colorClass || COLORS.find(col => col.type === cueType)?.class || COLORS[0].class;
+
+    return {
+      ...c,
+      id,
+      type: cueType,
+      colorClass
+    };
+  });
+}
 
 /**
  * Searches for text within the full script using exact match first,
@@ -292,13 +319,7 @@ export function validateImportedScriptJson(json: any): AppState {
   return {
     youtubeId: json.youtubeId || 'dQw4w9WgXcQ',
     scriptText: json.scriptText || '',
-    cues: Array.isArray(json.cues) ? json.cues.map((c: any) => {
-      if (!c.type && c.colorClass) {
-        const colorInfo = COLORS.find(col => col.class === c.colorClass);
-        return { ...c, type: colorInfo?.type || 'dialogue' };
-      }
-      return c;
-    }) : [],
+    cues: sanitizeCues(json.cues),
     settings: json.settings || DEFAULT_SETTINGS,
   };
 }

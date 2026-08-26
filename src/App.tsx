@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import YouTube, { YouTubeProps } from 'react-youtube';
-import { Play, Edit2, Download, Upload, Plus, Trash2, X, Check, FileText, Video, Clock, RefreshCw, Loader2, Settings, ChevronDown, ChevronUp, Book, Target, Info, Search, FolderOpen, Heart, Coffee, MoveHorizontal, AlignVerticalJustifyCenter, Palette } from 'lucide-react';
+import { Video, Info } from 'lucide-react';
 import { EXAMPLE_SECTIONS } from './examples';
 import { processScript, type LineType, type ProcessedLine } from './lib/scriptProcessor';
 import { 
@@ -25,6 +25,11 @@ import { DeleteConfirmationModal } from './components/DeleteConfirmationModal';
 import { ResetConfirmationModal } from './components/ResetConfirmationModal';
 import { TimingSettingsModal } from './components/TimingSettingsModal';
 import { ScriptColorModal } from './components/ScriptColorModal';
+import { AppHeader } from './components/AppHeader';
+import { ActiveHighlightsPanel } from './components/ActiveHighlightsPanel';
+import { TimelineCuesPanel } from './components/TimelineCuesPanel';
+import { ScriptHeaderControls } from './components/ScriptHeaderControls';
+import { CueEditorForm } from './components/CueEditorForm';
 import { cn, extractYoutubeId, generateId } from './lib/utils';
 import { useScriptStorage } from './hooks/useScriptStorage';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
@@ -53,6 +58,7 @@ import {
   SCROLL_FOCUS_PRESETS 
 } from './constants/script';
 import {
+  sanitizeCues,
   isCueActive,
   calculateCuePlaybackOpacity,
   exportStateToJsonFile,
@@ -243,7 +249,7 @@ export default function App() {
     try {
       const parsedCues = JSON.parse(rawCuesText);
       if (!Array.isArray(parsedCues)) throw new Error("Must be an array");
-      setState(prev => ({ ...prev, cues: parsedCues }));
+      setState(prev => ({ ...prev, cues: sanitizeCues(parsedCues) }));
       setIsCuesModalOpen(false);
     } catch (err) {
       alert("Invalid JSON format for cues. Please check your syntax.");
@@ -595,124 +601,20 @@ export default function App() {
   return (
     <div className="flex flex-col h-screen bg-stone-100 text-stone-900 font-sans overflow-hidden selection:bg-blue-100">
       {/* Header */}
-      <header className={cn(
-        "h-16 border-b border-stone-200 bg-white flex items-center justify-between px-3 lg:px-6 shrink-0 z-40 shadow-sm transition-all",
-        mode === 'playback' && "hidden lg:flex"
-      )}>
-        <div className="flex items-center gap-2 lg:gap-3">
-          <img 
-            src="/SCENEFLOW_TAG_B.png" 
-            alt="SceneFlow Logo" 
-            referrerPolicy="no-referrer"
-            className="h-8 lg:h-9 w-auto object-contain selection:bg-transparent pointer-events-none"
-          />
-        </div>
-        
-        <div className="flex items-center gap-2 lg:gap-4">
-          <div className="flex items-center gap-1 lg:gap-1.5 mr-1 xl:mr-2">
-            <button 
-              onClick={() => setResetConfirmation({ isOpen: true, type: 'blank', error: null })}
-              title="New Official Guide"
-              className="hidden lg:flex items-center gap-1.5 px-2 py-1.5 xl:px-2.5 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-stone-200 shadow-sm"
-            >
-              <Plus size={12} /> <span className="hidden xl:inline">Guide</span>
-            </button>
-            
-            <button 
-              onClick={() => setIsLibraryOpen(true)}
-              title="Example Library Catalog"
-              className={cn(
-                "flex items-center gap-1 px-1.5 py-1.5 lg:gap-1.5 lg:px-2 xl:px-2.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border shadow-sm",
-                isLibraryOpen ? "bg-stone-900 text-white border-stone-900" : "bg-white hover:bg-stone-50 text-stone-600 border-stone-200"
-              )}
-            >
-              <Book size={12} /> <span className="hidden xl:inline">Library</span>
-            </button>
-
-            <a 
-              href="https://ko-fi.com/tarumainfo"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Support on Ko-fi"
-              className="flex items-center gap-1 px-1.5 py-1.5 lg:gap-1.5 lg:px-2 xl:px-2.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 bg-[#FF5E5B] hover:bg-[#e04e4b] text-white shadow-sm"
-            >
-              <Coffee size={12} /> <span className="hidden xl:inline">Support</span>
-            </a>
-          </div>
-
-          <div className="hidden lg:flex items-center gap-2 px-3 xl:px-4 py-2 bg-stone-900 rounded-xl shadow-inner animate-in fade-in zoom-in duration-500">
-            <span className="hidden xl:inline text-[10px] font-black text-stone-500 uppercase tracking-widest">Current Time</span>
-            <span className="text-base xl:text-lg font-mono font-bold text-white w-12 xl:w-16 text-right">{currentTime.toFixed(1)}s</span>
-          </div>
-
-          <div className="flex bg-stone-100 p-0.5 lg:p-1 rounded-lg lg:rounded-xl ring-1 ring-stone-200 scale-90 xl:scale-100">
-            <button
-              onClick={() => setMode('playback')}
-              className={cn(
-                "px-2 lg:px-3 xl:px-5 py-1.5 lg:py-2 rounded-lg text-[10px] lg:text-xs xl:text-sm font-semibold transition-all flex items-center gap-1 lg:gap-2",
-                mode === 'playback' ? "bg-white shadow-md text-stone-900" : "text-stone-500 hover:text-stone-700"
-              )}
-            >
-              <Play size={12} className={mode === 'playback' ? "fill-current" : ""} /> Playback
-            </button>
-            <button
-              onClick={() => setMode('edit')}
-              className={cn(
-                "px-2 lg:px-3 xl:px-5 py-1.5 lg:py-2 rounded-lg text-[10px] lg:text-xs xl:text-sm font-semibold transition-all flex items-center gap-1 lg:gap-2",
-                mode === 'edit' ? "bg-white shadow-md text-stone-900" : "text-stone-500 hover:text-stone-700"
-              )}
-            >
-              <Edit2 size={12} /> Edit
-            </button>
-          </div>
-          
-          <div className="relative hidden lg:block">
-            <button
-              id="script-theme-header-button"
-              onClick={() => setIsColorModalOpen(true)}
-              className={cn(
-                "p-2 rounded-lg transition-all border shadow-sm active:scale-95 flex items-center justify-center",
-                isColorModalOpen ? "bg-stone-900 text-white border-stone-900" : "bg-white text-stone-500 hover:text-stone-700 border-stone-200"
-              )}
-              title="Script Color & Theme Presets"
-            >
-              <Palette size={18} />
-            </button>
-          </div>
-
-          <div className="relative hidden lg:block">
-            <button
-              onClick={() => setIsSettingsOpen(true)}
-              className={cn(
-                "p-2 rounded-lg transition-all border shadow-sm active:scale-95",
-                isSettingsOpen ? "bg-stone-900 text-white border-stone-900" : "bg-white text-stone-500 hover:text-stone-700 border-stone-200"
-              )}
-              title="Timing Settings"
-            >
-              <Clock size={18} />
-            </button>
-          </div>
-          
-          <div className="hidden lg:block h-8 w-px bg-stone-200 mx-2" />
-          
-          <div className="flex items-center gap-1">
-            <label
-              title="Open Sync (.json)"
-              className="cursor-pointer p-2 rounded-lg text-stone-500 hover:text-stone-800 bg-white hover:bg-stone-50 border border-stone-200 shadow-sm transition-all active:scale-95 flex items-center justify-center"
-            >
-              <FolderOpen size={18} />
-              <input type="file" accept=".json" onChange={importJson} className="hidden" />
-            </label>
-            <button
-              onClick={exportJson}
-              title="Save Sync (.json)"
-              className="p-2 rounded-lg text-stone-500 hover:text-stone-800 bg-white hover:bg-stone-50 border border-stone-200 shadow-sm transition-all active:scale-95 flex items-center justify-center"
-            >
-              <Download size={18} />
-            </button>
-          </div>
-        </div>
-      </header>
+      <AppHeader
+        mode={mode}
+        setMode={setMode}
+        currentTime={currentTime}
+        isLibraryOpen={isLibraryOpen}
+        setIsLibraryOpen={setIsLibraryOpen}
+        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'blank', error: null })}
+        isColorModalOpen={isColorModalOpen}
+        setIsColorModalOpen={setIsColorModalOpen}
+        isSettingsOpen={isSettingsOpen}
+        setIsSettingsOpen={setIsSettingsOpen}
+        importJson={importJson}
+        exportJson={exportJson}
+      />
 
       <main className={cn(
         "flex flex-1 flex-col lg:flex-row overflow-hidden",
@@ -802,80 +704,14 @@ export default function App() {
             </div>
             
             {mode === 'playback' && (
-              <div className="hidden lg:flex flex-col flex-1 mt-10 animate-in fade-in slide-in-from-left-4 duration-700">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-stone-400 flex items-center gap-2">
-                    <Video size={14} /> Active Highlights
-                  </h3>
-                  <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-2 py-0.5 rounded uppercase">
-                    {(state.cues || []).filter(isCueVisible).length} active
-                  </span>
-                </div>
-
-                {/* Legend / Filter */}
-                <div className="flex flex-wrap gap-1.5 mb-6">
-                  {COLORS.map(color => {
-                    const isActive = activeCueTypes.has(color.type);
-                    const isHidden = hiddenCueTypes.has(color.type);
-                    const themed = getCueColorForTheme(color.type, scriptThemeId);
-                    return (
-                      <button
-                        key={color.type}
-                        onClick={() => toggleCueTypeVisibility(color.type)}
-                        className={cn(
-                          "flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all border relative overflow-hidden",
-                          isHidden 
-                            ? "bg-stone-50 border-stone-100 text-stone-300 opacity-60" 
-                            : "bg-white border-stone-200 text-stone-500 hover:border-stone-300 shadow-sm",
-                          isActive && !isHidden && "bg-stone-50"
-                        )}
-                      >
-                        {isActive && !isHidden && (
-                          <span 
-                            className="absolute inset-0 opacity-30 animate-pulse" 
-                            style={{ backgroundColor: `rgb(${themed.rgb})` }}
-                          />
-                        )}
-                        <div 
-                          className="w-2 h-2 rounded-full shrink-0" 
-                          style={{ backgroundColor: isHidden ? undefined : `rgb(${themed.rgb})` }} 
-                        />
-                        {color.type}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <div className="flex-1 space-y-3 overflow-y-auto pr-2 scrollbar-hide">
-                  {(state.cues || []).filter(isCueVisible).sort((a, b) => {
-                    const order = COLORS.map(c => c.type);
-                    return order.indexOf(a.type || 'dialogue') - order.indexOf(b.type || 'dialogue');
-                  }).map(cue => {
-                    const themed = getCueColorForTheme(cue.type || cue.colorClass || '', scriptThemeId);
-                    return (
-                      <div key={cue.id} className="p-4 bg-stone-50 border border-stone-200 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 relative overflow-hidden">
-                        <div 
-                          className="w-1.5 h-8 rounded-full shrink-0" 
-                          style={{ backgroundColor: `rgb(${themed.rgb})` }}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-serif italic text-stone-700 line-clamp-2">"{cue.selectedText}"</p>
-                          {cue.type && (
-                            <span className="absolute top-1 right-2 text-[8px] font-black uppercase tracking-widest text-stone-300">
-                              {cue.type}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                  {(state.cues || []).filter(isCueVisible).length === 0 && (
-                    <div className="h-32 border-2 border-dashed border-stone-100 rounded-3xl flex items-center justify-center">
-                      <p className="text-xs text-stone-300 italic">No active highlights at this time</p>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <ActiveHighlightsPanel
+                cues={state.cues}
+                isCueVisible={isCueVisible}
+                activeCueTypes={activeCueTypes}
+                hiddenCueTypes={hiddenCueTypes}
+                toggleCueTypeVisibility={toggleCueTypeVisibility}
+                scriptThemeId={scriptThemeId}
+              />
             )}
           </section>
 
@@ -887,122 +723,22 @@ export default function App() {
             />
           )}
 
-          {/* Edit Mode Controls - Moved Cue Creation to Right Panel */}
+          {/* Edit Mode Controls */}
           {mode === 'edit' && (
-            <section className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 mt-4">
-              {/* Cue List */}
-              <div className="space-y-4">
-                <div className="flex flex-col gap-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-stone-400">Timeline Cues</h3>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => {
-                          setRawCuesText(JSON.stringify(state.cues, null, 2));
-                          setIsCuesModalOpen(true);
-                        }}
-                        title="Edit raw JSON cues"
-                        className="flex items-center gap-1.5 px-2.5 py-1 bg-stone-100 border border-stone-200 text-stone-500 hover:text-stone-700 hover:bg-stone-200 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95"
-                      >
-                        <Edit2 size={10} /> Raw
-                      </button>
-                      {(state.cues || []).length > 0 && (
-                        <button
-                          onClick={() => realignCues()}
-                          disabled={isAligning}
-                          title="Re-align cues with script text"
-                          className={cn(
-                            "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border",
-                            alignSuccess 
-                              ? "bg-green-50 border-green-100 text-green-600" 
-                              : "bg-stone-100 border-stone-200 text-stone-500 hover:text-stone-700 hover:bg-stone-200"
-                          )}
-                        >
-                          {isAligning ? (
-                            <Loader2 size={10} className="animate-spin" />
-                          ) : alignSuccess ? (
-                            <Check size={10} />
-                          ) : (
-                            <RefreshCw size={10} />
-                          )}
-                          {alignSuccess ? 'Aligned' : 'Align'}
-                        </button>
-                      )}
-                      <span className="text-[10px] font-bold text-stone-300 bg-stone-100 px-2 py-0.5 rounded uppercase">{(state.cues || []).length} total</span>
-                    </div>
-                  </div>
-
-                  {/* Legend */}
-                  <div className="flex flex-wrap gap-2 p-3 bg-stone-50 border border-stone-200 rounded-2xl">
-                    {COLORS.map(color => (
-                      <div key={color.type} className="flex items-center gap-1.5">
-                        <div className={cn("w-2.5 h-2.5 rounded-full", color.class)} />
-                        <span className="text-[9px] font-black uppercase tracking-widest text-stone-400">{color.type}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                 <div className="grid gap-3">
-                   {(state.cues || []).map(cue => {
-                    const cueType = cue.type || (cue.colorClass ? COLORS.find(c => c.class === cue.colorClass)?.type : 'dialogue') || 'dialogue';
-                    const colorClass = cue.colorClass || COLORS.find(c => c.type === cueType)?.class || COLORS[0].class;
-                    const themed = getCueColorForTheme(cueType, scriptThemeId);
-                    return (
-                    <div 
-                      key={cue.id} 
-                      onClick={() => selectCueForEdit(cue)}
-                      className={cn(
-                        "flex items-center justify-between p-4 bg-stone-50 border rounded-2xl group hover:bg-white hover:shadow-md transition-all relative overflow-hidden cursor-pointer",
-                        newCue.id === cue.id ? "border-stone-900 ring-1 ring-stone-900 bg-white shadow-md" : "border-stone-200"
-                      )}
-                    >
-                      <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <div 
-                          className="w-1.5 h-10 rounded-full shrink-0" 
-                          style={{ backgroundColor: `rgb(${themed.rgb})` }} 
-                        />
-                        <div className="flex flex-col flex-1 min-w-0">
-                          {cueType && (
-                            <span 
-                              className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md w-fit mb-1 border"
-                              style={{ 
-                                backgroundColor: `rgba(${themed.rgb}, 0.15)`,
-                                borderColor: `rgba(${themed.rgb}, 0.3)`,
-                                color: themed.textColorClass.includes('text-amber-100') ? '#b45309' : undefined
-                              }}
-                            >
-                              {cueType}
-                            </span>
-                          )}
-                          <span className="text-sm font-bold text-stone-800 italic leading-tight break-words">"{cue.selectedText}"</span>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[10px] font-mono font-bold text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded">{cue.startTime.toFixed(1)}s</span>
-                            <div className="w-2 h-px bg-stone-200" />
-                            <span className="text-[10px] font-mono font-bold text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded">{cue.endTime.toFixed(1)}s</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-4 shrink-0 ml-4">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteCue(cue.id);
-                          }}
-                          className="p-2 text-stone-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 shrink-0"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </div>
-                  );})}
-                  {(state.cues || []).length === 0 && (
-                    <div className="text-center py-12 border-2 border-dashed border-stone-100 rounded-[2rem] bg-stone-50/50">
-                      <p className="text-sm text-stone-400 font-medium italic">No cues created yet.</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </section>
+            <TimelineCuesPanel
+              cues={state.cues}
+              scriptThemeId={scriptThemeId}
+              selectedCueId={newCue.id}
+              onSelectCue={selectCueForEdit}
+              onDeleteCue={deleteCue}
+              onOpenRawCuesModal={() => {
+                setRawCuesText(JSON.stringify(state.cues, null, 2));
+                setIsCuesModalOpen(true);
+              }}
+              onRealignCues={realignCues}
+              isAligning={isAligning}
+              alignSuccess={alignSuccess}
+            />
           )}
         </div>
 
@@ -1011,547 +747,43 @@ export default function App() {
           "bg-stone-50 flex flex-col overflow-hidden relative transition-all duration-500",
           mode === 'edit' ? "hidden lg:flex w-full lg:w-1/2 h-full" : "w-full lg:w-1/2 flex-1"
         )}>
-          <div className={cn(
-            "h-16 border-b border-stone-200 flex items-center justify-between px-4 lg:px-8 bg-white shrink-0 z-20",
-            mode === 'playback' ? "h-12 sticky top-0 shadow-sm" : "h-16"
-          )}>
-            <div className="flex items-center gap-2 lg:gap-3">
-              <FileText size={16} className="text-stone-400 shrink-0" />
-              <span className="hidden sm:inline text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-stone-400">Script Preview</span>
-            </div>
-            <div className="flex items-center gap-2 lg:gap-4">
-              {mode === 'playback' && (
-                <div className="flex items-center gap-2">
-                  <div className="relative flex items-center">
-                    <button
-                      onClick={() => setIsAutoScrollEnabled(!isAutoScrollEnabled)}
-                      className={cn(
-                        "flex items-center gap-1.5 px-2 py-1 rounded-l-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border-y border-l shadow-sm",
-                        isAutoScrollEnabled ? "bg-blue-500 text-white border-blue-600" : "bg-white text-stone-400 border-stone-200 hover:text-stone-600"
-                      )}
-                      title={isAutoScrollEnabled ? "Auto-scroll enabled" : "Auto-scroll disabled"}
-                    >
-                      <Target size={10} className={cn(isAutoScrollEnabled && "animate-pulse")} />
-                      <span className="hidden sm:inline">Auto-Scroll</span>
-                    </button>
-                    <button
-                      onClick={() => setIsAutoScrollDropdownOpen(!isAutoScrollDropdownOpen)}
-                      className={cn(
-                        "px-1 py-1 rounded-r-lg border-y border-r shadow-sm transition-all active:scale-95",
-                        isAutoScrollEnabled ? "bg-blue-600 text-white border-blue-700" : "bg-white text-stone-400 border-stone-200 hover:text-stone-600"
-                      )}
-                    >
-                      <ChevronDown size={10} className={cn("transition-transform duration-200", isAutoScrollDropdownOpen && "rotate-180")} />
-                    </button>
+          <ScriptHeaderControls
+            mode={mode}
+            isAutoScrollEnabled={isAutoScrollEnabled}
+            setIsAutoScrollEnabled={setIsAutoScrollEnabled}
+            isAutoScrollDropdownOpen={isAutoScrollDropdownOpen}
+            setIsAutoScrollDropdownOpen={setIsAutoScrollDropdownOpen}
+            autoScrollTargets={autoScrollTargets}
+            setAutoScrollTargets={setAutoScrollTargets}
+            setIsLibraryOpen={setIsLibraryOpen}
+            scriptWidthPreset={scriptWidthPreset}
+            setScriptWidthPreset={setScriptWidthPreset}
+            isWidthDropdownOpen={isWidthDropdownOpen}
+            setIsWidthDropdownOpen={setIsWidthDropdownOpen}
+            scrollFocusPreset={scrollFocusPreset}
+            applyScrollFocus={applyScrollFocus}
+            isScrollFocusDropdownOpen={isScrollFocusDropdownOpen}
+            setIsScrollFocusDropdownOpen={setIsScrollFocusDropdownOpen}
+            currentTime={currentTime}
+          />
 
-                    {isAutoScrollDropdownOpen && (
-                      <>
-                        <div 
-                          className="fixed inset-0 z-40" 
-                          onClick={() => setIsAutoScrollDropdownOpen(false)} 
-                        />
-                        <div className="absolute top-full right-0 mt-2 w-44 bg-white rounded-xl shadow-xl border border-stone-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200">
-                          <div className="p-2 bg-stone-50 border-b border-stone-100 flex items-center justify-between">
-                            <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Focus Mode</p>
-                            <button 
-                              onClick={() => {
-                                const allTypes = COLORS.map(c => c.type);
-                                if (autoScrollTargets.length === allTypes.length) {
-                                  setAutoScrollTargets(['dialogue']);
-                                } else {
-                                  setAutoScrollTargets(allTypes);
-                                }
-                              }}
-                              className="text-[8px] font-bold text-blue-500 hover:text-blue-600 uppercase tracking-tighter"
-                            >
-                              {autoScrollTargets.length === COLORS.length ? 'Reset' : 'Select All'}
-                            </button>
-                          </div>
-                          <div className="p-1 max-h-64 overflow-y-auto">
-                            {COLORS.map(color => {
-                              const isSelected = autoScrollTargets.includes(color.type);
-                              return (
-                                <button
-                                  key={color.type}
-                                  onClick={() => {
-                                    setAutoScrollTargets(prev => {
-                                      if (isSelected) {
-                                        // Don't allow removing the last one
-                                        if (prev.length === 1) return prev;
-                                        return prev.filter(t => t !== color.type);
-                                      } else {
-                                        return [...prev, color.type];
-                                      }
-                                    });
-                                  }}
-                                  className={cn(
-                                    "w-full flex items-center justify-between px-3 py-2 rounded-lg text-[10px] font-bold transition-colors capitalize",
-                                    isSelected ? "bg-stone-900 text-white" : "text-stone-600 hover:bg-stone-50"
-                                  )}
-                                >
-                                  <div className="flex items-center gap-2">
-                                    <div className={cn("w-1.5 h-1.5 rounded-full", color.class)} />
-                                    {color.type}
-                                  </div>
-                                  {isSelected && <Check size={10} />}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                  <div className="h-4 w-px bg-stone-200 mx-1 hidden lg:block" />
-                  <button 
-                    onClick={() => setIsLibraryOpen(true)}
-                    className="lg:hidden flex items-center gap-1 px-2 py-1 bg-stone-100 hover:bg-stone-200 rounded text-[10px] font-bold text-stone-700 transition-colors"
-                  >
-                    <Book size={10} /> Library
-                  </button>
-                  <a 
-                    href="https://ko-fi.com/tarumainfo"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="Support on Ko-fi"
-                    className="lg:hidden flex items-center justify-center px-1.5 py-1 bg-[#FF5E5B] hover:bg-[#e04e4b] text-white rounded transition-colors"
-                  >
-                    <Coffee size={10} />
-                  </a>
-                </div>
-              )}
-              <div className="flex items-center gap-1.5">
-                <div className={cn(
-                  "hidden sm:block px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest",
-                  mode === 'edit' ? "bg-amber-100 text-amber-600" : "bg-blue-100 text-blue-600"
-                )}>
-                  {mode === 'edit' ? 'Edit' : 'Playback'}
-                </div>
-
-                {/* Page Width Preset Selector (Playback mode on Desktop only) */}
-                {mode === 'playback' && (
-                  <div className="relative hidden lg:flex items-center">
-                    <button
-                      id="script-preview-width-control"
-                      onClick={() => setIsWidthDropdownOpen(!isWidthDropdownOpen)}
-                      className={cn(
-                        "flex items-center gap-1 px-2 py-0.5 rounded-lg border text-[10px] font-bold tracking-tight transition-all active:scale-95 shadow-sm",
-                        isWidthDropdownOpen 
-                          ? "bg-stone-900 text-white border-stone-900" 
-                          : "bg-white text-stone-600 border-stone-200 hover:text-stone-900 hover:border-stone-300"
-                      )}
-                      title={`Script Width: ${SCRIPT_WIDTH_PRESETS.find(p => p.id === scriptWidthPreset)?.label || 'Standard'}`}
-                    >
-                      <MoveHorizontal size={11} className="text-stone-400 shrink-0" />
-                      <span className="font-mono text-[9px] uppercase tracking-wider text-stone-500 font-semibold">
-                        {SCRIPT_WIDTH_PRESETS.find(p => p.id === scriptWidthPreset)?.label}
-                      </span>
-                      <ChevronDown size={10} className={cn("text-stone-400 transition-transform duration-200", isWidthDropdownOpen && "rotate-180")} />
-                    </button>
-
-                    {isWidthDropdownOpen && (
-                      <>
-                        <div 
-                          className="fixed inset-0 z-40" 
-                          onClick={() => setIsWidthDropdownOpen(false)} 
-                        />
-                        <div className="absolute top-full right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-stone-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200">
-                          <div className="p-2.5 bg-stone-50 border-b border-stone-100 flex items-center justify-between">
-                            <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Script Width</p>
-                            <span className="text-[8px] font-mono text-stone-400 font-medium">5 Presets</span>
-                          </div>
-                          <div className="p-1.5 space-y-0.5">
-                            {SCRIPT_WIDTH_PRESETS.map((preset, index) => {
-                              const isSelected = scriptWidthPreset === preset.id;
-                              const isDefault = preset.id === 'standard';
-                              return (
-                                <button
-                                  key={preset.id}
-                                  id={`script-width-preset-${preset.id}`}
-                                  onClick={() => {
-                                    setScriptWidthPreset(preset.id);
-                                    if (typeof localStorage !== 'undefined') {
-                                      localStorage.setItem('sceneflow_script_width_preset', preset.id);
-                                    }
-                                    setIsWidthDropdownOpen(false);
-                                  }}
-                                  className={cn(
-                                    "w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left transition-colors group",
-                                    isSelected 
-                                      ? "bg-stone-900 text-white" 
-                                      : "text-stone-700 hover:bg-stone-100"
-                                  )}
-                                >
-                                  <div className="flex items-center gap-2">
-                                    {/* Visual width representation bars */}
-                                    <div className="w-8 flex items-center justify-center">
-                                      <div 
-                                        className={cn(
-                                          "h-1.5 rounded-full transition-all",
-                                          isSelected ? "bg-white" : "bg-stone-300 group-hover:bg-stone-500"
-                                        )}
-                                        style={{ width: `${30 + index * 16}%` }}
-                                      />
-                                    </div>
-                                    <div className="flex flex-col">
-                                      <div className="flex items-center gap-1.5">
-                                        <span className="text-[11px] font-bold leading-none">{preset.label}</span>
-                                        {isDefault && (
-                                          <span className={cn(
-                                            "text-[8px] px-1 py-0.2 rounded font-medium",
-                                            isSelected ? "bg-stone-800 text-stone-300" : "bg-stone-200 text-stone-600"
-                                          )}>
-                                            Default
-                                          </span>
-                                        )}
-                                      </div>
-                                      <span className={cn(
-                                        "text-[9px] font-mono leading-tight mt-0.5",
-                                        isSelected ? "text-stone-300" : "text-stone-400"
-                                      )}>
-                                        {preset.desc}
-                                      </span>
-                                    </div>
-                                  </div>
-                                  {isSelected && <Check size={12} className="shrink-0 ml-2" />}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )}
-
-                {/* Scroll Focus Line Selector (Playback mode on Desktop only) */}
-                {mode === 'playback' && (
-                  <div className="relative hidden lg:flex items-center">
-                    <button
-                      id="script-preview-scroll-focus-control"
-                      onClick={() => setIsScrollFocusDropdownOpen(!isScrollFocusDropdownOpen)}
-                      className={cn(
-                        "flex items-center gap-1 px-2 py-0.5 rounded-lg border text-[10px] font-bold tracking-tight transition-all active:scale-95 shadow-sm",
-                        isScrollFocusDropdownOpen 
-                          ? "bg-stone-900 text-white border-stone-900" 
-                          : "bg-white text-stone-600 border-stone-200 hover:text-stone-900 hover:border-stone-300"
-                      )}
-                      title={`Scroll Focus Position: ${SCROLL_FOCUS_PRESETS.find(p => p.id === scrollFocusPreset)?.label || 'Top (35%)'}`}
-                    >
-                      <AlignVerticalJustifyCenter size={11} className="text-stone-400 shrink-0" />
-                      <span className="font-mono text-[9px] uppercase tracking-wider text-stone-500 font-semibold">
-                        {SCROLL_FOCUS_PRESETS.find(p => p.id === scrollFocusPreset)?.shortLabel}
-                      </span>
-                      <ChevronDown size={10} className={cn("text-stone-400 transition-transform duration-200", isScrollFocusDropdownOpen && "rotate-180")} />
-                    </button>
-
-                    {isScrollFocusDropdownOpen && (
-                      <>
-                        <div 
-                          className="fixed inset-0 z-40" 
-                          onClick={() => setIsScrollFocusDropdownOpen(false)} 
-                        />
-                        <div className="absolute top-full right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-stone-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200">
-                          <div className="p-2.5 bg-stone-50 border-b border-stone-100 flex items-center justify-between">
-                            <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Focus Line</p>
-                            <span className="text-[8px] font-mono text-stone-400 font-medium">Viewport Focus</span>
-                          </div>
-                          <div className="p-1.5 space-y-0.5">
-                            {SCROLL_FOCUS_PRESETS.map((preset) => {
-                              const isSelected = scrollFocusPreset === preset.id;
-                              const isDefault = preset.id === 'top';
-                              return (
-                                <button
-                                  key={preset.id}
-                                  id={`script-scroll-focus-${preset.id}`}
-                                  onClick={() => applyScrollFocus(preset.id)}
-                                  className={cn(
-                                    "w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left transition-colors group",
-                                    isSelected 
-                                      ? "bg-stone-900 text-white" 
-                                      : "text-stone-700 hover:bg-stone-100"
-                                  )}
-                                >
-                                  <div className="flex items-center gap-2">
-                                    {/* Visual vertical position representation bar */}
-                                    <div className={cn(
-                                      "w-4 h-6 rounded border flex flex-col justify-between p-0.5 transition-all shrink-0",
-                                      isSelected ? "border-stone-700 bg-stone-800" : "border-stone-200 bg-stone-50 group-hover:border-stone-300"
-                                    )}>
-                                      <div 
-                                        className={cn(
-                                          "w-full h-1 rounded-sm transition-all",
-                                          preset.id === 'top' ? (isSelected ? "bg-amber-400" : "bg-blue-500") : "opacity-0"
-                                        )} 
-                                      />
-                                      <div 
-                                        className={cn(
-                                          "w-full h-1 rounded-sm transition-all",
-                                          preset.id === 'center' ? (isSelected ? "bg-amber-400" : "bg-blue-500") : "opacity-0"
-                                        )} 
-                                      />
-                                      <div 
-                                        className={cn(
-                                          "w-full h-1 rounded-sm transition-all",
-                                          preset.id === 'bottom' ? (isSelected ? "bg-amber-400" : "bg-blue-500") : "opacity-0"
-                                        )} 
-                                      />
-                                    </div>
-                                    <div className="flex flex-col">
-                                      <div className="flex items-center gap-1.5">
-                                        <span className="text-[11px] font-bold leading-none">{preset.label}</span>
-                                        {isDefault && (
-                                          <span className={cn(
-                                            "text-[8px] px-1 py-0.2 rounded font-medium",
-                                            isSelected ? "bg-stone-800 text-stone-300" : "bg-stone-200 text-stone-600"
-                                          )}>
-                                            Default
-                                          </span>
-                                        )}
-                                      </div>
-                                      <span className={cn(
-                                        "text-[9px] font-mono leading-tight mt-0.5",
-                                        isSelected ? "text-stone-300" : "text-stone-400"
-                                      )}>
-                                        {preset.desc}
-                                      </span>
-                                    </div>
-                                  </div>
-                                  {isSelected && <Check size={12} className="shrink-0 ml-2" />}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
-              <div className="lg:hidden flex items-center gap-1 px-2 py-1 bg-stone-900 rounded-lg shadow-inner">
-                <span className="text-[8px] font-black text-stone-500 uppercase">Time</span>
-                <span className="text-xs font-mono font-bold text-white w-10 text-right">{currentTime.toFixed(1)}s</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Create Cue Section - Moved to Right Panel in Edit Mode */}
+          {/* Create / Edit Cue Form in Edit Mode */}
           {mode === 'edit' && (
-            <div className="bg-white border-b border-stone-200 p-4 lg:p-6 shrink-0 z-10 shadow-sm animate-in slide-in-from-top duration-500">
-              <div className="max-w-xl mx-auto">
-                {!selection ? (
-                  <div className="py-4 text-center border-2 border-dashed border-stone-100 rounded-2xl bg-stone-50/50">
-                    <p className="text-xs text-stone-400 font-medium italic">Highlight text in the script below to create a sync cue.</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {newCue.id ? <Edit2 size={16} className="text-amber-500" /> : <Plus size={16} className="text-blue-500" />}
-                        <h3 className="text-sm font-bold text-stone-800">{newCue.id ? 'Edit Sync Cue' : 'New Sync Cue'}</h3>
-                      </div>
-                      <button 
-                        onClick={cancelEdit}
-                        className="text-[10px] uppercase tracking-widest text-stone-400 hover:text-stone-600 underline"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-
-                    <div className="bg-stone-50 p-3 rounded-xl border border-stone-100 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <p className="text-[10px] text-stone-400 uppercase tracking-widest">Selected Text</p>
-                        <button 
-                          onClick={findAlternativeLocations}
-                          className="flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-stone-400 hover:text-blue-500 transition-colors"
-                        >
-                          <Search size={10} /> {altLocations ? 'Refresh' : 'Find Alternative'}
-                        </button>
-                      </div>
-                      <textarea
-                        value={newCue.selectedText || ''}
-                        onChange={(e) => {
-                          const text = e.target.value;
-                          setNewCue(prev => ({ ...prev, selectedText: text }));
-                          setSelection(s => s ? { ...s, text } : { text, start: newCue.startIndex || 0, end: newCue.endIndex || 0 });
-                        }}
-                        className="w-full bg-white border border-stone-200 rounded-lg p-2 text-stone-800 font-mono text-xs min-h-[60px] focus:outline-none focus:ring-1 focus:ring-stone-500 transition-all duration-200 hover:border-stone-300"
-                        placeholder="Edit cue text..."
-                      />
-                      
-                      {altLocations && altLocations.length > 1 && (
-                        <div className="pt-2 mt-2 border-t border-stone-200">
-                          <p className="text-[8px] text-stone-400 uppercase tracking-widest mb-1">Alternative Locations ({altLocations.length})</p>
-                          <div className="max-h-24 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
-                            {altLocations.map((loc, i) => {
-                              const isCurrent = loc.start === newCue.startIndex;
-                              return (
-                                <button
-                                  key={i}
-                                  onClick={() => {
-                                    setNewCue(prev => ({ ...prev, startIndex: loc.start, endIndex: loc.end }));
-                                    setSelection(s => s ? { ...s, start: loc.start, end: loc.end } : null);
-                                  }}
-                                  className={cn(
-                                    "w-full text-left p-1.5 rounded text-[9px] font-mono transition-all border",
-                                    isCurrent 
-                                      ? "bg-blue-50 border-blue-200 text-blue-700 font-bold" 
-                                      : "bg-white border-stone-200 text-stone-500 hover:bg-stone-100"
-                                  )}
-                                >
-                                  <div className="flex items-center justify-between mb-0.5">
-                                    <span className="opacity-60 text-[7px]">Offset: {loc.start}</span>
-                                    {isCurrent && <Check size={8} />}
-                                  </div>
-                                  <div className="truncate">{loc.context}</div>
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      <div className="space-y-1">
-                        <label className="text-[8px] uppercase tracking-widest text-stone-400 font-black">Start Time</label>
-                        <div className="flex gap-1">
-                          <input 
-                            type="number"
-                            step="0.1"
-                            min="0"
-                            value={newCue.startTime ?? ''}
-                            onChange={(e) => setNewCue(prev => ({ ...prev, startTime: parseFloat(e.target.value) || 0 }))}
-                            className="w-full bg-white border border-stone-200 rounded-lg px-1.5 py-1 text-stone-800 font-mono text-[10px] focus:outline-none focus:ring-1 focus:ring-blue-500"
-                          />
-                          <button
-                            onClick={() => setNewCue(prev => ({ ...prev, startTime: player?.getCurrentTime() || 0 }))}
-                            className="bg-stone-100 hover:bg-stone-200 p-1 rounded-lg text-blue-500 transition-colors"
-                          >
-                            <Clock size={12} />
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="space-y-1">
-                        <label className="text-[8px] uppercase tracking-widest text-stone-400 font-black">End Time</label>
-                        <div className="flex gap-1">
-                          <input 
-                            type="number"
-                            step="0.1"
-                            min="0"
-                            value={newCue.endTime ?? ''}
-                            onChange={(e) => setNewCue(prev => ({ ...prev, endTime: parseFloat(e.target.value) || 0 }))}
-                            className="w-full bg-white border border-stone-200 rounded-lg px-1.5 py-1 text-stone-800 font-mono text-[10px] focus:outline-none focus:ring-1 focus:ring-blue-500"
-                          />
-                          <button
-                            onClick={() => setNewCue(prev => ({ ...prev, endTime: player?.getCurrentTime() || 0 }))}
-                            className="bg-stone-100 hover:bg-stone-200 p-1 rounded-lg text-blue-500 transition-colors"
-                          >
-                            <Clock size={12} />
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="space-y-1">
-                        <label className="text-[8px] uppercase tracking-widest text-stone-400 font-black">Start Index</label>
-                        <input 
-                          type="number"
-                          min="0"
-                          value={newCue.startIndex ?? ''}
-                          onChange={(e) => {
-                            const val = parseInt(e.target.value) || 0;
-                            setNewCue(prev => {
-                              const updated = { ...prev, startIndex: val };
-                              if (updated.endIndex !== undefined && updated.startIndex !== undefined) {
-                                const text = state.scriptText.substring(updated.startIndex, updated.endIndex);
-                                updated.selectedText = text;
-                                setSelection(s => s ? { ...s, text, start: updated.startIndex!, end: updated.endIndex! } : null);
-                              }
-                              return updated;
-                            });
-                          }}
-                          className="w-full bg-white border border-stone-200 rounded-lg px-1.5 py-1 text-stone-800 font-mono text-[10px] focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        />
-                      </div>
-
-                      <div className="space-y-1">
-                        <label className="text-[8px] uppercase tracking-widest text-stone-400 font-black">End Index</label>
-                        <input 
-                          type="number"
-                          min="0"
-                          value={newCue.endIndex ?? ''}
-                          onChange={(e) => {
-                            const val = parseInt(e.target.value) || 0;
-                            setNewCue(prev => {
-                              const updated = { ...prev, endIndex: val };
-                              if (updated.endIndex !== undefined && updated.startIndex !== undefined) {
-                                const text = state.scriptText.substring(updated.startIndex, updated.endIndex);
-                                updated.selectedText = text;
-                                setSelection(s => s ? { ...s, text, start: updated.startIndex!, end: updated.endIndex! } : null);
-                              }
-                              return updated;
-                            });
-                          }}
-                          className="w-full bg-white border border-stone-200 rounded-lg px-1.5 py-1 text-stone-800 font-mono text-[10px] focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-1">
-                      <div className="flex flex-wrap gap-1.5">
-                        {COLORS.map(color => {
-                          const themed = getCueColorForTheme(color.type, scriptThemeId);
-                          const isSelected = newCue.type ? newCue.type === color.type : newCue.colorClass === color.class;
-                          return (
-                            <button
-                              key={color.class}
-                              onClick={() => setNewCue(prev => ({ ...prev, colorClass: color.class, type: color.type }))}
-                              title={color.type}
-                              className={cn(
-                                "px-2 py-1 rounded-md transition-all border text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5",
-                                isSelected 
-                                  ? "border-stone-900 scale-105 shadow-sm opacity-100 bg-white font-bold ring-1 ring-stone-900" 
-                                  : "border-stone-200 bg-stone-50 opacity-70 hover:opacity-100 hover:bg-white"
-                              )}
-                            >
-                              <div 
-                                className="w-2 h-2 rounded-full shrink-0" 
-                                style={{ backgroundColor: `rgb(${themed.rgb})` }} 
-                              />
-                              {color.type}
-                            </button>
-                          );
-                        })}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {newCue.id && (
-                          <button
-                            onClick={() => deleteCue(newCue.id!)}
-                            className="p-2 text-stone-400 hover:text-red-500 transition-colors"
-                            title="Delete Cue"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        )}
-                        <button
-                          onClick={saveCue}
-                          disabled={!canSave}
-                          className={cn(
-                            "px-4 py-2 rounded-lg font-bold text-xs transition-all flex items-center gap-2",
-                            canSave 
-                              ? (newCue.id ? "bg-amber-500 hover:bg-amber-600 text-white shadow-md" : "bg-blue-500 hover:bg-blue-600 text-white shadow-md")
-                              : "bg-stone-100 text-stone-300 cursor-not-allowed"
-                          )}
-                        >
-                          <Check size={14} /> {newCue.id ? 'Update Cue' : 'Save Cue'}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+            <CueEditorForm
+              newCue={newCue}
+              setNewCue={setNewCue}
+              selection={selection}
+              setSelection={setSelection}
+              altLocations={altLocations}
+              findAlternativeLocations={findAlternativeLocations}
+              cancelEdit={cancelEdit}
+              saveCue={saveCue}
+              deleteCue={deleteCue}
+              canSave={canSave}
+              scriptText={state.scriptText}
+              scriptThemeId={scriptThemeId}
+              player={player}
+            />
           )}
           
           <div 
