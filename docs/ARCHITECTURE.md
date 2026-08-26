@@ -7,7 +7,7 @@ SceneFlow follows a modular, 5-layer architecture that separates script parsing,
 │                           PROCESSING LAYER                             │
 │  src/lib/scriptParser.ts  •  src/lib/scriptProcessor.ts                │
 └──────────────────────────────────┬─────────────────────────────────────┘
-                                   │ ProcessedLine[], StagingMarkers, ScriptBlock[]
+                                   │ ProcessedLine[], StagingMarkers
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
 │                            UTILITY LAYER                               │
@@ -17,24 +17,26 @@ SceneFlow follows a modular, 5-layer architecture that separates script parsing,
                                    │ sanitized cues, aligned offsets, theme configs
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
-│                            VISUALS LAYER                               │
-│  src/lib/scriptStyles.ts (Theme Engine, Cue Color Calibration)         │
+│                    VISUALS & DESIGN TOKENS LAYER                       │
+│  src/styles/ (UI_TOKENS, themes, cues, typography, helpers, index.ts)   │
+│  src/lib/scriptStyles.ts (backwards-compatibility re-export bridge)    │
 └──────────────────────────────────┬─────────────────────────────────────┘
-                                   │ CSS Classes, Theme Tokens, RGB Highlights
+                                   │ UI Tokens, Theme Styles, RGB Highlights
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
 │                          STATE / HOOKS LAYER                           │
 │  src/hooks/useScriptStorage.ts     src/hooks/useYouTubePlayer.ts       │
 │  src/hooks/useScriptPreferences.ts  src/hooks/useAutoScroll.ts         │
 │  src/hooks/useCueEditor.ts         src/hooks/useCueAlignment.ts        │
-│  src/hooks/useKeyboardShortcuts.ts                                     │
+│  src/hooks/useKeyboardShortcuts.ts  src/hooks/useScriptTheme.ts        │
+│  src/hooks/index.ts (barrel export)                                    │
 └──────────────────────────────────┬─────────────────────────────────────┘
-                                   │ AppState, currentTime, preferences
+                                   │ AppState, currentTime, theme, preferences
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
 │                              UI LAYER                                  │
 │  src/App.tsx (orchestrator)  •  src/components/* (18 sub-components)    │
-│  src/types/script.ts (16 interfaces)                                    │
+│  src/types/script.ts (14 domain interfaces)                            │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -45,8 +47,7 @@ SceneFlow follows a modular, 5-layer architecture that separates script parsing,
 The processing layer extracts structure, metadata, and character positions from raw screenplay text without depending on React or DOM APIs.
 
 ### `src/lib/scriptParser.ts`
-- **Staging Block Extraction (`parseScriptWithStaging`)**: Identifies top-level `[[STAGING]]...[[/STAGING]]` blocks and sub-tagged directives (e.g., `[[GLOBAL]]`, `[[LOOKBOOK]]`, `[[CAMERA]]`). Returns original lines, line indices to hide from the main view, and a map of line-anchored `StagingMarker` objects.
-- **Block-Level Parser (`parseScriptToBlocks`)**: Converts raw text into structured `ScriptBlock` AST items with start/end character offsets for external serialization and AST manipulation.
+- **Staging Block Extraction (`parseScriptWithStaging`)**: Identifies top-level `[[STAGING]]...[[/STAGING]]` blocks and sub-tagged directives (e.g., `[[GLOBAL]]`, `[[LOOKBOOK]]`, `[[CAMERA]]`). Returns original lines, line indices to hide from the main view, and a map of line-anchored `StagingMarker` objects. Evaluates trimmed lines for robust whitespace handling.
 
 ### `src/lib/scriptProcessor.ts`
 - **Semantic Line Classification (`processScript`)**: Analyzes text line-by-line using heuristics and regex to classify each line into one of 11 `LineType` variants:
@@ -98,9 +99,18 @@ Centralized application constants and configuration:
 
 ---
 
-## 3. Visuals Layer (`src/lib/scriptStyles.ts`)
+## 3. Visuals & Design Tokens Layer (`src/styles/`)
 
-The visuals layer encapsulates all styling tokens, color schemes, and theme definitions.
+The visuals layer encapsulates all styling tokens, color schemes, UI chrome tokens, and theme definitions.
+
+### Modular Design Tokens Structure
+- **`src/styles/tokens/ui.ts` (`UI_TOKENS`)**: Centralized design tokens providing reusable Tailwind class bundles for modal overlays, dialog containers, buttons (primary, secondary, danger, header controls, action pills), form controls (inputs, textareas, code boxes, search, labels), icon badge wrappers, panel banners, theme swatches, and alert cards.
+- **`src/styles/tokens/themes.ts` (`SCRIPT_THEMES`)**: Defines six visual themes categorized into `light`, `warm`, and `dark` alongside `SCRIPT_THEME_MAP`, `DEFAULT_SCRIPT_THEME`, and `THEME_CATEGORIES`.
+- **`src/styles/tokens/cues.ts` (`CUE_THEME_COLORS`)**: Calibrates the 8 cue categories across light, warm, and dark theme palettes and provides `getCueColorForTheme()`.
+- **`src/styles/tokens/typography.ts` (`getScriptThemeStyles`)**: Generates theme-specific typography, headings, title lines, staging badges, and cue wrapper styles.
+- **`src/styles/helpers.ts`**: Color conversion utilities (`hexToRgba`) and dynamic badge/inline cue styling factories (`createCueBadgeStyle`, `createInlineCueStyle`).
+- **`src/styles/index.ts`**: Canonical barrel export unifying all design tokens, theme definitions, and helpers.
+- **`src/lib/scriptStyles.ts`**: Backwards-compatibility re-export layer forwarding directly to `src/styles/`.
 
 ### Script Theme Engine (`SCRIPT_THEMES`)
 Supports six distinct visual themes categorized into `light`, `warm`, and `dark`:
@@ -130,7 +140,7 @@ The `getCueColorForTheme` helper returns the appropriate RGB values, contrast cl
 
 ## 4. State / Hooks Layer (`src/hooks/`)
 
-The hooks layer encapsulates all side effects, state lifecycle, and playback orchestration into seven modular custom hooks, keeping `App.tsx` as a lightweight orchestrator.
+The hooks layer encapsulates all side effects, state lifecycle, dynamic theme resolution, and playback orchestration into eight modular custom hooks, keeping `App.tsx` as a lightweight orchestrator. All hooks are consolidated in the canonical `src/hooks/index.ts` barrel.
 
 ### `useScriptStorage`
 State initialization and persistence engine:
@@ -175,6 +185,12 @@ Global keyboard shortcut handler:
 - Gates execution when input/textarea elements are focused or modals are open.
 - Also tracks `isDesktop` via `window.innerWidth >= 1024` resize listener.
 
+### `useScriptTheme`
+Theme metadata and color resolution hook:
+- Resolves active theme metadata (`ScriptThemeMetadata`), computed theme styles (`themeStyles`), and dark mode state (`isDark`).
+- Provides dynamic cue color resolution helper (`resolveCueColor: (typeOrClass) => CueColorInfo`).
+- Encapsulates theme-dependent styling logic for seamless integration across components.
+
 ---
 
 ## 5. UI Layer (`src/App.tsx` & `src/components/`)
@@ -182,8 +198,8 @@ Global keyboard shortcut handler:
 The UI layer coordinates video playback, real-time highlighting, user interaction, and modal dialogs.
 
 ### Core Orchestrator (`src/App.tsx`)
-- **Lightweight Composition**: `App.tsx` imports all seven custom hooks and eighteen sub-components, composing them into the full application shell while keeping its own logic to a minimum (mode toggling, library state, modal visibility).
-- **Hook Integration**: State, playback, preferences, auto-scroll, cue editing, alignment, and keyboard shortcuts are fully delegated to the hooks layer. `App.tsx` only wires hook return values to component props.
+- **Lightweight Composition**: `App.tsx` imports the custom hook suite and eighteen sub-components, composing them into the full application shell while keeping its own logic to a minimum (mode toggling, library state, modal visibility).
+- **Hook Integration**: State, playback, preferences, auto-scroll, cue editing, alignment, keyboard shortcuts, and active script theme are fully delegated to the hooks layer. `App.tsx` only wires hook return values to component props.
 - **Sync Engine (`renderedScript` `useMemo`)**: Computes line segments and active cue overlaps in real-time, calculating dynamic opacity based on per-category timing buffers.
 - **Auto-Scroll Engine**: Delegates to `useAutoScroll`, which automatically scrolls the screenplay during playback, prioritizing the most recent active cue, supporting multi-selected focus categories, and aligning to the user's selected vertical focus ratio (35% Top, 50% Center, 65% Bottom).
 - **Proximity-Aware Alignment**: Delegates to `useCueAlignment`, which uses `realignCuesList()` from `cueUtils.ts` to re-map cue character start/end positions when screenplay text is edited.
@@ -192,25 +208,25 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 ### Modular Sub-components (`src/components/`)
 1. **`AppHeader.tsx`**: Global navigation header with SceneFlow logo, Guide/Library/Ko-fi action buttons, real-time playback clock, and Playback/Edit mode toggle.
 2. **`InitializingScreen.tsx`**: Branded initial load screen displaying the SceneFlow logo with subtle animation.
-3. **`YoutubeSourceInput.tsx`**: YouTube URL/ID input with live player connection indicator and automatic ID extraction.
-4. **`ScriptManagementBar.tsx`**: Screenplay status banner showing loaded line count with an "Edit Raw" action button.
-5. **`CueEditorForm.tsx`**: Cue authoring/editing form with editable text area, cue type selector, start/end time inputs with clock buttons, index editors, and "Find Alternative" button.
-6. **`TimelineCuesPanel.tsx`**: Chronological cue list in edit mode showing color-dotted cards, per-type color legend, "Raw JSON" editor access, and "Align" realignment button.
-7. **`RawScriptModal.tsx`**: Modal dialog for bulk editing raw screenplay text.
-8. **`RawCuesModal.tsx`**: Modal dialog for viewing and editing raw cue data in JSON format, with `sanitizeCues()` applied on save.
+3. **`YoutubeSourceInput.tsx`**: YouTube URL/ID input with live player connection indicator and automatic ID extraction using `UI_TOKENS.input`.
+4. **`ScriptManagementBar.tsx`**: Screenplay status banner showing loaded line count with an "Edit Raw" action button styled with `UI_TOKENS`.
+5. **`CueEditorForm.tsx`**: Cue authoring/editing form with editable text area, cue type selector, start/end time inputs with clock buttons, index editors, and "Find Alternative" button, consuming `useScriptTheme` for cue colors.
+6. **`TimelineCuesPanel.tsx`**: Chronological cue list in edit mode showing color-dotted cards, per-type color legend, "Raw JSON" editor access, and "Align" realignment button, styled with `useScriptTheme`.
+7. **`RawScriptModal.tsx`**: Modal dialog for bulk editing raw screenplay text using `UI_TOKENS.modal` and `UI_TOKENS.input`.
+8. **`RawCuesModal.tsx`**: Modal dialog for viewing and editing raw cue data in JSON format, with `sanitizeCues()` applied on save and styled via `UI_TOKENS`.
 9. **`OverlapPicker.tsx`**: Floating context popup for selecting which overlapping cue to edit at a shared position.
-10. **`DeleteConfirmationModal.tsx`**: Confirmation dialog with cue text preview prior to permanent deletion.
-11. **`ResetConfirmationModal.tsx`**: Multi-purpose confirmation dialog for resetting settings, loading guide scripts, loading examples, or fetching remote projects, featuring integrated CORS error reporting.
-12. **`TimingSettingsModal.tsx`**: Full-screen configuration modal for per-category timing buffers (before/after offsets) and General Master Offset.
-13. **`ScriptColorModal.tsx`**: Theme picker featuring a "Theme Presets" tab with mini live paper preview cards and an "Element Inspector" tab displaying token details and the 8-category highlight spectrum.
+10. **`DeleteConfirmationModal.tsx`**: Confirmation dialog with cue text preview prior to permanent deletion styled via `UI_TOKENS`.
+11. **`ResetConfirmationModal.tsx`**: Multi-purpose confirmation dialog for resetting settings, loading guide scripts, loading examples, or fetching remote projects, featuring integrated CORS error reporting and styled via `UI_TOKENS`.
+12. **`TimingSettingsModal.tsx`**: Full-screen configuration modal for per-category timing buffers (before/after offsets) and General Master Offset using `UI_TOKENS`.
+13. **`ScriptColorModal.tsx`**: Theme picker featuring a "Theme Presets" tab with mini live paper preview cards and an "Element Inspector" tab displaying token details and the 8-category highlight spectrum using `UI_TOKENS.swatch`.
 14. **`ScriptHeaderControls.tsx`**: Playback-mode control bar with auto-scroll toggle, target-type multi-select dropdown, reading width preset selector, and scroll focus preset selector.
-15. **`ActiveHighlightsPanel.tsx`**: Desktop playback sidebar showing active highlight cards sorted by type, with per-type filter toggle chips and animated pulse indicators.
+15. **`ActiveHighlightsPanel.tsx`**: Desktop playback sidebar showing active highlight cards sorted by type, with per-type filter toggle chips and animated pulse indicators, consuming `useScriptTheme`.
 16. **`LibraryModal.tsx`**: Desktop library catalogue modal featuring real-time search, category navigation, sorting (Latest, Oldest, A-Z), section badges, and featured curations.
 17. **`MobileLibraryModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a touch-friendly category filter and search interface.
 18. **`StagingModal.tsx`**: Monospace overlay displaying hidden camera, lighting, or lookbook directives from `[[STAGING]]` blocks.
 
 ### Type Definitions & Data Schemas
-- **`src/types/script.ts`**: Defines 16 domain interfaces and types: `ScriptBlockType`, `ScriptBlock`, `Cue`, `TimingSettings`, `ColorCategory`, `AppState`, `ScriptWidthPresetId`, `ScriptWidthPreset`, `ScrollFocusPresetId`, `ScrollFocusPreset`, `TextSelection`, `DeleteConfirmationState`, `ResetConfirmationState`, `OverlapPickerState`, `AlternativeLocation`, and `AppMode`.
+- **`src/types/script.ts`**: Defines 14 domain interfaces and types: `Cue`, `TimingSettings`, `ColorCategory`, `AppState`, `ScriptWidthPresetId`, `ScriptWidthPreset`, `ScrollFocusPresetId`, `ScrollFocusPreset`, `TextSelection`, `DeleteConfirmationState`, `ResetConfirmationState`, `OverlapPickerState`, `AlternativeLocation`, and `AppMode`.
 - **`src/examples.ts`**: Defines the `Example` and `ExampleSection` schemas and holds the built-in catalogue metadata.
 
 ---
@@ -233,7 +249,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 5. useAutoScroll / useCueEditor ─► Combine lines with Cues[], currentTime, TimingSettings
    │
    ▼
-6. scriptStyles.ts ───────────► Resolves theme tokens (SCRIPT_THEMES) & RGB cue colors (CUE_THEME_COLORS)
+6. src/styles/ & useScriptTheme ──► Resolves theme tokens (SCRIPT_THEMES), UI tokens (UI_TOKENS), & RGB cue colors (CUE_THEME_COLORS)
    │
    ▼
 7. Rendered Screenplay ───────► Highlights active cues, auto-scrolls to focus preset, renders UI

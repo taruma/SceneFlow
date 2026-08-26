@@ -7,7 +7,7 @@ SceneFlow is built with a modern, lightweight, and performant web stack designed
 ## 1. Core Framework & Build Tooling
 
 - **React 19 (`react`, `react-dom: ^19.0.0`)**: Powers declarative UI rendering, concurrent features, and reactive component lifecycles.
-- **TypeScript 5.8 (`typescript: ~5.8.2`)**: Provides strict type safety across cue structures, screenplay AST blocks, theme tokens, and component props.
+- **TypeScript 5.8 (`typescript: ~5.8.2`)**: Provides strict type safety across cue structures, processed screenplay lines, staging markers, theme tokens, and component props.
 - **Vite 6 (`vite: ^6.2.0`, `@vitejs/plugin-react: ^5.0.4`)**: Build tool and local development server with instant Hot Module Replacement (HMR) and optimized rollup production bundles.
 - **TSX (`tsx: ^4.21.0`)**: TypeScript execution runtime for auxiliary scripts.
 
@@ -19,6 +19,9 @@ SceneFlow is built with a modern, lightweight, and performant web stack designed
   - `--font-sans`: `"Inter", ui-sans-serif, system-ui, sans-serif`
   - `--font-serif`: `"Libre Baskerville", serif`
   - `--font-mono`: `"JetBrains Mono", monospace`
+- **Modular Design Token Engine (`src/styles/`)**: Centralized design tokens and theme packages:
+  - `UI_TOKENS` (`src/styles/tokens/ui.ts`): Uniform Tailwind class definitions for modal surfaces, overlays, buttons, inputs, icon wrappers, swatches, and alerts.
+  - Theme Tokens (`src/styles/tokens/themes.ts`, `cues.ts`, `typography.ts`, `helpers.ts`): Theme-calibrated color palettes and typography rules.
 - **clsx (`^2.1.1`) & tailwind-merge (`^3.5.0`)**: Utility functions merged via `cn()` in `src/lib/utils.ts` to safely combine dynamic and conditional Tailwind classes without collisions.
 - **Motion (`motion: ^12.23.24`)**: Modern animation engine (from the creators of Framer Motion) providing spring physics for dialog transitions, overlay backdrops, and mobile bottom-sheet drawers (`motion/react`).
 - **Lucide React (`lucide-react: ^0.546.0`)**: Icon library powering navigation, playback controls, category badges, and modal actions.
@@ -43,7 +46,7 @@ SceneFlow is built with a modern, lightweight, and performant web stack designed
 
 ## 4. State Management, Persistence, & Data Fetching
 
-- **React Hooks**: Local component state orchestrated via `useState`, `useEffect`, `useRef`, and memoized highlighting through `useMemo`. Seven modular custom hooks (`useScriptStorage`, `useYouTubePlayer`, `useScriptPreferences`, `useAutoScroll`, `useCueEditor`, `useCueAlignment`, `useKeyboardShortcuts`) encapsulate state lifecycle, playback control, and side effects, keeping `App.tsx` as a lightweight orchestrator.
+- **React Hooks**: Local component state orchestrated via `useState`, `useEffect`, `useRef`, and memoized highlighting through `useMemo`. Eight modular custom hooks (`useScriptStorage`, `useYouTubePlayer`, `useScriptPreferences`, `useAutoScroll`, `useCueEditor`, `useCueAlignment`, `useKeyboardShortcuts`, `useScriptTheme`) with a unified `src/hooks/index.ts` barrel encapsulate state lifecycle, playback control, theme resolution, and side effects, keeping `App.tsx` as a lightweight orchestrator.
 - **LocalStorage**: Client-side persistence for:
   - `'screenplay_sync_state'`: Video source, screenplay raw text, cues array, and timing offsets.
   - `'sceneflow_script_theme'`: Active script viewer theme ID (`ScriptThemeId`).

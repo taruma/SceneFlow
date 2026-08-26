@@ -24,16 +24,18 @@ If you need to add a new script line type (e.g., `lyrics`, `transition`, or a sp
    ```
 2. **Implement Detection Logic**: Update `processScript()` in `src/lib/scriptProcessor.ts` with regex or heuristic rules to classify the line into your new type.
 3. **Map Visual Styles**: Update `getLineClass()` in `src/lib/scriptStyles.ts` to return the appropriate Tailwind CSS classes, referencing active theme tokens (e.g., `theme.textColor`, `theme.textMutedColor`).
-4. **Block-Level Types (Optional)**: If the new type applies to the structured block parser used for export or AST representations, add it to `ScriptBlockType` in `src/types/script.ts` and update `parseScriptToBlocks()` in `src/lib/scriptParser.ts`.
 
-## 2. Modifying Styles & Script Themes
+## 2. Modifying Styles, UI Tokens, & Script Themes
 
-**DO NOT** write hardcoded Tailwind color classes directly into `src/App.tsx` for screenplay text or cue highlights.
+**DO NOT** write hardcoded Tailwind color classes directly into `src/App.tsx` or components for screenplay text, cue highlights, or modal containers.
 
-- **Centralized Themes**: All paper surfaces, borders, shadows, punch holes, headings, staging badges, and brief cards are configured in `SCRIPT_THEMES` within `src/lib/scriptStyles.ts`.
-- **Theme Categories**: Each theme is categorized as `'light'`, `'warm'`, or `'dark'`.
-- **Cue Colors**: Dynamic highlight colors are resolved via `getCueColorForTheme(typeOrClass, themeId)`. Each cue category provides theme-calibrated RGB strings (`lightRgb`, `warmRgb`, `darkRgb`) defined in `CUE_THEME_COLORS`.
-- **Structural Styles**: Common structural classes (separators, title dividers, staging badges, cue base wrappers) are generated dynamically through `getScriptThemeStyles(themeId)`.
+- **Modular Design Tokens (`src/styles/tokens/`)**:
+  - `ui.ts`: Centralized `UI_TOKENS` for modals, dialogs, buttons, form controls, icon wrappers, swatches, and alert components.
+  - `themes.ts`: Six visual themes configured in `SCRIPT_THEMES` (`light`, `warm`, `dark`).
+  - `cues.ts`: Theme-calibrated RGB strings (`lightRgb`, `warmRgb`, `darkRgb`) defined in `CUE_THEME_COLORS` and resolved via `getCueColorForTheme(typeOrClass, themeId)`.
+  - `typography.ts`: Theme-specific structural classes and typography generated dynamically via `getScriptThemeStyles(themeId)`.
+  - `helpers.ts`: Color manipulation and dynamic badge style generators (`hexToRgba`, `createCueBadgeStyle`, `createInlineCueStyle`).
+- **Hook Integration (`useScriptTheme`)**: Use the `useScriptTheme(scriptThemeId)` hook in components to access active `themeStyles`, `themeMetadata`, `isDark`, and `resolveCueColor` helpers.
 - **Base Typography**: Maintain the `baseStyle` constant (`"whitespace-pre-wrap min-h-[1em] leading-snug"`) to preserve consistent line height and wrapping behavior.
 
 ## 3. Regex & Parsing Standards
