@@ -19,7 +19,7 @@ SceneFlow is built with a modern, lightweight, and performant web stack designed
   - `--font-sans`: `"Inter", ui-sans-serif, system-ui, sans-serif`
   - `--font-serif`: `"Libre Baskerville", serif`
   - `--font-mono`: `"JetBrains Mono", monospace`
-- **clsx (`^2.1.1`) & tailwind-merge (`^3.5.0`)**: Utility functions merged via `cn()` in [`src/lib/utils.ts`](file:///e:/_github/Screenplay-Sync/src/lib/utils.ts) to safely combine dynamic and conditional Tailwind classes without collisions.
+- **clsx (`^2.1.1`) & tailwind-merge (`^3.5.0`)**: Utility functions merged via `cn()` in `src/lib/utils.ts` to safely combine dynamic and conditional Tailwind classes without collisions.
 - **Motion (`motion: ^12.23.24`)**: Modern animation engine (from the creators of Framer Motion) providing spring physics for dialog transitions, overlay backdrops, and mobile bottom-sheet drawers (`motion/react`).
 - **Lucide React (`lucide-react: ^0.546.0`)**: Icon library powering navigation, playback controls, category badges, and modal actions.
 - **Google Fonts**:
@@ -43,7 +43,7 @@ SceneFlow is built with a modern, lightweight, and performant web stack designed
 
 ## 4. State Management, Persistence, & Data Fetching
 
-- **React Hooks**: Local component state orchestrated via `useState`, `useEffect`, `useRef`, and memoized highlighting through `useMemo`.
+- **React Hooks**: Local component state orchestrated via `useState`, `useEffect`, `useRef`, and memoized highlighting through `useMemo`. Seven modular custom hooks (`useScriptStorage`, `useYouTubePlayer`, `useScriptPreferences`, `useAutoScroll`, `useCueEditor`, `useCueAlignment`, `useKeyboardShortcuts`) encapsulate state lifecycle, playback control, and side effects, keeping `App.tsx` as a lightweight orchestrator.
 - **LocalStorage**: Client-side persistence for:
   - `'screenplay_sync_state'`: Video source, screenplay raw text, cues array, and timing offsets.
   - `'sceneflow_script_theme'`: Active script viewer theme ID (`ScriptThemeId`).

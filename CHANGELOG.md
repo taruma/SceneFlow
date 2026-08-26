@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.5.0-dev] - Unreleased
+## [2.0.0-dev] - Unreleased
 
 ### Added
 - **Script Theme System**: Introduced a customizable theme engine for the script viewer, allowing users to toggle between six distinct visual presets via the new `ScriptColorModal` component:
@@ -30,7 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `useCueEditor` — encapsulates cue authoring, range selection, in-place text editing, duplicate occurrence lookup, cue deletion with confirmation dialogs, and video timeline seeking.
   - `useCueAlignment` — manages automated and manual cue realignment against edited screenplay text with visual status indicators (`isAligning`, `alignSuccess`).
   - `useKeyboardShortcuts` — handles global playback hotkeys (Space for play/pause, ArrowLeft/Right for 5s jumps) with input element gating, modal bypass, and responsive desktop layout detection.
-- **Dedicated Cue Utilities Module (`src/lib/cueUtils.ts`)**: Extracted core cue processing, alignment, search, and validation logic into pure functions:
+- **Dedicated Cue Utilities Module (`src/lib/cueUtils.ts`)**: Extracted core cue processing, alignment, search, validation, and ID sanitization logic into pure functions:
+  - `sanitizeCues` — ID deduplication and normalization engine that guarantees unique React keys, infers missing `type`/`colorClass` fields bidirectionally on load, and injects UUID-fallback IDs for malformed cues.
+  - `findTextInScript` — three-tier text search (exact match, normalized whitespace/quotes regex, case-insensitive fallback) used by the cue editor to map user selections to character offsets.
   - `findAlternativeLocations` — proximity-aware regex search returning all matching text occurrences with surrounding 25-character context snippets while skipping hidden `[[STAGING]]` blocks.
   - `realignCuesList` — chronological cue alignment engine that recalculates character offset boundaries (`startIndex`, `endIndex`) against updated script text using proximity matching and fallback heuristics while excluding staging blocks.
   - `getCueTimingOffsets` — aggregates per-type and global lead-in/tail-out timing offsets.
@@ -45,7 +47,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `SCROLL_FOCUS_PRESETS` — configuration for the three auto-scroll anchor presets (`top`, `center`, `bottom`).
 - **Comprehensive Domain Types (`src/types/script.ts`)**: Consolidated domain interfaces and state definitions:
   - Added `TimingSettings`, `ColorCategory`, `AppState`, `ScriptWidthPresetId`, `ScriptWidthPreset`, `ScrollFocusPresetId`, `ScrollFocusPreset`, `TextSelection`, `DeleteConfirmationState`, `ResetConfirmationState`, `OverlapPickerState`, `AlternativeLocation`, and `AppMode`.
-- **Standalone ID Generator**: Extracted `generateId()` utility in `src/lib/utils.ts` utilizing `crypto.randomUUID()` with fallback generation for consistent entity identifiers.
+- **Shared Utility Module (`src/lib/utils.ts`)**: Extracted reusable utility functions from `App.tsx` into a dedicated module:
+  - `cn()` — safe Tailwind CSS class merging using `clsx` + `tailwind-merge` for conditional and dynamic class composition.
+  - `extractYoutubeId()` — robust YouTube URL/id parser supporting `youtu.be`, `watch?v=`, `embed/`, `shorts/`, and plain ID formats.
+  - `generateId()` — UUID generator utilizing `crypto.randomUUID()` with fallback generation for consistent entity identifiers.
 - **Mobile-Responsive Library Modal**: Designed a purpose-built `MobileLibraryModal` component tailored for smaller screens, providing a native-feeling category browsing experience distinct from the desktop `LibraryModal`. The desktop and mobile modals are mutually exclusive based on viewport width.
 - **Ko-fi Support Link**: Added a Ko-fi donation link (`https://ko-fi.com/tarumainfo`) with a themed coffee icon to the mobile header, alongside a Library access button for consistent discoverability across devices.
 - **Vercel Analytics Integration**: Integrated `@vercel/analytics` to capture and report audience traffic insights in production, complementing the existing Vercel Speed Insights for Web Vitals tracking.
@@ -71,11 +76,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Custom Dark Scrollbar Styling**: Added a dedicated `.custom-dark-scrollbar` CSS utility for dark-themed modals, providing a styled scrollbar (thin, with `stone-900` track and `stone-700` thumb) that matches the dark modal aesthetic on desktop browsers.
 
 ### Changed
-- **Architectural Modernization & App.tsx Refactoring**: Deconstructed the monolithic `App.tsx` into a lightweight orchestrator by delegating state, side effects, and domain logic to the custom hook suite and 13 modular sub-components:
-  - Sub-components: `InitializingScreen`, `YoutubeSourceInput`, `ScriptManagementBar`, `RawScriptModal`, `RawCuesModal`, `OverlapPicker`, `DeleteConfirmationModal`, `ResetConfirmationModal`, `TimingSettingsModal`, `ScriptColorModal`, `LibraryModal`, `MobileLibraryModal`, and `StagingModal`.
+- **Architectural Modernization & App.tsx Refactoring**: Deconstructed the monolithic `App.tsx` into a lightweight orchestrator by delegating state, side effects, and domain logic to the custom hook suite and 18 modular sub-components:
+  - App shell components: `AppHeader` (global navigation, logo, time display, mode toggle), `InitializingScreen` (branded loading splash), `YoutubeSourceInput` (video ID parser input).
+  - Edit-mode components: `ScriptManagementBar` (line count & raw script access), `CueEditorForm` (cue authoring/editing form with text, type, timing, and location fields), `TimelineCuesPanel` (chronological cue list with color legend, raw JSON access, Align button), `RawScriptModal`, `RawCuesModal`.
+  - Playback-mode components: `ScriptHeaderControls` (auto-scroll toggle, target-type multi-select, width preset, scroll focus preset), `ActiveHighlightsPanel` (desktop sidebar with per-type filter chips and active highlight cards).
+  - Shared modals: `OverlapPicker`, `DeleteConfirmationModal`, `ResetConfirmationModal`, `TimingSettingsModal`, `ScriptColorModal`, `LibraryModal`, `MobileLibraryModal`, and `StagingModal`.
   - New utility modules: `src/lib/cueUtils.ts` (cue processing, alignment, active states, JSON import/export) and `src/lib/utils.ts` (`cn`, `extractYoutubeId`, `generateId`).
   - Clear separation of concerns between presentation layer, state management layer, and persistence/transport layer.
   - Updated `TimingSettingsModal` to consume centralized types and constants directly from `types/script.ts` and `constants/script.ts`.
+- **Centralized Cue Sanitization Pipeline**: Retrofitted `useScriptStorage` so all five data-load paths (localStorage restore, default project load, blank script, example library selection, and remote project fetch) route through `sanitizeCues()` for deterministic ID deduplication and `type`/`colorClass` normalization. Raw-cues JSON import via `RawCuesModal` also now applies `sanitizeCues()` on paste, ensuring every ingress point sanitizes cue data consistently.
+- **Metadata & Deployment Configuration**: Updated `metadata.json` to version `2.0.0-dev` and registered `"MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"` to declare the application's server-side Gemini API capability for deployment environments.
 - **Cue Type & Color Normalization**: Refactored cue state management to standardize the relationship between cue `type` and `colorClass`:
   - Made `colorClass` optional on the `Cue` interface; styles are now dynamically derived from the `type` field using `getCueColorForTheme()`, which resolves theme-appropriate RGB colors.
   - Updated cue creation workflow to default `type` to `'dialogue'` and derive `colorClass` bidirectionally — if only `colorClass` is present, the type is inferred; if only `type` is present, the correct color class is assigned.
@@ -104,7 +114,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Cleaned up inconsistent tag metadata across the library.
 - **Comprehensive Documentation Synchronization**: Refreshed and synchronized project documentation across `docs/` and `README.md` to reflect all architectural, stack, and domain model changes:
   - `docs/AGENTS.md` — added guidance for block-level type registration in `scriptParser.ts` (`LineType` union additions), theme extensions, `CUE_THEME_COLORS` calibration across palettes, `localStorage` key mappings, and component communication patterns.
-  - `docs/ARCHITECTURE.md` — documented 3-layer system architecture (Presentation Layer with 13 modular sub-components, State & Processing Layer, Persistence & Transport Layer), custom hooks suite, ASCII data flow diagrams, theme engine, width/scroll presets, and the dark scrollbar utility.
+  - `docs/ARCHITECTURE.md` — documented 3-layer system architecture (Presentation Layer with 18 modular sub-components, State & Processing Layer, Persistence & Transport Layer), custom hooks suite, ASCII data flow diagrams, theme engine, width/scroll presets, and the dark scrollbar utility.
   - `docs/FUNCTIONALITY.md` — expanded library catalogue section with FRAME Series entries, hideFromAll filtering, adaptive section badges, 6 script themes, reading width and focus presets, and in-place cue editing.
   - `docs/TECH_STACK.md` — updated React version to 19, TypeScript to 5.8, Vite to 6, Tailwind CSS to v4 with `@theme` variables (`--font-sans`, `--font-serif`, `--font-mono`), Motion animation library (`motion/react`), Lucide React, and `@vercel/analytics` / `@vercel/speed-insights`.
   - `README.md` — replaced SVG logo reference with PNG, expanded the example loading table with all 20+ examples categorized by section, and updated the query parameter documentation.

@@ -59,6 +59,7 @@ Supports eight color-coded cue categories, each calibrated with theme-specific R
 - **Creation**: In Edit Mode, highlight text in the script preview to populate the "New Sync Cue" panel with calculated start and end character offsets.
 - **Timestamp Capture**: Click the `Clock` button next to Start/End Time to snap directly to the player's current video time, or input manual values.
 - **Manual Monospace Textarea**: Users can directly edit a cue's selected text in-place within the Edit Sync Cue panel. This allows safe text corrections without manual JSON editing while preserving character synchronization.
+- **ID Sanitization**: All cues loaded from any source (localStorage, built-in examples, remote projects, or pasted JSON) are automatically run through `sanitizeCues()`, which deduplicates IDs, normalizes `type`/`colorClass` fields bidirectionally, and injects fallback UUIDs for malformed entries.
 - **Duplicate Text & Alternative Location Finder**: When a phrase appears multiple times (e.g., `WIDE SHOT`), clicking "Find Alternative" scans the screenplay and presents a contextual list of all occurrences with character offsets and text snippets for instant snapping. Hidden `[[STAGING]]` block ranges are strictly excluded from search matches.
 
 ### Overlap Management
@@ -155,7 +156,7 @@ All project states (`screenplay_sync_state`), theme preferences (`sceneflow_scri
 - All query-based loads prompt a confirmation modal with error reporting before replacing the workspace.
 
 ### Library Catalogue (Desktop & Mobile)
-An interactive catalogue featuring 25+ curated screenplays organized into 4 distinct sections:
+An interactive catalogue featuring 30+ curated screenplays organized into 4 distinct sections:
 
 1. **AI Scenes**:
    - *Frequency Over Force* (`scene_frequency`, Default Example)
