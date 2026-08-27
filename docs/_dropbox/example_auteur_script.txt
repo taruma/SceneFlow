@@ -1,0 +1,72 @@
+This prompting style previously called "Auteur Brief"
+
+
+
+
+
+
+
+
+
+I. PART I
+
+[[STAGING]]
+[[INTENT]]
+Create a cinematic, dialogue-driven academic drama scene featuring @actor1 as MARK (voice: @audio1), a frustrated mathematician, and @actor2 as ROBERT (voice: @audio2), his composed senior mentor, inside a vast university auditorium as an ideological clash over system control is challenged by a simple mechanical metronome.
+[[/INTENT]]
+[[LOGIC]]
+Ensure rigid spatial continuity across four distinct camera setups on the auditorium stage, maintaining Mark strictly on stage left and Robert on stage right relative to the center desk axis. Preserve object permanence and hand placement for the folded paper manuscript and mechanical wooden metronome across all cuts. Prioritize grounded eye lines, authentic physical performance, and match-on-action transitions, preventing sudden jumps in character location or body orientation.
+[[/LOGIC]]
+[[AESTHETIC]]
+Medium: 35mm film texture, cinematic academic drama aesthetic.
+Palette: Deep navy blue, rich mahogany dark oak, charcoal grey, warm amber tungsten tones.
+Lighting: Overhead tungsten auditorium grid lighting, soft directional key light from stage left.
+Location: Mid-century university auditorium stage with dark mahogany wood wall paneling and a large slate chalkboard displaying faint white chalk equations.
+Wardrobe: Mark wears a rumpled navy blue oxford button-down shirt with rolled-up sleeves and charcoal dress trousers. Robert wears a rich burgundy wool crewneck sweater over a white collared dress shirt, dark navy trousers, and prominent thick-rimmed tortoiseshell aviator glasses.
+Key Props: Heavy dark-oak lecturer desk, vintage green-glass brass desk lamp, dark mahogany mechanical wooden metronome, folded paper manuscript.
+Ambience: Soft hollow hall acoustics, faint low ventilation hum, gentle atmospheric dust motes.
+[[/AESTHETIC]]
+[[OPENING]]
+Establishing shot from auditorium floor looking up at the wide, fully lit stage. At center stage sits a heavy dark-oak lecturer desk topped with stacked paper manuscripts and a glowing green brass desk lamp. Mark stands stage left in his rumpled navy shirt, pacing along a narrow corridor while gripping a folded sheet of paper near his torso. Robert stands stationary stage right in a burgundy sweater, holding a dark wooden metronome with both hands near his stomach. Deep mahogany wall paneling and chalk-covered slates frame the background behind them.
+[[/OPENING]]
+[[/STAGING]]
+
+[<BRIEF>]
+[CAM 01] EWS, wide stage center, static axis -> Mark pacing stage left, Robert motionless stage right holding metronome -> [BLOCK] Mark pivots sharply near the stage edge while gesturing with his paper -> Mark says (sharp exhalation) {If you force the parameters, the variance just spikes.} -> [ACT] Mark snaps the folded paper against his thigh -> <Paper slap against trousers>
+[CAM 02] MS, tracking Mark along stage left -> Mark mid-stride holding paper in right hand -> [ACT] Mark halts his pacing, spinning his body toward stage right to face Robert -> Mark says {It resist every... single... time!} -> [ACT] Mark points the crumpled sheet across the empty stage void -> [STATE OUT] Mark standing taut, shoulders tense
+[CAM 03] MCU, lockoff on Robert stage right -> Robert holding closed wooden metronome at chest height -> [ACT] Robert tilts his head slightly, eyes steady behind his aviator glasses -> Mark says O.S. {And why did you bring that metronome out here anyway?} -> [ACT] Robert shifts his thumbs across the smooth wooden casing -> <Soft thumb scrape on wood>
+[CAM 03] -> Robert holding metronome, looking toward stage left -> Robert says (soft exhaled chuckle) {Because I heard you shouting three doors down...} -> [ACT] Robert takes a measured step toward center desk -> [STATE OUT] Robert moving into mid-stage space
+[CAM 01] -> Robert walking from stage right toward desk, Mark watching defensively from stage left -> [BLOCK] Robert arrives at the center desk, positioning himself behind it -> Robert says {And because you are still trying to orchestrate it, Mark. You are treating your variables like isolated nodes.} -> [ACT] Robert holds the metronome balanced above the dark oak desk surface
+[CAM 02] -> Mark leaning forward, body posture rigid -> [ACT] Mark steps closer to the desk's left flank, grip tightening on paper sheet -> Mark says (frustrated sigh) {They are isolated nodes! Without direct feedback loops, there’s no reason to align.} -> [ACT] Mark shakes his head, jaw clenching tightly
+[CAM 04] MS, desk surface center focus -> Dark oak desk surface foreground with brass lamp illuminate dark wood -> [ACT] Robert lowers the wooden metronome onto the bare dark oak wood -> <Solid wooden thump on desk> -> [ACT] Robert unlatches the front cover, revealing the inner brass pendulum rod -> <Metallic latch click>
+[CAM 03] -> Robert adjusting pendulum weight on rod -> Robert says {They do not need direct feedback, Mark. They just need a shared floor.} -> [ACT] Robert slides the brass weight down to mid-tempo notch -> [STATE OUT] Robert's thumb poised over pendulum tip
+[CAM 02] -> Mark watching center desk, brow deeply furrowed -> [ACT] Mark rests his left palm onto desk edge -> Mark says (weary tone) {A shared floor does not transmit information, Robert.} -> [ACT] Mark's eyes narrow as he tracks Robert's hands on desk -> [STATE OUT] Mark leaning heavily over desk edge
+[CAM 04] -> Metronome stationary on oak wood, Robert's fingers releasing pendulum tip -> Robert says O.S. {It transmits vibration. That is enough.} -> [ACT] Pendulum swings left to right across wooden casing -> <Sharp wood-on-metal click> -> <Sharp wood-on-metal click>
+[CAM 01] -> Pendulum swinging at center desk, emitting steady acoustic rhythm -> [ACT] Mark freezes in place stage left, paper lowered to his hip -> [ACT] Robert steps back slightly stage right, arms relaxed by his sides -> <Wooden metronome clicking amplifies across hall>
+[</BRIEF>]
+
+II. PART II
+
+[[STAGING]]
+[[INTENT]]
+Create a seamless cinematic continuation of @Video 1 featuring @actor1as MARK (voice: @audio1), a frustrated junior mathematics professor, and @actor2as ROBERT (voice: @Audio 2), his composed senior mentor, inside a grand university lecture hall as their heated ideological clash over system control dissolves into a quiet, contemplative breakthrough.
+[[/INTENT]]
+[[CONTINUITY PROTOCOL]]
+Ensure strict, unbroken continuity extending directly from the final frame of @Video 1. Maintain Mark positioned stage left holding the folded paper manuscript lowered near his hip and Robert grounded stage right. Preserve exact matching across all four established camera setups, lighting conditions, acoustic hall acoustics, wardrobe textures, character postures, and the physical placement of the mechanical wooden metronome atop the mahogany desk. Enforce strict 180-degree axis discipline, spatial object permanence, and grounded eye-lines across all camera transitions.
+[[/CONTINUITY PROTOCOL]]
+[[/STAGING]]
+
+[<BRIEF>]
+[CAM 01] EWS, wide stage center, static axis -> Mark stands motionless stage left with paper down, Robert stands stage right behind center desk as pendulum swings -> [ACT] Mark exhales slowly into a relaxed posture while staring at the swinging wooden pendulum -> <Metronome pendulum mechanical click> -> [ACT] Robert shifts his feet slightly, resting one hand against his belt while watching Mark -> Mark standing upright, shoulders dropping
+[CAM 02] MS, tracking Mark along stage left -> Mark remains standing stage left, gazing intently toward the wooden desk -> Mark says (subdued exhale) {A weak interaction...} -> [ACT] Mark slowly lowers his arm, letting the paper rest loosely beside his thigh -> [STATE OUT] Mark's shoulders dropping from rigid tension into quiet stillness
+[CAM 04] MS, desk surface center focus -> The brass pendulum arm swings across the dark wood surface -> <Metronome pendulum mechanical click> -> [ACT] Robert's hand reaches into frame from stage right, hovering near the desk lamp -> Mark says O.S. {The environment becomes the medium.} -> [ACT] Robert rests his fingers lightly on the polished mahogany corner of the desk
+[CAM 03] MCU, lockoff on Robert stage right -> Robert standing beside the desk, watching the pendulum motion before looking up across the stage void -> Robert says (calm, measured tone) {Like this metronome...} -> [ACT] Robert tilts his head subtly, eyes calm behind his tortoiseshell frames -> <Soft wooden desk vibration>
+[CAM 01] EWS, wide stage center, static axis -> Mark standing stage left, Robert stage right near the desk under overhead tungsten grid light -> Robert says {On stone, it stands alone. Put it on a wooden board...} -> [ACT] Robert gestures gently with an open palm toward the dark oak desktop -> [STATE OUT] Robert maintaining calm posture stage right
+[CAM 02] -> Mark watching Robert intently from stage left -> Robert says O.S. {...and the board carries the pulse until they align.} -> [ACT] Mark shifts his weight slightly, his facial muscle tension relaxing -> <Faint paper crease sound in hand>
+[CAM 02]  -> Mark takes a small, cautious half-step forward toward the desk -> Mark says (soft realization) {It's not control...} -> [ACT] Mark uncurls his left hand, opening his palm downward toward the floor -> [STATE OUT] Mark standing steady near desk left edge
+[CAM 03] -> Robert's expression softens into a faint, reassuring smile -> Mark says O.S. {It's resonance.} -> [ACT] Robert nods slowly, relaxing his shoulders as he folds his hands loosely near his belt -> <Gentle exhaled breath>
+[CAM 03] -> Robert turns his head slightly toward the dark auditorium seating before looking back at Mark -> Robert says {Call it phase-locking if it helps the paper...} -> [ACT] Robert lowers his gaze briefly to the pendulum arm before meeting Mark's eyes -> [STATE OUT] Robert holding calm eye contact
+[CAM 01] -> Both figures visible on stage with the desk centered between them -> Robert says (gentle, steady delivery) {But people work the exact same way. You don't force agreement, Mark.} -> [ACT] Mark stands motionless stage left, absorbing the statement in complete silence -> <Mechanical pendulum knock>
+[CAM 02] -> Mark standing motionless, looking across the desk with a clear, reflective expression -> Robert says O.S. {You just hold the frequency.} -> [ACT] Mark gives a single, quiet nod of understanding as he loosely holds the manuscript by his side -> [STATE OUT] Mark standing relaxed in deep contemplation
+[CAM 01] -> Pendulum continuing its steady swing atop the desk between both professors -> [ACT] Robert steps back slightly stage right while Mark stays anchored stage left, both men sharing a quiet moment of mutual understanding -> <Steady mechanical metronome click echoes in hall> -> [STATE OUT] Wide stage composition locked in peaceful stillness
+[</BRIEF>]

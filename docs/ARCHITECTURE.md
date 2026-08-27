@@ -47,7 +47,7 @@ SceneFlow follows a modular, 5-layer architecture that separates script parsing,
 The processing layer extracts structure, metadata, and character positions from raw screenplay text without depending on React or DOM APIs.
 
 ### `src/lib/scriptParser.ts`
-- **Staging Block Extraction (`parseScriptWithStaging`)**: Identifies top-level `[[STAGING]]...[[/STAGING]]` blocks and sub-tagged directives (e.g., `[[GLOBAL]]`, `[[LOOKBOOK]]`, `[[CAMERA]]`). Returns original lines, line indices to hide from the main view, and a map of line-anchored `StagingMarker` objects. Evaluates trimmed lines for robust whitespace handling.
+- **Staging Block Extraction (`parseScriptWithStaging`)**: Identifies top-level `[[STAGING]]...[[/STAGING]]` blocks and sub-tagged directives (e.g., `[[INTENT]]`, `[[LOGIC]]`, `[[AESTHETIC]]`, `[[OPENING]]`, `[[CONTINUITY PROTOCOL]]`, `[[GLOBAL]]`, `[[LOOKBOOK]]`). Returns original lines, line indices to hide from the main view, and a map of line-anchored `StagingMarker` objects. Evaluates trimmed lines for robust whitespace handling.
 
 ### `src/lib/scriptProcessor.ts`
 - **Semantic Line Classification (`processScript`)**: Analyzes text line-by-line using heuristics and regex to classify each line into one of 11 `LineType` variants:
@@ -63,7 +63,7 @@ The processing layer extracts structure, metadata, and character positions from 
   - `action`: Emphasized ALL CAPS action beats or standard narrative text.
   - `default`: Fallback text formatting.
 - **Dialogue Lookahead**: Pre-scans consecutive speech lines following a character heading and attaches `charName` context to each dialogue line.
-- **Brief Block Handling**: Recognizes `[<BRIEF>]` and `[</BRIEF>]` delimiters, skips blank lines within technical blocks, and sets `isBrief: true`.
+- **Auteur Brief & State Transition Handling**: Recognizes `[<BRIEF>]` and `[</BRIEF>]` delimiters, skips blank lines within technical blocks, and sets `isBrief: true` to trigger waterfall indentation (`->`) and bold anchor tagging (`[...]`).
 - **Character Offset Indexing**: Computes exact `lineStart` and `lineEnd` character offsets to ensure sync cues remain accurately positioned.
 
 ---

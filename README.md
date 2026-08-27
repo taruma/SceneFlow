@@ -3,12 +3,12 @@
   
   # SceneFlow
   
-  **Screenplay-to-video synchronization for AI filmmakers.**
+  **Script-to-screen synchronization for AI filmmakers.**
   
   [![Live App](https://img.shields.io/badge/Live_App-Visit_Site-black?style=flat-square&logo=vercel)](https://sceneflow.taruma.my.id/)
   
   <p>
-    <strong>Sync screenplays with video. Evaluate AI-generated footage. Analyze script-to-screen fidelity.</strong>
+    <strong>Sync scripts and screenplays with video. Evaluate AI-generated footage. Analyze script-to-screen fidelity.</strong>
   </p>
 </div>
 
@@ -18,13 +18,14 @@ https://github.com/user-attachments/assets/e2469136-4224-4192-affc-d19d7e403f74
 
 ## 📖 Overview
 
-**SceneFlow** is a tool that syncs screenplays with video content, letting you see which parts of your script appear on screen in real-time.
+**SceneFlow** is a tool that syncs scripts and screenplays with video content, letting you see which parts of your prompt appear on screen in real-time.
 
-Built for evaluating how AI video models visualize screenplay prompts, it helps you compare script instructions against what was actually generated — useful for assessing prompt adherence and iterating on your screenplay prompts.
+Built for evaluating how AI video models visualize prompt instructions, it supports both traditional **Screenplay formatting** and high-precision, state-driven **Auteur Script formatting** with 5-part staging metadata. SceneFlow helps you compare instructions against what was actually generated — essential for assessing prompt adherence and iterating on AI cinema projects.
 
 ### What It Does
 
-- **Script Tracking** — Highlights which parts of your screenplay are playing in real-time
+- **Script-to-Screen Tracking** — Highlights which parts of your script are playing in real-time
+- **Dual Script Workflows** — Seamlessly handles both human-readable screenplays and state-chained Auteur Scripts
 - **Color-Coded Cues** — 8 element types: dialogue, action, camera, shots, audio, VFX, transitions, environments
 - **Timing Controls** — Adjustable buffers to fine-tune when highlights appear
 - **Portable** — JSON-based projects you can save, share, and version-control

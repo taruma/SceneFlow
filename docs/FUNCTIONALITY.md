@@ -1,12 +1,12 @@
 # Functionality
 
-SceneFlow is a specialized workspace for synchronizing video playback with written screenplays, evaluating AI video model fidelity, and analyzing script-to-screen prompt adherence.
+SceneFlow is a specialized workspace for synchronizing video playback with written screenplays and AI prompts, evaluating AI video model fidelity, and analyzing script-to-screen prompt adherence.
 
 ---
 
-## 1. Screenplay Parsing & Formatting Heuristics
+## 1. Dual Script Parsing & Formatting Heuristics
 
-SceneFlow parses raw screenplay text into structured layouts using deterministic heuristics and regex:
+SceneFlow seamlessly parses raw screenplay and technical Auteur Script text into structured layouts using deterministic heuristics and regex:
 
 | Element | Heuristic / Pattern | Styling & Layout |
 |---|---|---|
@@ -20,22 +20,29 @@ SceneFlow parses raw screenplay text into structured layouts using deterministic
 | **Separators** | Line containing exactly `---` | Themed horizontal dividing rule |
 | **Part Separators** | Matches `PART N` format | Themed centered title divider with flanking accent lines |
 | **Roman Titles** | Roman numeral prefix (e.g., `IV. THE AWAKENING`) | Themed title divider with uppercase spacing |
-| **Brief Blocks** | Enclosed between `[<BRIEF>]` and `[</BRIEF>]` | Monospace technical card with border, waterfall indentation, and bold anchors |
+| **Brief Blocks** | Enclosed between `[<BRIEF>]` and `[</BRIEF>]` | Monospace technical card with dashed border, waterfall indentation, and bold anchors |
 
-### Auteur Brief Formatting Engine
-- **Waterfall Indentation**: Sequences containing `->` automatically trigger hierarchical line breaks with indentation (`    -> `), preventing blank leading lines.
-- **Bold Anchors**: Bracketed tags like `[CAM]`, `[ACT]`, or `[VFX]` are automatically wrapped in `<b>` bold text for scanning.
+### Auteur Script Formatting Engine (`[<BRIEF>]`)
+For high-precision AI video prompting, execution timelines wrapped in `<BRIEF>` blocks are rendered as modular state transitions:
+- **Waterfall Indentation**: Beat transitions separated by `->` automatically trigger hierarchical line breaks with nested indentation (`\n    -> `), rendering complex execution prompts as readable visual cascades.
+- **Bold Anchors**: Bracketed dimension tags like `[CAM]`, `[ACT]`, `[AUDIO]`, `[STATE IN]`, or `[STATE OUT]` are automatically bolded (`<b>[...]</b>`) for rapid cognitive scanning.
 - **Ghost Line Suppression**: Empty or whitespace-only lines inside brief blocks are filtered out during script processing.
 
 ---
 
-## 2. Staging System (Auteur Prompting)
+## 2. Staging System (Auteur Script Scaffold)
 
-Special blocks wrapped in `[[STAGING]]...[[/STAGING]]` hold multi-level prompt directives (e.g., `[[GLOBAL]]`, `[[LOOKBOOK]]`, `[[CAMERA]]`):
-
-- **Visual Hiding**: Content inside staging blocks is excluded from the main screenplay flow.
+Blocks wrapped in `[[STAGING]]...[[/STAGING]]` hold multi-level prompt directives and guardrails:
+- **5-Part Scaffold Architecture**:
+  - `[[INTENT]]`: Directorial vision, high-level subject, and emotional weight.
+  - `[[LOGIC]]`: Hard guardrails for visual planning (spatial continuity, 180° axis, object permanence).
+  - `[[AESTHETIC]]`: Audio-visual reference world (palette, lighting, wardrobe, location, ambience).
+  - `[[OPENING]]`: First-frame coordinate anchor ($S_0$) establishing baseline geometry.
+  - `[[CONTINUITY PROTOCOL]]`: Multi-shot continuation rules extending directly from previous video generations.
+  - *Legacy directives* (`[[GLOBAL]]`, `[[LOOKBOOK]]`) remain fully backward-compatible.
+- **Visual Hiding**: Content inside staging blocks is concealed from the main reading flow.
 - **Interactive Badges**: A responsive `STAGING: LABEL` pill badge appears on the line where the staging block was declared.
-- **Staging Modal**: Clicking a staging badge opens a monospace modal displaying the hidden technical directives. Badges are disabled during active video playback, and any open staging modal automatically closes upon video play.
+- **Staging Modal**: Clicking a staging badge opens a monospace inspector displaying the hidden technical directives. Badges are disabled during active video playback, and any open staging modal automatically closes upon video play.
 - **Mobile Adaptation**: Staging badge sizes, padding, and gaps scale down dynamically on mobile viewports for compact wrapping.
 
 ---

@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.1.0-dev] - Unreleased
 
 ### Added
+- **Redesigned Onboarding Starter Guide (`public/examples/blank.json`)**:
+  - Restructured the default onboarding project to establish **Script-to-Screen** synchronization across both traditional and AI filmmaking workflows.
+  - Cleanly separated the documentation between **Screenplay Format** (headings, character dialogue, parentheticals, actions, SFX/VFX) and **Auteur Script Format** (technical `<BRIEF>` cards, `->` waterfall chaining, and bold anchor tags).
+  - Modernized the Staging metadata scaffold to feature the 5-part architecture (`[[INTENT]]`, `[[LOGIC]]`, `[[AESTHETIC]]`, `[[OPENING]]`, `[[CONTINUITY PROTOCOL]]`).
+  - Formatted all tutorial section headers and notes using native dialogue and parenthetical layout heuristics for optimal in-app visual rendering.
+  - Integrated the complete two-part **Auteur Script** masterclass (*Frequency Over Force*) featuring comprehensive staging guardrails, macro/sub-state transitions, and synchronized timeline cues.
+  - Added a directorial note documenting the style evolution since March 2026 toward state-driven prompt engineering for video generation models while maintaining full raw-text screenplay support.
 - **Additional Example Projects**: Added new short-form AI clip examples to the built-in catalogue.
 - **Visual System Token Harmonization (`src/styles/tokens/ui.ts` & `src/index.css`)**:
   - Expanded and centralized `UI_TOKENS` into standard design token groups covering:
