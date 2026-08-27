@@ -16,11 +16,13 @@ SceneFlow is built with a modern, lightweight, and performant web stack designed
 ## 2. Styling, UI, & Typography
 
 - **Tailwind CSS v4 (`tailwindcss: ^4.1.14`, `@tailwindcss/vite: ^4.1.14`)**: Utility-first CSS framework utilizing modern CSS `@theme` variables:
-  - `--font-sans`: `"Inter", ui-sans-serif, system-ui, sans-serif`
-  - `--font-serif`: `"Libre Baskerville", serif`
-  - `--font-mono`: `"JetBrains Mono", monospace`
+  - **Typography**:
+    - `--font-sans`: `"Inter", ui-sans-serif, system-ui, sans-serif`
+    - `--font-serif`: `"Libre Baskerville", serif`
+    - `--font-mono`: `"JetBrains Mono", monospace`
+  - **Semantic Color Tokens**: Mapped from `:root` variables to `@theme` for cohesive app-wide styling (`--color-app`, `--color-surface`, `--color-surface-subtle`, `--color-surface-muted`, `--color-surface-hover`, `--color-surface-dark`, `--color-border-main`, `--color-border-subtle`, `--color-text-main`, `--color-text-body`, `--color-text-muted`, `--color-text-faint`, `--color-overlay-bg`, `--color-overlay-heavy`, `--color-support`, `--color-support-hover`).
 - **Modular Design Token Engine (`src/styles/`)**: Centralized design tokens and theme packages:
-  - `UI_TOKENS` (`src/styles/tokens/ui.ts`): Uniform Tailwind class definitions for modal surfaces, overlays, buttons, inputs, icon wrappers, swatches, and alerts.
+  - `UI_TOKENS` (`src/styles/tokens/ui.ts`): Uniform Tailwind class definitions across layout frames, modal containers & overlays, dropdown menus, buttons & pills, form inputs, badge tags, panel cards, and swatches.
   - Theme Tokens (`src/styles/tokens/themes.ts`, `cues.ts`, `typography.ts`, `helpers.ts`): Theme-calibrated color palettes and typography rules.
 - **clsx (`^2.1.1`) & tailwind-merge (`^3.5.0`)**: Utility functions merged via `cn()` in `src/lib/utils.ts` to safely combine dynamic and conditional Tailwind classes without collisions.
 - **Motion (`motion: ^12.23.24`)**: Modern animation engine (from the creators of Framer Motion) providing spring physics for dialog transitions, overlay backdrops, and mobile bottom-sheet drawers (`motion/react`).

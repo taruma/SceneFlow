@@ -104,7 +104,16 @@ Centralized application constants and configuration:
 The visuals layer encapsulates all styling tokens, color schemes, UI chrome tokens, and theme definitions.
 
 ### Modular Design Tokens Structure
-- **`src/styles/tokens/ui.ts` (`UI_TOKENS`)**: Centralized design tokens providing reusable Tailwind class bundles for modal overlays, dialog containers, buttons (primary, secondary, danger, header controls, action pills), form controls (inputs, textareas, code boxes, search, labels), icon badge wrappers, panel banners, theme swatches, and alert cards.
+- **`src/styles/tokens/ui.ts` (`UI_TOKENS`)**: Centralized design tokens providing reusable Tailwind class bundles across 9 functional categories:
+  - `layout`: App header, playback/edit script headers, left/right panel base containers, and section title typography.
+  - `modal`: Backdrop overlays (`overlay`, `overlayHeavy`, `overlayHighZ`), responsive containers (`containerSm`, `containerMd`, `containerLg`, `containerXl`, `containerLibrary`, `containerStaging`), standard headers, footers, and padding tokens.
+  - `dropdown`: Focus mode, width preset, and scroll focus preset dropdown menus, headers, and interactive items.
+  - `button`: Primary, secondary, danger, header icon action buttons, mode switchers, sort toggles, action pills, support pills, and close buttons.
+  - `input`: Search inputs, multiline textareas, code boxes, number boxes, and label typography.
+  - `badge`: Counter tags, timestamp pills, and header current time pill badge.
+  - `panel`: Banners, interactive cards, empty placeholders, and legend containers.
+  - `swatch` & `alert`: Theme preview swatches and notification banners.
+- **`src/index.css`**: Semantic CSS custom properties defined in `:root` (`--app-bg`, `--surface`, `--surface-subtle`, `--border-main`, `--text-main`, `--overlay-bg`, `--color-support`, etc.) and mapped directly into Tailwind CSS v4's `@theme` directive.
 - **`src/styles/tokens/themes.ts` (`SCRIPT_THEMES`)**: Defines six visual themes categorized into `light`, `warm`, and `dark` alongside `SCRIPT_THEME_MAP`, `DEFAULT_SCRIPT_THEME`, and `THEME_CATEGORIES`.
 - **`src/styles/tokens/cues.ts` (`CUE_THEME_COLORS`)**: Calibrates the 8 cue categories across light, warm, and dark theme palettes and provides `getCueColorForTheme()`.
 - **`src/styles/tokens/typography.ts` (`getScriptThemeStyles`)**: Generates theme-specific typography, headings, title lines, staging badges, and cue wrapper styles.
