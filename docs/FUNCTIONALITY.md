@@ -23,7 +23,7 @@ SceneFlow seamlessly parses raw screenplay and technical Auteur Script text into
 | **Brief Blocks** | Enclosed between `[<BRIEF>]` and `[</BRIEF>]` | Monospace technical card with dashed border, waterfall indentation, and bold anchors |
 
 ### Auteur Script Formatting Engine (`[<BRIEF>]`)
-For high-precision AI video prompting, execution timelines wrapped in `<BRIEF>` blocks are rendered as modular state transitions:
+For high-precision AI video prompting, the active **`[EXECUTION]`** timeline is wrapped in `[<BRIEF>]` blocks (strictly separated from the static staging setup) and rendered as modular state transitions:
 - **Waterfall Indentation**: Beat transitions separated by `->` automatically trigger hierarchical line breaks with nested indentation (`\n    -> `), rendering complex execution prompts as readable visual cascades.
 - **Bold Anchors**: Bracketed dimension tags like `[CAM]`, `[ACT]`, `[AUDIO]`, `[STATE IN]`, or `[STATE OUT]` are automatically bolded (`<b>[...]</b>`) for rapid cognitive scanning.
 - **Ghost Line Suppression**: Empty or whitespace-only lines inside brief blocks are filtered out during script processing.
@@ -32,14 +32,22 @@ For high-precision AI video prompting, execution timelines wrapped in `<BRIEF>` 
 
 ## 2. Staging System (Auteur Script Scaffold)
 
-Blocks wrapped in `[[STAGING]]...[[/STAGING]]` hold multi-level prompt directives and guardrails:
-- **5-Part Scaffold Architecture**:
-  - `[[INTENT]]`: Directorial vision, high-level subject, and emotional weight.
-  - `[[LOGIC]]`: Hard guardrails for visual planning (spatial continuity, 180° axis, object permanence).
-  - `[[AESTHETIC]]`: Audio-visual reference world (palette, lighting, wardrobe, location, ambience).
-  - `[[OPENING]]`: First-frame coordinate anchor ($S_0$) establishing baseline geometry.
-  - `[[CONTINUITY PROTOCOL]]`: Multi-shot continuation rules extending directly from previous video generations.
-  - *Legacy directives* (`[[GLOBAL]]`, `[[LOOKBOOK]]`) remain fully backward-compatible.
+Blocks wrapped in `[[STAGING]]...[[/STAGING]]` hold multi-level prompt directives and guardrails representing the foundational setup layer of the Auteur Script, cleanly separated from the `[EXECUTION]` timeline:
+- **The 5-Part Scaffold Architecture**:
+  The standard Auteur Script framework is built upon a 5-part scaffold (modular and adaptable based on the specific scene or generation task):
+  1. `[INTENT]`: Directorial vision, high-level subject, and emotional weight.
+  2. `[LOGIC]`: Hard guardrails for visual planning (spatial continuity, 180° axis, object permanence).
+  3. `[AESTHETIC]`: Audio-visual reference world (palette, lighting, wardrobe, location, ambience).
+  4. `[OPENING]`: First-frame coordinate anchor ($S_0$) establishing baseline geometry.
+  5. `[EXECUTION]`: Active timeline state-transition pipeline (rendered via `[<BRIEF>]`).
+- **Staging Block Directives in SceneFlow**:
+  All non-execution setup blocks (parts 1–4) are declared inside `[[STAGING]]...[[/STAGING]]` to keep the reading timeline clean:
+  - `[[INTENT]]`: Scene vision, identity, and tone.
+  - `[[LOGIC]]`: Spatial, physics, and continuity guardrails.
+  - `[[AESTHETIC]]`: Master audio-visual styling parameters.
+  - `[[OPENING]]`: Initial frame coordinate anchor ($S_0$).
+  - *Optional Extensions*: Directives like `[[CONTINUITY PROTOCOL]]` (for video continuation rules) or legacy directives (`[[GLOBAL]]`, `[[LOOKBOOK]]`) are fully supported.
+  - *Execution Separation*: Everything inside `[<BRIEF>]...[</BRIEF>]` represents the **`[EXECUTION]`** block (never labeled as staging), driving the active state-transition pipeline.
 - **Visual Hiding**: Content inside staging blocks is concealed from the main reading flow.
 - **Interactive Badges**: A responsive `STAGING: LABEL` pill badge appears on the line where the staging block was declared.
 - **Staging Modal**: Clicking a staging badge opens a monospace inspector displaying the hidden technical directives. Badges are disabled during active video playback, and any open staging modal automatically closes upon video play.

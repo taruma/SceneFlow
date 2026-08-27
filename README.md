@@ -242,12 +242,21 @@ Both workflows share the exact same Staging metadata and Timeline Cue synchroniz
 SceneFlow embeds high-level prompt directives directly into your project using **Staging Blocks**. Staging content is concealed from the main reading flow and replaced with an interactive **STAGING** badge that opens a monospace inspector modal.
 
 #### The 5-Part Scaffold Architecture:
-- `[[INTENT]]` — High-level vision, subject definition, and core emotional beat.
-- `[[LOGIC]]` — Hard guardrails for visual planning (spatial continuity, 180° axis, object permanence).
-- `[[AESTHETIC]]` — Master audio-visual reference (palette, lighting, wardrobe, location, textures).
-- `[[OPENING]]` — Locked first-frame coordinate anchor ($S_0$) establishing baseline geometry.
-- `[[CONTINUITY PROTOCOL]]` — Multi-shot continuation rules extending directly from previous video generations.
-*(Legacy directives `[[GLOBAL]]` and `[[LOOKBOOK]]` remain fully backward-compatible).*
+The standard Auteur Script framework is built upon a 5-part scaffold (modular and adaptable based on the specific scene or generation task):
+1. `[INTENT]` — High-level vision, subject definition, and core emotional beat.
+2. `[LOGIC]` — Hard guardrails for visual planning (spatial continuity, 180° axis, object permanence).
+3. `[AESTHETIC]` — Master audio-visual reference (palette, lighting, wardrobe, location, textures).
+4. `[OPENING]` — Locked first-frame coordinate anchor ($S_0$) establishing baseline geometry.
+5. `[EXECUTION]` — Active timeline state-transition pipeline (wrapped in `[<BRIEF>]`).
+
+#### Staging Directives in SceneFlow:
+Within SceneFlow, all non-execution setup blocks (parts 1–4) are encapsulated inside `[[STAGING]]...[[/STAGING]]` to keep the reading timeline clean:
+- `[[INTENT]]` — Scene vision, identity, and tone.
+- `[[LOGIC]]` — Hard guardrails for visual planning.
+- `[[AESTHETIC]]` — Master audio-visual styling parameters.
+- `[[OPENING]]` — Starting first-frame coordinate anchor ($S_0$).
+- *Optional Extensions:* Directives like `[[CONTINUITY PROTOCOL]]` can be added for multi-shot video extensions; legacy directives (`[[GLOBAL]]` and `[[LOOKBOOK]]`) remain fully backward-compatible.
+- *Execution Separation:* Everything inside `[<BRIEF>]...[</BRIEF>]` represents the **`[EXECUTION]`** block (never labeled as staging), driving the active state-transition pipeline.
 
 #### Staging Example:
 

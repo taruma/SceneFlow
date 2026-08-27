@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Redesigned Onboarding Starter Guide (`public/examples/blank.json`)**:
   - Restructured the default onboarding project to establish **Script-to-Screen** synchronization across both traditional and AI filmmaking workflows.
   - Cleanly separated the documentation between **Screenplay Format** (headings, character dialogue, parentheticals, actions, SFX/VFX) and **Auteur Script Format** (technical `<BRIEF>` cards, `->` waterfall chaining, and bold anchor tags).
-  - Modernized the Staging metadata scaffold to feature the 5-part architecture (`[[INTENT]]`, `[[LOGIC]]`, `[[AESTHETIC]]`, `[[OPENING]]`, `[[CONTINUITY PROTOCOL]]`).
+  - Modernized the Staging metadata scaffold to feature the modular architecture (Part 1 fresh scene scaffold vs. Part 2 `[[CONTINUITY PROTOCOL]]` extensions) with strict separation between `[[STAGING]]` setup and `[<BRIEF>]` execution.
   - Formatted all tutorial section headers and notes using native dialogue and parenthetical layout heuristics for optimal in-app visual rendering.
   - Integrated the complete two-part **Auteur Script** masterclass (*Frequency Over Force*) featuring comprehensive staging guardrails, macro/sub-state transitions, and synchronized timeline cues.
   - Added a directorial note documenting the style evolution since March 2026 toward state-driven prompt engineering for video generation models while maintaining full raw-text screenplay support.
@@ -41,8 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `TimelineCuesPanel.tsx` — aligned section titles, cue count badge, cue category legend container, interactive cue cards, time tags, and empty state placeholder.
     - `TimingSettingsModal.tsx` — aligned heavy backdrop overlay and dialog container.
 - **Comprehensive Documentation Refresh & Specification Synchronization**:
-  - `README.md` — updated script element formatting heuristics table, documented the 5-Part Staging Scaffold (`[[INTENT]]`, `[[LOGIC]]`, `[[AESTHETIC]]`, `[[OPENING]]`, `[[CONTINUITY PROTOCOL]]`), documented the Auteur Script Formatting Engine (`[<BRIEF>]`), and refreshed example workflow links.
-  - `docs/FUNCTIONALITY.md` — detailed dual script parsing heuristics (Screenplay & Auteur Script), updated staging scaffold specifications, and linked catalogue reference to `SCENEFLOW_CATALOGUE.md`.
+  - `README.md` — updated script element formatting heuristics table, documented the modular scaffold (Part 1 standard vs. Part 2 extension examples), clarified the distinction between `[[STAGING]]` directives and `[<BRIEF>]` execution, and refreshed workflow links.
+  - `docs/FUNCTIONALITY.md` — detailed dual script parsing heuristics (Screenplay & Auteur Script), updated modular staging scaffold specifications, and linked catalogue reference to `SCENEFLOW_CATALOGUE.md`.
   - `docs/ARCHITECTURE.md` — documented Auteur Brief and state transition parsing within the Processing Layer (`scriptProcessor.ts`).
   - `SCENEFLOW_CATALOGUE.md` — updated catalogue index to reflect latest AI clip examples and models.
 - **Zero Visual Regression**: Preserved exact color, spacing, radius, shadow, and typography fidelity across desktop and mobile viewports.
