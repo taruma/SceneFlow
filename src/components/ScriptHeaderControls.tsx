@@ -141,7 +141,6 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                 </>
               )}
             </div>
-            <div className="h-4 w-px bg-stone-200 mx-1 hidden lg:block" />
             <button 
               onClick={() => setIsLibraryOpen(true)}
               className="lg:hidden flex items-center gap-1 px-2 py-1 bg-stone-100 hover:bg-stone-200 rounded text-[10px] font-bold text-stone-700 transition-colors"
@@ -153,7 +152,7 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
               target="_blank"
               rel="noopener noreferrer"
               title="Support on Ko-fi"
-              className={UI_TOKENS.button.supportPill}
+              className={cn("lg:hidden", UI_TOKENS.button.supportPill)}
             >
               <Coffee size={10} />
             </a>
