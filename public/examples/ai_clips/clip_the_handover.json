@@ -1,0 +1,517 @@
+{
+  "youtubeId": "https://youtu.be/aedutMHDjMU",
+  "scriptText": "\n\n\n\n\n\n\n\n\n\nI. THE HANDOVER\n\n[[STAGING]]\n[[INTENT]]\nCreate a cinematic, melancholic drama scene set in a humid, late-night laundromat, featuring @actor1 as SAMIRA, an exhausted artist hiding deep depression, and @actor2 as FELIX, her gentle, reliable long-time friend.\n[[/INTENT]]\n\n[[LOGIC]]\nEnsure strict spatial continuity on the bench, maintaining a clear 180-degree axis, consistent eye lines, and precise prop transfer tracking from Samira's coat pocket into Felix's hand.\n[[/LOGIC]]\n\n[[AESTHETIC]]\nMedium: 35mm film, pronounced grain, shallow depth of field\nPalette: Desaturated teal, harsh neon green reflections, dark slate blue\nLighting: Overhead flickering fluorescent tubes, soft rain-filtered street lighting\nLocation: Gritty 24-hour urban laundromat, row of spinning dryer drums, steamed glass storefront\nWardrobe Samira: Oversized navy woolen trench coat, dark ribbed beanie, charcoal sweater, worn leather boots\nWardrobe Felix: Dark maroon hooded sweatshirt, waxed canvas jacket, dark relaxed denim\nAudio: Heavy rain against glass, low rhythmic dryer hum, coin tumbling diegetics, soft breathing\n[[/AESTHETIC]]\n\n[[OPENING]]\n[CAM 01] MCU, eye-level, fixed side profile. Samira sits frame-left on a blue plastic bench, head resting softly on Felix's shoulder frame-right, staring blankly at the spinning dryer drums under flickering fluorescent light.\n[[/OPENING]]\n[[/STAGING]]\n\n[<BRIEF>]\n[CAM 01] -> [ACT] Samira stares blankly forward -> [ENV] Dryer drums spin continuously behind them.\n[CAM 01] -> [ACT] Samira shifts her head slightly -> SAMIRA says (soft sigh) {It feels so quiet in here—} -> [ACT] Samira blinks slowly at the spinning laundry.\n[CAM 01] -> [ACT] Samira adjusts her posture subtly -> SAMIRA says {—like time just stopped.} -> [ACT] Felix tilts his head gently toward her.\n[CAM 02] CU, low-angle, focused on bench seating -> [ACT] Samira slides her right hand slowly into her coat pocket\n[CAM 02] -> [ACT] Samira retrieves a brass key ring -> SAMIRA says {I won't be needing these—} -> [ACT] Samira holds the keys over Felix's open palm.\n[CAM 02] -> [ACT] Samira presses the brass keys gently into his palm -> FELIX says (soft laugh) {For your new place?} -> [ACT] Felix closes his fingers securely over the keys.\n[CAM 02] -> [ACT] Samira squeezes his closed fist firmly with both hands\n[CAM 03] MCU, over-the-shoulder, looking past Felix to Samira -> [ACT] Samira closes her eyes tightly -> SAMIRA says (trembling exhale) {Yeah— a fresh start.} -> [ACT] Samira rests her cheek deeper against his shoulder.\n[CAM 03] -> [ACT] Samira tightens her fingers around his jacket sleeve -> SAMIRA says {Thank you for staying tonight.} -> [ACT] Felix gazes warmly across the empty room.\n[CAM 03] -> [ACT] Felix rests his chin gently atop her beanie\n[CAM 01] MCU, eye-level, fixed side profile -> [ACT] Samira inhales a deep breath slowly -> SAMIRA says (muffled whisper) {Just stay like this—} -> [ACT] Samira remains completely still against his side.\n[CAM 01] -> [ACT] Samira relaxes her shoulders completely -> SAMIRA says {—for one last minute.} -> [ACT] Felix pats her hand reassuringly.\n[CAM 01] -> [ACT] Samira keeps her eyes closed peacefully -> [ENV] Rain streams down the exterior glass door.\n[CAM 03] MCU, over-the-shoulder view -> [ACT] Samira swallows hard -> SAMIRA says (shaky breath) {Don't forget this.} -> [ACT] Samira rests silently against his chest.\n[CAM 01] MCU, wide bench composition -> [ACT] Felix smiles calmly while Samira rests motionless on his shoulder -> FELIX says {Never, Sam.} -> [ACT] Both sit together as laundry tumbles endlessly in background.\n[</BRIEF>]",
+  "cues": [
+    {
+      "id": "cue-001",
+      "type": "shot",
+      "selectedText": "[CAM 01]",
+      "startTime": 0,
+      "endTime": 6.36,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 1400,
+      "endIndex": 1408
+    },
+    {
+      "id": "cue-002",
+      "type": "action",
+      "selectedText": "Samira stares blankly forward",
+      "startTime": 0,
+      "endTime": 1.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1418,
+      "endIndex": 1447
+    },
+    {
+      "id": "cue-003",
+      "type": "environment",
+      "selectedText": "Dryer drums spin continuously behind them.",
+      "startTime": 0,
+      "endTime": 6.36,
+      "colorClass": "bg-slate-400/50",
+      "speaker": null,
+      "startIndex": 1457,
+      "endIndex": 1499
+    },
+    {
+      "id": "cue-004",
+      "type": "audio",
+      "selectedText": "soft sigh",
+      "startTime": 0.8,
+      "endTime": 1.6,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 1566,
+      "endIndex": 1575
+    },
+    {
+      "id": "cue-005",
+      "type": "action",
+      "selectedText": "Samira shifts her head slightly",
+      "startTime": 1.2,
+      "endTime": 2.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1518,
+      "endIndex": 1549
+    },
+    {
+      "id": "cue-006",
+      "type": "dialogue",
+      "selectedText": "It feels so quiet in here—",
+      "startTime": 1.6,
+      "endTime": 3.7,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "SAMIRA",
+      "startIndex": 1578,
+      "endIndex": 1604
+    },
+    {
+      "id": "cue-007",
+      "type": "action",
+      "selectedText": "Samira blinks slowly at the spinning laundry.",
+      "startTime": 2.6,
+      "endTime": 4.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1615,
+      "endIndex": 1660
+    },
+    {
+      "id": "cue-008",
+      "type": "action",
+      "selectedText": "Samira adjusts her posture subtly",
+      "startTime": 4.4,
+      "endTime": 5.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1679,
+      "endIndex": 1712
+    },
+    {
+      "id": "cue-009",
+      "type": "dialogue",
+      "selectedText": "—like time just stopped.",
+      "startTime": 4.6,
+      "endTime": 6.3,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "SAMIRA",
+      "startIndex": 1729,
+      "endIndex": 1753
+    },
+    {
+      "id": "cue-010",
+      "type": "action",
+      "selectedText": "Felix tilts his head gently toward her.",
+      "startTime": 4.8,
+      "endTime": 6.36,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1764,
+      "endIndex": 1803
+    },
+    {
+      "id": "cue-011",
+      "type": "shot",
+      "selectedText": "[CAM 02] CU, low-angle, focused on bench seating",
+      "startTime": 6.36,
+      "endTime": 11.5,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 1804,
+      "endIndex": 1852
+    },
+    {
+      "id": "cue-012",
+      "type": "action",
+      "selectedText": "Samira slides her right hand slowly into her coat pocket",
+      "startTime": 6.36,
+      "endTime": 7.9,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1862,
+      "endIndex": 1918
+    },
+    {
+      "id": "cue-013",
+      "type": "action",
+      "selectedText": "Samira retrieves a brass key ring",
+      "startTime": 7.6,
+      "endTime": 9.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1937,
+      "endIndex": 1970
+    },
+    {
+      "id": "cue-014",
+      "type": "dialogue",
+      "selectedText": "I won't be needing these—",
+      "startTime": 7.7,
+      "endTime": 9.3,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "SAMIRA",
+      "startIndex": 1987,
+      "endIndex": 2012
+    },
+    {
+      "id": "cue-015",
+      "type": "action",
+      "selectedText": "Samira holds the keys over Felix's open palm.",
+      "startTime": 8.7,
+      "endTime": 9.6,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2023,
+      "endIndex": 2068
+    },
+    {
+      "id": "cue-016",
+      "type": "action",
+      "selectedText": "Samira presses the brass keys gently into his palm",
+      "startTime": 9.5,
+      "endTime": 10.4,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2087,
+      "endIndex": 2137
+    },
+    {
+      "id": "cue-017",
+      "type": "dialogue",
+      "selectedText": "For your new place?",
+      "startTime": 9.8,
+      "endTime": 11.2,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "FELIX",
+      "startIndex": 2166,
+      "endIndex": 2185
+    },
+    {
+      "id": "cue-018",
+      "type": "action",
+      "selectedText": "Felix closes his fingers securely over the keys.",
+      "startTime": 10.2,
+      "endTime": 11,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2196,
+      "endIndex": 2244
+    },
+    {
+      "id": "cue-019",
+      "type": "action",
+      "selectedText": "Samira squeezes his closed fist firmly with both hands",
+      "startTime": 10.7,
+      "endTime": 11.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2263,
+      "endIndex": 2317
+    },
+    {
+      "id": "cue-020",
+      "type": "shot",
+      "selectedText": "[CAM 03] MCU, over-the-shoulder, looking past Felix to Samira",
+      "startTime": 11.5,
+      "endTime": 16.5,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 2318,
+      "endIndex": 2379
+    },
+    {
+      "id": "cue-021",
+      "type": "action",
+      "selectedText": "Samira closes her eyes tightly",
+      "startTime": 11.8,
+      "endTime": 13.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2389,
+      "endIndex": 2419
+    },
+    {
+      "id": "cue-022",
+      "type": "dialogue",
+      "selectedText": "Yeah— a fresh start.",
+      "startTime": 11.9,
+      "endTime": 14.5,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "SAMIRA",
+      "startIndex": 2455,
+      "endIndex": 2475
+    },
+    {
+      "id": "cue-023",
+      "type": "action",
+      "selectedText": "Samira rests her cheek deeper against his shoulder.",
+      "startTime": 12.8,
+      "endTime": 14.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2486,
+      "endIndex": 2537
+    },
+    {
+      "id": "cue-024",
+      "type": "action",
+      "selectedText": "Samira tightens her fingers around his jacket sleeve",
+      "startTime": 13.5,
+      "endTime": 15.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2556,
+      "endIndex": 2608
+    },
+    {
+      "id": "cue-025",
+      "type": "dialogue",
+      "selectedText": "Thank you for staying tonight.",
+      "startTime": 14.8,
+      "endTime": 16.5,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "SAMIRA",
+      "startIndex": 2625,
+      "endIndex": 2655
+    },
+    {
+      "id": "cue-026",
+      "type": "action",
+      "selectedText": "Felix gazes warmly across the empty room.",
+      "startTime": 15,
+      "endTime": 16.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2666,
+      "endIndex": 2707
+    },
+    {
+      "id": "cue-027",
+      "type": "shot",
+      "selectedText": "[CAM 01] MCU, eye-level, fixed side profile",
+      "startTime": 16.5,
+      "endTime": 22.5,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 2770,
+      "endIndex": 2813
+    },
+    {
+      "id": "cue-028",
+      "type": "action",
+      "selectedText": "Felix rests his chin gently atop her beanie",
+      "startTime": 16.5,
+      "endTime": 19.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2726,
+      "endIndex": 2769
+    },
+    {
+      "id": "cue-035",
+      "type": "environment",
+      "selectedText": "Rain streams down the exterior glass door.",
+      "startTime": 16.5,
+      "endTime": 22.5,
+      "colorClass": "bg-slate-400/50",
+      "speaker": null,
+      "startIndex": 3181,
+      "endIndex": 3223
+    },
+    {
+      "id": "cue-029",
+      "type": "audio",
+      "selectedText": "muffled whisper",
+      "startTime": 17.5,
+      "endTime": 18.6,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 2875,
+      "endIndex": 2890
+    },
+    {
+      "id": "cue-030",
+      "type": "action",
+      "selectedText": "Samira inhales a deep breath slowly",
+      "startTime": 17.5,
+      "endTime": 18.9,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2823,
+      "endIndex": 2858
+    },
+    {
+      "id": "cue-031",
+      "type": "dialogue",
+      "selectedText": "Just stay like this—",
+      "startTime": 18.9,
+      "endTime": 20.7,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "SAMIRA",
+      "startIndex": 2893,
+      "endIndex": 2913
+    },
+    {
+      "id": "cue-032",
+      "type": "action",
+      "selectedText": "Samira remains completely still against his side.",
+      "startTime": 19.5,
+      "endTime": 22.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2924,
+      "endIndex": 2973
+    },
+    {
+      "id": "cue-033",
+      "type": "action",
+      "selectedText": "Samira relaxes her shoulders completely",
+      "startTime": 20,
+      "endTime": 22,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2992,
+      "endIndex": 3031
+    },
+    {
+      "id": "cue-034",
+      "type": "dialogue",
+      "selectedText": "—for one last minute.",
+      "startTime": 21,
+      "endTime": 23.2,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "SAMIRA",
+      "startIndex": 3048,
+      "endIndex": 3069
+    },
+    {
+      "id": "cue-036",
+      "type": "shot",
+      "selectedText": "[CAM 03] MCU, over-the-shoulder view",
+      "startTime": 22.5,
+      "endTime": 26.5,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 3224,
+      "endIndex": 3260
+    },
+    {
+      "id": "cue-037",
+      "type": "action",
+      "selectedText": "Samira swallows hard",
+      "startTime": 23,
+      "endTime": 24.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3270,
+      "endIndex": 3290
+    },
+    {
+      "id": "cue-039",
+      "type": "action",
+      "selectedText": "Samira rests silently against his chest.",
+      "startTime": 24.5,
+      "endTime": 26.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3351,
+      "endIndex": 3391
+    },
+    {
+      "id": "cue-038",
+      "type": "dialogue",
+      "selectedText": "Don't forget this.",
+      "startTime": 24.7,
+      "endTime": 26.3,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "SAMIRA",
+      "startIndex": 3322,
+      "endIndex": 3340
+    },
+    {
+      "id": "cue-040",
+      "type": "shot",
+      "selectedText": "[CAM 01] MCU, wide bench composition",
+      "startTime": 26.5,
+      "endTime": 29.8,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 3392,
+      "endIndex": 3428
+    },
+    {
+      "id": "cue-041",
+      "type": "action",
+      "selectedText": "Felix smiles calmly while Samira rests motionless on his shoulder",
+      "startTime": 26.5,
+      "endTime": 29.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3438,
+      "endIndex": 3503
+    },
+    {
+      "id": "cue-043",
+      "type": "action",
+      "selectedText": "Both sit together as laundry tumbles endlessly in background.",
+      "startTime": 26.5,
+      "endTime": 29.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3541,
+      "endIndex": 3602
+    },
+    {
+      "id": "cue-042",
+      "type": "dialogue",
+      "selectedText": "Never, Sam.",
+      "startTime": 27.5,
+      "endTime": 29.2,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "FELIX",
+      "startIndex": 3519,
+      "endIndex": 3530
+    }
+  ],
+  "settings": {
+    "general": {
+      "before": 0.5,
+      "after": 0.5
+    },
+    "dialogue": {
+      "before": 0.5,
+      "after": 0.7
+    },
+    "action": {
+      "before": 0,
+      "after": 0
+    },
+    "camera": {
+      "before": 0,
+      "after": 0
+    },
+    "shot": {
+      "before": 0,
+      "after": 0
+    },
+    "audio": {
+      "before": 0,
+      "after": 0
+    },
+    "vfx": {
+      "before": 0,
+      "after": 0
+    },
+    "transition": {
+      "before": 0,
+      "after": 0
+    },
+    "environment": {
+      "before": 0,
+      "after": 0
+    }
+  }
+}

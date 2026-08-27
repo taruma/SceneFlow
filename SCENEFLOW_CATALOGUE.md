@@ -58,12 +58,20 @@ To load a remote project, use `?project=URL`.
 | 2026-01-27 | `frame_02` | Wandering Souls | Kling 2.6 |
 | 2026-01-25 | `frame_01` | Distant | Kling 2.6 |
 
-## AI Clips (5)
+## AI Clips (13)
 
 *Hidden from the "All" library view — accessible via direct link or AI Clips tab.*
 
 | Date | ID | Title | Video Model |
 |---|---|---|---|
+| 2026-08-25 | `clip_screaming_la` | Screaming Amber Wood (Live Action) | Seedance 2.5 |
+| 2026-08-24 | `clip_follow_me` | Follow Me | Seedance 2.5 |
+| 2026-08-23 | `clip_mosaic_animation` | Mosaic (Animation) | Seedance 2.5 |
+| 2026-08-20 | `clip_broken_frame` | Broken Frame | Seedance 2.5 |
+| 2026-08-07 | `clip_silent_accusation` | Silent Accusation | Seedance 2.5 |
+| 2026-08-05 | `clip_the_drivers_seat` | The Driver's Seat | Seedance 2.5 |
+| 2026-08-04 | `clip_false_pretense` | False Pretense | Seedance 2.5 |
+| 2026-08-03 | `clip_the_handover` | The Handover | Seedance 2.5 |
 | 2026-06-03 | `the_magic_card` | The Magic Card | Seedance 2.0 |
 | 2026-06-01 | `wonder_uncut` | Wonder (Uncut) | Seedance 2.0 |
 | 2026-05-07 | `reality_bending` | Reality-Bending Video | Seedance 2.0 |

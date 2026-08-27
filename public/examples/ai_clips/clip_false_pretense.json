@@ -1,0 +1,653 @@
+{
+  "youtubeId": "https://youtu.be/Hu9xZTQxMCs",
+  "scriptText": "\n\n\n\n\n\n\n\n\n\nI. FALSE PRETENSE\n\n[[STAGING]]\n[[INTENT]]\nCreate a suspense drama scene featuring @actor1 as ROBERT, @actor2 as ARTHUR, @actor3 as SAMIRA, @actor4 as EVAN, and @actor5 as FIONA gathered in a claustrophobic family estate living room where hidden secrets and calculated betrayal slowly unravel.\n[[/INTENT]]\n\n[[LOGIC]]\nEnsure absolute spatial continuity across three established framing axes and maintain strict relative screen direction among all five characters. Preserve hand placement on furniture, physical posture carryover, and lighting directionality across cuts. Avoid rapid editing or unmotivated focal changes to retain the suffocating, grounded tension.\n[[/LOGIC]]\n\n[[AESTHETIC]]\nPalette: Muted amber, deep burgundy mahogany, rainy slate blue, shadowy charcoal\nLighting: Warm firelight key from hearth frame-left, cold overcast window side-fill frame-right\nLocation: Estate library living room, dark coffered ceiling, velvet drapes, mahogany bookshelves, brick hearth\nWardrobe: Robert wearing dark charcoal wool cardigan over open-collar cream shirt; Arthur wearing navy tailored blazer and oxford shirt; Samira wearing olive cable-knit sweater and pleated trousers; Evan wearing faded indigo crewneck sweater and dark chinos; Fiona wearing beige knit cardigan over silk blouse\nSound: No Music. Diegetic Sound Only. Ambient rain against glass, crackling embers, muted floorboard creaks\n[[/AESTHETIC]]\n\n[[OPENING]]\nEstablishing wide framing of a dimly lit mahogany-paneled estate living room. Firelight flickers soft orange on frame-left, while pale slate rain light filters through tall sash windows on frame-right. Robert sits motionless in a wingback armchair left of center, right hand resting on the carved wooden armrest. Arthur stands near the fireplace mantel facing center, arms crossed tightly. Evan stands defensively beside a liquor cabinet background-right, gripping a tumbler. Fiona sits stiffly in a shadow-draped velvet chair midground-center. Samira stands motionless by the tall windows frame-right, silhouette outlined against rain-streaked glass.\n[[/OPENING]]\n[[/STAGING]]\n\n[<BRIEF>]\n[CAM 01] WS, HIGH-ANGLE, LOCKOFF [AXIS] Fireplace frame-left to window frame-right -> Arthur shifts weight near the hearth while Evan takes a short step back toward the liquor cabinet -> Robert remains perfectly still in his armchair, eyes tracking the room quietly while Arthur exhales heavily\n[CAM 02] MS, LOW-ANGLE, SLOW PUSH [AXIS] Center axis anchored on winged armchair -> Robert leans slightly forward, gripping the left armrest with silvered knuckles -> Robert says (sighs softly) {It does not matter who unlocked the drawer.} -> Robert tilts his head slowly, gazing across at Arthur without blinking\n[CAM 03] OTS MS, EYE-LEVEL, STATIC [AXIS] Over Arthur shoulder facing Evan frame-right -> Arthur turns his torso toward the bar cart while Evan clenches his jaw -> Arthur says (O.S.) {Be straight with us for once, Evan.} -> Evan snaps his head up, raising his chin defensively and swallowing hard\n[CAM 02] [AXIS] Center axis anchored on shadowed wing chair -> Fiona leans forward into the hearth light, resting her forearms on her knees -> Fiona says (scoffs) {—acting like you did not check his desk yourself, Arthur.} -> Fiona folds her hands tightly together, eyes fixed on Arthur back\n[CAM 01] [AXIS] Room perimeter master plane -> Evan pushes off the bar cart and takes two quick strides toward the rug center -> Evan says (gasping breath) {do not put this on me!} -> Evan stops abruptly mid-room, chest heaving while Arthur turns around to face him directly\n[CAM 03] [AXIS] Over Fiona shoulder facing Samira by window -> Samira turns her head slowly away from the glass, entering full profile -> Samira says {there is nothing inside that desk.} -> Samira lowers her gaze to the floor, fingers tightening around her wrist\n[CAM 02] [AXIS] Low frontal center on armchair -> Robert relaxes his shoulders slightly, sinking back into dark leather padding -> Robert (quiet laugh) says {she always was the observant one.} -> Robert rests his chin in his right palm, studying his children with unsettling calm\n[CAM 01] [AXIS] Master room symmetry -> Arthur steps between Evan and the center rug, raising one open hand -> Arthur (O.S.) says {what are you saying, Samira?} -> Fiona stands up slowly from her armchair, backing away toward the wall bookcase\n[CAM 03] [AXIS] Over Arthur shoulder facing Samira frame-right -> Samira takes one slow step away from the rain window toward room center -> Samira (labored exhale) then say {...I saw him burn the envelope two nights ago.} -> Samira halts her movement, keeping her gaze locked firmly onto Robert\n[CAM 02] [AXIS] Low centered hero framing on patriarch -> Robert slowly spreads his hands flat onto the leather armrests -> Robert says {—and yet you all searched anyway.} -> Robert smiles faintly without warmth, sitting motionless while room atmosphere freezes in silence\n[</BRIEF>]",
+  "cues": [
+    {
+      "id": "cue-001",
+      "type": "camera",
+      "selectedText": "[CAM 01]",
+      "startTime": 0,
+      "endTime": 0.2,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 2122,
+      "endIndex": 2130
+    },
+    {
+      "id": "cue-002",
+      "type": "shot",
+      "selectedText": "WS, HIGH-ANGLE, LOCKOFF",
+      "startTime": 0,
+      "endTime": 3,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 2131,
+      "endIndex": 2154
+    },
+    {
+      "id": "cue-003",
+      "type": "environment",
+      "selectedText": "Fireplace frame-left to window frame-right",
+      "startTime": 0,
+      "endTime": 3,
+      "colorClass": "bg-slate-400/50",
+      "speaker": null,
+      "startIndex": 2162,
+      "endIndex": 2204
+    },
+    {
+      "id": "cue-004",
+      "type": "action",
+      "selectedText": "Arthur shifts weight near the hearth while Evan takes a short step back toward the liquor cabinet",
+      "startTime": 0,
+      "endTime": 3,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2208,
+      "endIndex": 2305
+    },
+    {
+      "id": "cue-005",
+      "type": "action",
+      "selectedText": "Robert remains perfectly still in his armchair, eyes tracking the room quietly while Arthur exhales heavily",
+      "startTime": 0,
+      "endTime": 3,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2309,
+      "endIndex": 2416
+    },
+    {
+      "id": "cue-006",
+      "type": "camera",
+      "selectedText": "[CAM 02]",
+      "startTime": 3,
+      "endTime": 3.2,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 2417,
+      "endIndex": 2425
+    },
+    {
+      "id": "cue-007",
+      "type": "shot",
+      "selectedText": "MS, LOW-ANGLE, SLOW PUSH",
+      "startTime": 3,
+      "endTime": 6,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 2426,
+      "endIndex": 2450
+    },
+    {
+      "id": "cue-008",
+      "type": "environment",
+      "selectedText": "Center axis anchored on winged armchair",
+      "startTime": 3,
+      "endTime": 6,
+      "colorClass": "bg-slate-400/50",
+      "speaker": null,
+      "startIndex": 2458,
+      "endIndex": 2497
+    },
+    {
+      "id": "cue-009",
+      "type": "action",
+      "selectedText": "Robert leans slightly forward, gripping the left armrest with silvered knuckles",
+      "startTime": 3,
+      "endTime": 6,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2501,
+      "endIndex": 2580
+    },
+    {
+      "id": "cue-011",
+      "type": "action",
+      "selectedText": "Robert tilts his head slowly, gazing across at Arthur without blinking",
+      "startTime": 3,
+      "endTime": 6,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2660,
+      "endIndex": 2730
+    },
+    {
+      "id": "cue-010",
+      "type": "dialogue",
+      "selectedText": "It does not matter who unlocked the drawer.",
+      "startTime": 4.1,
+      "endTime": 6,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "ROBERT",
+      "startIndex": 2612,
+      "endIndex": 2655
+    },
+    {
+      "id": "cue-012",
+      "type": "camera",
+      "selectedText": "[CAM 03]",
+      "startTime": 6,
+      "endTime": 6.2,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 2731,
+      "endIndex": 2739
+    },
+    {
+      "id": "cue-013",
+      "type": "shot",
+      "selectedText": "OTS MS, EYE-LEVEL, STATIC",
+      "startTime": 6,
+      "endTime": 9,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 2740,
+      "endIndex": 2765
+    },
+    {
+      "id": "cue-014",
+      "type": "environment",
+      "selectedText": "Over Arthur shoulder facing Evan frame-right",
+      "startTime": 6,
+      "endTime": 9,
+      "colorClass": "bg-slate-400/50",
+      "speaker": null,
+      "startIndex": 2773,
+      "endIndex": 2817
+    },
+    {
+      "id": "cue-015",
+      "type": "action",
+      "selectedText": "Arthur turns his torso toward the bar cart while Evan clenches his jaw",
+      "startTime": 6,
+      "endTime": 9,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2821,
+      "endIndex": 2891
+    },
+    {
+      "id": "cue-017",
+      "type": "action",
+      "selectedText": "Evan snaps his head up, raising his chin defensively and swallowing hard",
+      "startTime": 6,
+      "endTime": 9,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2955,
+      "endIndex": 3027
+    },
+    {
+      "id": "cue-016",
+      "type": "dialogue",
+      "selectedText": "Be straight with us for once, Evan.",
+      "startTime": 6.9,
+      "endTime": 8.9,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "ARTHUR",
+      "startIndex": 2915,
+      "endIndex": 2950
+    },
+    {
+      "id": "cue-018",
+      "selectedText": "[CAM 02]",
+      "startIndex": 3028,
+      "endIndex": 3036,
+      "startTime": 9,
+      "endTime": 9.2,
+      "colorClass": "bg-green-400/50",
+      "type": "camera"
+    },
+    {
+      "id": "cue-019",
+      "type": "environment",
+      "selectedText": "Center axis anchored on shadowed wing chair",
+      "startTime": 9,
+      "endTime": 11.5,
+      "colorClass": "bg-slate-400/50",
+      "speaker": null,
+      "startIndex": 3044,
+      "endIndex": 3087
+    },
+    {
+      "id": "cue-020",
+      "type": "action",
+      "selectedText": "Fiona leans forward into the hearth light, resting her forearms on her knees",
+      "startTime": 9,
+      "endTime": 11.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3091,
+      "endIndex": 3167
+    },
+    {
+      "id": "cue-023",
+      "type": "action",
+      "selectedText": "Fiona folds her hands tightly together, eyes fixed on Arthur back",
+      "startTime": 9,
+      "endTime": 11.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3254,
+      "endIndex": 3319
+    },
+    {
+      "id": "cue-021",
+      "type": "audio",
+      "selectedText": "scoffs",
+      "startTime": 9.6,
+      "endTime": 9.9,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3183,
+      "endIndex": 3189
+    },
+    {
+      "id": "cue-022",
+      "type": "dialogue",
+      "selectedText": "—acting like you did not check his desk yourself, Arthur.",
+      "startTime": 9.9,
+      "endTime": 11.5,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "FIONA",
+      "startIndex": 3192,
+      "endIndex": 3249
+    },
+    {
+      "id": "cue-024",
+      "selectedText": "[CAM 01]",
+      "startIndex": 3320,
+      "endIndex": 3328,
+      "startTime": 11.5,
+      "endTime": 11.7,
+      "colorClass": "bg-green-400/50",
+      "type": "camera"
+    },
+    {
+      "id": "cue-025",
+      "type": "environment",
+      "selectedText": "Room perimeter master plane",
+      "startTime": 11.5,
+      "endTime": 14.5,
+      "colorClass": "bg-slate-400/50",
+      "speaker": null,
+      "startIndex": 3336,
+      "endIndex": 3363
+    },
+    {
+      "id": "cue-026",
+      "type": "action",
+      "selectedText": "Evan pushes off the bar cart and takes two quick strides toward the rug center",
+      "startTime": 11.5,
+      "endTime": 14.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3367,
+      "endIndex": 3445
+    },
+    {
+      "id": "cue-029",
+      "type": "action",
+      "selectedText": "Evan stops abruptly mid-room, chest heaving while Arthur turns around to face him directly",
+      "startTime": 11.5,
+      "endTime": 14.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3504,
+      "endIndex": 3594
+    },
+    {
+      "id": "cue-027",
+      "type": "audio",
+      "selectedText": "gasping breath",
+      "startTime": 12.5,
+      "endTime": 12.8,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3460,
+      "endIndex": 3474
+    },
+    {
+      "id": "cue-028",
+      "type": "dialogue",
+      "selectedText": "do not put this on me!",
+      "startTime": 12.8,
+      "endTime": 13.9,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "EVAN",
+      "startIndex": 3477,
+      "endIndex": 3499
+    },
+    {
+      "id": "cue-030",
+      "selectedText": "[CAM 03]",
+      "startIndex": 3595,
+      "endIndex": 3603,
+      "startTime": 14.5,
+      "endTime": 14.7,
+      "colorClass": "bg-green-400/50",
+      "type": "camera"
+    },
+    {
+      "id": "cue-031",
+      "type": "environment",
+      "selectedText": "Over Fiona shoulder facing Samira by window",
+      "startTime": 14.5,
+      "endTime": 17,
+      "colorClass": "bg-slate-400/50",
+      "speaker": null,
+      "startIndex": 3611,
+      "endIndex": 3654
+    },
+    {
+      "id": "cue-032",
+      "type": "action",
+      "selectedText": "Samira turns her head slowly away from the glass, entering full profile",
+      "startTime": 14.5,
+      "endTime": 17,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3658,
+      "endIndex": 3729
+    },
+    {
+      "id": "cue-034",
+      "type": "action",
+      "selectedText": "Samira lowers her gaze to the floor, fingers tightening around her wrist",
+      "startTime": 14.5,
+      "endTime": 17,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3785,
+      "endIndex": 3857
+    },
+    {
+      "id": "cue-033",
+      "type": "dialogue",
+      "selectedText": "there is nothing inside that desk.",
+      "startTime": 15.3,
+      "endTime": 16.7,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "SAMIRA",
+      "startIndex": 3746,
+      "endIndex": 3780
+    },
+    {
+      "id": "cue-035",
+      "selectedText": "[CAM 02]",
+      "startIndex": 3858,
+      "endIndex": 3866,
+      "startTime": 17,
+      "endTime": 17.2,
+      "colorClass": "bg-green-400/50",
+      "type": "camera"
+    },
+    {
+      "id": "cue-036",
+      "type": "shot",
+      "selectedText": "Low frontal center on armchair",
+      "startTime": 17,
+      "endTime": 20,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 3874,
+      "endIndex": 3904
+    },
+    {
+      "id": "cue-037",
+      "type": "action",
+      "selectedText": "Robert relaxes his shoulders slightly, sinking back into dark leather padding",
+      "startTime": 17,
+      "endTime": 20,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3908,
+      "endIndex": 3985
+    },
+    {
+      "id": "cue-040",
+      "type": "action",
+      "selectedText": "Robert rests his chin in his right palm, studying his children with unsettling calm",
+      "startTime": 17,
+      "endTime": 20,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4054,
+      "endIndex": 4137
+    },
+    {
+      "id": "cue-038",
+      "type": "audio",
+      "selectedText": "quiet laugh",
+      "startTime": 17.7,
+      "endTime": 18,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3997,
+      "endIndex": 4008
+    },
+    {
+      "id": "cue-039",
+      "type": "dialogue",
+      "selectedText": "she always was the observant one.",
+      "startTime": 18,
+      "endTime": 19.8,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "ROBERT",
+      "startIndex": 4016,
+      "endIndex": 4049
+    },
+    {
+      "id": "cue-041",
+      "selectedText": "[CAM 01]",
+      "startIndex": 4138,
+      "endIndex": 4146,
+      "startTime": 20,
+      "endTime": 20.2,
+      "colorClass": "bg-green-400/50",
+      "type": "camera"
+    },
+    {
+      "id": "cue-042",
+      "type": "environment",
+      "selectedText": "Master room symmetry",
+      "startTime": 20,
+      "endTime": 22,
+      "colorClass": "bg-slate-400/50",
+      "speaker": null,
+      "startIndex": 4154,
+      "endIndex": 4174
+    },
+    {
+      "id": "cue-043",
+      "type": "action",
+      "selectedText": "Arthur steps between Evan and the center rug, raising one open hand",
+      "startTime": 20,
+      "endTime": 22,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4178,
+      "endIndex": 4245
+    },
+    {
+      "id": "cue-045",
+      "type": "action",
+      "selectedText": "Fiona stands up slowly from her armchair, backing away toward the wall bookcase",
+      "startTime": 20,
+      "endTime": 22,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4302,
+      "endIndex": 4381
+    },
+    {
+      "id": "cue-044",
+      "type": "dialogue",
+      "selectedText": "what are you saying, Samira?",
+      "startTime": 20.7,
+      "endTime": 21.8,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "ARTHUR",
+      "startIndex": 4269,
+      "endIndex": 4297
+    },
+    {
+      "id": "cue-046",
+      "selectedText": "[CAM 03]",
+      "startIndex": 4382,
+      "endIndex": 4390,
+      "startTime": 22,
+      "endTime": 22.2,
+      "colorClass": "bg-green-400/50",
+      "type": "camera"
+    },
+    {
+      "id": "cue-047",
+      "type": "environment",
+      "selectedText": "Over Arthur shoulder facing Samira frame-right",
+      "startTime": 22,
+      "endTime": 25.5,
+      "colorClass": "bg-slate-400/50",
+      "speaker": null,
+      "startIndex": 4398,
+      "endIndex": 4444
+    },
+    {
+      "id": "cue-048",
+      "type": "action",
+      "selectedText": "Samira takes one slow step away from the rain window toward room center",
+      "startTime": 22,
+      "endTime": 25.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4448,
+      "endIndex": 4519
+    },
+    {
+      "id": "cue-051",
+      "type": "action",
+      "selectedText": "Samira halts her movement, keeping her gaze locked firmly onto Robert",
+      "startTime": 22,
+      "endTime": 25.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4608,
+      "endIndex": 4677
+    },
+    {
+      "id": "cue-049",
+      "type": "audio",
+      "selectedText": "labored exhale",
+      "startTime": 22.8,
+      "endTime": 23.2,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 4531,
+      "endIndex": 4545
+    },
+    {
+      "id": "cue-050",
+      "type": "dialogue",
+      "selectedText": "...I saw him burn the envelope two nights ago.",
+      "startTime": 23.2,
+      "endTime": 25.4,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "SAMIRA",
+      "startIndex": 4557,
+      "endIndex": 4603
+    },
+    {
+      "id": "cue-052",
+      "selectedText": "[CAM 02]",
+      "startIndex": 4678,
+      "endIndex": 4686,
+      "startTime": 25.5,
+      "endTime": 25.7,
+      "colorClass": "bg-green-400/50",
+      "type": "camera"
+    },
+    {
+      "id": "cue-053",
+      "type": "shot",
+      "selectedText": "Low centered hero framing on patriarch",
+      "startTime": 25.5,
+      "endTime": 29,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 4694,
+      "endIndex": 4732
+    },
+    {
+      "id": "cue-054",
+      "type": "action",
+      "selectedText": "Robert slowly spreads his hands flat onto the leather armrests",
+      "startTime": 25.5,
+      "endTime": 29,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4736,
+      "endIndex": 4798
+    },
+    {
+      "id": "cue-056",
+      "type": "action",
+      "selectedText": "Robert smiles faintly without warmth, sitting motionless while room atmosphere freezes in silence",
+      "startTime": 25.5,
+      "endTime": 29,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4853,
+      "endIndex": 4950
+    },
+    {
+      "id": "cue-055",
+      "type": "dialogue",
+      "selectedText": "—and yet you all searched anyway.",
+      "startTime": 26.5,
+      "endTime": 28.5,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "ROBERT",
+      "startIndex": 4815,
+      "endIndex": 4848
+    }
+  ],
+  "settings": {
+    "general": {
+      "before": 0.5,
+      "after": 0.5
+    },
+    "dialogue": {
+      "before": 0.5,
+      "after": 0.7
+    },
+    "action": {
+      "before": 0,
+      "after": 0
+    },
+    "camera": {
+      "before": 0,
+      "after": 0
+    },
+    "shot": {
+      "before": 0,
+      "after": 0
+    },
+    "audio": {
+      "before": 0,
+      "after": 0
+    },
+    "vfx": {
+      "before": 0,
+      "after": 0
+    },
+    "transition": {
+      "before": 0,
+      "after": 0
+    },
+    "environment": {
+      "before": 0,
+      "after": 0
+    }
+  }
+}

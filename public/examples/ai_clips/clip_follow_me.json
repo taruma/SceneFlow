@@ -1,0 +1,911 @@
+{
+  "youtubeId": "https://youtu.be/aa-bZw_diME",
+  "scriptText": "\n\n\n\n\n\n\n\n\n\nI. FOLLOW ME\n\n[[STAGING]]\n[[INTENT]]\nCreate a visceral, continuous single-take action sequence from an unbroken child POV where @actor1 as Robert (voice: @audio1), a battle-hardened soldier, rescues the child from a ruined apartment building during an off-screen alien assault.\n[[/INTENT]]\n\n[[LOGIC]]\nMaintain an unbroken first-person child POV at low eye-level throughout, ensuring grounded physical interactions, realistic camera inertia responding to shockwaves, and strict spatial continuity without cuts.\n[[/LOGIC]]\n\n[[AESTHETIC]]\nMedium: Gritty cinematic continuous take, low-angle handheld camera\nPalette: Desaturated slate grays, cold blues, harsh warm flashes of orange explosive light\nLighting: Dim ambient moonlight punctuated by strobing exterior flashes and embers\nLocation: Decimated concrete apartment corridor, exposed rebar, hanging wires, rubble\nWardrobe: Robert wearing distressed olive-drab tactical vest over a dust-stained combat shirt, reinforced cargo pants, combat gloves, dirt-streaked tactical harness; Child wearing oversized frayed gray woolen knit sweater with torn cuffs\nAudio: Diegetic only; resonant building rumbles, off-screen guttural sonic pulses, distant ballistic echoes, gritty debris crunches underfoot\n[[/AESTHETIC]]\n\n[[OPENING]]\nECU, child POV from floor looking upward through blinking eye-vignettes, Robert leaning close into lens with soot-streaked skin and urgent eyes amid dim blue moonlight and drifting drywall dust.\n[[/OPENING]]\n[[/STAGING]]\n\n[<BRIEF>]\n[CAM] ECU, LOW ANGLE, POV FLOOR -> [ACT] Blinking dual-lid vignette widens as Robert leans inches from lens -> Robert says (whispering) {Hey... wake up.} -> [ACT] Robert taps lens edge gently -> <Muffled ringing tone>\n[CAM] ECU, JOLTING HANDHELD -> [VFX] Heavy shockwave rumbles through room as plaster dust rains down -> <Violent distant concussive blast> -> [ACT] Robert flinches slightly, shielding child's head with broad forearm\n[CAM] MCU, LOW ANGLE UPWARD -> [ACT] Robert maintains steady eye contact -> Robert says (tense, low breath) {Easy... Stay calm. Follow me, understand?} -> [ACT] Robert reaches right hand toward lens -> <Rhythmic distant ballistic fire>\n[CAM] TILT DOWN THEN UP -> [ACT] POV nods affirmatively in rapid motion -> [ACT] Frame steadies back onto Robert's focused expression -> <Scraping masonry on floor>\n[CAM] RISING TRACKING POV -> [ACT] Robert grips camera frame and hoists POV upward to child standing height -> Robert says (strained breath) {Up on your feet.} -> [ACT] Robert turns forward toward room exit -> <Rustling combat gear>\n[CAM] TRACKING FORWARD, LOW ANGLE -> [ACT] POV follows tightly behind Robert's back as he reaches breached doorway -> [ACT] Robert halts at threshold, peering left down corridor -> <Screeching metallic stress O.S.>\n[CAM] VIOLENT SHAKE, LOW ANGLE -> [VFX] Shockwave rattles corridor as ceiling chunks collapse frame-right -> <Deep guttural acoustic pulse> -> [ACT] Robert throws left arm back, pressing POV flat against concrete wall\n[CAM] MCU, LOW ANGLE -> [BLOCK] Robert shields POV against wall -> [ACT] Robert sweeps corridor ahead with tactical vigilance -> Robert says (urgent whisper) {Keep low, right behind me.} -> [ACT] Robert glances back down into lens -> <Hissing steam from ruptured pipe>\n[CAM] CU, LOW ANGLE -> [ACT] Robert stares directly into lens with intense focus -> Robert says (firm) {Ready? Eyes on me.} -> [ACT] Robert waits half a beat for confirmation -> <Staccato gunfire echoes O.S.>\n[CAM] QUICK TILT DOWN AND UP -> [ACT] POV nods rapidly -> [ACT] Lens locks back onto Robert's nodding confirmation -> <Crunching glass under boot>\n[CAM] LOW TRACKING FORWARD -> [ACT] Robert drops into crouch and advances through doorway into dusty hallway -> [ACT] POV follows closely behind his left shoulder -> <Scuffling rapid footsteps>\n[CAM] TRACKING FORWARD, TIGHT -> [ACT] Robert maneuvers past dangling live wires and concrete debris -> [ACT] Robert keeps right hand on carbine, left hand guiding behind him -> <Humming structural tremor>\n[CAM] SHAKY TRACKING POV -> [VFX] Blinding orange flash strobes through exterior window gap -> <Massive explosion outside> -> [ACT] Robert lowers posture further, bracing against hallway corner\n[CAM] MCU, LOW ANGLE -> [ACT] Robert leans around corner, scanning ahead -> [ACT] Robert raises left hand, signaling a brief hold -> <Distant extraterrestrial screech>\n[CAM] MCU, LOW ANGLE -> [ACT] Robert pivots head back toward lens -> Robert says (hushed intensity) {Move now, sprint to the stairs.} -> [ACT] Robert pushes off wall into forward stride -> <Shuffling boots on rubble>\n[CAM] RUNNING HANDHELD, LOW ANGLE -> [ACT] POV accelerates immediately behind Robert down ruined hallway -> [ACT] Robert checks rear shoulder while running -> <Heavy syncopated breathing and footfalls>\n[CAM] TRACKING FORWARD -> [ACT] Robert reaches dark stairwell entrance and yanks reinforced metal door open -> [ACT] Robert waves POV through threshold ahead of him -> <Heavy metal latch clanking>\n[CAM] PUSH FORWARD DOWNWARD -> [ACT] POV plunges into dim stairwell landing as Robert follows behind, sealing door shut -> Robert says (grunted effort) {Keep moving down.} -> [ACT] POV descends first step into gloom -> <Heavy iron door slamming>\n[</BRIEF>]",
+  "cues": [
+    {
+      "id": "cue-001",
+      "type": "shot",
+      "selectedText": "ECU, LOW ANGLE, POV FLOOR",
+      "startTime": 0,
+      "endTime": 0.7,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 1520,
+      "endIndex": 1545
+    },
+    {
+      "id": "cue-002",
+      "type": "action",
+      "selectedText": "Blinking dual-lid vignette widens as Robert leans inches from lens",
+      "startTime": 0,
+      "endTime": 0.7,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1555,
+      "endIndex": 1621
+    },
+    {
+      "id": "cue-003",
+      "type": "dialogue",
+      "selectedText": "Hey... wake up.",
+      "startTime": 0,
+      "endTime": 0.7,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "ROBERT",
+      "startIndex": 1651,
+      "endIndex": 1666
+    },
+    {
+      "id": "cue-004",
+      "type": "action",
+      "selectedText": "Robert taps lens edge gently",
+      "startTime": 0,
+      "endTime": 0.7,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1677,
+      "endIndex": 1705
+    },
+    {
+      "id": "cue-005",
+      "type": "audio",
+      "selectedText": "Muffled ringing tone",
+      "startTime": 0,
+      "endTime": 0.7,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 1710,
+      "endIndex": 1730
+    },
+    {
+      "id": "cue-006",
+      "type": "camera",
+      "selectedText": "ECU, JOLTING HANDHELD",
+      "startTime": 1.5,
+      "endTime": 2.2,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 1738,
+      "endIndex": 1759
+    },
+    {
+      "id": "cue-007",
+      "type": "vfx",
+      "selectedText": "Heavy shockwave rumbles through room as plaster dust rains down",
+      "startTime": 1.5,
+      "endTime": 2.2,
+      "colorClass": "bg-cyan-400/50",
+      "speaker": null,
+      "startIndex": 1769,
+      "endIndex": 1832
+    },
+    {
+      "id": "cue-008",
+      "type": "audio",
+      "selectedText": "Violent distant concussive blast",
+      "startTime": 1.5,
+      "endTime": 2.2,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 1837,
+      "endIndex": 1869
+    },
+    {
+      "id": "cue-009",
+      "type": "action",
+      "selectedText": "Robert flinches slightly, shielding child's head with broad forearm",
+      "startTime": 1.5,
+      "endTime": 2.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1880,
+      "endIndex": 1947
+    },
+    {
+      "id": "cue-010",
+      "type": "shot",
+      "selectedText": "MCU, LOW ANGLE UPWARD",
+      "startTime": 2.3,
+      "endTime": 7.5,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 1954,
+      "endIndex": 1975
+    },
+    {
+      "id": "cue-011",
+      "type": "action",
+      "selectedText": "Robert maintains steady eye contact",
+      "startTime": 2.3,
+      "endTime": 7.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1985,
+      "endIndex": 2020
+    },
+    {
+      "id": "cue-012",
+      "type": "audio",
+      "selectedText": "Rhythmic distant ballistic fire",
+      "startTime": 2.3,
+      "endTime": 7.5,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 2151,
+      "endIndex": 2182
+    },
+    {
+      "id": "cue-013",
+      "type": "dialogue",
+      "selectedText": "Easy... Stay calm. Follow me, understand?",
+      "startTime": 3.2,
+      "endTime": 7.2,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "ROBERT",
+      "startIndex": 2057,
+      "endIndex": 2098
+    },
+    {
+      "id": "cue-014",
+      "type": "action",
+      "selectedText": "Robert reaches right hand toward lens",
+      "startTime": 6.8,
+      "endTime": 7.7,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2109,
+      "endIndex": 2146
+    },
+    {
+      "id": "cue-015",
+      "type": "camera",
+      "selectedText": "TILT DOWN THEN UP",
+      "startTime": 7.5,
+      "endTime": 8.5,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 2190,
+      "endIndex": 2207
+    },
+    {
+      "id": "cue-016",
+      "type": "action",
+      "selectedText": "POV nods affirmatively in rapid motion",
+      "startTime": 7.8,
+      "endTime": 8.3,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2217,
+      "endIndex": 2255
+    },
+    {
+      "id": "cue-017",
+      "type": "action",
+      "selectedText": "Frame steadies back onto Robert's focused expression",
+      "startTime": 7.8,
+      "endTime": 8.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2265,
+      "endIndex": 2317
+    },
+    {
+      "id": "cue-018",
+      "type": "audio",
+      "selectedText": "Scraping masonry on floor",
+      "startTime": 7.8,
+      "endTime": 8.5,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 2322,
+      "endIndex": 2347
+    },
+    {
+      "id": "cue-019",
+      "type": "dialogue",
+      "selectedText": "Up on your feet.",
+      "startTime": 8,
+      "endTime": 8.9,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "ROBERT",
+      "startIndex": 2491,
+      "endIndex": 2507
+    },
+    {
+      "id": "cue-020",
+      "type": "camera",
+      "selectedText": "RISING TRACKING POV",
+      "startTime": 8.5,
+      "endTime": 9.1,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 2355,
+      "endIndex": 2374
+    },
+    {
+      "id": "cue-021",
+      "type": "action",
+      "selectedText": "Robert grips camera frame and hoists POV upward to child standing height",
+      "startTime": 8.5,
+      "endTime": 9.1,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2384,
+      "endIndex": 2456
+    },
+    {
+      "id": "cue-023",
+      "type": "audio",
+      "selectedText": "Rustling combat gear",
+      "startTime": 8.5,
+      "endTime": 9.3,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 2560,
+      "endIndex": 2580
+    },
+    {
+      "id": "cue-022",
+      "type": "action",
+      "selectedText": "Robert turns forward toward room exit",
+      "startTime": 8.7,
+      "endTime": 9.3,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2518,
+      "endIndex": 2555
+    },
+    {
+      "id": "cue-024",
+      "type": "camera",
+      "selectedText": "TRACKING FORWARD, LOW ANGLE",
+      "startTime": 9.1,
+      "endTime": 11,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 2588,
+      "endIndex": 2615
+    },
+    {
+      "id": "cue-025",
+      "type": "action",
+      "selectedText": "POV follows tightly behind Robert's back as he reaches breached doorway",
+      "startTime": 9.1,
+      "endTime": 10.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2625,
+      "endIndex": 2696
+    },
+    {
+      "id": "cue-026",
+      "type": "action",
+      "selectedText": "Robert halts at threshold, peering left down corridor",
+      "startTime": 10.5,
+      "endTime": 11.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2706,
+      "endIndex": 2759
+    },
+    {
+      "id": "cue-027",
+      "type": "audio",
+      "selectedText": "Screeching metallic stress O.S.",
+      "startTime": 10.5,
+      "endTime": 11.2,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 2764,
+      "endIndex": 2795
+    },
+    {
+      "id": "cue-028",
+      "type": "camera",
+      "selectedText": "VIOLENT SHAKE, LOW ANGLE",
+      "startTime": 11.2,
+      "endTime": 13,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 2803,
+      "endIndex": 2827
+    },
+    {
+      "id": "cue-029",
+      "type": "vfx",
+      "selectedText": "Shockwave rattles corridor as ceiling chunks collapse frame-right",
+      "startTime": 11.5,
+      "endTime": 12.5,
+      "colorClass": "bg-cyan-400/50",
+      "speaker": null,
+      "startIndex": 2837,
+      "endIndex": 2902
+    },
+    {
+      "id": "cue-030",
+      "type": "audio",
+      "selectedText": "Deep guttural acoustic pulse",
+      "startTime": 11.5,
+      "endTime": 12.5,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 2907,
+      "endIndex": 2935
+    },
+    {
+      "id": "cue-031",
+      "type": "action",
+      "selectedText": "Robert throws left arm back, pressing POV flat against concrete wall",
+      "startTime": 11.5,
+      "endTime": 13.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2946,
+      "endIndex": 3014
+    },
+    {
+      "id": "cue-032",
+      "type": "shot",
+      "selectedText": "MCU, LOW ANGLE",
+      "startTime": 13,
+      "endTime": 18,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 3021,
+      "endIndex": 3035
+    },
+    {
+      "id": "cue-033",
+      "type": "action",
+      "selectedText": "Robert shields POV against wall",
+      "startTime": 13,
+      "endTime": 18,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3047,
+      "endIndex": 3078
+    },
+    {
+      "id": "cue-034",
+      "type": "action",
+      "selectedText": "Robert sweeps corridor ahead with tactical vigilance",
+      "startTime": 13,
+      "endTime": 18,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3088,
+      "endIndex": 3140
+    },
+    {
+      "id": "cue-035",
+      "type": "audio",
+      "selectedText": "Hissing steam from ruptured pipe",
+      "startTime": 13,
+      "endTime": 18,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3250,
+      "endIndex": 3282
+    },
+    {
+      "id": "cue-036",
+      "type": "dialogue",
+      "selectedText": "Keep low, right behind me.",
+      "startTime": 13.8,
+      "endTime": 15.2,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "ROBERT",
+      "startIndex": 3174,
+      "endIndex": 3200
+    },
+    {
+      "id": "cue-037",
+      "type": "action",
+      "selectedText": "Robert glances back down into lens",
+      "startTime": 15.3,
+      "endTime": 17,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3211,
+      "endIndex": 3245
+    },
+    {
+      "id": "cue-038",
+      "type": "dialogue",
+      "selectedText": "Ready? Eyes on me.",
+      "startTime": 15.5,
+      "endTime": 17.2,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "ROBERT",
+      "startIndex": 3388,
+      "endIndex": 3406
+    },
+    {
+      "id": "cue-039",
+      "selectedText": "CU, LOW ANGLE",
+      "startIndex": 3290,
+      "endIndex": 3303,
+      "startTime": 17.5,
+      "endTime": 18.3,
+      "colorClass": "bg-purple-400/50",
+      "type": "shot"
+    },
+    {
+      "id": "cue-040",
+      "type": "action",
+      "selectedText": "Robert stares directly into lens with intense focus",
+      "startTime": 17.5,
+      "endTime": 18.3,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3313,
+      "endIndex": 3364
+    },
+    {
+      "id": "cue-041",
+      "type": "audio",
+      "selectedText": "Staccato gunfire echoes O.S.",
+      "startTime": 17.5,
+      "endTime": 18.3,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3463,
+      "endIndex": 3491
+    },
+    {
+      "id": "cue-042",
+      "type": "camera",
+      "selectedText": "QUICK TILT DOWN AND UP",
+      "startTime": 18.3,
+      "endTime": 19.5,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 3499,
+      "endIndex": 3521
+    },
+    {
+      "id": "cue-043",
+      "type": "action",
+      "selectedText": "POV nods rapidly",
+      "startTime": 18.5,
+      "endTime": 19,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3531,
+      "endIndex": 3547
+    },
+    {
+      "id": "cue-045",
+      "type": "audio",
+      "selectedText": "Crunching glass under boot",
+      "startTime": 18.5,
+      "endTime": 19.5,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3612,
+      "endIndex": 3638
+    },
+    {
+      "id": "cue-044",
+      "type": "action",
+      "selectedText": "Lens locks back onto Robert's nodding confirmation",
+      "startTime": 19,
+      "endTime": 19.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3557,
+      "endIndex": 3607
+    },
+    {
+      "id": "cue-046",
+      "type": "camera",
+      "selectedText": "LOW TRACKING FORWARD",
+      "startTime": 19.5,
+      "endTime": 21,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 3646,
+      "endIndex": 3666
+    },
+    {
+      "id": "cue-047",
+      "type": "action",
+      "selectedText": "Robert drops into crouch and advances through doorway into dusty hallway",
+      "startTime": 19.5,
+      "endTime": 21,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3676,
+      "endIndex": 3748
+    },
+    {
+      "id": "cue-048",
+      "type": "action",
+      "selectedText": "POV follows closely behind his left shoulder",
+      "startTime": 19.5,
+      "endTime": 21,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3758,
+      "endIndex": 3802
+    },
+    {
+      "id": "cue-049",
+      "type": "audio",
+      "selectedText": "Scuffling rapid footsteps",
+      "startTime": 19.5,
+      "endTime": 21,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3807,
+      "endIndex": 3832
+    },
+    {
+      "id": "cue-050",
+      "type": "camera",
+      "selectedText": "TRACKING FORWARD, TIGHT",
+      "startTime": 21,
+      "endTime": 22,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 3840,
+      "endIndex": 3863
+    },
+    {
+      "id": "cue-051",
+      "type": "action",
+      "selectedText": "Robert maneuvers past dangling live wires and concrete debris",
+      "startTime": 21,
+      "endTime": 22,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3873,
+      "endIndex": 3934
+    },
+    {
+      "id": "cue-052",
+      "type": "action",
+      "selectedText": "Robert keeps right hand on carbine, left hand guiding behind him",
+      "startTime": 21,
+      "endTime": 22,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3944,
+      "endIndex": 4008
+    },
+    {
+      "id": "cue-053",
+      "type": "audio",
+      "selectedText": "Humming structural tremor",
+      "startTime": 21,
+      "endTime": 22,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 4013,
+      "endIndex": 4038
+    },
+    {
+      "id": "cue-054",
+      "type": "camera",
+      "selectedText": "SHAKY TRACKING POV",
+      "startTime": 22,
+      "endTime": 23,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 4046,
+      "endIndex": 4064
+    },
+    {
+      "id": "cue-055",
+      "type": "vfx",
+      "selectedText": "Blinding orange flash strobes through exterior window gap",
+      "startTime": 22.1,
+      "endTime": 22.8,
+      "colorClass": "bg-cyan-400/50",
+      "speaker": null,
+      "startIndex": 4074,
+      "endIndex": 4131
+    },
+    {
+      "id": "cue-056",
+      "type": "audio",
+      "selectedText": "Massive explosion outside",
+      "startTime": 22.1,
+      "endTime": 22.8,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 4136,
+      "endIndex": 4161
+    },
+    {
+      "id": "cue-057",
+      "type": "action",
+      "selectedText": "Robert lowers posture further, bracing against hallway corner",
+      "startTime": 22.2,
+      "endTime": 23.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4172,
+      "endIndex": 4233
+    },
+    {
+      "id": "cue-058",
+      "selectedText": "MCU, LOW ANGLE",
+      "startIndex": 4240,
+      "endIndex": 4254,
+      "startTime": 23,
+      "endTime": 24.5,
+      "colorClass": "bg-purple-400/50",
+      "type": "shot"
+    },
+    {
+      "id": "cue-059",
+      "type": "action",
+      "selectedText": "Robert leans around corner, scanning ahead",
+      "startTime": 23,
+      "endTime": 24,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4264,
+      "endIndex": 4306
+    },
+    {
+      "id": "cue-061",
+      "type": "audio",
+      "selectedText": "Distant extraterrestrial screech",
+      "startTime": 23,
+      "endTime": 24.5,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 4368,
+      "endIndex": 4400
+    },
+    {
+      "id": "cue-060",
+      "type": "action",
+      "selectedText": "Robert raises left hand, signaling a brief hold",
+      "startTime": 23.8,
+      "endTime": 24.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4316,
+      "endIndex": 4363
+    },
+    {
+      "id": "cue-062",
+      "type": "shot",
+      "selectedText": "MCU, LOW ANGLE",
+      "startTime": 24.5,
+      "endTime": 25.5,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 4408,
+      "endIndex": 4422
+    },
+    {
+      "id": "cue-063",
+      "type": "action",
+      "selectedText": "Robert pivots head back toward lens",
+      "startTime": 24.5,
+      "endTime": 25.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4432,
+      "endIndex": 4467
+    },
+    {
+      "id": "cue-064",
+      "type": "dialogue",
+      "selectedText": "Move now, sprint to the stairs.",
+      "startTime": 24.5,
+      "endTime": 25.8,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "ROBERT",
+      "startIndex": 4503,
+      "endIndex": 4534
+    },
+    {
+      "id": "cue-066",
+      "type": "audio",
+      "selectedText": "Shuffling boots on rubble",
+      "startTime": 24.5,
+      "endTime": 26,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 4592,
+      "endIndex": 4617
+    },
+    {
+      "id": "cue-065",
+      "type": "action",
+      "selectedText": "Robert pushes off wall into forward stride",
+      "startTime": 25.2,
+      "endTime": 26,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4545,
+      "endIndex": 4587
+    },
+    {
+      "id": "cue-067",
+      "type": "camera",
+      "selectedText": "RUNNING HANDHELD, LOW ANGLE",
+      "startTime": 26,
+      "endTime": 27.5,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 4625,
+      "endIndex": 4652
+    },
+    {
+      "id": "cue-068",
+      "type": "action",
+      "selectedText": "POV accelerates immediately behind Robert down ruined hallway",
+      "startTime": 26,
+      "endTime": 27.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4662,
+      "endIndex": 4723
+    },
+    {
+      "id": "cue-070",
+      "type": "audio",
+      "selectedText": "Heavy syncopated breathing and footfalls",
+      "startTime": 26,
+      "endTime": 27.5,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 4779,
+      "endIndex": 4819
+    },
+    {
+      "id": "cue-069",
+      "type": "action",
+      "selectedText": "Robert checks rear shoulder while running",
+      "startTime": 26.5,
+      "endTime": 27.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4733,
+      "endIndex": 4774
+    },
+    {
+      "id": "cue-071",
+      "type": "camera",
+      "selectedText": "TRACKING FORWARD",
+      "startTime": 27.5,
+      "endTime": 28.5,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 4827,
+      "endIndex": 4843
+    },
+    {
+      "id": "cue-072",
+      "type": "action",
+      "selectedText": "Robert reaches dark stairwell entrance and yanks reinforced metal door open",
+      "startTime": 27.5,
+      "endTime": 28.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4853,
+      "endIndex": 4928
+    },
+    {
+      "id": "cue-074",
+      "type": "audio",
+      "selectedText": "Heavy metal latch clanking",
+      "startTime": 27.8,
+      "endTime": 28.7,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 4990,
+      "endIndex": 5016
+    },
+    {
+      "id": "cue-073",
+      "type": "action",
+      "selectedText": "Robert waves POV through threshold ahead of him",
+      "startTime": 28,
+      "endTime": 28.7,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4938,
+      "endIndex": 4985
+    },
+    {
+      "id": "cue-075",
+      "type": "camera",
+      "selectedText": "PUSH FORWARD DOWNWARD",
+      "startTime": 28.5,
+      "endTime": 30,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 5024,
+      "endIndex": 5045
+    },
+    {
+      "id": "cue-076",
+      "type": "action",
+      "selectedText": "POV plunges into dim stairwell landing as Robert follows behind, sealing door shut",
+      "startTime": 28.5,
+      "endTime": 30,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 5055,
+      "endIndex": 5137
+    },
+    {
+      "id": "cue-077",
+      "type": "dialogue",
+      "selectedText": "Keep moving down.",
+      "startTime": 28.8,
+      "endTime": 29.8,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "ROBERT",
+      "startIndex": 5171,
+      "endIndex": 5188
+    },
+    {
+      "id": "cue-078",
+      "type": "action",
+      "selectedText": "POV descends first step into gloom",
+      "startTime": 29.2,
+      "endTime": 30,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 5199,
+      "endIndex": 5233
+    },
+    {
+      "id": "cue-079",
+      "type": "audio",
+      "selectedText": "Heavy iron door slamming",
+      "startTime": 29.2,
+      "endTime": 30,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 5238,
+      "endIndex": 5262
+    }
+  ],
+  "settings": {
+    "general": {
+      "before": 0.5,
+      "after": 0.5
+    },
+    "dialogue": {
+      "before": 0.5,
+      "after": 0.7
+    },
+    "action": {
+      "before": 0,
+      "after": 0
+    },
+    "camera": {
+      "before": 0,
+      "after": 0
+    },
+    "shot": {
+      "before": 0,
+      "after": 0
+    },
+    "audio": {
+      "before": 0,
+      "after": 0
+    },
+    "vfx": {
+      "before": 0,
+      "after": 0
+    },
+    "transition": {
+      "before": 0,
+      "after": 0
+    },
+    "environment": {
+      "before": 0,
+      "after": 0
+    }
+  }
+}

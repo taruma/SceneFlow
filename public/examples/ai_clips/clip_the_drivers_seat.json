@@ -1,0 +1,813 @@
+{
+  "youtubeId": "https://youtu.be/ss9kfgIL3hc",
+  "scriptText": "\n\n\n\n\n\n\n\n\n\nI. THE DRIVER'S SEAT\n\n[[STAGING]]\n[[INTENT]]\nCreate a psychological drama scene featuring @actor1 as ROSA, @actor2 as EVAN, and @actor3 as ARTHUR in an intense apartment conflict immediately following a fatal hit-and-run incident.\n[[/INTENT]]\n\n[[LOGIC]]\nEnsure spatial continuity across four repeating static setups. Maintain character positioning, keeping Evan pacing midground, Arthur anchored at the central table, and Rosa grounded near the window. Preserve hand states, eyelines, and grounded diegetic acoustics throughout.\n[[/LOGIC]]\n\n[[AESTHETIC]]\nPalette: Desaturated slate blue, bruised navy, sickly tungsten amber\nLighting: Low-key harsh practical lighting from a single unshaded lamp casting deep shadows\nLocation: Dim studio apartment, peeling wallpaper, exposed radiator, rain-streaked window pane\nWardrobe: Rosa wearing dark oversized corduroy jacket over sweater; Evan wearing rain-damp gray henley shirt; Arthur wearing faded navy work shirt\nAudio: Diegetic radiator steam hiss, distant urban rain, heavy breathing, floorboard creaks. No Music\n[[/AESTHETIC]]\n\n[[OPENING]]\nWS, STATIC, interior apartment setup. Evan stands center-left in profile, shoulders hunched, hands gripping his head in acute panic. Arthur sits on the edge of a worn wooden table foreground-right, leaning forward with palms flat on his knees. Rosa stands motionless far-right beside the wet window frame, arms folded tight across her chest, watching Evan. Rain streaks the glass background under flickering warm light.\n[[/OPENING]]\n[[/STAGING]]\n\n[<BRIEF>]\n[CAM] WS, STATIC -> [AXIS] Diagonal interior axis -> [BLOCK] Evan paces left toward the sink while Arthur stays anchored at the table -> [ACT] EVAN says (shaky exhale) {It wasn't even on the road, Arthur! Just stepped out from—} -> [ACT] Evan slams his right palm onto the metal counter surface\n[CAM] MS, LOCKOFF -> [AXIS] Side profile framing Evan midground, Arthur background center -> [BLOCK] Evan freezes near the sink with back half-turned -> [ACT] EVAN says (throat clear) {We turn around now, we're done. Life over. Simple math.} -> [ACT] Evan turns sharply to face toward the window\n[CAM] MCU, STATIC -> [AXIS] Side angle framing Rosa foreground, Arthur visible background -> [BLOCK] Rosa stays motionless near the window glass -> [ACT] ROSA says (soft heavy sigh) {You hit a body, Evan.} -> [ACT] Rosa slowly shifts her gaze downward toward Arthur's hands\n[CAM] OTS, LOCKOFF -> [AXIS] Over Rosa's right shoulder toward Arthur at table -> [BLOCK] Arthur maintains posture, staring straight ahead -> [ACT] ARTHUR says (quiet gasp) {I'll tell them it was me driving.} -> [ACT] Arthur grips his own knee fabrics with white-knuckled tension\n[CAM] MS, LOCKOFF -> [AXIS] Side profile framing Evan mid-step near room center -> [BLOCK] Evan stops abruptly, pivoting toward Arthur with wide eyes -> [ACT] EVAN: (forced scoffing laugh) says {You? What the hell are you talking about?} -> [ACT] Evan extends his right forefinger accusingly\n[CAM] MCU, STATIC -> [AXIS] Framing Rosa in tight side orientation, background soft-focused -> [BLOCK] Rosa stands rigid, eyebrows furrowed in quiet realization -> [ACT] ROSA (O.S.): (hesitant breath) {He isn't trying to cover for you, Evan.} -> [ACT] Rosa tightens her folded arms firmer across her ribs\n[CAM] OTS, LOCKOFF -> [AXIS] Over Evan's left shoulder toward Arthur's blank face -> [BLOCK] Arthur releases his grip, resting palms limp on wood -> [ACT] ARTHUR: (faint dry breath) says {Truck's registered under my uncle's name anyway. It works out.} -> [ACT] Arthur exhales slowly through unmoving lips -> [STATE OUT] Arthur sits unnaturally still with vacant gaze\n[CAM] WS, STATIC -> [AXIS] Wide spatial view establishing all three figures -> [BLOCK] Evan steps aggressively forward toward table center while Rosa remains fixed -> [ACT] EVAN (angry stammer) says {Shut up! Just.. just stop talking like a martyr!} -> [ACT] Evan seizes the top rail of a wooden chair to steady his hands\n[CAM] MCU, STATIC -> [AXIS] Framing Rosa foreground with Arthur's silhouette behind -> [BLOCK] Rosa turns her head slowly, looking directly into Arthur's hollow expression -> [ACT] ROSA (heavy shuddering breath) says {He... wants to get caught.}\n[CAM] MS, LOCKOFF -> [AXIS] Framing Evan frozen midway between counter and table, Arthur seated below -> [BLOCK] Evan's grip on the chair rail loosens slowly -> [ACT] EVAN: (whispered gulp) {What?} -> [ACT] Evan drops his hands to his sides as realization dawns, standing motionless\n[</BRIEF>]",
+  "cues": [
+    {
+      "id": "cue-001",
+      "type": "camera",
+      "selectedText": "[CAM] WS, STATIC",
+      "startTime": 0,
+      "endTime": 1,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 1555,
+      "endIndex": 1571
+    },
+    {
+      "id": "cue-002",
+      "type": "shot",
+      "selectedText": "WS",
+      "startTime": 0,
+      "endTime": 1,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 1561,
+      "endIndex": 1563
+    },
+    {
+      "id": "cue-003",
+      "type": "camera",
+      "selectedText": "[AXIS] Diagonal interior axis",
+      "startTime": 0,
+      "endTime": 1,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 1575,
+      "endIndex": 1604
+    },
+    {
+      "id": "cue-004",
+      "type": "action",
+      "selectedText": "Evan paces left toward the sink while Arthur stays anchored at the table",
+      "startTime": 0,
+      "endTime": 1,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1616,
+      "endIndex": 1688
+    },
+    {
+      "id": "cue-005",
+      "type": "audio",
+      "selectedText": "shaky exhale",
+      "startTime": 0,
+      "endTime": 0.5,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 1709,
+      "endIndex": 1721
+    },
+    {
+      "id": "cue-006",
+      "type": "dialogue",
+      "selectedText": "It wasn't even on the road, Arthur! Just stepped out from—",
+      "startTime": 0.8,
+      "endTime": 3,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "EVAN",
+      "startIndex": 1724,
+      "endIndex": 1782
+    },
+    {
+      "id": "cue-007",
+      "type": "action",
+      "selectedText": "Evan slams his right palm onto the metal counter surface",
+      "startTime": 2.5,
+      "endTime": 3.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1793,
+      "endIndex": 1849
+    },
+    {
+      "id": "cue-008",
+      "type": "camera",
+      "selectedText": "[CAM] MS, LOCKOFF",
+      "startTime": 3.3,
+      "endTime": 6.8,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 1850,
+      "endIndex": 1867
+    },
+    {
+      "id": "cue-009",
+      "type": "shot",
+      "selectedText": "MS",
+      "startTime": 3.3,
+      "endTime": 6.8,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 1856,
+      "endIndex": 1858
+    },
+    {
+      "id": "cue-010",
+      "type": "camera",
+      "selectedText": "[AXIS] Side profile framing Evan midground, Arthur background center",
+      "startTime": 3.3,
+      "endTime": 6.8,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 1871,
+      "endIndex": 1939
+    },
+    {
+      "id": "cue-011",
+      "type": "action",
+      "selectedText": "Evan freezes near the sink with back half-turned",
+      "startTime": 3.3,
+      "endTime": 4.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1951,
+      "endIndex": 1999
+    },
+    {
+      "id": "cue-012",
+      "type": "audio",
+      "selectedText": "throat clear",
+      "startTime": 3.4,
+      "endTime": 3.7,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 2020,
+      "endIndex": 2032
+    },
+    {
+      "id": "cue-013",
+      "type": "dialogue",
+      "selectedText": "We turn around now, we're done. Life over. Simple math.",
+      "startTime": 4.5,
+      "endTime": 6.8,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "EVAN",
+      "startIndex": 2035,
+      "endIndex": 2090
+    },
+    {
+      "id": "cue-014",
+      "type": "action",
+      "selectedText": "Evan turns sharply to face toward the window",
+      "startTime": 5.9,
+      "endTime": 6.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2101,
+      "endIndex": 2145
+    },
+    {
+      "id": "cue-015",
+      "type": "camera",
+      "selectedText": "[CAM] MCU, STATIC",
+      "startTime": 6.9,
+      "endTime": 9.9,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 2146,
+      "endIndex": 2163
+    },
+    {
+      "id": "cue-016",
+      "type": "shot",
+      "selectedText": "MCU",
+      "startTime": 6.9,
+      "endTime": 9.9,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 2152,
+      "endIndex": 2155
+    },
+    {
+      "id": "cue-017",
+      "type": "camera",
+      "selectedText": "[AXIS] Side angle framing Rosa foreground, Arthur visible background",
+      "startTime": 6.9,
+      "endTime": 9.9,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 2167,
+      "endIndex": 2235
+    },
+    {
+      "id": "cue-018",
+      "type": "action",
+      "selectedText": "Rosa stays motionless near the window glass",
+      "startTime": 6.9,
+      "endTime": 9.9,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2247,
+      "endIndex": 2290
+    },
+    {
+      "id": "cue-019",
+      "type": "audio",
+      "selectedText": "soft heavy sigh",
+      "startTime": 7,
+      "endTime": 7.5,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 2311,
+      "endIndex": 2326
+    },
+    {
+      "id": "cue-020",
+      "type": "dialogue",
+      "selectedText": "You hit a body, Evan.",
+      "startTime": 7.8,
+      "endTime": 9.5,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "ROSA",
+      "startIndex": 2329,
+      "endIndex": 2350
+    },
+    {
+      "id": "cue-021",
+      "type": "action",
+      "selectedText": "Rosa slowly shifts her gaze downward toward Arthur's hands",
+      "startTime": 8.5,
+      "endTime": 9.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2361,
+      "endIndex": 2419
+    },
+    {
+      "id": "cue-022",
+      "type": "camera",
+      "selectedText": "[CAM] OTS, LOCKOFF",
+      "startTime": 10,
+      "endTime": 12.5,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 2420,
+      "endIndex": 2438
+    },
+    {
+      "id": "cue-023",
+      "type": "shot",
+      "selectedText": "OTS",
+      "startTime": 10,
+      "endTime": 12.5,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 2426,
+      "endIndex": 2429
+    },
+    {
+      "id": "cue-024",
+      "type": "camera",
+      "selectedText": "[AXIS] Over Rosa's right shoulder toward Arthur at table",
+      "startTime": 10,
+      "endTime": 12.5,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 2442,
+      "endIndex": 2498
+    },
+    {
+      "id": "cue-025",
+      "type": "action",
+      "selectedText": "Arthur maintains posture, staring straight ahead",
+      "startTime": 10,
+      "endTime": 12.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2510,
+      "endIndex": 2558
+    },
+    {
+      "id": "cue-026",
+      "type": "audio",
+      "selectedText": "quiet gasp",
+      "startTime": 10.1,
+      "endTime": 10.4,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 2581,
+      "endIndex": 2591
+    },
+    {
+      "id": "cue-027",
+      "type": "dialogue",
+      "selectedText": "I'll tell them it was me driving.",
+      "startTime": 10.5,
+      "endTime": 12.2,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "ARTHUR",
+      "startIndex": 2594,
+      "endIndex": 2627
+    },
+    {
+      "id": "cue-028",
+      "type": "action",
+      "selectedText": "Arthur grips his own knee fabrics with white-knuckled tension",
+      "startTime": 11.2,
+      "endTime": 12.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2638,
+      "endIndex": 2699
+    },
+    {
+      "id": "cue-029",
+      "type": "camera",
+      "selectedText": "[CAM] MS, LOCKOFF",
+      "startTime": 12.6,
+      "endTime": 15,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 2700,
+      "endIndex": 2717
+    },
+    {
+      "id": "cue-030",
+      "selectedText": "MS",
+      "startIndex": 2706,
+      "endIndex": 2708,
+      "startTime": 12.6,
+      "endTime": 15,
+      "colorClass": "bg-purple-400/50",
+      "type": "shot"
+    },
+    {
+      "id": "cue-031",
+      "type": "camera",
+      "selectedText": "[AXIS] Side profile framing Evan mid-step near room center",
+      "startTime": 12.6,
+      "endTime": 15,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 2721,
+      "endIndex": 2779
+    },
+    {
+      "id": "cue-032",
+      "type": "action",
+      "selectedText": "Evan stops abruptly, pivoting toward Arthur with wide eyes",
+      "startTime": 12.6,
+      "endTime": 13.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2791,
+      "endIndex": 2849
+    },
+    {
+      "id": "cue-033",
+      "type": "audio",
+      "selectedText": "forced scoffing laugh",
+      "startTime": 12.8,
+      "endTime": 13.2,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 2866,
+      "endIndex": 2887
+    },
+    {
+      "id": "cue-034",
+      "type": "dialogue",
+      "selectedText": "You? What the hell are you talking about?",
+      "startTime": 13.3,
+      "endTime": 15,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "EVAN",
+      "startIndex": 2895,
+      "endIndex": 2936
+    },
+    {
+      "id": "cue-035",
+      "type": "action",
+      "selectedText": "Evan extends his right forefinger accusingly",
+      "startTime": 13.8,
+      "endTime": 14.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2947,
+      "endIndex": 2991
+    },
+    {
+      "id": "cue-036",
+      "type": "camera",
+      "selectedText": "[CAM] MCU, STATIC",
+      "startTime": 15.1,
+      "endTime": 17.5,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 2992,
+      "endIndex": 3009
+    },
+    {
+      "id": "cue-037",
+      "type": "shot",
+      "selectedText": "MCU",
+      "startTime": 15.1,
+      "endTime": 17.5,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 2998,
+      "endIndex": 3001
+    },
+    {
+      "id": "cue-038",
+      "type": "camera",
+      "selectedText": "[AXIS] Framing Rosa in tight side orientation, background soft-focused",
+      "startTime": 15.1,
+      "endTime": 17.5,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 3013,
+      "endIndex": 3083
+    },
+    {
+      "id": "cue-039",
+      "type": "action",
+      "selectedText": "Rosa stands rigid, eyebrows furrowed in quiet realization",
+      "startTime": 15.1,
+      "endTime": 17.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3095,
+      "endIndex": 3152
+    },
+    {
+      "id": "cue-040",
+      "type": "audio",
+      "selectedText": "hesitant breath",
+      "startTime": 15.2,
+      "endTime": 15.6,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3176,
+      "endIndex": 3191
+    },
+    {
+      "id": "cue-041",
+      "type": "dialogue",
+      "selectedText": "He isn't trying to cover for you, Evan.",
+      "startTime": 15.8,
+      "endTime": 17.5,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "ROSA",
+      "startIndex": 3194,
+      "endIndex": 3233
+    },
+    {
+      "id": "cue-042",
+      "type": "action",
+      "selectedText": "Rosa tightens her folded arms firmer across her ribs",
+      "startTime": 16.5,
+      "endTime": 17.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3244,
+      "endIndex": 3296
+    },
+    {
+      "id": "cue-043",
+      "type": "camera",
+      "selectedText": "[CAM] OTS, LOCKOFF",
+      "startTime": 17.6,
+      "endTime": 21,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 3297,
+      "endIndex": 3315
+    },
+    {
+      "id": "cue-044",
+      "type": "shot",
+      "selectedText": "OTS",
+      "startTime": 17.6,
+      "endTime": 21,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 3303,
+      "endIndex": 3306
+    },
+    {
+      "id": "cue-045",
+      "type": "camera",
+      "selectedText": "[AXIS] Over Evan's left shoulder toward Arthur's blank face",
+      "startTime": 17.6,
+      "endTime": 21,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 3319,
+      "endIndex": 3378
+    },
+    {
+      "id": "cue-046",
+      "type": "action",
+      "selectedText": "Arthur releases his grip, resting palms limp on wood",
+      "startTime": 17.6,
+      "endTime": 18.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3390,
+      "endIndex": 3442
+    },
+    {
+      "id": "cue-047",
+      "type": "audio",
+      "selectedText": "faint dry breath",
+      "startTime": 17.7,
+      "endTime": 18,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3461,
+      "endIndex": 3477
+    },
+    {
+      "id": "cue-048",
+      "type": "dialogue",
+      "selectedText": "Truck's registered under my uncle's name anyway. It works out.",
+      "startTime": 18.2,
+      "endTime": 20.8,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "ARTHUR",
+      "startIndex": 3485,
+      "endIndex": 3547
+    },
+    {
+      "id": "cue-049",
+      "type": "action",
+      "selectedText": "Arthur exhales slowly through unmoving lips",
+      "startTime": 20,
+      "endTime": 21,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3558,
+      "endIndex": 3601
+    },
+    {
+      "id": "cue-050",
+      "type": "action",
+      "selectedText": "Arthur sits unnaturally still with vacant gaze",
+      "startTime": 20.5,
+      "endTime": 21.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3617,
+      "endIndex": 3663
+    },
+    {
+      "id": "cue-051",
+      "type": "camera",
+      "selectedText": "[CAM] WS, STATIC",
+      "startTime": 21.1,
+      "endTime": 24,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 3664,
+      "endIndex": 3680
+    },
+    {
+      "id": "cue-052",
+      "type": "shot",
+      "selectedText": "WS",
+      "startTime": 21.1,
+      "endTime": 24,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 3670,
+      "endIndex": 3672
+    },
+    {
+      "id": "cue-053",
+      "type": "camera",
+      "selectedText": "[AXIS] Wide spatial view establishing all three figures",
+      "startTime": 21.1,
+      "endTime": 24,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 3684,
+      "endIndex": 3739
+    },
+    {
+      "id": "cue-054",
+      "type": "action",
+      "selectedText": "Evan steps aggressively forward toward table center while Rosa remains fixed",
+      "startTime": 21.1,
+      "endTime": 22,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3751,
+      "endIndex": 3827
+    },
+    {
+      "id": "cue-055",
+      "type": "audio",
+      "selectedText": "angry stammer",
+      "startTime": 21.3,
+      "endTime": 21.6,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3843,
+      "endIndex": 3856
+    },
+    {
+      "id": "cue-056",
+      "type": "dialogue",
+      "selectedText": "Shut up! Just.. just stop talking like a martyr!",
+      "startTime": 21.7,
+      "endTime": 23.8,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "EVAN",
+      "startIndex": 3864,
+      "endIndex": 3912
+    },
+    {
+      "id": "cue-057",
+      "type": "action",
+      "selectedText": "Evan seizes the top rail of a wooden chair to steady his hands",
+      "startTime": 22,
+      "endTime": 23.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3923,
+      "endIndex": 3985
+    },
+    {
+      "id": "cue-058",
+      "type": "camera",
+      "selectedText": "[CAM] MCU, STATIC",
+      "startTime": 24.1,
+      "endTime": 26.9,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 3986,
+      "endIndex": 4003
+    },
+    {
+      "id": "cue-059",
+      "type": "shot",
+      "selectedText": "MCU",
+      "startTime": 24.1,
+      "endTime": 26.9,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 3992,
+      "endIndex": 3995
+    },
+    {
+      "id": "cue-060",
+      "type": "camera",
+      "selectedText": "[AXIS] Framing Rosa foreground with Arthur's silhouette behind",
+      "startTime": 24.1,
+      "endTime": 26.9,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 4007,
+      "endIndex": 4069
+    },
+    {
+      "id": "cue-061",
+      "type": "action",
+      "selectedText": "Rosa turns her head slowly, looking directly into Arthur's hollow expression",
+      "startTime": 24.1,
+      "endTime": 25,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4081,
+      "endIndex": 4157
+    },
+    {
+      "id": "cue-062",
+      "type": "audio",
+      "selectedText": "heavy shuddering breath",
+      "startTime": 24.3,
+      "endTime": 24.8,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 4173,
+      "endIndex": 4196
+    },
+    {
+      "id": "cue-063",
+      "type": "dialogue",
+      "selectedText": "He... wants to get caught.",
+      "startTime": 25.1,
+      "endTime": 26.8,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "ROSA",
+      "startIndex": 4204,
+      "endIndex": 4230
+    },
+    {
+      "id": "cue-064",
+      "type": "camera",
+      "selectedText": "[CAM] MS, LOCKOFF",
+      "startTime": 27,
+      "endTime": 29.8,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 4232,
+      "endIndex": 4249
+    },
+    {
+      "id": "cue-065",
+      "type": "shot",
+      "selectedText": "MS",
+      "startTime": 27,
+      "endTime": 29.8,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 4238,
+      "endIndex": 4240
+    },
+    {
+      "id": "cue-066",
+      "type": "camera",
+      "selectedText": "[AXIS] Framing Evan frozen midway between counter and table, Arthur seated below",
+      "startTime": 27,
+      "endTime": 29.8,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 4253,
+      "endIndex": 4333
+    },
+    {
+      "id": "cue-067",
+      "type": "action",
+      "selectedText": "Evan's grip on the chair rail loosens slowly",
+      "startTime": 27,
+      "endTime": 28,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4345,
+      "endIndex": 4389
+    },
+    {
+      "id": "cue-068",
+      "type": "audio",
+      "selectedText": "whispered gulp",
+      "startTime": 27.2,
+      "endTime": 27.5,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 4406,
+      "endIndex": 4420
+    },
+    {
+      "id": "cue-070",
+      "type": "action",
+      "selectedText": "Evan drops his hands to his sides as realization dawns, standing motionless",
+      "startTime": 28,
+      "endTime": 29.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4439,
+      "endIndex": 4514
+    },
+    {
+      "id": "cue-069",
+      "type": "dialogue",
+      "selectedText": "What?",
+      "startTime": 28.9,
+      "endTime": 29.5,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "EVAN",
+      "startIndex": 4423,
+      "endIndex": 4428
+    }
+  ],
+  "settings": {
+    "general": {
+      "before": 0.5,
+      "after": 0.5
+    },
+    "dialogue": {
+      "before": 0.5,
+      "after": 0.7
+    },
+    "action": {
+      "before": 0,
+      "after": 0
+    },
+    "camera": {
+      "before": 0,
+      "after": 0
+    },
+    "shot": {
+      "before": 0,
+      "after": 0
+    },
+    "audio": {
+      "before": 0,
+      "after": 0
+    },
+    "vfx": {
+      "before": 0,
+      "after": 0
+    },
+    "transition": {
+      "before": 0,
+      "after": 0
+    },
+    "environment": {
+      "before": 0,
+      "after": 0
+    }
+  }
+}

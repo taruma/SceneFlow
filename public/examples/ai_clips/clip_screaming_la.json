@@ -1,0 +1,561 @@
+{
+  "youtubeId": "https://youtu.be/wWe_wz9Nv_k",
+  "scriptText": "\n\n\n\n\n\n\n\n\n\nI. SCREAMING AMBER WOOD (LIVE-ACTION)\n\n[[STAGING]]\n[[INTENT]]\nCreate a dark fantasy cinematic scene featuring @actor1 as Rosa (voice: @audio1), a crowned princess clad in travel mantle, and @actor2 as Robert (voice: @audio2), her translucent spectral mentor, confronting each other within an ancient dormant grove.\n[[/INTENT]]\n\n[[LOGIC]]\nMaintain 180-degree axis discipline with Rosa advancing toward the subterranean root fissure while Robert floats across her screen direction. Ensure persistent bioluminescent cyan footprint ripples on the frost floor, unbroken semi-transparency and cyan rim-lighting from Robert, and stable tracking of the silver thorn crown across all beats.\n[[/LOGIC]]\n\n[[AESTHETIC]]\nMedium: 35mm dark fantasy film, fine grain, anamorphic falloff.\nPalette: Midnight blue, petrified bone white, slate grey, bioluminescent cyan, molten amber.\nLighting: Chiaroscuro twilight, spectral cyan fill from Robert, intense golden underlighting from the subterranean fissure.\nLocation: Dormant primordial grove, petrified weeping trunks, reactive mycelial frost carpet, steaming root cavity.\nWardrobe: Rosa in textured charcoal wool tunic, silver thorn crown, tattered navy velvet mantle; Robert in distressed leather brigandine, rendered as a hovering translucent spirit with misty vapor trails.\nAudio: Cavernous ambient hum, crisp crystalline footfalls, wind whistling through petrified hollows, viscous bubbling subterranean amber.\n[[/AESTHETIC]]\n\n[[OPENING]]\nFull shot, eye level, camera positioned right of axis facing a circular clearing of petrified white weeping trees. Rosa stands midground in her navy velvet mantle and silver thorn crown, oriented left toward a glowing root fissure in the background, while the semi-translucent, glowing cyan spirit of Robert hovers at chest height beside her above the frost-covered floor.\n[[/OPENING]]\n[[/STAGING]]\n\n[<BRIEF>]\n[CAM] FS, tracking backward ahead of Rosa -> [ACT] Rosa strides deliberately across the frost floor, sending rippling cyan bioluminescence outward from each boot step, as Robert drifts directly into her forward path -> Robert says (pleading) {Rosa, stop.} -> <Crisp crunch of frozen moss under heavy boots> -> Robert says {Look at the ridge. There’s smoke.} -> [ACT] Rosa continues marching forward without breaking her stride.\n[CAM] MCU, side profile tracking Rosa -> [ACT] Rosa fixes her gaze ahead toward the warm glow of the root cavity -> Rosa says (curt, tight jaw) {I see it.} -> Robert says O.S. (strained) {Then why are you here?} -> <Deep subterranean vibration vibrating through the frozen earth> -> [ACT] Swirling frost mist curls past her shoulders as she presses forward.\n[CAM] MS, reverse tracking looking past Rosa toward Robert -> [ACT] Robert glides backward through the cold air matching her walking pace, raising translucent hands in appeal -> Robert says (urgent) {Every minute here brings the fire closer to your mother’s gates.} -> <Faint ethereal hum trailing Robert's floating form> -> [ACT] Rosa marches steadily into the space he occupies without flinching.\n[CAM] MS, low angle looking past Rosa's mantle toward Robert -> [ACT] Robert descends to eye level, hovering just above the bioluminescent frost directly in front of her -> Rosa says (controlled, tense) {I know what’s at stake, Robert.} -> Robert says (harsh whisper) {Then act like it.} -> <Heavy breath billowing in the freezing air> -> [ACT] Rosa walks straight through his spectral shoulder, breaking his misty outline.\n[CAM] MCU, moving three-quarters profile -> [ACT] Rosa emerges through the cyan vapor of Robert's spirit, her mantle fluttering from the ethereal draft -> Robert says (exasperated) {I bought you this road.} -> Rosa says (bitter, sorrowful) {You threw yourself away.} -> <Soft rustle of heavy velvet over travel wool> -> [ACT] Her jaw tightens as she locks her sight onto the approaching root chasm.\n[CAM] FS, wide orbital track maintaining axis -> [ACT] Robert sweeps across her line of sight in a wide arc of cyan mist, his spectral face tight with dread -> Robert says (booming resonance) {I cleared your path!} -> <Distant groan of petrified timber echoing> -> Robert says {Take the horses. Cross the border.} -> [ACT] Robert comes to a halt hovering rigidly beside the perimeter of the glowing root fissure.\n[CAM] MS, high angle looking down at the fissure perimeter -> [ACT] Rosa halts at the lip of the split root cavity, molten amber light illuminating her face and silver crown from below -> Rosa says (resolute) {Not alone.} -> Robert says O.S. (desperate plea) {The old stories are a trap, Rosa.} -> <Rhythmic thrumming heat pulsing from the chasm floor> -> [ACT] Golden vapor billows around her boots as she stares into the depths.\n[CAM] MS, slow tilt down facing Rosa by the glowing fissure -> [ACT] Robert drifts down to ground level beside the rim, while Rosa drops into a grounded kneel before the fiery opening -> Robert says (hushed, defeated) {Whatever is down there... leave it in the dirt.} -> Rosa says (quiet, unshakeable) {I’m bringing you back.} -> <Viscous bubbling of hot subterranean resin> -> [ACT] Rosa lowers her bare hand steadily into the golden amber radiance.",
+  "cues": [
+    {
+      "id": "cue-001",
+      "type": "camera",
+      "selectedText": "FS, tracking backward ahead of Rosa",
+      "startTime": 0,
+      "endTime": 1,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 1902,
+      "endIndex": 1937
+    },
+    {
+      "id": "cue-002",
+      "type": "action",
+      "selectedText": "Rosa strides deliberately across the frost floor, sending rippling cyan bioluminescence outward from each boot step, as Robert drifts directly into her forward path",
+      "startTime": 0,
+      "endTime": 1,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1947,
+      "endIndex": 2111
+    },
+    {
+      "id": "cue-003",
+      "type": "audio",
+      "selectedText": "Crisp crunch of frozen moss under heavy boots",
+      "startTime": 0,
+      "endTime": 0.8,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 2156,
+      "endIndex": 2201
+    },
+    {
+      "id": "cue-004",
+      "type": "dialogue",
+      "selectedText": "Rosa, stop.",
+      "startTime": 0.3,
+      "endTime": 1.2,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Robert",
+      "startIndex": 2139,
+      "endIndex": 2150
+    },
+    {
+      "id": "cue-005",
+      "type": "action",
+      "selectedText": "Rosa continues marching forward without breaking her stride.",
+      "startTime": 1,
+      "endTime": 3.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2263,
+      "endIndex": 2323
+    },
+    {
+      "id": "cue-006",
+      "type": "dialogue",
+      "selectedText": "Look at the ridge. There’s smoke.",
+      "startTime": 1.5,
+      "endTime": 3.3,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Robert",
+      "startIndex": 2219,
+      "endIndex": 2252
+    },
+    {
+      "id": "cue-007",
+      "type": "camera",
+      "selectedText": "MCU, side profile tracking Rosa",
+      "startTime": 3.8,
+      "endTime": 4.5,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 2330,
+      "endIndex": 2361
+    },
+    {
+      "id": "cue-008",
+      "type": "action",
+      "selectedText": "Rosa fixes her gaze ahead toward the warm glow of the root cavity",
+      "startTime": 3.8,
+      "endTime": 4.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2371,
+      "endIndex": 2436
+    },
+    {
+      "id": "cue-009",
+      "type": "action",
+      "selectedText": "Swirling frost mist curls past her shoulders as she presses forward.",
+      "startTime": 3.8,
+      "endTime": 5.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2613,
+      "endIndex": 2681
+    },
+    {
+      "id": "cue-011",
+      "type": "audio",
+      "selectedText": "Deep subterranean vibration vibrating through the frozen earth",
+      "startTime": 4,
+      "endTime": 6,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 2540,
+      "endIndex": 2602
+    },
+    {
+      "id": "cue-010",
+      "type": "dialogue",
+      "selectedText": "I see it.",
+      "startTime": 4.1,
+      "endTime": 4.6,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Rosa",
+      "startIndex": 2469,
+      "endIndex": 2478
+    },
+    {
+      "id": "cue-012",
+      "type": "dialogue",
+      "selectedText": "Then why are you here?",
+      "startTime": 4.8,
+      "endTime": 5.8,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Robert",
+      "startIndex": 2512,
+      "endIndex": 2534
+    },
+    {
+      "id": "cue-013",
+      "type": "camera",
+      "selectedText": "MS, reverse tracking looking past Rosa toward Robert",
+      "startTime": 6,
+      "endTime": 7.5,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 2688,
+      "endIndex": 2740
+    },
+    {
+      "id": "cue-014",
+      "type": "audio",
+      "selectedText": "Faint ethereal hum trailing Robert's floating form",
+      "startTime": 6,
+      "endTime": 9.5,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 2952,
+      "endIndex": 3002
+    },
+    {
+      "id": "cue-015",
+      "type": "action",
+      "selectedText": "Robert glides backward through the cold air matching her walking pace, raising translucent hands in appeal",
+      "startTime": 6,
+      "endTime": 9,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2750,
+      "endIndex": 2856
+    },
+    {
+      "id": "cue-016",
+      "type": "dialogue",
+      "selectedText": "Every minute here brings the fire closer to your mother’s gates.",
+      "startTime": 6.1,
+      "endTime": 9.3,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Robert",
+      "startIndex": 2882,
+      "endIndex": 2946
+    },
+    {
+      "id": "cue-017",
+      "type": "action",
+      "selectedText": "Rosa marches steadily into the space he occupies without flinching.",
+      "startTime": 8,
+      "endTime": 9.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3013,
+      "endIndex": 3080
+    },
+    {
+      "id": "cue-018",
+      "type": "camera",
+      "selectedText": "MS, low angle looking past Rosa's mantle toward Robert",
+      "startTime": 9.8,
+      "endTime": 10.5,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 3087,
+      "endIndex": 3141
+    },
+    {
+      "id": "cue-019",
+      "type": "audio",
+      "selectedText": "Heavy breath billowing in the freezing air",
+      "startTime": 9.8,
+      "endTime": 12,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3373,
+      "endIndex": 3415
+    },
+    {
+      "id": "cue-020",
+      "type": "action",
+      "selectedText": "Robert descends to eye level, hovering just above the bioluminescent frost directly in front of her",
+      "startTime": 9.8,
+      "endTime": 11.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3151,
+      "endIndex": 3250
+    },
+    {
+      "id": "cue-021",
+      "type": "dialogue",
+      "selectedText": "I know what’s at stake, Robert.",
+      "startTime": 9.9,
+      "endTime": 11.2,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Rosa",
+      "startIndex": 3285,
+      "endIndex": 3316
+    },
+    {
+      "id": "cue-022",
+      "type": "dialogue",
+      "selectedText": "Then act like it.",
+      "startTime": 11.2,
+      "endTime": 12,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Robert",
+      "startIndex": 3350,
+      "endIndex": 3367
+    },
+    {
+      "id": "cue-023",
+      "type": "action",
+      "selectedText": "Rosa walks straight through his spectral shoulder, breaking his misty outline.",
+      "startTime": 11.5,
+      "endTime": 12.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3426,
+      "endIndex": 3504
+    },
+    {
+      "id": "cue-024",
+      "type": "camera",
+      "selectedText": "MCU, moving three-quarters profile",
+      "startTime": 12.9,
+      "endTime": 13.5,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 3511,
+      "endIndex": 3545
+    },
+    {
+      "id": "cue-025",
+      "type": "audio",
+      "selectedText": "Soft rustle of heavy velvet over travel wool",
+      "startTime": 12.9,
+      "endTime": 16,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3776,
+      "endIndex": 3820
+    },
+    {
+      "id": "cue-026",
+      "type": "action",
+      "selectedText": "Rosa emerges through the cyan vapor of Robert's spirit, her mantle fluttering from the ethereal draft",
+      "startTime": 12.9,
+      "endTime": 14.3,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3555,
+      "endIndex": 3656
+    },
+    {
+      "id": "cue-027",
+      "type": "dialogue",
+      "selectedText": "I bought you this road.",
+      "startTime": 13,
+      "endTime": 14.1,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Robert",
+      "startIndex": 3687,
+      "endIndex": 3710
+    },
+    {
+      "id": "cue-028",
+      "type": "dialogue",
+      "selectedText": "You threw yourself away.",
+      "startTime": 14.3,
+      "endTime": 15.6,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Rosa",
+      "startIndex": 3746,
+      "endIndex": 3770
+    },
+    {
+      "id": "cue-029",
+      "type": "action",
+      "selectedText": "Her jaw tightens as she locks her sight onto the approaching root chasm.",
+      "startTime": 14.5,
+      "endTime": 16.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3831,
+      "endIndex": 3903
+    },
+    {
+      "id": "cue-030",
+      "type": "camera",
+      "selectedText": "FS, wide orbital track maintaining axis",
+      "startTime": 16.5,
+      "endTime": 18,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 3910,
+      "endIndex": 3949
+    },
+    {
+      "id": "cue-031",
+      "type": "audio",
+      "selectedText": "Distant groan of petrified timber echoing",
+      "startTime": 16.5,
+      "endTime": 20,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 4123,
+      "endIndex": 4164
+    },
+    {
+      "id": "cue-032",
+      "type": "action",
+      "selectedText": "Robert sweeps across her line of sight in a wide arc of cyan mist, his spectral face tight with dread",
+      "startTime": 16.5,
+      "endTime": 18.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3959,
+      "endIndex": 4060
+    },
+    {
+      "id": "cue-033",
+      "type": "dialogue",
+      "selectedText": "I cleared your path!",
+      "startTime": 16.7,
+      "endTime": 18,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Robert",
+      "startIndex": 4097,
+      "endIndex": 4117
+    },
+    {
+      "id": "cue-034",
+      "type": "dialogue",
+      "selectedText": "Take the horses. Cross the border.",
+      "startTime": 18.2,
+      "endTime": 20,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Robert",
+      "startIndex": 4182,
+      "endIndex": 4216
+    },
+    {
+      "id": "cue-035",
+      "type": "action",
+      "selectedText": "Robert comes to a halt hovering rigidly beside the perimeter of the glowing root fissure.",
+      "startTime": 18.5,
+      "endTime": 21,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4227,
+      "endIndex": 4316
+    },
+    {
+      "id": "cue-036",
+      "type": "camera",
+      "selectedText": "MS, high angle looking down at the fissure perimeter",
+      "startTime": 21,
+      "endTime": 22,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 4323,
+      "endIndex": 4375
+    },
+    {
+      "id": "cue-037",
+      "type": "audio",
+      "selectedText": "Rhythmic thrumming heat pulsing from the chasm floor",
+      "startTime": 21,
+      "endTime": 25,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 4616,
+      "endIndex": 4668
+    },
+    {
+      "id": "cue-038",
+      "type": "action",
+      "selectedText": "Rosa halts at the lip of the split root cavity, molten amber light illuminating her face and silver crown from below",
+      "startTime": 21,
+      "endTime": 22.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4385,
+      "endIndex": 4501
+    },
+    {
+      "id": "cue-039",
+      "type": "dialogue",
+      "selectedText": "Not alone.",
+      "startTime": 21.4,
+      "endTime": 22.1,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Rosa",
+      "startIndex": 4527,
+      "endIndex": 4537
+    },
+    {
+      "id": "cue-041",
+      "type": "action",
+      "selectedText": "Golden vapor billows around her boots as she stares into the depths.",
+      "startTime": 22,
+      "endTime": 25,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4679,
+      "endIndex": 4747
+    },
+    {
+      "id": "cue-040",
+      "type": "dialogue",
+      "selectedText": "The old stories are a trap, Rosa.",
+      "startTime": 22.2,
+      "endTime": 24.5,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Robert",
+      "startIndex": 4577,
+      "endIndex": 4610
+    },
+    {
+      "id": "cue-042",
+      "type": "camera",
+      "selectedText": "MS, slow tilt down facing Rosa by the glowing fissure",
+      "startTime": 25,
+      "endTime": 26.5,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 4754,
+      "endIndex": 4807
+    },
+    {
+      "id": "cue-043",
+      "type": "audio",
+      "selectedText": "Viscous bubbling of hot subterranean resin",
+      "startTime": 25,
+      "endTime": 30,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 5079,
+      "endIndex": 5121
+    },
+    {
+      "id": "cue-044",
+      "type": "action",
+      "selectedText": "Robert drifts down to ground level beside the rim, while Rosa drops into a grounded kneel before the fiery opening",
+      "startTime": 25,
+      "endTime": 27.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4817,
+      "endIndex": 4931
+    },
+    {
+      "id": "cue-045",
+      "type": "dialogue",
+      "selectedText": "Whatever is down there... leave it in the dirt.",
+      "startTime": 25.2,
+      "endTime": 27.8,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Robert",
+      "startIndex": 4967,
+      "endIndex": 5014
+    },
+    {
+      "id": "cue-046",
+      "type": "action",
+      "selectedText": "Rosa lowers her bare hand steadily into the golden amber radiance.",
+      "startTime": 27.5,
+      "endTime": 29.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 5132,
+      "endIndex": 5198
+    },
+    {
+      "id": "cue-047",
+      "type": "dialogue",
+      "selectedText": "I’m bringing you back.",
+      "startTime": 28,
+      "endTime": 29.5,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Rosa",
+      "startIndex": 5051,
+      "endIndex": 5073
+    }
+  ],
+  "settings": {
+    "general": {
+      "before": 0.5,
+      "after": 0.5
+    },
+    "dialogue": {
+      "before": 0.5,
+      "after": 0.7
+    },
+    "action": {
+      "before": 0,
+      "after": 0
+    },
+    "camera": {
+      "before": 0,
+      "after": 0
+    },
+    "shot": {
+      "before": 0,
+      "after": 0
+    },
+    "audio": {
+      "before": 0,
+      "after": 0
+    },
+    "vfx": {
+      "before": 0,
+      "after": 0
+    },
+    "transition": {
+      "before": 0,
+      "after": 0
+    },
+    "environment": {
+      "before": 0,
+      "after": 0
+    }
+  }
+}

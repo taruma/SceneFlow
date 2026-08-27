@@ -156,49 +156,9 @@ All project states (`screenplay_sync_state`), theme preferences (`sceneflow_scri
 - All query-based loads prompt a confirmation modal with error reporting before replacing the workspace.
 
 ### Library Catalogue (Desktop & Mobile)
-An interactive catalogue featuring 30+ curated screenplays organized into 4 distinct sections:
+An interactive catalogue featuring curated screenplays organized into 4 distinct sections: **AI Scenes**, **The Written Motion (TWM Anthology)**, **FRAME Series**, and **AI Clips**.
 
-1. **AI Scenes**:
-   - *Frequency Over Force* (`scene_frequency`, Default Example)
-   - *Entropy* (`scene_entropy`)
-   - *The Expansion* (`expansion`)
-   - *Intent Over Rules* (`intent`)
-   - *Mosaic* (`mosaic`)
-   - *🐸 Frog Invasion* (`invasion`)
-   - *The Distance* (`the_distance`)
-   - *Not About Fish* (`not_about_fish`)
-   - *Afraid* (`afraid`)
-   - *A Duet of Distance* (`duet_of_distance`)
-   - *Table Four* (`table_four`)
-   - *Flat Frog Problems* (`flat_frog_problems`)
-   - *Museum* (`museum`)
-   - *Still Here* (`scene_still_here`)
-
-2. **The Written Motion (TWM Anthology)**:
-   - *Volume 1: The Breaking Point* (`twm_vol1`)
-   - *Volume 2: Elemental Forces* (`twm_vol2`)
-   - *Volume 3: Kinetic* (`twm_vol3`)
-   - *Volume 4: Wayfarers* (`twm_vol4`)
-   - *Volume 5: Fractures* (`twm_vol5`)
-   - *Volume 6: Wonder* (`twm_vol6`)
-   - *Volume 7: What We Leave* (`twm_vol7`)
-
-3. **FRAME Series**:
-   - *FRAME 01: Distant* (`frame_01`)
-   - *FRAME 02: Wandering Souls* (`frame_02`)
-   - *FRAME 03: Relics of Time* (`frame_03`)
-   - *FRAME 04: Where Am I?* (`frame_04`)
-   - *FRAME 05: Old Growth* (`frame_05`, Featured)
-   - *FRAME 06: Forgotten* (`frame_06`)
-   - *FRAME 07: Samsara* (`frame_07`)
-   - *FRAME 08: Still, Restless* (`frame_08`)
-
-4. **AI Clips**:
-   - *Wild Kinship* (`wild_kinship`)
-   - *Vibe Shift* (`vibe_shift`)
-   - *Reality-Bending Video* (`reality_bending`)
-   - *The Magic Card* (`the_magic_card`)
-   - *Wonder (Uncut)* (`wonder_uncut`)
+For a complete and up-to-date list of all available sceneflow projects, release dates, video models, and shareable IDs, refer to the **[SceneFlow Catalogue](../SCENEFLOW_CATALOGUE.md)**.
 
 #### Catalogue Features
 - **`hideFromAll` Filtering**: Excludes high-density vignettes (e.g., AI Clips) from populating the unified "All Works" view.

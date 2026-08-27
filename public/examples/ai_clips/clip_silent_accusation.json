@@ -1,0 +1,597 @@
+{
+  "youtubeId": "https://youtu.be/9vaz0vTR8yM",
+  "scriptText": "\n\n\n\n\n\n\n\n\n\nI. SILENT ACCUSATIONS\n\n[[STAGING]]\n[[INTENT]]\nCreate a dramatic intervention scene where @actor1 as GABRIEL, @actor2 as LEA, and @actor3 as ROSA confront their long-time friend @actor4 as ARTHUR, a disgraced fugitive who has just unexpectedly walked into his own surprise intervention inside Rosa's dimly lit bohemian apartment.\n[[/INTENT]]\n\n[[LOGIC]]\nEnsure strict spatial continuity across all twelve beats and three camera setups. Preserve a fixed 180-degree axis anchored along the line between the open apartment entrance and the interior kitchen counter. Maintain precise prop tracking for Arthur's brass keyring, Gabriel's pocketed cell phone, and Rosa's trembling left hand on the counter. Avoid any close-up shot sizes or handheld tracking moves, relying instead on static compositions and controlled spatial perspective.\n[[/LOGIC]]\n\n[[AESTHETIC]]\nPalette: Deep amber, moody indigo shadows, burnt terracotta, olive drab, warm bronze undertones.\nLighting: Dim tungsten practicals in interior kitchen contrasting cool blue twilight spilling through rain-streaked background window.\nLocation: Industrial loft living space, exposed brick wall, polished concrete floor, kitchen island counter, untouched ceramic dinner plates on wooden dining table.\nWardrobe: Gabriel wears charcoal wool overcoat over burgundy shirt; Lea wears tailored navy sweater with thin gold metal headband; Rosa wears oversized rust corduroy shirt; Arthur wears distressed dark teal canvas coat over grey henley.\nAudio: Diegetic background Foley and ambient atmosphere only. Distant street traffic hum, wind whistle through doorway crack, hum of kitchen refrigerator. No music score.\n[[/AESTHETIC]]\n\n[[OPENING]]\nECU, child POV from floor looking upward through blinking eye-vignettes, Robert leaning close into lens with soot-streaked skin and urgent eyes amid dim blue moonlight and drifting drywall dust.\n[[/OPENING]]\n[[/STAGING]]\n\n[<BRIEF>]\n[CAM 01] -> [ACT] Arthur stands motionless in the frame-left doorway with keys dangling loose in his right fingers -> Arthur says {You really thought I wouldn't figure this out?} -> [ACT] Gabriel freezes mid-step near the window background-right.\n[CAM 01] -> [ACT] Gabriel turns his body slowly toward the front door -> Gabriel says {Arthur, just come inside and shut the door.} -> <Keys rattling softly as Arthur's grip slackens>\n[CAM 01] -> [ACT] Lea remains seated stiffly on the couch arm with arms tightly crossed -> [ENV] Cold hallway draft blows the open front door inward slightly.\n[CAM 02] MCU, low-angle, over-the-shoulder past Lea looking toward Arthur -> [ACT] Arthur lowers his eyes toward his uncurling right fingers -> Arthur says {Ten years, and you talk to each other instead of me.} -> [ACT] Arthur's thumb slides off the brass keyring.\n[CAM 02] -> [ACT] Lea leans forward slightly without uncrossing her arms -> Lea says {Because you stopped telling us the truth months ago.} -> [ACT] Arthur shifts his posture back toward the dark outer hallway.\n[CAM 02] -> [ACT] Arthur raises his chin, meeting Lea's steady gaze -> Arthur says (shaky breath) {I was trying to keep you out of it.} -> <Heavy distant thunder roll outside>\n[CAM 03] MS, low eye-level, framed across kitchen counter -> [ACT] Rosa stands by the kitchen threshold, resting her trembling left palm flat on the wooden surface -> Rosa says (soft whisper) {Artie, please...} -> [ACT] Rosa presses her trembling fingers firmly against the countertop.\n[CAM 03] -> [ACT] Gabriel steps forward from the rain-streaked window frame toward the center table -> Gabriel says {Look at the table, Arthur. We set a place for you.} -> [ACT] Gabriel gestures toward the four untouched ceramic dinner plates.\n[CAM 03] -> [ACT] Rosa keeps her gaze locked on Arthur's face without blinking\n[CAM 01] MS, eye-level, fixed multi-character view -> [ACT] Arthur glances past them at the untouched dinner setting on the central wooden table -> Arthur says {It's too late for dinner.} -> <Keyring clatters against metal doorframe>\n[CAM 01] -> [ACT] Gabriel's mobile phone vibrates silently inside his dark overcoat pocket -> [ACT] Gabriel ignores the phone's rhythmic vibration and maintains unwavering eye contact\n[CAM 01] -> [ACT] Arthur steps backward into the dark carpeted corridor while grasping the doorframe -> Arthur says (gasping exhale) {Don't follow me.} -> [ACT] Arthur turns toward the unlit staircase leaving the front door wide open.\n[</BRIEF>]",
+  "cues": [
+    {
+      "id": "cue-001",
+      "type": "camera",
+      "selectedText": "[CAM 01]",
+      "startTime": 0,
+      "endTime": 0.7,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 1932,
+      "endIndex": 1940
+    },
+    {
+      "id": "cue-002",
+      "type": "action",
+      "selectedText": "Arthur stands motionless in the frame-left doorway with keys dangling loose in his right fingers",
+      "startTime": 0,
+      "endTime": 0.9,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1950,
+      "endIndex": 2046
+    },
+    {
+      "id": "cue-003",
+      "type": "audio",
+      "selectedText": "Keys rattling softly as Arthur's grip slackens",
+      "startTime": 0,
+      "endTime": 1,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 2315,
+      "endIndex": 2361
+    },
+    {
+      "id": "cue-004",
+      "type": "action",
+      "selectedText": "Gabriel freezes mid-step near the window background-right.",
+      "startTime": 0,
+      "endTime": 3.1,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2120,
+      "endIndex": 2178
+    },
+    {
+      "id": "cue-005",
+      "type": "environment",
+      "selectedText": "Cold hallway draft blows the open front door inward slightly.",
+      "startTime": 0,
+      "endTime": 1.5,
+      "colorClass": "bg-slate-400/50",
+      "speaker": null,
+      "startIndex": 2460,
+      "endIndex": 2521
+    },
+    {
+      "id": "cue-011",
+      "type": "action",
+      "selectedText": "Lea remains seated stiffly on the couch arm with arms tightly crossed",
+      "startTime": 0,
+      "endTime": 7.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2381,
+      "endIndex": 2450
+    },
+    {
+      "id": "cue-006",
+      "type": "dialogue",
+      "selectedText": "You really thought I wouldn't figure this out?",
+      "startTime": 0.9,
+      "endTime": 3.1,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Arthur",
+      "startIndex": 2063,
+      "endIndex": 2109
+    },
+    {
+      "id": "cue-007",
+      "selectedText": "[CAM 01]",
+      "startIndex": 2179,
+      "endIndex": 2187,
+      "startTime": 3.1,
+      "endTime": 4.3,
+      "colorClass": "bg-green-400/50",
+      "type": "camera"
+    },
+    {
+      "id": "cue-008",
+      "type": "action",
+      "selectedText": "Gabriel turns his body slowly toward the front door",
+      "startTime": 3.1,
+      "endTime": 4.3,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2197,
+      "endIndex": 2248
+    },
+    {
+      "id": "cue-009",
+      "type": "dialogue",
+      "selectedText": "Arthur, just come inside and shut the door.",
+      "startTime": 4.3,
+      "endTime": 6.9,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Gabriel",
+      "startIndex": 2266,
+      "endIndex": 2309
+    },
+    {
+      "id": "cue-010",
+      "selectedText": "[CAM 01]",
+      "startIndex": 2363,
+      "endIndex": 2371,
+      "startTime": 6.9,
+      "endTime": 7.5,
+      "colorClass": "bg-green-400/50",
+      "type": "camera"
+    },
+    {
+      "id": "cue-012",
+      "type": "camera",
+      "selectedText": "[CAM 02]",
+      "startTime": 7.5,
+      "endTime": 8.2,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 2522,
+      "endIndex": 2530
+    },
+    {
+      "id": "cue-013",
+      "type": "shot",
+      "selectedText": "MCU, low-angle, over-the-shoulder past Lea looking toward Arthur",
+      "startTime": 7.5,
+      "endTime": 11.4,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 2531,
+      "endIndex": 2595
+    },
+    {
+      "id": "cue-014",
+      "type": "action",
+      "selectedText": "Arthur's thumb slides off the brass keyring.",
+      "startTime": 7.5,
+      "endTime": 9,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2742,
+      "endIndex": 2786
+    },
+    {
+      "id": "cue-015",
+      "type": "action",
+      "selectedText": "Arthur lowers his eyes toward his uncurling right fingers",
+      "startTime": 7.8,
+      "endTime": 8.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2605,
+      "endIndex": 2662
+    },
+    {
+      "id": "cue-016",
+      "type": "dialogue",
+      "selectedText": "Ten years, and you talk to each other instead of me.",
+      "startTime": 8.8,
+      "endTime": 11.4,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Arthur",
+      "startIndex": 2679,
+      "endIndex": 2731
+    },
+    {
+      "id": "cue-017",
+      "selectedText": "[CAM 02]",
+      "startIndex": 2787,
+      "endIndex": 2795,
+      "startTime": 11.4,
+      "endTime": 12,
+      "colorClass": "bg-green-400/50",
+      "type": "camera"
+    },
+    {
+      "id": "cue-018",
+      "type": "action",
+      "selectedText": "Arthur shifts his posture back toward the dark outer hallway.",
+      "startTime": 11.4,
+      "endTime": 14.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2936,
+      "endIndex": 2997
+    },
+    {
+      "id": "cue-019",
+      "type": "action",
+      "selectedText": "Lea leans forward slightly without uncrossing her arms",
+      "startTime": 11.4,
+      "endTime": 13.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2805,
+      "endIndex": 2859
+    },
+    {
+      "id": "cue-020",
+      "type": "dialogue",
+      "selectedText": "Because you stopped telling us the truth months ago.",
+      "startTime": 11.8,
+      "endTime": 14.2,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Lea",
+      "startIndex": 2873,
+      "endIndex": 2925
+    },
+    {
+      "id": "cue-025",
+      "type": "audio",
+      "selectedText": "Heavy distant thunder roll outside",
+      "startTime": 14,
+      "endTime": 16.5,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3138,
+      "endIndex": 3172
+    },
+    {
+      "id": "cue-021",
+      "selectedText": "[CAM 02]",
+      "startIndex": 2998,
+      "endIndex": 3006,
+      "startTime": 14.2,
+      "endTime": 14.8,
+      "colorClass": "bg-green-400/50",
+      "type": "camera"
+    },
+    {
+      "id": "cue-022",
+      "type": "action",
+      "selectedText": "Arthur raises his chin, meeting Lea's steady gaze",
+      "startTime": 14.2,
+      "endTime": 15.6,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3016,
+      "endIndex": 3065
+    },
+    {
+      "id": "cue-023",
+      "type": "audio",
+      "selectedText": "shaky breath",
+      "startTime": 14.4,
+      "endTime": 14.8,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3082,
+      "endIndex": 3094
+    },
+    {
+      "id": "cue-024",
+      "type": "dialogue",
+      "selectedText": "I was trying to keep you out of it.",
+      "startTime": 14.8,
+      "endTime": 16.5,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Arthur",
+      "startIndex": 3097,
+      "endIndex": 3132
+    },
+    {
+      "id": "cue-026",
+      "type": "camera",
+      "selectedText": "[CAM 03]",
+      "startTime": 16.5,
+      "endTime": 17.2,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 3174,
+      "endIndex": 3182
+    },
+    {
+      "id": "cue-027",
+      "type": "shot",
+      "selectedText": "MS, low eye-level, framed across kitchen counter",
+      "startTime": 16.5,
+      "endTime": 22,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 3183,
+      "endIndex": 3231
+    },
+    {
+      "id": "cue-028",
+      "type": "action",
+      "selectedText": "Rosa stands by the kitchen threshold, resting her trembling left palm flat on the wooden surface",
+      "startTime": 16.5,
+      "endTime": 18.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3241,
+      "endIndex": 3337
+    },
+    {
+      "id": "cue-031",
+      "type": "action",
+      "selectedText": "Rosa presses her trembling fingers firmly against the countertop.",
+      "startTime": 16.5,
+      "endTime": 18.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3394,
+      "endIndex": 3459
+    },
+    {
+      "id": "cue-038",
+      "type": "action",
+      "selectedText": "Rosa keeps her gaze locked on Arthur's face without blinking",
+      "startTime": 16.5,
+      "endTime": 22.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3722,
+      "endIndex": 3782
+    },
+    {
+      "id": "cue-029",
+      "type": "audio",
+      "selectedText": "soft whisper",
+      "startTime": 16.8,
+      "endTime": 18.2,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3352,
+      "endIndex": 3364
+    },
+    {
+      "id": "cue-030",
+      "type": "dialogue",
+      "selectedText": "Artie, please...",
+      "startTime": 16.8,
+      "endTime": 18.2,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Rosa",
+      "startIndex": 3367,
+      "endIndex": 3383
+    },
+    {
+      "id": "cue-032",
+      "selectedText": "[CAM 03]",
+      "startIndex": 3460,
+      "endIndex": 3468,
+      "startTime": 18.2,
+      "endTime": 18.8,
+      "colorClass": "bg-green-400/50",
+      "type": "camera"
+    },
+    {
+      "id": "cue-033",
+      "type": "action",
+      "selectedText": "Gabriel steps forward from the rain-streaked window frame toward the center table",
+      "startTime": 18.5,
+      "endTime": 21,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3478,
+      "endIndex": 3559
+    },
+    {
+      "id": "cue-034",
+      "type": "dialogue",
+      "selectedText": "Look at the table, Arthur.",
+      "startTime": 18.8,
+      "endTime": 20,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Gabriel",
+      "startIndex": 3577,
+      "endIndex": 3603
+    },
+    {
+      "id": "cue-035",
+      "type": "dialogue",
+      "selectedText": "We set a place for you.",
+      "startTime": 20,
+      "endTime": 21.5,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Gabriel",
+      "startIndex": 3604,
+      "endIndex": 3627
+    },
+    {
+      "id": "cue-036",
+      "type": "action",
+      "selectedText": "Gabriel gestures toward the four untouched ceramic dinner plates.",
+      "startTime": 20,
+      "endTime": 22,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3638,
+      "endIndex": 3703
+    },
+    {
+      "id": "cue-037",
+      "selectedText": "[CAM 03]",
+      "startIndex": 3704,
+      "endIndex": 3712,
+      "startTime": 22,
+      "endTime": 22.8,
+      "colorClass": "bg-green-400/50",
+      "type": "camera"
+    },
+    {
+      "id": "cue-039",
+      "type": "camera",
+      "selectedText": "[CAM 01]",
+      "startTime": 22.8,
+      "endTime": 26.2,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 3783,
+      "endIndex": 3791
+    },
+    {
+      "id": "cue-040",
+      "type": "shot",
+      "selectedText": "MS, eye-level, fixed multi-character view",
+      "startTime": 22.8,
+      "endTime": 29.8,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 3792,
+      "endIndex": 3833
+    },
+    {
+      "id": "cue-041",
+      "type": "action",
+      "selectedText": "Arthur glances past them at the untouched dinner setting on the central wooden table",
+      "startTime": 22.8,
+      "endTime": 24,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3843,
+      "endIndex": 3927
+    },
+    {
+      "id": "cue-042",
+      "type": "dialogue",
+      "selectedText": "It's too late for dinner.",
+      "startTime": 23.9,
+      "endTime": 25.3,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Arthur",
+      "startIndex": 3944,
+      "endIndex": 3969
+    },
+    {
+      "id": "cue-043",
+      "type": "audio",
+      "selectedText": "Keyring clatters against metal doorframe",
+      "startTime": 25.3,
+      "endTime": 26.2,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3975,
+      "endIndex": 4015
+    },
+    {
+      "id": "cue-044",
+      "selectedText": "[CAM 01]",
+      "startIndex": 4017,
+      "endIndex": 4025,
+      "startTime": 26.2,
+      "endTime": 28.5,
+      "colorClass": "bg-green-400/50",
+      "type": "camera"
+    },
+    {
+      "id": "cue-045",
+      "type": "action",
+      "selectedText": "Gabriel's mobile phone vibrates silently inside his dark overcoat pocket",
+      "startTime": 26.2,
+      "endTime": 28.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4035,
+      "endIndex": 4107
+    },
+    {
+      "id": "cue-046",
+      "type": "action",
+      "selectedText": "Gabriel ignores the phone's rhythmic vibration and maintains unwavering eye contact",
+      "startTime": 26.2,
+      "endTime": 28.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4117,
+      "endIndex": 4200
+    },
+    {
+      "id": "cue-049",
+      "type": "dialogue",
+      "selectedText": "Don't follow me.",
+      "startTime": 28,
+      "endTime": 29,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Arthur",
+      "startIndex": 4335,
+      "endIndex": 4351
+    },
+    {
+      "id": "cue-047",
+      "selectedText": "[CAM 01]",
+      "startIndex": 4201,
+      "endIndex": 4209,
+      "startTime": 28.5,
+      "endTime": 29.8,
+      "colorClass": "bg-green-400/50",
+      "type": "camera"
+    },
+    {
+      "id": "cue-048",
+      "type": "action",
+      "selectedText": "Arthur steps backward into the dark carpeted corridor while grasping the doorframe",
+      "startTime": 28.5,
+      "endTime": 29.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4219,
+      "endIndex": 4301
+    },
+    {
+      "id": "cue-051",
+      "type": "action",
+      "selectedText": "Arthur turns toward the unlit staircase leaving the front door wide open.",
+      "startTime": 28.5,
+      "endTime": 29.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4362,
+      "endIndex": 4435
+    },
+    {
+      "id": "cue-050",
+      "type": "audio",
+      "selectedText": "gasping exhale",
+      "startTime": 28.8,
+      "endTime": 29.5,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 4318,
+      "endIndex": 4332
+    }
+  ],
+  "settings": {
+    "general": {
+      "before": 0.5,
+      "after": 0.5
+    },
+    "dialogue": {
+      "before": 0.5,
+      "after": 0.7
+    },
+    "action": {
+      "before": 0,
+      "after": 0
+    },
+    "camera": {
+      "before": 0,
+      "after": 0
+    },
+    "shot": {
+      "before": 0,
+      "after": 0
+    },
+    "audio": {
+      "before": 0,
+      "after": 0
+    },
+    "vfx": {
+      "before": 0,
+      "after": 0
+    },
+    "transition": {
+      "before": 0,
+      "after": 0
+    },
+    "environment": {
+      "before": 0,
+      "after": 0
+    }
+  }
+}

@@ -1,0 +1,549 @@
+{
+  "youtubeId": "https://youtu.be/pl7179L4ZeY",
+  "scriptText": "\n\n\n\nI. BROKEN FRAME\n\n[[STAGING]]\n[[INTENT]]\nCreate a raw 1990s 35mm film screen test interview featuring @image1 as ROSA, confronting sudden personal grief mid-shoot, supported briefly by @image2 as ROBERT, while questioned by @image3 as ARTHUR off-camera.\n[[/INTENT]]\n\n[[LOGIC]]\nMaintain single-take continuity without cuts. Preserve spatial axis, naturalistic micro-performances, consistent key lighting, and grounded physical interactions between subjects.\n[[/LOGIC]]\n\n[[AESTHETIC]]\nMedium: 1990s 35mm film stock, organic grain, subtle halation\nPalette: Slate blue, charcoal, muted cream, warm skin tones\nLighting: Soft directional key light camera-left, gentle warm rim light\nLocation: Minimalist soundstage, textured grey-blue backdrop, wooden stool\nWardrobe: Rosa wearing an oversized vintage olive-green ribbed knit sweater and dark pleated trousers; Robert wearing a charcoal unbuttoned chore jacket over a faded off-white henley shirt;\nAudio: Pure diegetic soundstage room tone, foley, and dialogue; no music score\n[[/AESTHETIC]]\n\n[[OPENING]]\nMCU, eye-level, static single shot centered on Rosa seated on a wooden stool against the dark slate backdrop, eyes glistening with suppressed emotion.\n[[/OPENING]]\n[[/STAGING]]\n\n\n\n[<BRIEF>]\n[CAM 01] MCU, eye-level -> [ACT] A dark crew silhouette crosses the blurred foreground -> [ACT] Rosa rubs her trembling knuckles -> <Muffled studio chatter and hurried footsteps>\n[CAM 01] -> [ACT] Rosa lifts her chin slightly -> Arthur (O.S.) says: {Whenever you remember her voice, what is the first thing that comes back?} -> [ACT] Rosa swallows hard, blinking rapidly -> <Distant equipment latch click>\n[CAM 01] -> [ACT] Rosa parts her lips with a shaky exhale -> Rosa says (voice trembling): {She never whispered.} -> [ACT] Rosa presses her hands firmly against her jeans -> <Soft fabric friction>\n[CAM 01] -> [ACT] Rosa looks down toward frame-left -> Rosa says: {Even when everything was quiet, she filled the entire hallway.} -> [ACT] Rosa bites her lower lip to hold back tears\n[CAM 01] -> [ACT] A single tear slips down Rosa's cheek -> Rosa says: {We were supposed to call her at lunch.} -> [ACT] Rosa bows her head, shoulders trembling -> <Stifled sob>\n[CAM 01] -> [ACT] Robert enters frame-right, kneeling beside the stool -> [ACT] Robert places a steady hand on the stool rung, looking up at Rosa -> <Floorboard creak>\n[CAM 01] -> [ACT] Rosa turns her glistening eyes toward Robert -> Rosa says (whispering): {I didn't pick up the second ring.} -> [ACT] Rosa dabs her eye with the back of her wrist -> <Soft sniffle>\n[CAM 01] -> [ACT] Robert tilts his head gently with warm empathy -> Robert says (softly): {She knew, Rosa. Can you do this today?} -> [ACT] Rosa exhales deeply, meeting his gaze\n[CAM 01] -> [ACT] Rosa nods slowly, steeling her expression -> Rosa says: {I want to finish what we started.} -> [ACT] Robert gives a reassuring nod, squeezing her forearm -> <Soft fabric rustle>\n[CAM 01] -> [ACT] Robert stands and exits frame-right -> [ACT] Rosa straightens her spine and smooths down her sweater -> <Quiet receding footsteps>\n[CAM 01] -> [ACT] Rosa closes her eyes for one steady breath -> Rosa says: {She'd hate it if I stopped the roll.} -> [ACT] Rosa opens her focused eyes toward off-camera\n[CAM 01] -> [ACT] Rosa rolls her shoulders back -> Arthur (O.S.) says: {Take ten if you need, Rosa.} -> [ACT] Rosa raises her right hand slightly in a gentle decline -> <Soundstage ambient hum>\n[CAM 01] -> [ACT] Rosa tilts her head upward -> Rosa says: {No, don't cut.} -> [ACT] Rosa settles her posture with calm determination\n[CAM 01] -> [ACT] Rosa turns her gaze directly into the camera lens -> Rosa says: {Let's take it from the top.} -> [ACT] A subtle, resolute half-smile touches her lips\n[CAM 01] -> [ACT] Rosa holds unwavering eye contact with the lens -> [ACT] Rosa releases a quiet, steady breath -> <Clapper slate snap in distance>\n[</BRIEF>]",
+  "cues": [
+    {
+      "id": "cue-001",
+      "selectedText": "MCU, eye-level",
+      "startIndex": 1251,
+      "endIndex": 1265,
+      "startTime": 0,
+      "endTime": 1,
+      "colorClass": "bg-purple-400/50",
+      "type": "shot"
+    },
+    {
+      "id": "cue-002",
+      "type": "action",
+      "selectedText": "A dark crew silhouette crosses the blurred foreground",
+      "startTime": 0,
+      "endTime": 1.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1275,
+      "endIndex": 1328
+    },
+    {
+      "id": "cue-003",
+      "type": "action",
+      "selectedText": "Rosa rubs her trembling knuckles",
+      "startTime": 0,
+      "endTime": 5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1338,
+      "endIndex": 1370
+    },
+    {
+      "id": "cue-004",
+      "type": "audio",
+      "selectedText": "Muffled studio chatter and hurried footsteps",
+      "startTime": 0,
+      "endTime": 1.5,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 1375,
+      "endIndex": 1419
+    },
+    {
+      "id": "cue-006",
+      "type": "dialogue",
+      "selectedText": "Whenever you remember her voice, what is the first thing that comes back?",
+      "startTime": 1.6,
+      "endTime": 5,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Arthur",
+      "startIndex": 1492,
+      "endIndex": 1565
+    },
+    {
+      "id": "cue-005",
+      "type": "action",
+      "selectedText": "Rosa lifts her chin slightly",
+      "startTime": 1.8,
+      "endTime": 3,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1439,
+      "endIndex": 1467
+    },
+    {
+      "id": "cue-007",
+      "type": "action",
+      "selectedText": "Rosa swallows hard, blinking rapidly",
+      "startTime": 3.5,
+      "endTime": 5.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1576,
+      "endIndex": 1612
+    },
+    {
+      "id": "cue-008",
+      "type": "action",
+      "selectedText": "Rosa parts her lips with a shaky exhale",
+      "startTime": 5,
+      "endTime": 5.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1666,
+      "endIndex": 1705
+    },
+    {
+      "id": "cue-009",
+      "type": "dialogue",
+      "selectedText": "She never whispered.",
+      "startTime": 5.5,
+      "endTime": 7,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Rosa",
+      "startIndex": 1739,
+      "endIndex": 1759
+    },
+    {
+      "id": "cue-010",
+      "type": "action",
+      "selectedText": "Rosa presses her hands firmly against her jeans",
+      "startTime": 5.6,
+      "endTime": 7.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1770,
+      "endIndex": 1817
+    },
+    {
+      "id": "cue-011",
+      "type": "audio",
+      "selectedText": "Soft fabric friction",
+      "startTime": 5.7,
+      "endTime": 6.8,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 1822,
+      "endIndex": 1842
+    },
+    {
+      "id": "cue-012",
+      "type": "action",
+      "selectedText": "Rosa looks down toward frame-left",
+      "startTime": 7.3,
+      "endTime": 9.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1862,
+      "endIndex": 1895
+    },
+    {
+      "id": "cue-013",
+      "type": "dialogue",
+      "selectedText": "Even when everything was quiet, she filled the entire hallway.",
+      "startTime": 7.3,
+      "endTime": 10.3,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Rosa",
+      "startIndex": 1911,
+      "endIndex": 1973
+    },
+    {
+      "id": "cue-015",
+      "type": "action",
+      "selectedText": "A single tear slips down Rosa's cheek",
+      "startTime": 9.2,
+      "endTime": 11.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2046,
+      "endIndex": 2083
+    },
+    {
+      "id": "cue-014",
+      "type": "action",
+      "selectedText": "Rosa bites her lower lip to hold back tears",
+      "startTime": 9.8,
+      "endTime": 11,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1984,
+      "endIndex": 2027
+    },
+    {
+      "id": "cue-016",
+      "type": "dialogue",
+      "selectedText": "We were supposed to call her at lunch.",
+      "startTime": 11.1,
+      "endTime": 13,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Rosa",
+      "startIndex": 2099,
+      "endIndex": 2137
+    },
+    {
+      "id": "cue-017",
+      "type": "action",
+      "selectedText": "Rosa bows her head, shoulders trembling",
+      "startTime": 12.8,
+      "endTime": 14.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2148,
+      "endIndex": 2187
+    },
+    {
+      "id": "cue-018",
+      "type": "audio",
+      "selectedText": "Stifled sob",
+      "startTime": 12.8,
+      "endTime": 13.8,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 2192,
+      "endIndex": 2203
+    },
+    {
+      "id": "cue-019",
+      "type": "action",
+      "selectedText": "Robert enters frame-right, kneeling beside the stool",
+      "startTime": 13,
+      "endTime": 15,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2223,
+      "endIndex": 2275
+    },
+    {
+      "id": "cue-020",
+      "type": "action",
+      "selectedText": "Robert places a steady hand on the stool rung, looking up at Rosa",
+      "startTime": 14.5,
+      "endTime": 16.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2285,
+      "endIndex": 2350
+    },
+    {
+      "id": "cue-021",
+      "type": "action",
+      "selectedText": "Rosa turns her glistening eyes toward Robert",
+      "startTime": 14.5,
+      "endTime": 15.6,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2391,
+      "endIndex": 2435
+    },
+    {
+      "id": "cue-022",
+      "type": "dialogue",
+      "selectedText": "I didn't pick up the second ring.",
+      "startTime": 15,
+      "endTime": 16.8,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Rosa",
+      "startIndex": 2464,
+      "endIndex": 2497
+    },
+    {
+      "id": "cue-023",
+      "type": "action",
+      "selectedText": "Rosa dabs her eye with the back of her wrist",
+      "startTime": 15.6,
+      "endTime": 17,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2508,
+      "endIndex": 2552
+    },
+    {
+      "id": "cue-024",
+      "type": "audio",
+      "selectedText": "Soft sniffle",
+      "startTime": 16.5,
+      "endTime": 17.2,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 2557,
+      "endIndex": 2569
+    },
+    {
+      "id": "cue-025",
+      "type": "action",
+      "selectedText": "Robert tilts his head gently with warm empathy",
+      "startTime": 17,
+      "endTime": 18.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2589,
+      "endIndex": 2635
+    },
+    {
+      "id": "cue-026",
+      "type": "dialogue",
+      "selectedText": "She knew, Rosa. Can you do this today?",
+      "startTime": 17.2,
+      "endTime": 19.8,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Robert",
+      "startIndex": 2662,
+      "endIndex": 2700
+    },
+    {
+      "id": "cue-027",
+      "type": "action",
+      "selectedText": "Rosa exhales deeply, meeting his gaze",
+      "startTime": 19.5,
+      "endTime": 20.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2711,
+      "endIndex": 2748
+    },
+    {
+      "id": "cue-029",
+      "type": "dialogue",
+      "selectedText": "I want to finish what we started.",
+      "startTime": 20.3,
+      "endTime": 22.2,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Rosa",
+      "startIndex": 2824,
+      "endIndex": 2857
+    },
+    {
+      "id": "cue-028",
+      "type": "action",
+      "selectedText": "Rosa nods slowly, steeling her expression",
+      "startTime": 20.5,
+      "endTime": 22,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2767,
+      "endIndex": 2808
+    },
+    {
+      "id": "cue-030",
+      "type": "action",
+      "selectedText": "Robert gives a reassuring nod, squeezing her forearm",
+      "startTime": 21.3,
+      "endTime": 22.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2868,
+      "endIndex": 2920
+    },
+    {
+      "id": "cue-031",
+      "type": "action",
+      "selectedText": "Robert stands and exits frame-right",
+      "startTime": 22.2,
+      "endTime": 24,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2963,
+      "endIndex": 2998
+    },
+    {
+      "id": "cue-032",
+      "type": "action",
+      "selectedText": "Rosa straightens her spine and smooths down her sweater",
+      "startTime": 22.5,
+      "endTime": 24.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3008,
+      "endIndex": 3063
+    },
+    {
+      "id": "cue-033",
+      "type": "action",
+      "selectedText": "Rosa closes her eyes for one steady breath",
+      "startTime": 23,
+      "endTime": 24.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3112,
+      "endIndex": 3154
+    },
+    {
+      "id": "cue-034",
+      "type": "dialogue",
+      "selectedText": "She'd hate it if I stopped the roll.",
+      "startTime": 23.5,
+      "endTime": 25,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Rosa",
+      "startIndex": 3170,
+      "endIndex": 3206
+    },
+    {
+      "id": "cue-035",
+      "type": "action",
+      "selectedText": "Rosa opens her focused eyes toward off-camera",
+      "startTime": 24.3,
+      "endTime": 25.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3217,
+      "endIndex": 3262
+    },
+    {
+      "id": "cue-036",
+      "type": "action",
+      "selectedText": "Rosa rolls her shoulders back",
+      "startTime": 24.8,
+      "endTime": 25.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3281,
+      "endIndex": 3310
+    },
+    {
+      "id": "cue-037",
+      "type": "dialogue",
+      "selectedText": "Take ten if you need, Rosa.",
+      "startTime": 25.2,
+      "endTime": 26.6,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Arthur",
+      "startIndex": 3335,
+      "endIndex": 3362
+    },
+    {
+      "id": "cue-038",
+      "type": "action",
+      "selectedText": "Rosa raises her right hand slightly in a gentle decline",
+      "startTime": 25.8,
+      "endTime": 27,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3373,
+      "endIndex": 3428
+    },
+    {
+      "id": "cue-040",
+      "type": "action",
+      "selectedText": "Rosa tilts her head upward",
+      "startTime": 26,
+      "endTime": 27,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3475,
+      "endIndex": 3501
+    },
+    {
+      "id": "cue-041",
+      "type": "dialogue",
+      "selectedText": "No, don't cut.",
+      "startTime": 26.5,
+      "endTime": 27.8,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Rosa",
+      "startIndex": 3517,
+      "endIndex": 3531
+    },
+    {
+      "id": "cue-042",
+      "type": "action",
+      "selectedText": "Rosa settles her posture with calm determination",
+      "startTime": 27,
+      "endTime": 28.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3542,
+      "endIndex": 3590
+    },
+    {
+      "id": "cue-043",
+      "type": "action",
+      "selectedText": "Rosa turns her gaze directly into the camera lens",
+      "startTime": 27.5,
+      "endTime": 28.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3609,
+      "endIndex": 3658
+    },
+    {
+      "id": "cue-044",
+      "type": "dialogue",
+      "selectedText": "Let's take it from the top.",
+      "startTime": 28,
+      "endTime": 29.2,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Rosa",
+      "startIndex": 3674,
+      "endIndex": 3701
+    },
+    {
+      "id": "cue-046",
+      "type": "action",
+      "selectedText": "Rosa holds unwavering eye contact with the lens",
+      "startTime": 28.5,
+      "endTime": 30,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3777,
+      "endIndex": 3824
+    },
+    {
+      "id": "cue-045",
+      "type": "action",
+      "selectedText": "A subtle, resolute half-smile touches her lips",
+      "startTime": 28.8,
+      "endTime": 30,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3712,
+      "endIndex": 3758
+    },
+    {
+      "id": "cue-047",
+      "type": "audio",
+      "selectedText": "Clapper slate snap in distance",
+      "startTime": 29.3,
+      "endTime": 29.8,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3875,
+      "endIndex": 3905
+    }
+  ],
+  "settings": {
+    "general": {
+      "before": 0.5,
+      "after": 1
+    },
+    "dialogue": {
+      "before": 0,
+      "after": 0
+    },
+    "action": {
+      "before": 0,
+      "after": 0
+    },
+    "camera": {
+      "before": 0,
+      "after": 0
+    },
+    "shot": {
+      "before": 0,
+      "after": 0
+    },
+    "audio": {
+      "before": 0,
+      "after": 0
+    },
+    "vfx": {
+      "before": 0,
+      "after": 0
+    },
+    "transition": {
+      "before": 0,
+      "after": 0
+    },
+    "environment": {
+      "before": 0,
+      "after": 0
+    }
+  }
+}

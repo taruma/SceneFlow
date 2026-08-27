@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.1.0-dev] - Unreleased
 
 ### Added
+- **Additional Example Projects**: Added new short-form AI clip examples to the built-in catalogue.
 - **Visual System Token Harmonization (`src/styles/tokens/ui.ts` & `src/index.css`)**:
   - Expanded and centralized `UI_TOKENS` into standard design token groups covering:
     - **`layout`**: App header, script headers (playback & edit modes), panel frames, and section titles.

@@ -1,0 +1,605 @@
+{
+  "youtubeId": "https://youtu.be/nrUr4aQsbKs",
+  "scriptText": "\n\n\n\n\n\n\n\n\n\nI. MOSAIC (ANIMATION)\n\n[[STAGING]]\n[[INTENT]]\nCreate a stylized animated sequence in a French graphic novel aesthetic featuring @actor1 as MARK (voice: @audio1) and @actor2 as ROBERT (voice: @audio2) in an intellectual walk-and-talk down a 1970s university corridor, debating visual tokenization through exaggerated hand-drawn dynamics.\n[[/INTENT]]\n\n[[LOGIC]]\nMaintain a continuous backward tracking shot without cuts. Preserve 180-degree axis discipline, hand-prop continuity for the blue exam folders, and exaggerated squash-and-stretch animation physics throughout the walk.\n[[/LOGIC]]\n\n[[AESTHETIC]]\nMedium: French animated cinema aesthetic, Franco-Belgian graphic novel style, contemporary editorial illustration, semi-ligne claire contour inking, muted digital watercolor wash, textured gouache shading, matte surface finish, subtle pigment grain\nPalette: Amber ochre, burnt sienna, slate blue, institutional olive, cream\nLighting: Grimy overhead fluorescent flicker mixed with warm late-afternoon clerestory rays\nLocation: Gothic Revival university hallway, vaulted arches, linoleum tile grid\nWardrobe: Mark wearing an oversized charcoal knit cardigan over a mustard henley, dark tweed trousers; Robert wearing an olive-drab trench coat over a faded denim button-down, charcoal slacks, thick tortoiseshell glasses\nSound: Purely diegetic; linoleum shoe squeaks, radiator clanks, paper rustling, hollow corridor ambience\n[[/AESTHETIC]]\n\n[[OPENING]]\nMS, EYE-LEVEL, centered. Robert strides forward down the linoleum corridor, clutching blue exam folders to his chest. Gothic archways recede into deep linear perspective behind him.\n[[/OPENING]]\n[[/STAGING]]\n\n[<BRIEF>]\n[CAM 01] MS, tracking backward -> [MOTION] Anticipation crouch into extreme linear stretch -> [ACT] Mark catapults from a recessed doorway into frame -> [ACT] Robert maintains his steady stride without flinching -> <Shoe rubber squeak on linoleum>\n[CAM 01] -> [MOTION] Quick pivot with dynamic secondary hair follow-through -> [ACT] Mark snaps into a backward walk facing Robert -> Mark says with wide eyes {The grid's a lie, Robert!} -> [ACT] Mark flings both hands upward in disbelief\n[CAM 01] -> [MOTION] Floating ease-in on backward stride -> [ACT] Mark spreads his fingers wide to outline an invisible box -> Mark says (urgent whisper) {Pixels aren't atoms. The model stopped seeing particles.} -> [ACT] Mark points an accusatory finger toward Robert's chest\n[CAM 01] -> [MOTION] Subtle shoulder bounce and rhythmic weight shift -> [ACT] Robert tightens his grip on the exam folders -> Robert says with a dry smirk {I assume you stayed up reading the new paper. Good morning, Mark.} -> [ACT] Robert tilts his head in weary amusement\n[CAM 01] -> [MOTION] Snappy exaggeration with hand smear frames -> [ACT] Mark shakes his head while miming a cutting motion -> Mark says (sharp cadence) {It's a shift! Shattering images into sixteen-by-sixteen patches.} -> [ACT] Mark pulls an invisible string between his hands -> <Paper folder creak>\n[CAM 01] -> [MOTION] Arc trajectory drift shifting Mark from front to screen-left flank -> [ACT] Mark rotates mid-stride to walk parallel beside Robert -> [ACT] Mark chops the air into rigid grid squares -> Mark says {Discrete tokens.} -> Mark drops his arms with a sharp exhale\n[CAM 01] -> [MOTION] Subtle squash on footsteps with synchronized head turn -> [ACT] Robert glances sideways over his spectacles -> [ACT] Robert adjusts the folders against his ribcage -> Robert says (thoughtful cadence) {So, it’s a mosaic? Tiles that suggest a face.} -> Robert nods slightly\n[CAM 01] -> [MOTION] Exaggerated upward pop on step -> [ACT] Mark snaps his fingers with intense joy -> Mark says (beaming) {Exactly! Geometry masquerading as language.} -> [ACT] Mark traces a rapid geometric spiral in mid-air -> <Crisp finger snap>\n[CAM 01] -> [MOTION] Follow-through flutter on exam folder edges -> [ACT] Robert looks down at the blue booklets -> [ACT] Robert flicks the paper corners with his thumb -> Robert says with a low chuckle {I hope it can tokenize these essays into something coherent.} -> <Rapid paper fluttering>\n[CAM 01] -> [MOTION] Sudden recoil with comedic head tilt -> [ACT] Mark taps his temple rhythmically with one finger -> Mark says (grinning) {Only if the weights are balanced, Rob.} -> [ACT] Mark leans forward into his stride\n[CAM 01] -> [MOTION] Progressive silhouette stretch into high-contrast chiaroscuro -> [ACT] Mark matches Robert's deliberate tempo -> [ACT] Robert lets out a soft, amused breath -> <Distant radiator pipe hiss>\n[CAM 01] -> [MOTION] Slow ease-out decrescendo into deep archway shadow -> [ACT] Mark and Robert stride shoulder-to-shoulder into the vaulted darkness -> [ACT] Robert shifts his papers firmly under his arm -> <Fading hollow footsteps>\n[</BRIEF>]",
+  "cues": [
+    {
+      "id": "cue-001",
+      "type": "camera",
+      "selectedText": "MS, tracking backward",
+      "startTime": 0,
+      "endTime": 27.8,
+      "colorClass": "bg-green-400/50",
+      "speaker": null,
+      "startIndex": 1692,
+      "endIndex": 1713
+    },
+    {
+      "id": "cue-002",
+      "type": "action",
+      "selectedText": "Anticipation crouch into extreme linear stretch",
+      "startTime": 0,
+      "endTime": 1.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1726,
+      "endIndex": 1773
+    },
+    {
+      "id": "cue-003",
+      "type": "action",
+      "selectedText": "Mark catapults from a recessed doorway into frame",
+      "startTime": 0,
+      "endTime": 1.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1783,
+      "endIndex": 1832
+    },
+    {
+      "id": "cue-004",
+      "type": "action",
+      "selectedText": "Robert maintains his steady stride without flinching",
+      "startTime": 0,
+      "endTime": 3,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1842,
+      "endIndex": 1894
+    },
+    {
+      "id": "cue-005",
+      "type": "audio",
+      "selectedText": "Shoe rubber squeak on linoleum",
+      "startTime": 0.6,
+      "endTime": 1.2,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 1899,
+      "endIndex": 1929
+    },
+    {
+      "id": "cue-006",
+      "type": "action",
+      "selectedText": "Quick pivot with dynamic secondary hair follow-through",
+      "startTime": 0.9,
+      "endTime": 1.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 1952,
+      "endIndex": 2006
+    },
+    {
+      "id": "cue-007",
+      "type": "dialogue",
+      "selectedText": "The grid's a lie, Robert!",
+      "startTime": 1,
+      "endTime": 2.6,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Mark",
+      "startIndex": 2091,
+      "endIndex": 2116
+    },
+    {
+      "id": "cue-008",
+      "type": "action",
+      "selectedText": "Mark snaps into a backward walk facing Robert",
+      "startTime": 1.1,
+      "endTime": 2.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2016,
+      "endIndex": 2061
+    },
+    {
+      "id": "cue-009",
+      "type": "action",
+      "selectedText": "Mark flings both hands upward in disbelief",
+      "startTime": 1.6,
+      "endTime": 2.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2127,
+      "endIndex": 2169
+    },
+    {
+      "id": "cue-010",
+      "type": "action",
+      "selectedText": "Floating ease-in on backward stride",
+      "startTime": 2.5,
+      "endTime": 4.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2191,
+      "endIndex": 2226
+    },
+    {
+      "id": "cue-011",
+      "type": "action",
+      "selectedText": "Mark spreads his fingers wide to outline an invisible box",
+      "startTime": 2.7,
+      "endTime": 4,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2236,
+      "endIndex": 2293
+    },
+    {
+      "id": "cue-012",
+      "type": "dialogue",
+      "selectedText": "Pixels aren't atoms. The model stopped seeing particles.",
+      "startTime": 2.8,
+      "endTime": 6.2,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Mark",
+      "startIndex": 2325,
+      "endIndex": 2381
+    },
+    {
+      "id": "cue-013",
+      "type": "action",
+      "selectedText": "Mark points an accusatory finger toward Robert's chest",
+      "startTime": 4,
+      "endTime": 6.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2392,
+      "endIndex": 2446
+    },
+    {
+      "id": "cue-014",
+      "type": "action",
+      "selectedText": "Robert tightens his grip on the exam folders",
+      "startTime": 4.5,
+      "endTime": 7,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2526,
+      "endIndex": 2570
+    },
+    {
+      "id": "cue-015",
+      "type": "action",
+      "selectedText": "Subtle shoulder bounce and rhythmic weight shift",
+      "startTime": 6,
+      "endTime": 9,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2468,
+      "endIndex": 2516
+    },
+    {
+      "id": "cue-016",
+      "type": "dialogue",
+      "selectedText": "I assume you stayed up reading the new paper. Good morning, Mark.",
+      "startTime": 6.3,
+      "endTime": 9.2,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Robert",
+      "startIndex": 2604,
+      "endIndex": 2669
+    },
+    {
+      "id": "cue-017",
+      "type": "action",
+      "selectedText": "Robert tilts his head in weary amusement",
+      "startTime": 6.5,
+      "endTime": 9,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2680,
+      "endIndex": 2720
+    },
+    {
+      "id": "cue-018",
+      "type": "action",
+      "selectedText": "Snappy exaggeration with hand smear frames",
+      "startTime": 9,
+      "endTime": 11.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2742,
+      "endIndex": 2784
+    },
+    {
+      "id": "cue-019",
+      "type": "action",
+      "selectedText": "Mark shakes his head while miming a cutting motion",
+      "startTime": 9,
+      "endTime": 11,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2794,
+      "endIndex": 2844
+    },
+    {
+      "id": "cue-020",
+      "type": "dialogue",
+      "selectedText": "It's a shift! Shattering images into sixteen-by-sixteen patches.",
+      "startTime": 9.1,
+      "endTime": 13.5,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Mark",
+      "startIndex": 2875,
+      "endIndex": 2939
+    },
+    {
+      "id": "cue-021",
+      "type": "action",
+      "selectedText": "Mark pulls an invisible string between his hands",
+      "startTime": 10.6,
+      "endTime": 12.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 2950,
+      "endIndex": 2998
+    },
+    {
+      "id": "cue-022",
+      "type": "action",
+      "selectedText": "Arc trajectory drift shifting Mark from front to screen-left flank",
+      "startTime": 12.5,
+      "endTime": 15.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3044,
+      "endIndex": 3110
+    },
+    {
+      "id": "cue-023",
+      "type": "action",
+      "selectedText": "Mark chops the air into rigid grid squares",
+      "startTime": 12.8,
+      "endTime": 14.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3184,
+      "endIndex": 3226
+    },
+    {
+      "id": "cue-024",
+      "type": "action",
+      "selectedText": "Mark rotates mid-stride to walk parallel beside Robert",
+      "startTime": 13,
+      "endTime": 16,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3120,
+      "endIndex": 3174
+    },
+    {
+      "id": "cue-025",
+      "type": "dialogue",
+      "selectedText": "Discrete tokens.",
+      "startTime": 13.6,
+      "endTime": 15,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Mark",
+      "startIndex": 3241,
+      "endIndex": 3257
+    },
+    {
+      "id": "cue-026",
+      "type": "action",
+      "selectedText": "Mark drops his arms with a sharp exhale",
+      "startTime": 14.5,
+      "endTime": 16,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3262,
+      "endIndex": 3301
+    },
+    {
+      "id": "cue-027",
+      "type": "action",
+      "selectedText": "Subtle squash on footsteps with synchronized head turn",
+      "startTime": 15,
+      "endTime": 17.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3323,
+      "endIndex": 3377
+    },
+    {
+      "id": "cue-028",
+      "type": "action",
+      "selectedText": "Robert adjusts the folders against his ribcage",
+      "startTime": 15,
+      "endTime": 17,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3440,
+      "endIndex": 3486
+    },
+    {
+      "id": "cue-029",
+      "type": "dialogue",
+      "selectedText": "So, it’s a mosaic? Tiles that suggest a face.",
+      "startTime": 15.2,
+      "endTime": 18.9,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Robert",
+      "startIndex": 3524,
+      "endIndex": 3569
+    },
+    {
+      "id": "cue-030",
+      "type": "action",
+      "selectedText": "Robert glances sideways over his spectacles",
+      "startTime": 15.5,
+      "endTime": 18,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3387,
+      "endIndex": 3430
+    },
+    {
+      "id": "cue-031",
+      "type": "action",
+      "selectedText": "Robert nods slightly",
+      "startTime": 17.5,
+      "endTime": 19,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3574,
+      "endIndex": 3594
+    },
+    {
+      "id": "cue-032",
+      "type": "action",
+      "selectedText": "Exaggerated upward pop on step",
+      "startTime": 18.5,
+      "endTime": 20,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3616,
+      "endIndex": 3646
+    },
+    {
+      "id": "cue-033",
+      "type": "action",
+      "selectedText": "Mark snaps his fingers with intense joy",
+      "startTime": 18.8,
+      "endTime": 20.2,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3656,
+      "endIndex": 3695
+    },
+    {
+      "id": "cue-034",
+      "type": "audio",
+      "selectedText": "Crisp finger snap",
+      "startTime": 18.9,
+      "endTime": 19.3,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 3826,
+      "endIndex": 3843
+    },
+    {
+      "id": "cue-035",
+      "type": "dialogue",
+      "selectedText": "Exactly! Geometry masquerading as language.",
+      "startTime": 18.9,
+      "endTime": 22,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Mark",
+      "startIndex": 3720,
+      "endIndex": 3763
+    },
+    {
+      "id": "cue-036",
+      "type": "action",
+      "selectedText": "Mark traces a rapid geometric spiral in mid-air",
+      "startTime": 19.5,
+      "endTime": 21.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3774,
+      "endIndex": 3821
+    },
+    {
+      "id": "cue-037",
+      "type": "action",
+      "selectedText": "Follow-through flutter on exam folder edges",
+      "startTime": 21.5,
+      "endTime": 24.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3866,
+      "endIndex": 3909
+    },
+    {
+      "id": "cue-038",
+      "type": "action",
+      "selectedText": "Robert looks down at the blue booklets",
+      "startTime": 21.8,
+      "endTime": 25,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3919,
+      "endIndex": 3957
+    },
+    {
+      "id": "cue-039",
+      "type": "action",
+      "selectedText": "Robert flicks the paper corners with his thumb",
+      "startTime": 22,
+      "endTime": 25,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 3967,
+      "endIndex": 4013
+    },
+    {
+      "id": "cue-040",
+      "type": "dialogue",
+      "selectedText": "I hope it can tokenize these essays into something coherent.",
+      "startTime": 22.1,
+      "endTime": 25.5,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Robert",
+      "startIndex": 4049,
+      "endIndex": 4109
+    },
+    {
+      "id": "cue-041",
+      "type": "audio",
+      "selectedText": "Rapid paper fluttering",
+      "startTime": 22.8,
+      "endTime": 24.8,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 4115,
+      "endIndex": 4137
+    },
+    {
+      "id": "cue-042",
+      "type": "action",
+      "selectedText": "Sudden recoil with comedic head tilt",
+      "startTime": 24.5,
+      "endTime": 26.5,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4160,
+      "endIndex": 4196
+    },
+    {
+      "id": "cue-043",
+      "type": "action",
+      "selectedText": "Mark taps his temple rhythmically with one finger",
+      "startTime": 24.8,
+      "endTime": 27,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4206,
+      "endIndex": 4255
+    },
+    {
+      "id": "cue-044",
+      "type": "dialogue",
+      "selectedText": "Only if the weights are balanced, Rob.",
+      "startTime": 25.4,
+      "endTime": 27.8,
+      "colorClass": "bg-yellow-400/50",
+      "speaker": "Mark",
+      "startIndex": 4281,
+      "endIndex": 4319
+    },
+    {
+      "id": "cue-045",
+      "type": "action",
+      "selectedText": "Mark leans forward into his stride",
+      "startTime": 26,
+      "endTime": 28,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4330,
+      "endIndex": 4364
+    },
+    {
+      "id": "cue-046",
+      "type": "audio",
+      "selectedText": "Robert lets out a soft, amused breath",
+      "startTime": 27.2,
+      "endTime": 28.2,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 4505,
+      "endIndex": 4542
+    },
+    {
+      "id": "cue-047",
+      "type": "shot",
+      "selectedText": "Progressive silhouette stretch into high-contrast chiaroscuro",
+      "startTime": 27.8,
+      "endTime": 29.8,
+      "colorClass": "bg-purple-400/50",
+      "speaker": null,
+      "startIndex": 4386,
+      "endIndex": 4447
+    },
+    {
+      "id": "cue-048",
+      "type": "action",
+      "selectedText": "Mark matches Robert's deliberate tempo",
+      "startTime": 27.8,
+      "endTime": 29.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4457,
+      "endIndex": 4495
+    },
+    {
+      "id": "cue-049",
+      "type": "action",
+      "selectedText": "Slow ease-out decrescendo into deep archway shadow",
+      "startTime": 27.8,
+      "endTime": 29.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4596,
+      "endIndex": 4646
+    },
+    {
+      "id": "cue-050",
+      "type": "action",
+      "selectedText": "Mark and Robert stride shoulder-to-shoulder into the vaulted darkness",
+      "startTime": 27.8,
+      "endTime": 29.8,
+      "colorClass": "bg-blue-400/50",
+      "speaker": null,
+      "startIndex": 4656,
+      "endIndex": 4725
+    },
+    {
+      "id": "cue-051",
+      "type": "audio",
+      "selectedText": "Fading hollow footsteps",
+      "startTime": 27.8,
+      "endTime": 29.8,
+      "colorClass": "bg-orange-400/50",
+      "speaker": null,
+      "startIndex": 4785,
+      "endIndex": 4808
+    }
+  ],
+  "settings": {
+    "general": {
+      "before": 0.5,
+      "after": 0.5
+    },
+    "dialogue": {
+      "before": 0.5,
+      "after": 0.7
+    },
+    "action": {
+      "before": 0,
+      "after": 0
+    },
+    "camera": {
+      "before": 0,
+      "after": 0
+    },
+    "shot": {
+      "before": 0,
+      "after": 0
+    },
+    "audio": {
+      "before": 0,
+      "after": 0
+    },
+    "vfx": {
+      "before": 0,
+      "after": 0
+    },
+    "transition": {
+      "before": 0,
+      "after": 0
+    },
+    "environment": {
+      "before": 0,
+      "after": 0
+    }
+  }
+}
