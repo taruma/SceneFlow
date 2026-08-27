@@ -1183,6 +1183,16 @@
       "speaker": null,
       "startIndex": 17639,
       "endIndex": 17690
+    },
+    {
+      "id": "d01a4103-4de6-4dba-a00c-5667605bbc43",
+      "selectedText": "Welcome to SceneFlow!",
+      "startIndex": 0,
+      "endIndex": 21,
+      "startTime": 0,
+      "endTime": 1,
+      "colorClass": "bg-yellow-400/50",
+      "type": "dialogue"
     }
   ],
   "settings": {
