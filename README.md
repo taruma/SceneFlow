@@ -22,11 +22,14 @@ https://github.com/user-attachments/assets/e2469136-4224-4192-affc-d19d7e403f74
 
 Built for evaluating how AI video models visualize prompt instructions, it supports both traditional **Screenplay formatting** and high-precision, state-driven **Auteur Script formatting** with 5-part staging metadata. SceneFlow helps you compare instructions against what was actually generated — essential for assessing prompt adherence and iterating on AI cinema projects.
 
+> **Note on Cue Creation**: SceneFlow does not automatically extract or generate video sync cues for you. Cues must be mapped **manually** (by highlighting text in Edit Mode and setting timestamps) or generated externally using **multimodal AI models** (such as Gemini) that analyze video frames against script timecodes.
+
 ### What It Does
 
 - **Script-to-Screen Tracking** — Highlights which parts of your script are playing in real-time
 - **Dual Script Workflows** — Seamlessly handles both human-readable screenplays and state-chained Auteur Scripts
 - **Color-Coded Cues** — 8 element types: dialogue, action, camera, shots, audio, VFX, transitions, environments
+- **Adherence Analysis** — Pinpoint missed prompt elements, camera drift, or continuity deviations against the generated video
 - **Timing Controls** — Adjustable buffers to fine-tune when highlights appear
 - **Portable** — JSON-based projects you can save, share, and version-control
 
@@ -146,23 +149,26 @@ npm run dev
 
 ### Playback Mode
 
-1. **Load a Script** — Use the example library or import your own JSON file
-2. **Play the Video** — The script will highlight in real-time as the video plays
-3. **Auto-Scroll** — Toggle auto-scroll to follow dialogue automatically
-4. **Filter Cues** — Click cue type buttons to show/hide specific categories
+1. **Load a Script** — Use the built-in Library (`?example=ID`), load a remote URL (`?project=URL`), or import a JSON project file.
+2. **Play the Video** — The script highlights in real-time as the video timeline progresses.
+3. **Auto-Scroll & Focus Mode** — Script automatically follows active cues. Click the **Focus Mode** dropdown next to Auto-Scroll to filter which cue types trigger scrolling (e.g., track *Dialogue* only).
+4. **Scroll Focus Line** — Choose where the active cue centers in your viewport (Top 35%, Center 50%, or Bottom 65%).
+5. **Script Width Presets** — Toggle between 5 reading column widths (Narrow to Expanded) for side-by-side video review.
+6. **Script Themes** — Switch between 6 light, warm, and OLED dark themes via the theme picker.
 
 ### Edit Mode
 
-1. **Switch to Edit** — Click the "Edit" button in the header
-2. **Add YouTube URL** — Paste any YouTube video URL or ID
-3. **Input Screenplay** — Click "Edit Raw" to paste your script text
-4. **Create Cues**:
-   - Select text in the script
-   - Set start/end times using the video player or manual input
-   - Choose a cue type (dialogue, action, etc.)
-   - Click "Save Cue"
-5. **Align Cues** — Use the "Align" button to re-match cues after script changes
-6. **Export** — Save your project as a JSON file
+1. **Switch to Edit** — Click the "Edit" toggle in the header.
+2. **Set Video Source** — Paste any YouTube video URL, short ID, or direct video link.
+3. **Edit Script Text** — Click "Edit Raw" to modify the complete script and staging blocks.
+4. **Create & Adjust Cues**:
+   - Highlight any text in the script preview to open the Cue Editor.
+   - Snap start/end timestamps using the clock button or manual inputs.
+   - Choose a cue category (Dialogue, Action, Camera, Shot, Audio, VFX, Transition, Environment).
+   - Edit the selected cue text directly in-place using the monospace editor without touching raw JSON.
+5. **Handle Overlaps** — Click overlapping highlights in the script to select specific cues via the Overlap Picker.
+6. **Align Cues** — Click "Align" to automatically re-anchor highlights if script text changes; use "Find Alternative" to resolve duplicate phrase occurrences.
+7. **Export** — Download a portable JSON project file via "Save Sync".
 
 ### Keyboard Shortcuts
 
@@ -197,75 +203,89 @@ You can load any JSON project hosted on a CORS-enabled server by appending `?pro
 
 ## 📝 Script Formatting Guide
 
-SceneFlow uses a specific set of rules to parse and style your screenplay text. Follow these formatting conventions in the **Edit Raw** mode to ensure your script is rendered correctly.
+SceneFlow uses deterministic heuristics and regex to parse, render, and synchronize both traditional screenplays and technical Auteur Scripts.
 
-### Core Elements
+### Two Supported Scripting Workflows
+
+SceneFlow accommodates both major prompting styles used across AI filmmaking:
+
+1. **Classic Auteur (Screenplay Style)**:
+   - Uses traditional cinema formatting: Scene Headings (`INT./EXT.`), character dialogue blocks, parentheticals, and bold action lines.
+   - Ideal for narrative scenes, multi-page drama, and human-readable script sharing where natural language guides the model's visual staging.
+2. **Auteur Script (Technical State Engine)**:
+   - Uses modular state-transition blocks enclosed in `[<BRIEF>]` tags with chained arrows (`->`) and bold anchor tokens (`[CAM]`, `[ACT]`, `[AUDIO]`, `[STATE OUT]`).
+   - Ideal for reasoning-based video models where each Macro-State line ($S_n$) inherits the visible physical coordinates of the previous beat without hallucinating resets.
+
+Both workflows share the exact same Staging metadata and Timeline Cue synchronization engines.
+
+### Core Elements Table
 
 | Element | Format | Example |
 |---------|--------|---------|
 | **Scene Heading** | Starts with `INT.` or `EXT.` | `INT. OFFICE - DAY` |
 | **Character Name** | ALL CAPS followed by a colon | `JOHN:` |
-| **Dialogue** | Lines immediately following a character name | `I should go now.` |
-| **Parenthetical** | Text wrapped in parentheses | `(beat)` |
-| **Bold Direction** | Single line in ALL CAPS (emphasized) | `HE WALKS TO THE WINDOW.` |
-| **Action** | Mixed case paragraphs (standard) | `He walks slowly to the window, his eyes FIXED on the horizon.` |
-| **Shot/Camera Note** | Text wrapped in square brackets `[...]` | `[SHOT 1: CU - LOW ANGLE]` |
-| **Effect** | Starts with `SFX:` or `VFX:` | `SFX: THUNDER CLAP` |
+| **Dialogue** | Lines immediately following a character name | `Everything starts with intent.` |
+| **Parenthetical** | Text wrapped in parentheses | `(whispering with excitement)` |
+| **Bold Direction** | Single line in ALL CAPS (emphasized action) | `HE PIVOTS SHARPLY TO FACE THE DOOR.` |
+| **Action** | Mixed case narrative paragraphs | `The cursor blinks on a clean slate as the creator leans in.` |
+| **Shot / Camera Note** | Text wrapped in square brackets `[...]` | `[CLOSE-UP – MONITOR DISPLAY]` |
+| **Effect** | Starts with `SFX:` or `VFX:` | `SFX: Mechanical keyboard click` |
 | **Separator** | Three dashes on a single line | `---` |
 | **Part Separator** | `PART` followed by a number | `PART 1` |
 | **Roman Title** | Roman numeral + dot + Uppercase Title | `I. THE BEGINNING` |
-| **Auteur Brief** | Block wrapped in `[<BRIEF>]` and `[</BRIEF>]` | *See below* |
+| **Auteur Script Block** | Block wrapped in `[<BRIEF>]` and `[</BRIEF>]` | *See below* |
 
-> **Note on Square Brackets `[...]`**: While styled as technical notes, these are primarily used for shot numbers, shot types, camera angles, and emphasizing specific camera movements or technical instructions within the script.
+---
 
-### Staging Blocks & Auteur Prompting
+### Staging Blocks (Auteur Script Scaffold)
 
-SceneFlow supports a hierarchical prompt structure called **Auteur Prompting**. While the main view focuses on the **Level 3: Screenplay**, you can use **Staging Blocks** to embed higher-level instructions directly into your project.
+SceneFlow embeds high-level prompt directives directly into your project using **Staging Blocks**. Staging content is concealed from the main reading flow and replaced with an interactive **STAGING** badge that opens a monospace inspector modal.
 
-- **Level 1: GLOBAL Instruction** — Overarching style, technical parameters, and model-wide rules.
-- **Level 2: Lookbook/Reference** — Visual references, aesthetic guides, and character/environment consistency notes.
-- **Level 3: Screenplay** — The actual script text (the primary content synced to the video).
+#### The 5-Part Scaffold Architecture:
+- `[[INTENT]]` — High-level vision, subject definition, and core emotional beat.
+- `[[LOGIC]]` — Hard guardrails for visual planning (spatial continuity, 180° axis, object permanence).
+- `[[AESTHETIC]]` — Master audio-visual reference (palette, lighting, wardrobe, location, textures).
+- `[[OPENING]]` — Locked first-frame coordinate anchor ($S_0$) establishing baseline geometry.
+- `[[CONTINUITY PROTOCOL]]` — Multi-shot continuation rules extending directly from previous video generations.
+*(Legacy directives `[[GLOBAL]]` and `[[LOOKBOOK]]` remain fully backward-compatible).*
 
-#### Implementation Example:
+#### Staging Example:
 
 ```text
 [[STAGING]]
-[[GLOBAL]]
-Generate ...
-[[/GLOBAL]]
-
-[[LOOKBOOK]]
-ESTABLISHING SCENE / CONTINUITY PROTOCOL
-[[/LOOKBOOK]]
+[[INTENT]]
+Create a cinematic, dialogue-driven academic drama scene featuring Mark and Robert.
+[[/INTENT]]
+[[LOGIC]]
+Ensure rigid spatial continuity across camera setups. Preserve object permanence for the metronome.
+[[/LOGIC]]
+[[AESTHETIC]]
+Medium: 35mm film texture.
+Palette: Deep navy blue, rich mahogany dark oak, warm amber tungsten.
+Lighting: Overhead tungsten auditorium grid lighting.
+[[/AESTHETIC]]
+[[OPENING]]
+Establishing wide shot of the auditorium stage. Mark stands stage left; Robert holds a wooden metronome stage right.
+[[/OPENING]]
 [[/STAGING]]
-
-INT. CYBER-CAFE - NIGHT
-...
 ```
 
-- **Container**: Wrap metadata in `[[STAGING]]` and `[[/STAGING]]`.
-- **Labels**: Use custom labels like `[[GLOBAL]]` or `[[LOOKBOOK]]` inside the container.
-- **Visibility**: Content inside staging blocks is hidden from the main script view but appears as a "Staging" badge that can be toggled to reveal the underlying prompt levels.
+---
 
-### Auteur Brief Prompting
+### Auteur Script Formatting Engine (`[<BRIEF>]`)
 
-**Auteur Brief Prompting** is a high-density, concise framework for technical execution. It follows a structured workflow:
-`[INTENT] -> [LOGIC] -> [AESTHETIC] -> [EXECUTION]`
+For high-precision AI video models, wrap your timeline execution in `[<BRIEF>]` blocks. SceneFlow renders this in a dedicated monospace card and applies two automatic layout engines:
 
-The `[<BRIEF>]` block (optimized for the **[EXECUTION]** phase) provides enhanced readability for technical directives. As of v1.2.4, the script's **alignment and search engines** intelligently distinguish between creative content and hidden metadata, ensuring cues never snap to data inside `[[STAGING]]` blocks.
+- **Waterfall Indentation**: Every `->` delimiter automatically creates a new line with nested indentation (`\n    -> `), turning complex prompt sequences into clean visual beat cascades.
+- **Bold Anchor Tagging**: Any bracketed dimension tag like `[CAM]`, `[ACT]`, `[AUDIO]`, `[STATE IN]`, or `[STATE OUT]` is automatically bolded (`<b>[...]</b>`) for rapid cognitive scanning.
+- **State Chaining**: Each line represents a **Macro-State** ($S_n$), composed of modular **Sub-States** that map frame transformations over time.
 
-#### Features:
+#### Auteur Script Example:
 
-- **Waterfall Indentation**: Using `->` automatically triggers a waterfall layout, ideal for separating different shots or beats within a single sequence.
-- **Bold Anchors**: Technical anchors like `[CAM]`, `[ACT]`, or `[VFX]` are automatically bolded for better scanning.
-- **Monospace Styling**: The entire block uses monospace typography to distinguish technical directives from creative dialogue.
-
-#### Example:
 ```text
 [<BRIEF>]
-[CAM: MCU/HANDHELD] Jax stands on a razor-thin jagged edge -> 
-[ACT] Sharp exhale, jaw sets firm -> 
-[AUDIO] Piercing wind whip; rhythmic, heavy breathing
+[CAM 01] MS, eye-level lockoff -> [ACT] Creator types the first command -> Creator: "Let's build." -> <Mechanical keyboard click> -> [STATE OUT] Frame locked in clean focus
+[CAM 02] MCU, low-angle on monitor -> [ACT] Screen reflects glowing amber text -> [AUDIO] Low cooling fan hum
 [</BRIEF>]
 ```
 
