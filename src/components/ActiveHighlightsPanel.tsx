@@ -50,9 +50,9 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
               className={cn(
                 "flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all border relative overflow-hidden",
                 isHidden 
-                  ? "bg-stone-50 border-stone-100 text-stone-300 opacity-60" 
-                  : "bg-white border-stone-200 text-stone-500 hover:border-stone-300 shadow-sm",
-                isActive && !isHidden && "bg-stone-50"
+                  ? "bg-surface-subtle border-border-subtle text-text-faint opacity-60" 
+                  : "bg-surface border-border-main text-text-muted hover:border-border-main shadow-sm",
+                isActive && !isHidden && "bg-surface-subtle"
               )}
             >
               {isActive && !isHidden && (
@@ -84,9 +84,9 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
                 style={{ backgroundColor: `rgb(${themed.rgb})` }}
               />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-serif italic text-stone-700 line-clamp-2">"{cue.selectedText}"</p>
+                <p className="text-sm font-serif italic text-text-body line-clamp-2">"{cue.selectedText}"</p>
                 {cue.type && (
-                  <span className="absolute top-1 right-2 text-[8px] font-black uppercase tracking-widest text-stone-300">
+                  <span className="absolute top-1 right-2 text-[8px] font-black uppercase tracking-widest text-text-faint">
                     {cue.type}
                   </span>
                 )}
@@ -96,7 +96,7 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
         })}
         {visibleCues.length === 0 && (
           <div className={cn(UI_TOKENS.panel.emptyPlaceholder, "py-8")}>
-            <p className="text-xs text-stone-300 italic">No active highlights at this time</p>
+            <p className="text-xs text-text-faint italic">No active highlights at this time</p>
           </div>
         )}
       </div>

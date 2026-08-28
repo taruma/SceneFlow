@@ -83,7 +83,7 @@ export function ResetConfirmationModal({
             <button
               disabled={isRemoteLoading}
               onClick={onConfirm}
-              className="px-6 py-3 bg-stone-900 text-white rounded-xl font-bold hover:bg-stone-800 transition-all active:scale-95 shadow-lg shadow-stone-900/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="px-6 py-3 bg-btn-primary-bg text-btn-primary-text rounded-xl font-bold hover:bg-btn-primary-hover transition-all active:scale-95 shadow-lg shadow-surface-dark/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isRemoteLoading && <Loader2 size={16} className="animate-spin" />}
               {resetConfirmation.error ? 'Try Again' : 'Confirm'}

@@ -48,19 +48,19 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
         className={UI_TOKENS.modal.containerXl}
       >
         {/* Modal Header */}
-        <div className="p-4 sm:p-6 border-b border-stone-100 flex items-center justify-between bg-stone-50/50 shrink-0">
+        <div className="p-4 sm:p-6 border-b border-border-subtle flex items-center justify-between bg-surface-subtle shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-stone-900 text-white flex items-center justify-center shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-btn-primary-bg text-btn-primary-text flex items-center justify-center shadow-xs">
               <Palette size={18} />
             </div>
             <div>
-              <h3 className="font-bold text-stone-900 text-base flex items-center gap-2">
+              <h3 className="font-bold text-text-main text-base flex items-center gap-2">
                 Screenplay Visual Themes
-                <span className="text-[10px] font-mono font-normal uppercase tracking-wider bg-stone-200/70 text-stone-600 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-mono font-normal uppercase tracking-wider bg-surface-muted text-text-muted px-2 py-0.5 rounded-full">
                   6 Presets
                 </span>
               </h3>
-              <p className="text-xs text-stone-500 mt-0.5">
+              <p className="text-xs text-text-muted mt-0.5">
                 Switch screenplay canvas textures, typography contrast, and adaptive cue highlight palettes.
               </p>
             </div>
@@ -70,7 +70,7 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
             {currentThemeId !== 'studio-light' && (
               <button
                 onClick={() => onSelectTheme('studio-light')}
-                className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-stone-500 hover:text-stone-800 bg-white hover:bg-stone-100 border border-stone-200 px-2.5 py-1.5 rounded-lg transition-colors shadow-xs"
+                className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-text-muted hover:text-text-main bg-surface hover:bg-surface-hover border border-border-main px-2.5 py-1.5 rounded-lg transition-colors shadow-xs"
                 title="Reset to default Studio Crisp theme"
               >
                 <RotateCcw size={11} /> Reset
@@ -78,7 +78,7 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
             )}
             <button
               onClick={onClose}
-              className="p-1.5 text-stone-400 hover:text-stone-700 hover:bg-stone-200/50 rounded-lg transition-colors"
+              className="p-1.5 text-text-faint hover:text-text-main hover:bg-surface-hover rounded-lg transition-colors"
               title="Close modal"
             >
               <X size={18} />
@@ -87,14 +87,14 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex border-b border-stone-100 px-4 sm:px-6 bg-white shrink-0">
+        <div className="flex border-b border-border-subtle px-4 sm:px-6 bg-surface shrink-0">
           <button
             onClick={() => setActiveTab('presets')}
             className={cn(
               "flex items-center gap-2 py-3 px-1 text-xs font-bold border-b-2 transition-all mr-6",
               activeTab === 'presets'
-                ? "border-stone-900 text-stone-900"
-                : "border-transparent text-stone-400 hover:text-stone-600"
+                ? "border-text-main text-text-main"
+                : "border-transparent text-text-faint hover:text-text-main"
             )}
           >
             <Sparkles size={14} /> Theme Presets
@@ -104,8 +104,8 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
             className={cn(
               "flex items-center gap-2 py-3 px-1 text-xs font-bold border-b-2 transition-all",
               activeTab === 'inspector'
-                ? "border-stone-900 text-stone-900"
-                : "border-transparent text-stone-400 hover:text-stone-600"
+                ? "border-text-main text-text-main"
+                : "border-transparent text-text-faint hover:text-text-main"
             )}
           >
             <Layers size={14} /> Element Inspector
@@ -127,19 +127,19 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                       className={cn(
                         "relative flex flex-col text-left rounded-xl p-3.5 transition-all duration-200 border-2 group",
                         isSelected
-                          ? UI_TOKENS.swatch.cardSelected + " bg-white"
-                          : "border-stone-200/80 hover:border-stone-300 hover:shadow-xs bg-white"
+                          ? UI_TOKENS.swatch.cardSelected + " bg-surface"
+                          : "border-border-main hover:border-border-main hover:shadow-xs bg-surface"
                       )}
                     >
                       {/* Top row: Name & Category badge */}
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="font-bold text-xs text-stone-900 flex items-center gap-1.5">
+                        <span className="font-bold text-xs text-text-main flex items-center gap-1.5">
                           {theme.name}
                         </span>
                         <span className={cn(
                           "text-[8px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded font-semibold flex items-center gap-1",
-                          theme.category === 'dark' ? "bg-stone-800 text-stone-200" :
-                          theme.category === 'warm' ? "bg-amber-100 text-amber-800" : "bg-stone-100 text-stone-600"
+                          theme.category === 'dark' ? "bg-surface-dark text-text-main" :
+                          theme.category === 'warm' ? "bg-amber-100 text-amber-800" : "bg-surface-muted text-text-muted"
                         )}>
                           {theme.category === 'dark' && <Moon size={8} />}
                           {theme.category === 'warm' && <Coffee size={8} />}
@@ -149,7 +149,7 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                       </div>
 
                       {/* Description */}
-                      <p className="text-[11px] text-stone-500 line-clamp-2 leading-relaxed mb-3 min-h-[30px]">
+                      <p className="text-[11px] text-text-muted line-clamp-2 leading-relaxed mb-3 min-h-[30px]">
                         {theme.description}
                       </p>
 
@@ -204,7 +204,7 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
 
                       {/* Selected check icon badge */}
                       {isSelected && (
-                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-stone-900 text-white flex items-center justify-center shadow-xs">
+                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-btn-primary-bg text-btn-primary-text flex items-center justify-center shadow-xs">
                           <Check size={11} strokeWidth={3} />
                         </div>
                       )}
@@ -214,12 +214,12 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
               </div>
 
               {/* Active Theme Summary footer note */}
-              <div className="mt-4 p-3 bg-stone-50 rounded-xl border border-stone-100 flex items-center justify-between text-xs text-stone-500">
+              <div className="mt-4 p-3 bg-surface-subtle rounded-xl border border-border-subtle flex items-center justify-between text-xs text-text-muted">
                 <div className="flex items-center gap-2">
-                  <Eye size={14} className="text-stone-400 shrink-0" />
+                  <Eye size={14} className="text-text-faint shrink-0" />
                   <span>Currently Applied: <strong>{currentTheme.name}</strong></span>
                 </div>
-                <span className="text-[10px] font-mono text-stone-400 uppercase tracking-wider">
+                <span className="text-[10px] font-mono text-text-faint uppercase tracking-wider">
                   Script Paper Only
                 </span>
               </div>
@@ -236,43 +236,43 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
 
               {/* Surface & Structural Tokens */}
               <div className="space-y-2.5">
-                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400 flex items-center gap-1.5">
+                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-faint flex items-center gap-1.5">
                   <Layers size={12} /> Paper & Structure Elements
                 </h4>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="p-3 bg-stone-50 border border-stone-200 rounded-xl flex items-center justify-between">
+                  <div className="p-3 bg-surface-subtle border border-border-main rounded-xl flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-bold text-stone-800">Paper Canvas Surface</p>
-                      <p className="text-[10px] text-stone-400 font-mono">{currentTheme.paperBg}</p>
+                      <p className="text-xs font-bold text-text-main">Paper Canvas Surface</p>
+                      <p className="text-[10px] text-text-faint font-mono">{currentTheme.paperBg}</p>
                     </div>
                     <div className={cn("w-8 h-8 rounded-lg border shadow-xs", currentTheme.paperBg, currentTheme.paperBorder)} />
                   </div>
 
-                  <div className="p-3 bg-stone-50 border border-stone-200 rounded-xl flex items-center justify-between">
+                  <div className="p-3 bg-surface-subtle border border-border-main rounded-xl flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-bold text-stone-800">Scene Heading Stripe</p>
-                      <p className="text-[10px] text-stone-400 font-mono">{currentTheme.headingBg}</p>
+                      <p className="text-xs font-bold text-text-main">Scene Heading Stripe</p>
+                      <p className="text-[10px] text-text-faint font-mono">{currentTheme.headingBg}</p>
                     </div>
                     <div className={cn("w-14 h-8 rounded-lg border flex items-center justify-center text-[8px] font-bold", currentTheme.headingBg, currentTheme.headingBorder, currentTheme.textColor)}>
                       EXT.
                     </div>
                   </div>
 
-                  <div className="p-3 bg-stone-50 border border-stone-200 rounded-xl flex items-center justify-between">
+                  <div className="p-3 bg-surface-subtle border border-border-main rounded-xl flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-bold text-stone-800">Script Line Typography</p>
-                      <p className="text-[10px] text-stone-400 font-mono">{currentTheme.textColor}</p>
+                      <p className="text-xs font-bold text-text-main">Script Line Typography</p>
+                      <p className="text-[10px] text-text-faint font-mono">{currentTheme.textColor}</p>
                     </div>
                     <div className={cn("px-2.5 py-1 rounded-lg border font-serif text-xs font-bold", currentTheme.paperBg, currentTheme.textColor)}>
                       Dialogue Text
                     </div>
                   </div>
 
-                  <div className="p-3 bg-stone-50 border border-stone-200 rounded-xl flex items-center justify-between">
+                  <div className="p-3 bg-surface-subtle border border-border-main rounded-xl flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-bold text-stone-800">Staging Block Badges</p>
-                      <p className="text-[10px] text-stone-400 font-mono">Pill badge overlay</p>
+                      <p className="text-xs font-bold text-text-main">Staging Block Badges</p>
+                      <p className="text-[10px] text-text-faint font-mono">Pill badge overlay</p>
                     </div>
                     <div className={cn(
                       "px-2.5 py-1 rounded-full border text-[9px] font-black uppercase tracking-wider",
@@ -284,10 +284,10 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                     </div>
                   </div>
 
-                  <div className="p-3 bg-stone-50 border border-stone-200 rounded-xl flex items-center justify-between">
+                  <div className="p-3 bg-surface-subtle border border-border-main rounded-xl flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-bold text-stone-800">BRIEF Macro-States</p>
-                      <p className="text-[10px] text-stone-400 font-mono">Dashed card border</p>
+                      <p className="text-xs font-bold text-text-main">BRIEF Macro-States</p>
+                      <p className="text-[10px] text-text-faint font-mono">Dashed card border</p>
                     </div>
                     <div className={cn(
                       "px-2.5 py-1 rounded-md border border-dashed text-[9px] font-mono flex items-center gap-1",
@@ -305,14 +305,14 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
               {/* Cue Highlights Spectrum */}
               <div className="space-y-2.5 pt-2">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400 flex items-center gap-1.5">
+                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-faint flex items-center gap-1.5">
                     <Sparkles size={12} /> Sync Cue Highlight Spectrum (8 Categories)
                   </h4>
                   <span className={cn(
                     "text-[8px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border",
                     currentTheme.category === 'warm' ? "bg-amber-50 text-amber-800 border-amber-200" :
-                    currentTheme.category === 'dark' ? "bg-stone-800 text-stone-200 border-stone-700" :
-                    "bg-stone-100 text-stone-600 border-stone-200"
+                    currentTheme.category === 'dark' ? "bg-surface-dark text-text-main border-border-main" :
+                    "bg-surface-muted text-text-muted border-border-main"
                   )}>
                     {currentTheme.category === 'warm' ? 'Warm Antique Gouache Palette' :
                      currentTheme.category === 'dark' ? 'Luminous Dark Glow Palette' :
@@ -324,16 +324,16 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                   {CUE_THEME_COLORS.map(c => {
                     const themed = getCueColorForTheme(c.type, currentThemeId);
                     return (
-                      <div key={c.type} className="p-2.5 bg-stone-50 border border-stone-200 rounded-xl flex items-center gap-2.5">
+                      <div key={c.type} className="p-2.5 bg-surface-subtle border border-border-main rounded-xl flex items-center gap-2.5">
                         <div 
                           className="w-3.5 h-3.5 rounded-full shrink-0 shadow-2xs" 
                           style={{ backgroundColor: themed.dotColor }}
                         />
                         <div className="min-w-0 flex-1">
-                          <span className="text-[10px] font-bold text-stone-700 uppercase tracking-tight block truncate">
+                          <span className="text-[10px] font-bold text-text-body uppercase tracking-tight block truncate">
                             {c.name}
                           </span>
-                          <span className="text-[8px] font-mono text-stone-400 block truncate">
+                          <span className="text-[8px] font-mono text-text-faint block truncate">
                             rgb({themed.rgb})
                           </span>
                         </div>
@@ -347,13 +347,13 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="p-3.5 sm:p-4 border-t border-stone-100 bg-stone-50/50 flex items-center justify-between shrink-0">
-          <span className="text-[10px] font-mono text-stone-400">
-            Selected: <strong className="text-stone-700">{currentTheme.name}</strong> ({currentTheme.category})
+        <div className="p-3.5 sm:p-4 border-t border-border-subtle bg-surface-subtle flex items-center justify-between shrink-0">
+          <span className="text-[10px] font-mono text-text-faint">
+            Selected: <strong className="text-text-body">{currentTheme.name}</strong> ({currentTheme.category})
           </span>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 bg-stone-900 hover:bg-stone-800 text-white rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95"
+            className="px-4 py-1.5 bg-btn-primary-bg hover:bg-btn-primary-hover text-btn-primary-text rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95"
           >
             Done
           </button>

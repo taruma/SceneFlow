@@ -650,7 +650,7 @@ export default function App() {
             "transition-all duration-300 z-30 sticky top-0", 
             mode === 'playback' && "space-y-4 lg:space-y-6",
             mode === 'edit' && "-mx-4 lg:-mx-10 px-4 lg:px-10",
-            mode === 'edit' && leftPanelScroll <= 80 && "bg-white border-b border-stone-100 pb-6 mb-8 space-y-4",
+            mode === 'edit' && leftPanelScroll <= 80 && "bg-surface border-b border-border-subtle pb-6 mb-8 space-y-4",
             mode === 'edit' && leftPanelScroll > 80 && "bg-transparent pointer-events-none space-y-0 pb-0 mb-0"
           )}>
             <div className={cn(
@@ -659,12 +659,12 @@ export default function App() {
               mode === 'edit' && "flex",
               mode === 'edit' && leftPanelScroll > 80 && "opacity-0 h-0 overflow-hidden mb-0"
             )}>
-               <h2 className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-stone-400 flex items-center gap-2">
+               <h2 className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-text-faint flex items-center gap-2">
                 <Video size={14} /> {mode === 'edit' ? 'Media Preview' : 'Now Playing'}
               </h2>
               {mode === 'playback' && isDesktop && (
                 <div className="flex items-center gap-3 animate-in fade-in slide-in-from-right-2 duration-500">
-                  <span className="text-[9px] font-black uppercase tracking-widest text-stone-300">Size</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-text-faint">Size</span>
                   <input 
                     type="range" 
                     min="40" 
@@ -672,15 +672,15 @@ export default function App() {
                     step="5"
                     value={videoWidth}
                     onChange={(e) => setVideoWidth(parseInt(e.target.value))}
-                    className="w-24 h-1 bg-stone-100 rounded-lg appearance-none cursor-pointer accent-stone-400 hover:accent-stone-600 transition-all"
+                    className="w-24 h-1 bg-surface-muted rounded-lg appearance-none cursor-pointer accent-text-muted hover:accent-text-main transition-all"
                   />
-                  <span className="text-[9px] font-mono font-bold text-stone-400 w-8">{videoWidth}%</span>
+                  <span className="text-[9px] font-mono font-bold text-text-faint w-8">{videoWidth}%</span>
                 </div>
               )}
             </div>
             
             <div className={cn(
-              "aspect-video bg-black overflow-hidden shadow-2xl ring-1 ring-stone-900/10 relative group transition-all duration-500 origin-top-left pointer-events-auto",
+              "aspect-video bg-black overflow-hidden shadow-2xl ring-1 ring-border-main relative group transition-all duration-500 origin-top-left pointer-events-auto",
               mode === 'edit' ? "rounded-3xl" : "rounded-none lg:rounded-3xl",
               mode === 'edit' && leftPanelScroll > 80 && "w-1/2 rounded-2xl shadow-2xl scale-90 -translate-y-2"
             )}

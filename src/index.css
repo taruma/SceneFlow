@@ -6,7 +6,7 @@
   --surface: #ffffff;
   --surface-subtle: #fafaf9;
   --surface-muted: #f5f5f4;
-  --surface-hover: #f5f5f4;
+  --surface-hover: #e7e5e4;
   --surface-dark: #1c1917;
   --border-main: #e7e5e4;
   --border-subtle: #f5f5f4;
@@ -16,6 +16,12 @@
   --text-muted: #78716c;
   --text-faint: #a8a29e;
   --text-placeholder: #d6d3d1;
+  --btn-primary-bg: #1c1917;
+  --btn-primary-text: #ffffff;
+  --btn-primary-hover: #292524;
+  --btn-secondary-bg: #f5f5f4;
+  --btn-secondary-text: #57534e;
+  --btn-secondary-hover: #e7e5e4;
   --overlay-bg: rgba(28, 25, 23, 0.4);
   --overlay-heavy: rgba(28, 25, 23, 0.6);
   --color-support: #FF5E5B;
@@ -36,10 +42,18 @@
   --color-surface-dark: var(--surface-dark);
   --color-border-main: var(--border-main);
   --color-border-subtle: var(--border-subtle);
+  --color-border-subtle-trans: var(--border-subtle-trans);
   --color-text-main: var(--text-main);
   --color-text-body: var(--text-body);
   --color-text-muted: var(--text-muted);
   --color-text-faint: var(--text-faint);
+  --color-text-placeholder: var(--text-placeholder);
+  --color-btn-primary-bg: var(--btn-primary-bg);
+  --color-btn-primary-text: var(--btn-primary-text);
+  --color-btn-primary-hover: var(--btn-primary-hover);
+  --color-btn-secondary-bg: var(--btn-secondary-bg);
+  --color-btn-secondary-text: var(--btn-secondary-text);
+  --color-btn-secondary-hover: var(--btn-secondary-hover);
   --color-overlay-bg: var(--overlay-bg);
   --color-overlay-heavy: var(--overlay-heavy);
   --color-support: var(--color-support);
@@ -47,7 +61,7 @@
 }
 
 body {
-  @apply font-sans text-stone-900 bg-stone-50;
+  @apply font-sans text-text-main bg-app;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

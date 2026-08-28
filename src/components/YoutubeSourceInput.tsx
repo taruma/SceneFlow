@@ -21,7 +21,7 @@ export function YoutubeSourceInput({
   return (
     <div className="space-y-3 mb-8 animate-in fade-in slide-in-from-top-2 duration-500">
       <div className="flex items-center justify-between px-1">
-        <label className="text-[10px] uppercase tracking-[0.2em] text-stone-400 font-black flex items-center gap-2">
+        <label className="text-[10px] uppercase tracking-[0.2em] text-text-faint font-black flex items-center gap-2">
           <Video size={12} /> YouTube Source
           <div className={cn(
             "w-2 h-2 rounded-full transition-all duration-500",
@@ -42,11 +42,11 @@ export function YoutubeSourceInput({
           className={UI_TOKENS.input.baseText}
           placeholder="Paste YouTube URL or Video ID"
         />
-        <Video size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 group-focus-within:text-stone-600 transition-colors" />
+        <Video size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-faint group-focus-within:text-text-main transition-colors" />
         {youtubeId && (
           <button 
             onClick={onClear}
-            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-300 hover:text-stone-600 transition-colors"
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-faint hover:text-text-main transition-colors"
           >
             <X size={16} />
           </button>

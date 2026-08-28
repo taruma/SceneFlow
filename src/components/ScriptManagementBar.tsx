@@ -13,11 +13,11 @@ export function ScriptManagementBar({ lineCount, onOpenRawScriptModal }: ScriptM
       <div className={UI_TOKENS.panel.banner}>
         <div className="flex items-center gap-3">
           <div className={UI_TOKENS.iconWrapper.smBox}>
-            <FileText size={14} className="text-stone-400" />
+            <FileText size={14} className="text-text-faint" />
           </div>
           <div>
-            <h2 className="text-[10px] font-black uppercase tracking-[0.1em] text-stone-400 leading-none mb-1">Screenplay Data</h2>
-            <p className="text-[10px] font-bold text-stone-600 leading-none">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.1em] text-text-faint leading-none mb-1">Screenplay Data</h2>
+            <p className="text-[10px] font-bold text-text-body leading-none">
               {lineCount} lines loaded
             </p>
           </div>

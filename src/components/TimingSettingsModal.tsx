@@ -42,8 +42,8 @@ export function TimingSettingsModal({
                 <Settings size={24} className="text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-black uppercase tracking-widest text-stone-900">Timing Settings</h2>
-                <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Adjust highlight visibility buffers</p>
+                <h2 className="text-xl font-black uppercase tracking-widest text-text-main">Timing Settings</h2>
+                <p className="text-[10px] font-bold text-text-faint uppercase tracking-widest">Adjust highlight visibility buffers</p>
               </div>
             </div>
             <button 
@@ -95,10 +95,10 @@ export function TimingSettingsModal({
             {/* Specific Category Grid */}
             <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {colors.map(color => (
-                <div key={color.type} className="p-4 bg-stone-50 border border-stone-100 rounded-2xl space-y-3 hover:bg-white hover:shadow-md transition-all">
+                <div key={color.type} className="p-4 bg-surface-subtle border border-border-subtle rounded-2xl space-y-3 hover:bg-surface hover:shadow-md transition-all">
                   <div className="flex items-center gap-2">
                     <div className={cn("w-2.5 h-2.5 rounded-full", color.class)} />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-stone-600">{color.type}</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-text-body">{color.type}</span>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="space-y-1">
@@ -131,10 +131,10 @@ export function TimingSettingsModal({
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-stone-100">
+          <div className="flex items-center justify-between pt-4 border-t border-border-subtle">
             <button 
               onClick={onResetClick}
-              className="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-stone-400 hover:text-red-500 transition-colors flex items-center gap-2"
+              className="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-text-faint hover:text-red-500 transition-colors flex items-center gap-2"
             >
               <RefreshCw size={12} /> Reset to Defaults
             </button>

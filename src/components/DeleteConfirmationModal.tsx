@@ -40,9 +40,9 @@ export function DeleteConfirmationModal({
           </div>
           
           {cue && (
-            <div className="bg-stone-50 p-4 rounded-2xl border border-stone-100 text-left">
-              <p className="text-[10px] font-black uppercase tracking-widest text-stone-400 mb-1">Cue Content</p>
-              <p className="text-xs italic text-stone-600 line-clamp-2">"{cue.selectedText}"</p>
+            <div className="bg-surface-subtle p-4 rounded-2xl border border-border-subtle text-left">
+              <p className="text-[10px] font-black uppercase tracking-widest text-text-faint mb-1">Cue Content</p>
+              <p className="text-xs italic text-text-body line-clamp-2">"{cue.selectedText}"</p>
             </div>
           )}
 
