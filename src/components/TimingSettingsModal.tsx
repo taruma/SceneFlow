@@ -39,7 +39,7 @@ export function TimingSettingsModal({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className={UI_TOKENS.iconWrapper.dark}>
-                <Settings size={24} className="text-white" />
+                <Settings size={24} className="text-btn-primary-text" />
               </div>
               <div>
                 <h2 className="text-xl font-black uppercase tracking-widest text-text-main">Timing Settings</h2>

@@ -85,11 +85,11 @@ export const UI_TOKENS = {
 
   // Icon container badges
   iconWrapper: {
-    danger: "w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto border border-red-100",
-    amber: "w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto border border-amber-100",
+    danger: "w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto border border-red-500/20 text-red-500",
+    amber: "w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto border border-amber-500/20 text-amber-500",
     neutral: "w-12 h-12 bg-surface-muted rounded-2xl flex items-center justify-center border border-border-main text-text-main",
-    blue: "w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100 shadow-sm",
-    dark: "w-12 h-12 bg-surface-dark text-btn-primary-text rounded-2xl flex items-center justify-center shadow-lg shadow-surface-dark/20",
+    blue: "w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center border border-blue-500/20 shadow-sm text-blue-500",
+    dark: "w-12 h-12 bg-btn-primary-bg text-btn-primary-text rounded-2xl flex items-center justify-center shadow-md",
     smBox: "w-8 h-8 bg-surface rounded-lg flex items-center justify-center border border-border-subtle shadow-sm text-text-main",
   },
 
