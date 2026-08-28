@@ -138,7 +138,7 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                         </span>
                         <span className={cn(
                           "text-[8px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded font-semibold flex items-center gap-1",
-                          theme.category === 'dark' ? "bg-surface-dark text-text-main" :
+                          theme.category === 'dark' ? "bg-stone-800 text-stone-200" :
                           theme.category === 'warm' ? "bg-amber-100 text-amber-800" : "bg-surface-muted text-text-muted"
                         )}>
                           {theme.category === 'dark' && <Moon size={8} />}
@@ -311,7 +311,7 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                   <span className={cn(
                     "text-[8px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border",
                     currentTheme.category === 'warm' ? "bg-amber-50 text-amber-800 border-amber-200" :
-                    currentTheme.category === 'dark' ? "bg-surface-dark text-text-main border-border-main" :
+                    currentTheme.category === 'dark' ? "bg-stone-800 text-stone-200 border-stone-700" :
                     "bg-surface-muted text-text-muted border-border-main"
                   )}>
                     {currentTheme.category === 'warm' ? 'Warm Antique Gouache Palette' :

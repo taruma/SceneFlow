@@ -236,7 +236,7 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                                   {isDefault && (
                                     <span className={cn(
                                       "text-[8px] px-1 py-0.2 rounded font-medium",
-                                      isSelected ? "bg-surface-dark text-text-muted" : "bg-surface-muted text-text-body"
+                                      isSelected ? "bg-stone-800 text-stone-300" : "bg-surface-muted text-text-body"
                                     )}>
                                       Default
                                     </span>
@@ -339,7 +339,7 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                                   {isDefault && (
                                     <span className={cn(
                                       "text-[8px] px-1 py-0.2 rounded font-medium",
-                                      isSelected ? "bg-surface-dark text-text-muted" : "bg-surface-muted text-text-body"
+                                      isSelected ? "bg-stone-800 text-stone-300" : "bg-surface-muted text-text-body"
                                     )}>
                                       Default
                                     </span>
