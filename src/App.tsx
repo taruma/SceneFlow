@@ -34,6 +34,7 @@ import { useScriptStorage } from './hooks/useScriptStorage';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
 import { useScriptPreferences } from './hooks/useScriptPreferences';
 import { useScriptTheme } from './hooks/useScriptTheme';
+import { useAppShellTheme } from './hooks/useAppShellTheme';
 import { useAutoScroll } from './hooks/useAutoScroll';
 import { useCueEditor } from './hooks/useCueEditor';
 import { useCueAlignment } from './hooks/useCueAlignment';
@@ -111,6 +112,12 @@ export default function App() {
   } = useScriptPreferences();
 
   const { theme: activeTheme } = useScriptTheme(scriptThemeId);
+  const {
+    themeMode,
+    setThemeMode,
+    cycleThemeMode,
+    effectiveCategory,
+  } = useAppShellTheme(scriptThemeId);
 
   const {
 
@@ -600,7 +607,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-stone-100 text-stone-900 font-sans overflow-hidden selection:bg-blue-100">
+    <div className="flex flex-col h-screen bg-app text-text-main font-sans overflow-hidden">
       {/* Header */}
       <AppHeader
         mode={mode}
@@ -617,6 +624,9 @@ export default function App() {
         setIsInfoModalOpen={setIsInfoModalOpen}
         importJson={importJson}
         exportJson={exportJson}
+        themeMode={themeMode}
+        effectiveThemeCategory={effectiveCategory}
+        onCycleThemeMode={cycleThemeMode}
       />
 
       <main className={cn(
@@ -951,6 +961,9 @@ export default function App() {
             localStorage.setItem('sceneflow_script_theme', themeId);
           }
         }}
+        themeMode={themeMode}
+        setThemeMode={setThemeMode}
+        effectiveThemeCategory={effectiveCategory}
       />
 
       {/* App Info / About Modal */}

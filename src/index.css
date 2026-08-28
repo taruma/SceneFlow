@@ -1,7 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap');
 @import "tailwindcss";
 
-:root {
+:root,
+[data-theme-category="light"] {
   --app-bg: #f5f5f4;
   --surface: #ffffff;
   --surface-subtle: #fafaf9;
@@ -24,6 +25,60 @@
   --btn-secondary-hover: #e7e5e4;
   --overlay-bg: rgba(28, 25, 23, 0.4);
   --overlay-heavy: rgba(28, 25, 23, 0.6);
+  --color-support: #FF5E5B;
+  --color-support-hover: #e04e4b;
+}
+
+[data-theme-category="warm"] {
+  --app-bg: #f3efe6;
+  --surface: #faf7f0;
+  --surface-subtle: #f6f2e8;
+  --surface-muted: #ece5d6;
+  --surface-hover: #e3dcce;
+  --surface-dark: #2c251e;
+  --border-main: #dfd7c5;
+  --border-subtle: #ece5d6;
+  --border-subtle-trans: rgba(223, 215, 197, 0.5);
+  --text-main: #2b231d;
+  --text-body: #3c322a;
+  --text-muted: #7c6f62;
+  --text-faint: #a69888;
+  --text-placeholder: #c9bdae;
+  --btn-primary-bg: #2b231d;
+  --btn-primary-text: #faf7f0;
+  --btn-primary-hover: #3d3229;
+  --btn-secondary-bg: #ece5d6;
+  --btn-secondary-text: #54473c;
+  --btn-secondary-hover: #dfd7c5;
+  --overlay-bg: rgba(43, 35, 29, 0.45);
+  --overlay-heavy: rgba(43, 35, 29, 0.65);
+  --color-support: #FF5E5B;
+  --color-support-hover: #e04e4b;
+}
+
+[data-theme-category="dark"] {
+  --app-bg: #0c0a09;
+  --surface: #171514;
+  --surface-subtle: #1c1917;
+  --surface-muted: #24211e;
+  --surface-hover: #2e2a27;
+  --surface-dark: #0f0e0d;
+  --border-main: #2c2825;
+  --border-subtle: #201d1b;
+  --border-subtle-trans: rgba(44, 40, 37, 0.5);
+  --text-main: #f5f5f4;
+  --text-body: #e7e5e4;
+  --text-muted: #a8a29e;
+  --text-faint: #78716c;
+  --text-placeholder: #57534e;
+  --btn-primary-bg: #f5f5f4;
+  --btn-primary-text: #1c1917;
+  --btn-primary-hover: #e7e5e4;
+  --btn-secondary-bg: #24211e;
+  --btn-secondary-text: #d6d3d1;
+  --btn-secondary-hover: #2e2a27;
+  --overlay-bg: rgba(0, 0, 0, 0.65);
+  --overlay-heavy: rgba(0, 0, 0, 0.85);
   --color-support: #FF5E5B;
   --color-support-hover: #e04e4b;
 }
@@ -62,6 +117,7 @@
 
 body {
   @apply font-sans text-text-main bg-app;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

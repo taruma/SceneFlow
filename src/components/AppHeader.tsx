@@ -1,7 +1,8 @@
 import React from 'react';
-import { Plus, Book, Coffee, Play, Edit2, Palette, Clock, FolderOpen, Download, Info } from 'lucide-react';
+import { Plus, Book, Coffee, Play, Edit2, Palette, Clock, FolderOpen, Download, Info, Sun, Moon, Sparkles } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { UI_TOKENS } from '../styles/tokens/ui';
+import type { AppThemeMode, AppThemeCategory } from '../hooks/useAppShellTheme';
 
 interface AppHeaderProps {
   mode: 'playback' | 'edit';
@@ -18,6 +19,9 @@ interface AppHeaderProps {
   setIsInfoModalOpen: (open: boolean) => void;
   importJson: (e: React.ChangeEvent<HTMLInputElement>) => void;
   exportJson: () => void;
+  themeMode?: AppThemeMode;
+  effectiveThemeCategory?: AppThemeCategory;
+  onCycleThemeMode?: () => void;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
@@ -35,6 +39,9 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   setIsInfoModalOpen,
   importJson,
   exportJson,
+  themeMode = 'auto',
+  effectiveThemeCategory = 'light',
+  onCycleThemeMode,
 }) => {
   return (
     <header
@@ -109,6 +116,31 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             <Edit2 size={12} /> Edit
           </button>
         </div>
+
+        {/* Quick App Shell Theme Switcher */}
+        {onCycleThemeMode && (
+          <div className="relative hidden lg:block">
+            <button
+              id="app-theme-cycle-button"
+              onClick={onCycleThemeMode}
+              className={UI_TOKENS.button.headerIconButton}
+              title={`App Theme: ${themeMode === 'auto' ? `Auto (Matching ${effectiveThemeCategory})` : themeMode.toUpperCase()} — Click to cycle (Auto/Light/Warm/Dark)`}
+            >
+              {themeMode === 'auto' ? (
+                <div className="relative">
+                  <Sparkles size={16} className="text-amber-500" />
+                  <span className="absolute -bottom-1 -right-1 text-[7px] font-black uppercase tracking-tighter opacity-80">A</span>
+                </div>
+              ) : effectiveThemeCategory === 'dark' ? (
+                <Moon size={17} className="text-blue-400" />
+              ) : effectiveThemeCategory === 'warm' ? (
+                <Coffee size={17} className="text-amber-600" />
+              ) : (
+                <Sun size={17} className="text-amber-500" />
+              )}
+            </button>
+          </div>
+        )}
 
         <div className="relative hidden lg:block">
           <button

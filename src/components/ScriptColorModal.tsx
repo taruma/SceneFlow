@@ -4,12 +4,16 @@ import { cn } from '../lib/utils';
 import { SCRIPT_THEMES, getCueColorForTheme, CUE_THEME_COLORS, type ScriptThemeId, type ScriptTheme } from '../lib/scriptStyles';
 import { UI_TOKENS } from '../styles/tokens/ui';
 import { useEscapeKey } from '../hooks/useEscapeKey';
+import type { AppThemeMode, AppThemeCategory } from '../hooks/useAppShellTheme';
 
 interface ScriptColorModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentThemeId: ScriptThemeId;
   onSelectTheme: (themeId: ScriptThemeId) => void;
+  themeMode?: AppThemeMode;
+  setThemeMode?: (mode: AppThemeMode) => void;
+  effectiveThemeCategory?: AppThemeCategory;
 }
 
 const PREVIEW_CUE_CHIPS = [
@@ -25,6 +29,9 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
   onClose,
   currentThemeId,
   onSelectTheme,
+  themeMode = 'auto',
+  setThemeMode,
+  effectiveThemeCategory = 'light',
 }) => {
   useEscapeKey(onClose, isOpen);
 
@@ -214,14 +221,15 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
               </div>
 
               {/* Active Theme Summary footer note */}
-              <div className="mt-4 p-3 bg-surface-subtle rounded-xl border border-border-subtle flex items-center justify-between text-xs text-text-muted">
+              <div className="mt-4 p-3 bg-surface-subtle rounded-xl border border-border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-text-muted">
                 <div className="flex items-center gap-2">
                   <Eye size={14} className="text-text-faint shrink-0" />
-                  <span>Currently Applied: <strong>{currentTheme.name}</strong></span>
+                  <span>Script Paper: <strong className="text-text-main">{currentTheme.name}</strong> ({currentTheme.category})</span>
                 </div>
-                <span className="text-[10px] font-mono text-text-faint uppercase tracking-wider">
-                  Script Paper Only
-                </span>
+                <div className="flex items-center gap-1.5 text-[10px] font-mono text-text-faint">
+                  <Sparkles size={11} className="text-amber-500 shrink-0" />
+                  <span>App Shell: <strong className="text-text-body font-semibold uppercase">{themeMode === 'auto' ? `Auto (${effectiveThemeCategory})` : themeMode}</strong></span>
+                </div>
               </div>
             </div>
           ) : (
