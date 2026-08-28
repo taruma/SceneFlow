@@ -2,6 +2,7 @@ import * as React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Search, BookOpen, Film, ArrowUpRight, Sparkles } from "lucide-react";
 import { EXAMPLE_SECTIONS, Example } from "../examples";
+import { useEscapeKey } from "../hooks/useEscapeKey";
 
 function formatDateString(dateStr?: string): string {
   if (!dateStr) return "";
@@ -20,7 +21,10 @@ interface MobileLibraryModalProps {
 }
 
 export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileLibraryModalProps) {
+  useEscapeKey(onClose, isOpen);
+
   const [searchQuery, setSearchQuery] = React.useState("");
+
   const [selectedCategory, setSelectedCategory] = React.useState<string>("All");
 
   const categories = ["All", "Featured", ...EXAMPLE_SECTIONS.map((s) => s.label)];

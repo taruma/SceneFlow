@@ -1,6 +1,7 @@
 import React from 'react';
 import { FileText, X } from 'lucide-react';
 import { UI_TOKENS } from '../styles/tokens/ui';
+import { useEscapeKey } from '../hooks/useEscapeKey';
 
 interface RawScriptModalProps {
   isOpen: boolean;
@@ -15,11 +16,19 @@ export function RawScriptModal({
   scriptText,
   onChangeScriptText,
 }: RawScriptModalProps) {
+  useEscapeKey(onClose, isOpen);
+
   if (!isOpen) return null;
 
   return (
-    <div className={UI_TOKENS.modal.overlayHeavy}>
+    <div 
+      className={UI_TOKENS.modal.overlayHeavy}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
       <div className={UI_TOKENS.modal.containerMd}>
+
         <div className={UI_TOKENS.modal.bodyPad}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">

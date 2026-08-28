@@ -2,6 +2,7 @@ import * as React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X } from "lucide-react";
 import { UI_TOKENS } from "../styles/tokens/ui";
+import { useEscapeKey } from "../hooks/useEscapeKey";
 
 interface StagingModalProps {
   isOpen: boolean;
@@ -11,14 +12,8 @@ interface StagingModalProps {
 }
 
 export function StagingModal({ isOpen, onClose, label, content }: StagingModalProps) {
-  // Close on escape key
-  React.useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
-  }, [onClose]);
+  useEscapeKey(onClose, isOpen);
+
 
   return (
     <AnimatePresence>

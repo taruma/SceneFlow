@@ -2,6 +2,7 @@ import React from 'react';
 import { Cue } from '../types/script';
 import { getCueColorForTheme } from '../lib/scriptStyles';
 import { UI_TOKENS } from '../styles/tokens/ui';
+import { useEscapeKey } from '../hooks/useEscapeKey';
 
 interface OverlapPickerProps {
   isOpen: boolean;
@@ -18,6 +19,8 @@ export function OverlapPicker({
   onSelectCue,
   onClose,
 }: OverlapPickerProps) {
+  useEscapeKey(onClose, isOpen);
+
   if (!isOpen) return null;
 
   return (

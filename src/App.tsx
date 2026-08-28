@@ -112,33 +112,8 @@ export default function App() {
 
   const { theme: activeTheme } = useScriptTheme(scriptThemeId);
 
-  const { isDesktop } = useKeyboardShortcuts({
-    player,
-    togglePlayPause,
-    jumpBy,
-    disabled: isScriptModalOpen || isCuesModalOpen || isSettingsOpen || isColorModalOpen || isInfoModalOpen || isLibraryOpen,
-  });
-
   const {
-    isAutoScrollEnabled,
-    setIsAutoScrollEnabled,
-    autoScrollTargets,
-    setAutoScrollTargets,
-    isAutoScrollDropdownOpen,
-    setIsAutoScrollDropdownOpen,
-    applyScrollFocus,
-  } = useAutoScroll({
-    scriptRef,
-    cues: state.cues,
-    settings: state.settings,
-    currentTime,
-    mode,
-    isDesktop,
-    scrollFocusPreset,
-    onScrollFocusChange: setScrollFocusPreset,
-  });
 
-  const {
     selection,
     setSelection,
     newCue,
@@ -173,6 +148,46 @@ export default function App() {
     state,
     setState,
   });
+
+  const isAnyModalOpen = Boolean(
+    isScriptModalOpen ||
+    isCuesModalOpen ||
+    isSettingsOpen ||
+    isColorModalOpen ||
+    isInfoModalOpen ||
+    isLibraryOpen ||
+    activeStaging ||
+    deleteConfirmation.isOpen ||
+    resetConfirmation.isOpen ||
+    overlapPicker.isOpen
+  );
+
+  const { isDesktop } = useKeyboardShortcuts({
+    player,
+    togglePlayPause,
+    jumpBy,
+    disabled: isAnyModalOpen,
+  });
+
+  const {
+    isAutoScrollEnabled,
+    setIsAutoScrollEnabled,
+    autoScrollTargets,
+    setAutoScrollTargets,
+    isAutoScrollDropdownOpen,
+    setIsAutoScrollDropdownOpen,
+    applyScrollFocus,
+  } = useAutoScroll({
+    scriptRef,
+    cues: state.cues,
+    settings: state.settings,
+    currentTime,
+    mode,
+    isDesktop,
+    scrollFocusPreset,
+    onScrollFocusChange: setScrollFocusPreset,
+  });
+
 
   const activeCueTypes = useMemo(() => {
     const active = new Set<string>();

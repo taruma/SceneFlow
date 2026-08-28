@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Universal Modal `Escape` Key & Backdrop Dismissal (`src/hooks/useEscapeKey.ts`, `src/components/*`)**:
+  - Standardized keyboard and click dismissal across all modals via a lightweight, reusable `useEscapeKey(onClose, isOpen)` hook.
+  - Added `Escape` key listeners and backdrop click-to-dismiss handlers to `ScriptColorModal` (Visual Themes), `TimingSettingsModal` (Timing Buffers), `MobileLibraryModal`, `RawScriptModal` (Raw Screenplay), `RawCuesModal` (Raw Cues JSON), `DeleteConfirmationModal`, `ResetConfirmationModal`, and `OverlapPicker`.
+  - Refactored `AppInfoModal`, `LibraryModal`, and `StagingModal` to use the consolidated `useEscapeKey` hook for clean event cleanup and consistent lifecycle handling.
 - **Desktop App Info & About Modal (`src/components/AppInfoModal.tsx`, `src/components/AppHeader.tsx`, `src/App.tsx`)**:
   - Introduced a desktop-only About & Application Info dialog opened via a dedicated `i` (Info) icon button in the header toolbar.
   - **Dynamic Metadata & Versioning**: Automatically reads application name, current version (`v2.1.1`), and description directly from `metadata.json`.
@@ -15,8 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Resource Links**: Clean 2x2 interactive badge grid linking to the GitHub Repository, Documentation & Guide, Release Notes (Changelog), and Ko-fi Support.
   - **Key Capabilities & Shortcuts Cheat Sheet**: In-app overview of core capabilities and supported keyboard shortcuts (`Space / K`, `← / →`, `J / L`, `Esc`).
   - **Ergonomics & Modal Safety**: Supports dismissal via `Escape` key, backdrop click, or close button; automatically disables global video keyboard shortcuts while any modal is active.
-- **Enhanced Global Keyboard Shortcuts (`src/hooks/useKeyboardShortcuts.ts`)**:
-  - Added YouTube-standard navigation hotkeys (`KeyK` for Play/Pause, `KeyJ` for -5s seek, `KeyL` for +5s seek) alongside existing `Space` and arrow key (`ArrowLeft` / `ArrowRight`) bindings with automatic typing and modal detection safeguards.
+- **Enhanced Global Keyboard Shortcuts (`src/hooks/useKeyboardShortcuts.ts`, `src/App.tsx`)**:
+  - Added YouTube-standard navigation hotkeys (`KeyK` for Play/Pause, `KeyJ` for -5s seek, `KeyL` for +5s seek) alongside existing `Space` and arrow key (`ArrowLeft` / `ArrowRight`) bindings.
+  - Hardened modal detection safeguards in `App.tsx` via `isAnyModalOpen` to disable background video shortcuts whenever any dialog or confirmation is active.
+
 
 ## [2.1.1] - 2026-08-28
 

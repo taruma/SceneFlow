@@ -2,6 +2,7 @@ import React from 'react';
 import { Trash2 } from 'lucide-react';
 import { Cue } from '../types/script';
 import { UI_TOKENS } from '../styles/tokens/ui';
+import { useEscapeKey } from '../hooks/useEscapeKey';
 
 interface DeleteConfirmationModalProps {
   isOpen: boolean;
@@ -16,11 +17,19 @@ export function DeleteConfirmationModal({
   onClose,
   onConfirm,
 }: DeleteConfirmationModalProps) {
+  useEscapeKey(onClose, isOpen);
+
   if (!isOpen) return null;
 
   return (
-    <div className={UI_TOKENS.modal.overlay}>
+    <div 
+      className={UI_TOKENS.modal.overlay}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
       <div className={UI_TOKENS.modal.containerSm}>
+
         <div className={UI_TOKENS.modal.dialogPad}>
           <div className={UI_TOKENS.iconWrapper.danger}>
             <Trash2 size={24} className="text-red-500" />

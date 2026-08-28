@@ -176,9 +176,11 @@ npm run dev
 
 | Key | Action |
 |-----|--------|
-| `Space` | Play / Pause video |
-| `←` Arrow Left | Rewind 5 seconds |
-| `→` Arrow Right | Forward 5 seconds |
+| `Space` / `K` | Play / Pause video |
+| `←` / `J` | Rewind 5 seconds |
+| `→` / `L` | Forward 5 seconds |
+| `Esc` | Close active modal / dialog |
+
 
 ---
 

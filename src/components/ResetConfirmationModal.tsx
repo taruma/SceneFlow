@@ -2,6 +2,7 @@ import React from 'react';
 import { RefreshCw, Info, X, Loader2 } from 'lucide-react';
 import { UI_TOKENS } from '../styles/tokens/ui';
 import type { ResetConfirmationState } from '../types/script';
+import { useEscapeKey } from '../hooks/useEscapeKey';
 
 interface ResetConfirmationModalProps {
   resetConfirmation: ResetConfirmationState;
@@ -18,11 +19,19 @@ export function ResetConfirmationModal({
   onConfirm,
   onClearError,
 }: ResetConfirmationModalProps) {
+  useEscapeKey(onClose, resetConfirmation.isOpen);
+
   if (!resetConfirmation.isOpen) return null;
 
   return (
-    <div className={UI_TOKENS.modal.overlayHighZ}>
+    <div 
+      className={UI_TOKENS.modal.overlayHighZ}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
       <div className={UI_TOKENS.modal.containerSm}>
+
         <div className={UI_TOKENS.modal.dialogPad}>
           <div className={UI_TOKENS.iconWrapper.amber}>
             <RefreshCw size={24} className="text-amber-500" />

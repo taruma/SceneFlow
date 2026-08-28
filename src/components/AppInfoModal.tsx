@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { 
   Info, 
   X, 
@@ -14,6 +14,7 @@ import {
 import metadata from '../../metadata.json';
 import { cn } from '../lib/utils';
 import { UI_TOKENS } from '../styles/tokens/ui';
+import { useEscapeKey } from '../hooks/useEscapeKey';
 
 interface AppInfoModalProps {
   isOpen: boolean;
@@ -21,18 +22,8 @@ interface AppInfoModalProps {
 }
 
 export function AppInfoModal({ isOpen, onClose }: AppInfoModalProps) {
-  // Handle escape key listener
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-    if (isOpen) {
-      window.addEventListener('keydown', handleKeyDown);
-    }
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  useEscapeKey(onClose, isOpen);
+
 
   if (!isOpen) return null;
 

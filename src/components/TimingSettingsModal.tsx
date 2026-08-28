@@ -3,6 +3,7 @@ import { Settings, X, RefreshCw } from 'lucide-react';
 import { cn } from '../lib/utils';
 import type { TimingSettings, ColorCategory } from '../types/script';
 import { UI_TOKENS } from '../styles/tokens/ui';
+import { useEscapeKey } from '../hooks/useEscapeKey';
 
 interface TimingSettingsModalProps {
   isOpen: boolean;
@@ -21,11 +22,19 @@ export function TimingSettingsModal({
   onUpdateSetting,
   onResetClick,
 }: TimingSettingsModalProps) {
+  useEscapeKey(onClose, isOpen);
+
   if (!isOpen) return null;
 
   return (
-    <div className={UI_TOKENS.modal.overlayHeavy}>
+    <div 
+      className={UI_TOKENS.modal.overlayHeavy}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
       <div className={UI_TOKENS.modal.containerLg}>
+
         <div className="p-8 lg:p-10 space-y-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">

@@ -193,11 +193,14 @@ Accessible via the `i` (Info) icon button in the desktop header toolbar:
 - **Interactive Resource Grid**: 2x2 resource links for GitHub Repository, Documentation / Guide, Release Notes (Changelog), and Ko-fi Support.
 - **MIT License**: License status indicator.
 
-### Global Keyboard Shortcuts
+### Global Keyboard Shortcuts & Modal Dismissal
 Available on desktop across both Playback and Edit modes with automatic input/textarea and modal guards:
 - `Space` / `K`: Toggle YouTube video playback (Play / Pause).
 - `←` / `→` (ArrowLeft / ArrowRight): Seek -5s / +5s.
-- `J` / `L`: Seek -5s / +5s (YouTube standard hotkeys).
-- `Esc`: Close any active modal.
+- `J` / `L`: Seek -5s / +5s (YouTube standard navigation hotkeys).
+- `Esc`: Close any active modal or popover (`ScriptColorModal`, `TimingSettingsModal`, `LibraryModal`, `MobileLibraryModal`, `RawScriptModal`, `RawCuesModal`, `DeleteConfirmationModal`, `ResetConfirmationModal`, `StagingModal`, `AppInfoModal`, `OverlapPicker`).
+- **Backdrop Dismissal**: Clicking outside modal content on the backdrop overlay dismisses the active modal.
+- **Shortcuts Safeguard**: All playback hotkeys are automatically gated and disabled whenever any modal or confirmation prompt is open.
+
 
 

@@ -3,6 +3,7 @@ import { Sparkles, Check, RotateCcw, X, Moon, Sun, Coffee, Eye, Layers, Palette 
 import { cn } from '../lib/utils';
 import { SCRIPT_THEMES, getCueColorForTheme, CUE_THEME_COLORS, type ScriptThemeId, type ScriptTheme } from '../lib/scriptStyles';
 import { UI_TOKENS } from '../styles/tokens/ui';
+import { useEscapeKey } from '../hooks/useEscapeKey';
 
 interface ScriptColorModalProps {
   isOpen: boolean;
@@ -25,6 +26,8 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
   currentThemeId,
   onSelectTheme,
 }) => {
+  useEscapeKey(onClose, isOpen);
+
   const [activeTab, setActiveTab] = useState<'presets' | 'inspector'>('presets');
 
   if (!isOpen) return null;
@@ -33,7 +36,13 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
   const themeList: ScriptTheme[] = Object.values(SCRIPT_THEMES);
 
   return (
-    <div className={UI_TOKENS.modal.overlayHeavy}>
+    <div 
+      className={UI_TOKENS.modal.overlayHeavy}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+
       <div 
         id="script-color-modal"
         className={UI_TOKENS.modal.containerXl}

@@ -29,8 +29,9 @@ SceneFlow follows a modular, 5-layer architecture that separates script parsing,
 │  src/hooks/useScriptPreferences.ts  src/hooks/useAutoScroll.ts         │
 │  src/hooks/useCueEditor.ts         src/hooks/useCueAlignment.ts        │
 │  src/hooks/useKeyboardShortcuts.ts  src/hooks/useScriptTheme.ts        │
-│  src/hooks/index.ts (barrel export)                                    │
+│  src/hooks/useEscapeKey.ts         src/hooks/index.ts (barrel export)  │
 └──────────────────────────────────┬─────────────────────────────────────┘
+
                                    │ AppState, currentTime, theme, preferences
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -200,7 +201,14 @@ Theme metadata and color resolution hook:
 - Provides dynamic cue color resolution helper (`resolveCueColor: (typeOrClass) => CueColorInfo`).
 - Encapsulates theme-dependent styling logic for seamless integration across components.
 
+### `useEscapeKey`
+Modal and dialog `Escape` key dismissal hook:
+- Attaches a lightweight `keydown` listener to `window` specifically for the `Escape` key.
+- Lifecycle-guarded: only active when `isOpen === true`, automatically unbinding immediately on modal close or unmount.
+- Eliminates duplicated keyboard event handling across modal components and popovers.
+
 ---
+
 
 ## 5. UI Layer (`src/App.tsx` & `src/components/`)
 

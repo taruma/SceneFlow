@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { X, Search, BookOpen, Film, Notebook, Compass, ArrowUpRight, Lock, Clapperboard, Sparkles } from "lucide-react";
 import { EXAMPLE_SECTIONS, Example } from "../examples";
 import { UI_TOKENS } from "../styles/tokens/ui";
+import { useEscapeKey } from "../hooks/useEscapeKey";
 
 function formatDateString(dateStr?: string): string {
   if (!dateStr) return "";
@@ -21,18 +22,12 @@ interface LibraryModalProps {
 }
 
 export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalProps) {
+  useEscapeKey(onClose, isOpen);
+
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedCategory, setSelectedCategory] = React.useState<string>("All");
   const [sortBy, setSortBy] = React.useState<"newest" | "oldest" | "alphabetical">("newest");
 
-  // Close on Escape key press
-  React.useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
-  }, [onClose]);
 
   // Handle reset search if requested
   const handleClearSearch = () => setSearchQuery("");
