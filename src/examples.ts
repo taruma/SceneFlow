@@ -375,6 +375,14 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         tags: ['auteur script', 'seedance 2.5'],
       },
       {
+        id: 'clip_cold_purge',
+        title: "Cold Purge",
+        path: '/examples/ai_clips/clip_cold_purge.json',
+        description: "Crew loyalty shatters under the pressure of an unstoppable biological breach.",
+        releaseDate: '2026-08-28',
+        tags: ['auteur script', 'seedance 2.5'],
+      },
+      {
         id: 'clip_the_handover',
         title: "The Handover",
         path: '/examples/ai_clips/clip_the_handover.json',
