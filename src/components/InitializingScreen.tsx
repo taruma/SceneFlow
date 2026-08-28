@@ -8,7 +8,13 @@ export function InitializingScreen() {
         src="/SCENEFLOW_TAG_B.png" 
         alt="SceneFlow Logo" 
         referrerPolicy="no-referrer"
-        className="h-12 lg:h-16 w-auto object-contain animate-pulse selection:bg-transparent pointer-events-none"
+        className="logo-light h-12 lg:h-16 w-auto object-contain animate-pulse selection:bg-transparent pointer-events-none"
+      />
+      <img 
+        src="/SCENEFLOW_TAG_WHITE.png" 
+        alt="SceneFlow Logo" 
+        referrerPolicy="no-referrer"
+        className="logo-dark h-12 lg:h-16 w-auto object-contain animate-pulse selection:bg-transparent pointer-events-none"
       />
       <div className="flex items-center gap-2 text-text-faint">
         <Loader2 className="w-4 h-4 animate-spin text-text-muted" />

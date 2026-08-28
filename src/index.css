@@ -120,6 +120,22 @@ body {
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
+/* Adaptive Theme Logo */
+.logo-light {
+  display: block;
+}
+.logo-dark {
+  display: none;
+}
+
+[data-theme-category="dark"] .logo-light {
+  display: none !important;
+}
+
+[data-theme-category="dark"] .logo-dark {
+  display: block !important;
+}
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 .scrollbar-hide::-webkit-scrollbar,
 .no-scrollbar::-webkit-scrollbar {

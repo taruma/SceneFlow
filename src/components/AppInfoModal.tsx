@@ -127,7 +127,12 @@ export function AppInfoModal({ isOpen, onClose }: AppInfoModalProps) {
                 <img
                   src="/SCENEFLOW_TAG_B.png"
                   alt="SceneFlow Logo"
-                  className="h-6 w-auto object-contain pointer-events-none"
+                  className="logo-light h-6 w-auto object-contain pointer-events-none"
+                />
+                <img
+                  src="/SCENEFLOW_TAG_WHITE.png"
+                  alt="SceneFlow Logo"
+                  className="logo-dark h-6 w-auto object-contain pointer-events-none"
                 />
               </div>
               <div className="flex items-center gap-1.5 text-[10px] font-bold text-text-faint uppercase tracking-wider">

@@ -55,7 +55,13 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           src="/SCENEFLOW_TAG_B.png"
           alt="SceneFlow Logo"
           referrerPolicy="no-referrer"
-          className="h-8 lg:h-9 w-auto object-contain selection:bg-transparent pointer-events-none"
+          className="logo-light h-8 lg:h-9 w-auto object-contain selection:bg-transparent pointer-events-none"
+        />
+        <img
+          src="/SCENEFLOW_TAG_WHITE.png"
+          alt="SceneFlow Logo"
+          referrerPolicy="no-referrer"
+          className="logo-dark h-8 lg:h-9 w-auto object-contain selection:bg-transparent pointer-events-none"
         />
       </div>
 
