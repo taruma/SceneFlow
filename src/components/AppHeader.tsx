@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Book, Coffee, Play, Edit2, Palette, Clock, FolderOpen, Download } from 'lucide-react';
+import { Plus, Book, Coffee, Play, Edit2, Palette, Clock, FolderOpen, Download, Info } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { UI_TOKENS } from '../styles/tokens/ui';
 
@@ -14,6 +14,8 @@ interface AppHeaderProps {
   setIsColorModalOpen: (open: boolean) => void;
   isSettingsOpen: boolean;
   setIsSettingsOpen: (open: boolean) => void;
+  isInfoModalOpen: boolean;
+  setIsInfoModalOpen: (open: boolean) => void;
   importJson: (e: React.ChangeEvent<HTMLInputElement>) => void;
   exportJson: () => void;
 }
@@ -29,6 +31,8 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   setIsColorModalOpen,
   isSettingsOpen,
   setIsSettingsOpen,
+  isInfoModalOpen,
+  setIsInfoModalOpen,
   importJson,
   exportJson,
 }) => {
@@ -124,6 +128,16 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             title="Timing Settings"
           >
             <Clock size={18} />
+          </button>
+        </div>
+
+        <div className="relative hidden lg:block">
+          <button
+            onClick={() => setIsInfoModalOpen(true)}
+            className={isInfoModalOpen ? UI_TOKENS.button.headerIconButtonActive : UI_TOKENS.button.headerIconButton}
+            title="About & Information"
+          >
+            <Info size={18} />
           </button>
         </div>
 

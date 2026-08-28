@@ -40,14 +40,17 @@ export function useKeyboardShortcuts({
 
       switch (e.code) {
         case 'Space':
+        case 'KeyK':
           e.preventDefault();
           togglePlayPause();
           break;
         case 'ArrowLeft':
+        case 'KeyJ':
           e.preventDefault();
           jumpBy(-5);
           break;
         case 'ArrowRight':
+        case 'KeyL':
           e.preventDefault();
           jumpBy(5);
           break;

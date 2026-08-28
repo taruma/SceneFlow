@@ -35,7 +35,7 @@ SceneFlow follows a modular, 5-layer architecture that separates script parsing,
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
 │                              UI LAYER                                  │
-│  src/App.tsx (orchestrator)  •  src/components/* (18 sub-components)    │
+│  src/App.tsx (orchestrator)  •  src/components/* (19 sub-components)    │
 │  src/types/script.ts (14 domain interfaces)                            │
 └────────────────────────────────────────────────────────────────────────┘
 ```
@@ -190,8 +190,8 @@ Automated cue realignment orchestration:
 
 ### `useKeyboardShortcuts`
 Global keyboard shortcut handler:
-- Space = play/pause toggle, ArrowLeft = -5s seek, ArrowRight = +5s seek.
-- Gates execution when input/textarea elements are focused or modals are open.
+- `Space` / `KeyK` = play/pause toggle, `ArrowLeft` / `KeyJ` = -5s seek, `ArrowRight` / `KeyL` = +5s seek.
+- Gates execution when input/textarea elements are focused or any modal is open.
 - Also tracks `isDesktop` via `window.innerWidth >= 1024` resize listener.
 
 ### `useScriptTheme`
@@ -207,7 +207,7 @@ Theme metadata and color resolution hook:
 The UI layer coordinates video playback, real-time highlighting, user interaction, and modal dialogs.
 
 ### Core Orchestrator (`src/App.tsx`)
-- **Lightweight Composition**: `App.tsx` imports the custom hook suite and eighteen sub-components, composing them into the full application shell while keeping its own logic to a minimum (mode toggling, library state, modal visibility).
+- **Lightweight Composition**: `App.tsx` imports the custom hook suite and nineteen sub-components, composing them into the full application shell while keeping its own logic to a minimum (mode toggling, library state, modal visibility).
 - **Hook Integration**: State, playback, preferences, auto-scroll, cue editing, alignment, keyboard shortcuts, and active script theme are fully delegated to the hooks layer. `App.tsx` only wires hook return values to component props.
 - **Sync Engine (`renderedScript` `useMemo`)**: Computes line segments and active cue overlaps in real-time, calculating dynamic opacity based on per-category timing buffers.
 - **Auto-Scroll Engine**: Delegates to `useAutoScroll`, which automatically scrolls the screenplay during playback, prioritizing the most recent active cue, supporting multi-selected focus categories, and aligning to the user's selected vertical focus ratio (35% Top, 50% Center, 65% Bottom).
@@ -233,6 +233,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 16. **`LibraryModal.tsx`**: Desktop library catalogue modal featuring real-time search, category navigation, sorting (Latest, Oldest, A-Z), section badges, and featured curations.
 17. **`MobileLibraryModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a touch-friendly category filter and search interface.
 18. **`StagingModal.tsx`**: Monospace overlay displaying hidden camera, lighting, or lookbook directives from `[[STAGING]]` blocks.
+19. **`AppInfoModal.tsx`**: Desktop application info and about dialog displaying dynamic versioning from `metadata.json`, author attribution for Taruma Sakti ([Linktree](https://linktr.ee/tarumainfo)), 2x2 resource badge grid, and keyboard shortcuts cheat sheet.
 
 ### Type Definitions & Data Schemas
 - **`src/types/script.ts`**: Defines 14 domain interfaces and types: `Cue`, `TimingSettings`, `ColorCategory`, `AppState`, `ScriptWidthPresetId`, `ScriptWidthPreset`, `ScrollFocusPresetId`, `ScrollFocusPreset`, `TextSelection`, `DeleteConfirmationState`, `ResetConfirmationState`, `OverlapPickerState`, `AlternativeLocation`, and `AppMode`.

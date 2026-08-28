@@ -182,3 +182,22 @@ For a complete and up-to-date list of all available sceneflow projects, release 
 - **Dual Modal Architecture**: Full modal dialog on desktop viewports (`LibraryModal`), touch-friendly bottom-sheet drawer on mobile viewports (`MobileLibraryModal`).
 - **Community Support**: Direct Ko-fi donation link (`https://ko-fi.com/tarumainfo`) integrated into desktop and mobile headers.
 
+---
+
+## 8. Application Information & Keyboard Navigation
+
+### Desktop App Info Modal (`AppInfoModal`)
+Accessible via the `i` (Info) icon button in the desktop header toolbar:
+- **Dynamic Version & Metadata**: Automatically loads current version (`v2.1.1`), app title, and description directly from `metadata.json`.
+- **Author Attribution**: Features creator credit for **Taruma Sakti** in header and footer linking directly to [Linktree](https://linktr.ee/tarumainfo).
+- **Interactive Resource Grid**: 2x2 resource links for GitHub Repository, Documentation / Guide, Release Notes (Changelog), and Ko-fi Support.
+- **MIT License**: License status indicator.
+
+### Global Keyboard Shortcuts
+Available on desktop across both Playback and Edit modes with automatic input/textarea and modal guards:
+- `Space` / `K`: Toggle YouTube video playback (Play / Pause).
+- `←` / `→` (ArrowLeft / ArrowRight): Seek -5s / +5s.
+- `J` / `L`: Seek -5s / +5s (YouTube standard hotkeys).
+- `Esc`: Close any active modal.
+
+

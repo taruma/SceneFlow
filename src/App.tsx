@@ -22,6 +22,7 @@ import { DeleteConfirmationModal } from './components/DeleteConfirmationModal';
 import { ResetConfirmationModal } from './components/ResetConfirmationModal';
 import { TimingSettingsModal } from './components/TimingSettingsModal';
 import { ScriptColorModal } from './components/ScriptColorModal';
+import { AppInfoModal } from './components/AppInfoModal';
 import { AppHeader } from './components/AppHeader';
 import { ActiveHighlightsPanel } from './components/ActiveHighlightsPanel';
 import { TimelineCuesPanel } from './components/TimelineCuesPanel';
@@ -57,6 +58,7 @@ export default function App() {
   const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
   const [isCuesModalOpen, setIsCuesModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [rawCuesText, setRawCuesText] = useState("");
   const [leftPanelScroll, setLeftPanelScroll] = useState(0);
@@ -114,7 +116,7 @@ export default function App() {
     player,
     togglePlayPause,
     jumpBy,
-    disabled: isScriptModalOpen || isCuesModalOpen,
+    disabled: isScriptModalOpen || isCuesModalOpen || isSettingsOpen || isColorModalOpen || isInfoModalOpen || isLibraryOpen,
   });
 
   const {
@@ -596,6 +598,8 @@ export default function App() {
         setIsColorModalOpen={setIsColorModalOpen}
         isSettingsOpen={isSettingsOpen}
         setIsSettingsOpen={setIsSettingsOpen}
+        isInfoModalOpen={isInfoModalOpen}
+        setIsInfoModalOpen={setIsInfoModalOpen}
         importJson={importJson}
         exportJson={exportJson}
       />
@@ -932,6 +936,12 @@ export default function App() {
             localStorage.setItem('sceneflow_script_theme', themeId);
           }
         }}
+      />
+
+      {/* App Info / About Modal */}
+      <AppInfoModal
+        isOpen={isInfoModalOpen}
+        onClose={() => setIsInfoModalOpen(false)}
       />
     </div>
   );
