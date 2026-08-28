@@ -179,7 +179,7 @@ Real-time playback auto-scroll engine:
 
 ### `useCueEditor`
 Cue authoring and editing state machine:
-- Handles text selection → script-text mapping via `findTextInScript`.
+- Handles line-anchored DOM text selection → script-text mapping via `getSelectionIndicesFromDOM` with fallback to `findTextInScript`.
 - Manages cue creation, editing, deletion with confirmation modals, and duplicate occurrence lookup.
 - Exposes `selection`, `newCue`, `altLocations`, `overlapPicker`, and `resetConfirmation` state.
 

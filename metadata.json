@@ -1,7 +1,7 @@
 {
   "name": "SceneFlow",
   "description": "SceneFlow bridges the gap between structured screenplays and AI video generation with real-time synchronization, staging blocks, and precision timing controls.",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

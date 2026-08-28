@@ -62,6 +62,133 @@ export function findTextInScript(fullText: string, text: string): number {
 }
 
 /**
+ * Accurately extracts start/end character indexes within the full script
+ * for a user's DOM mouse selection, using line-anchored metadata (`data-line-start`).
+ * Falls back to `findTextInScript` if DOM elements cannot be resolved.
+ */
+export function getSelectionIndicesFromDOM(
+  sel: Selection | null,
+  scriptText: string
+): { start: number; end: number; text: string } | null {
+  if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return null;
+  const rawSelectedText = sel.toString();
+  if (!rawSelectedText.trim()) return null;
+
+  try {
+    const range = sel.getRangeAt(0);
+    
+    // Helper to find the closest line container
+    const findLineContainer = (node: Node | null): HTMLElement | null => {
+      let curr: Node | null = node;
+      if (curr && curr.nodeType === Node.TEXT_NODE) {
+        curr = curr.parentElement;
+      }
+      if (curr && curr instanceof HTMLElement) {
+        return curr.closest('[data-line-start]');
+      }
+      return null;
+    };
+
+    const startLineEl = findLineContainer(range.startContainer);
+    
+    if (startLineEl) {
+      const lineStartAttr = startLineEl.getAttribute('data-line-start');
+      if (lineStartAttr !== null) {
+        const lineStart = parseInt(lineStartAttr, 10);
+        
+        // Measure offset inside startLineEl up to range.startContainer / range.startOffset
+        const preStartRange = range.cloneRange();
+        preStartRange.selectNodeContents(startLineEl);
+        preStartRange.setEnd(range.startContainer, range.startOffset);
+        const offsetInLine = preStartRange.toString().length;
+        
+        let start = lineStart + offsetInLine;
+        let end = start + rawSelectedText.length;
+
+        // Check if multi-line selection
+        const endLineEl = findLineContainer(range.endContainer);
+        if (endLineEl && endLineEl !== startLineEl) {
+          const endLineStartAttr = endLineEl.getAttribute('data-line-start');
+          if (endLineStartAttr !== null) {
+            const endLineStart = parseInt(endLineStartAttr, 10);
+            const preEndRange = range.cloneRange();
+            preEndRange.selectNodeContents(endLineEl);
+            preEndRange.setEnd(range.endContainer, range.endOffset);
+            end = endLineStart + preEndRange.toString().length;
+          }
+        }
+
+        // Direct slice validation against scriptText
+        if (start >= 0 && end <= scriptText.length) {
+          const directSlice = scriptText.substring(start, end);
+          if (directSlice === rawSelectedText) {
+            return { start, end, text: directSlice };
+          }
+        }
+
+        // Search in a local window bounded by the surrounding line
+        const windowStart = Math.max(0, start - 60);
+        const windowEnd = Math.min(scriptText.length, end + 60);
+        const localSnippet = scriptText.substring(windowStart, windowEnd);
+        
+        // Try exact match within local snippet
+        const localIdx = localSnippet.indexOf(rawSelectedText);
+        if (localIdx !== -1) {
+          const resolvedStart = windowStart + localIdx;
+          const resolvedEnd = resolvedStart + rawSelectedText.length;
+          return {
+            start: resolvedStart,
+            end: resolvedEnd,
+            text: scriptText.substring(resolvedStart, resolvedEnd)
+          };
+        }
+
+        // Try regex match within local snippet for formatting tolerance
+        const escaped = rawSelectedText.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
+        try {
+          const reg = new RegExp(escaped, 'i');
+          const m = reg.exec(localSnippet);
+          if (m) {
+            const resolvedStart = windowStart + m.index;
+            const resolvedEnd = resolvedStart + m[0].length;
+            return {
+              start: resolvedStart,
+              end: resolvedEnd,
+              text: scriptText.substring(resolvedStart, resolvedEnd)
+            };
+          }
+        } catch {
+          // ignore regex errors
+        }
+
+        // If local snippet didn't match cleanly, return bounded start/end
+        if (start >= 0 && start < scriptText.length) {
+          return {
+            start,
+            end: Math.min(scriptText.length, start + rawSelectedText.length),
+            text: scriptText.substring(start, Math.min(scriptText.length, start + rawSelectedText.length))
+          };
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("DOM selection index extraction encountered error, falling back:", err);
+  }
+
+  // Graceful fallback to legacy findTextInScript
+  const fallbackIndex = findTextInScript(scriptText, rawSelectedText);
+  if (fallbackIndex !== -1) {
+    return {
+      start: fallbackIndex,
+      end: fallbackIndex + rawSelectedText.length,
+      text: scriptText.substring(fallbackIndex, fallbackIndex + rawSelectedText.length)
+    };
+  }
+
+  return null;
+}
+
+/**
  * Finds alternative matching locations for a selected text across the script,
  * skipping any text located inside [[STAGING]] blocks.
  */

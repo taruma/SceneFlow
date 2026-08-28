@@ -407,7 +407,7 @@ export default function App() {
 
       if (type === 'part-separator' || type === 'roman-title') {
         scriptElements.push(
-          <div key={lineIdx} className={themeStyles.titleContainer}>
+          <div key={lineIdx} data-line-start={lineStart} data-line-end={lineEnd} data-line-idx={lineIdx} className={themeStyles.titleContainer}>
             <div className={themeStyles.titleLine} />
             <span className={themeStyles.titleText}>{trimmed}</span>
             <div className={themeStyles.titleLine} />
@@ -461,7 +461,13 @@ export default function App() {
         const finalDisplayValue = lineData.isBrief ? formatBriefSegment(displayValue, true) : displayValue;
         
         scriptElements.push(
-          <div key={lineIdx} className={cn("whitespace-pre-wrap min-h-[1em]", className)}>
+          <div 
+            key={lineIdx} 
+            data-line-start={lineStart} 
+            data-line-end={lineEnd} 
+            data-line-idx={lineIdx} 
+            className={cn("whitespace-pre-wrap min-h-[1em]", className)}
+          >
             {finalDisplayValue}
           </div>
         );
@@ -555,7 +561,13 @@ export default function App() {
       }
 
       scriptElements.push(
-        <div key={lineIdx} className={cn("whitespace-pre-wrap min-h-[1em]", className)}>
+        <div 
+          key={lineIdx} 
+          data-line-start={lineStart} 
+          data-line-end={lineEnd} 
+          data-line-idx={lineIdx} 
+          className={cn("whitespace-pre-wrap min-h-[1em]", className)}
+        >
           {segments.length > 0 ? segments : (type === 'name' ? trimmed.slice(0, -1) : line)}
         </div>
       );

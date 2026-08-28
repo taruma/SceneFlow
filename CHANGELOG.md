@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2026-08-28
+
+### Fixed
+- **Line-Anchored DOM Offset Calculation for Text Selection in Edit View (`src/lib/cueUtils.ts`, `src/hooks/useCueEditor.ts`, `src/App.tsx`)**:
+  - Fixed an issue where highlighting text containing repeated keywords (e.g. `CAM 05`, character names, parentheticals, or repeated phrases) in Edit View incorrectly jumped to the first occurrence at the beginning of the screenplay instead of targeting the specific line highlighted by the mouse cursor.
+  - Added line metadata attributes (`data-line-start`, `data-line-end`, `data-line-idx`) to all rendered screenplay line containers in `App.tsx`.
+  - Introduced `getSelectionIndicesFromDOM()` in `cueUtils.ts` to accurately compute exact character offsets from the browser's DOM `Range` and line container, with local snippet matching and seamless fallback to `findTextInScript()`.
+  - Updated `handleSelection()` in `useCueEditor.ts` to utilize DOM-anchored character offsets, ensuring precise sync cue placement on repeated phrases across the entire document.
+
 ## [2.1.0] - 2026-08-28
 
 ### Added

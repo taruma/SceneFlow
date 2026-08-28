@@ -11,7 +11,7 @@ import type {
 } from '../types/script';
 import { COLORS } from '../constants/script';
 import { generateId } from '../lib/utils';
-import { findTextInScript, findAlternativeLocations as searchAlternativeLocations } from '../lib/cueUtils';
+import { getSelectionIndicesFromDOM, findAlternativeLocations as searchAlternativeLocations } from '../lib/cueUtils';
 
 interface UseCueEditorOptions {
   scriptText: string;
@@ -73,27 +73,19 @@ export function useCueEditor({
       return;
     }
 
-    const text = sel.toString();
-    if (!text.trim()) return;
-
-    console.log("Selection captured:", text);
-
-    const fullText = scriptText;
-    const startIndex = findTextInScript(fullText, text);
-    
-    if (startIndex !== -1) {
-      console.log("Text found in script at index:", startIndex);
-      const actualText = fullText.substring(startIndex, startIndex + text.length);
+    const res = getSelectionIndicesFromDOM(sel, scriptText);
+    if (res && res.text.trim()) {
+      console.log("DOM Selection captured at index range:", res.start, res.end, res.text);
       setSelection({
-        text: actualText,
-        start: startIndex,
-        end: startIndex + text.length,
+        text: res.text,
+        start: res.start,
+        end: res.end,
       });
       setNewCue(prev => ({
         ...prev,
-        selectedText: actualText,
-        startIndex: startIndex,
-        endIndex: startIndex + text.length,
+        selectedText: res.text,
+        startIndex: res.start,
+        endIndex: res.end,
       }));
     } else {
       console.warn("Text not found in raw scriptText. Selection might span across complex formatting or have different whitespace.");
