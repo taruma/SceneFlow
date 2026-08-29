@@ -314,7 +314,7 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                                 isDisabled
                                   ? "bg-surface-subtle/60 border-border-main/50 opacity-60 cursor-not-allowed"
                                   : example.featured
-                                    ? "bg-amber-50/[0.25] border-amber-200/80 hover:border-amber-400 shadow-[0_2px_8px_rgba(245,158,11,0.02)] hover:shadow-[0_6px_22px_rgba(245,158,11,0.07)] hover:bg-amber-50/[0.45] active:scale-[0.98] cursor-pointer"
+                                    ? "bg-amber-500/[0.04] border-amber-500/30 hover:border-amber-500/60 shadow-[0_2px_12px_rgba(245,158,11,0.04)] hover:shadow-[0_4px_20px_rgba(245,158,11,0.08)] active:scale-[0.98] cursor-pointer"
                                     : "bg-surface border-border-subtle hover:border-border-main hover:shadow-md active:scale-[0.98] cursor-pointer"
                               }`}
                             >
@@ -323,17 +323,19 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                                 {(selectedCategory === "All" || selectedCategory === "Featured") && (() => {
                                   const itemSecLabel = getItemSectionLabel(example.id);
                                   return (
-                                    <div className={`flex items-center gap-1.5 mb-2 px-2 py-0.5 rounded-md w-fit border transition-all ${
+                                    <div className={cn(
+                                      "flex items-center gap-1.5 mb-2 px-2 py-0.5 rounded-md w-fit border transition-all",
                                       example.featured
-                                        ? "bg-amber-100/40 border-amber-200/30 text-amber-850"
+                                        ? "bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400"
                                         : "bg-surface-muted border-border-subtle-trans text-text-muted"
-                                    }`}>
+                                    )}>
                                       <span className="shrink-0 flex items-center justify-center">
                                         {getCategoryIcon(itemSecLabel, 10)}
                                       </span>
-                                      <span className={`text-[8.5px] font-black uppercase tracking-[0.12em] ${
-                                        example.featured ? "text-amber-900/80" : "text-text-muted"
-                                      }`}>
+                                      <span className={cn(
+                                        "text-[8.5px] font-black uppercase tracking-[0.12em]",
+                                        example.featured ? "text-amber-600 dark:text-amber-400" : "text-text-muted"
+                                      )}>
                                         {itemSecLabel}
                                       </span>
                                     </div>
@@ -343,8 +345,8 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                                 {/* Top Metadata: Date & Volume indicator */}
                                 <div className="flex flex-wrap items-center gap-1.5 mb-1.5 w-full">
                                   {example.featured && (
-                                    <span className="inline-flex items-center gap-1 text-[8px] font-extrabold text-amber-700 bg-amber-100/55 border border-amber-200/45 px-1.5 py-0.5 rounded-md uppercase tracking-wider">
-                                      <Sparkles size={8} className="text-amber-500 fill-amber-500/10 animate-[pulse_2s_infinite]" />
+                                    <span className="inline-flex items-center gap-1 text-[8px] font-extrabold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/25 px-1.5 py-0.5 rounded-md uppercase tracking-wider">
+                                      <Sparkles size={8} className="text-amber-500 fill-amber-500/20 animate-[pulse_2s_infinite]" />
                                       Featured
                                     </span>
                                   )}
@@ -357,13 +359,14 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                                     <span className="text-text-faint select-none text-[9px]">•</span>
                                   )}
                                   {example.volume && (
-                                    <span className={`text-[8px] font-mono font-bold tracking-wider uppercase px-1.5 py-0.5 rounded-md ${
+                                    <span className={cn(
+                                      "text-[8px] font-mono font-bold tracking-wider uppercase px-1.5 py-0.5 rounded-md border",
                                       isDisabled
-                                        ? "bg-surface-hover text-text-faint"
+                                        ? "bg-surface-hover text-text-faint border-transparent"
                                         : example.featured
-                                          ? "bg-amber-100/70 text-amber-800 border border-amber-200/20"
-                                          : "bg-amber-100/70 text-amber-700 border border-amber-200/10"
-                                    }`}>
+                                          ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                                          : "bg-surface-muted text-text-faint border-border-subtle"
+                                    )}>
                                       {example.volume}
                                     </span>
                                   )}
@@ -371,11 +374,7 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
 
                                 {/* Primary Title block */}
                                 <div className="flex items-start justify-between gap-2.5 w-full">
-                                  <span className={`text-xs font-bold leading-snug transition-colors ${
-                                    example.featured 
-                                      ? "text-amber-950 group-hover:text-amber-900" 
-                                      : "text-text-body group-hover:text-text-main"
-                                  }`}>
+                                  <span className="text-xs font-bold leading-snug transition-colors text-text-main group-hover:text-amber-500">
                                     {example.title}
                                   </span>
                                   {isDisabled ? (
@@ -386,19 +385,13 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                                   ) : (
                                     <ArrowUpRight
                                       size={12}
-                                      className={`transition-all shrink-0 mt-0.5 ${
-                                        example.featured
-                                          ? "text-amber-400 group-hover:text-amber-700 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                                          : "text-text-faint group-hover:text-text-body group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                                      }`}
+                                      className="transition-all shrink-0 mt-0.5 text-text-faint group-hover:text-amber-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                                     />
                                   )}
                                 </div>
 
                                 {/* Script Description */}
-                                <p className={`text-[10.5px] md:text-[10px] font-medium leading-relaxed mt-1.5 ${
-                                  example.featured ? "text-amber-800/80" : "text-text-muted"
-                                }`}>
+                                <p className="text-[10.5px] md:text-[10px] font-medium leading-relaxed mt-1.5 text-text-muted">
                                   {example.description}
                                 </p>
                                 
@@ -408,13 +401,14 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                                     {example.tags.map((tag) => (
                                       <span
                                         key={tag}
-                                        className={`text-[8px] font-mono font-semibold tracking-wider uppercase px-2 py-0.5 rounded-md border transition-all duration-200 ${
+                                        className={cn(
+                                          "text-[8px] font-mono font-semibold tracking-wider uppercase px-2 py-0.5 rounded-md border transition-all duration-200",
                                           isDisabled
                                             ? "bg-surface-muted text-text-faint border-border-subtle-trans"
                                             : example.featured
-                                              ? "bg-amber-100/40 text-amber-800 border-amber-200/30 group-hover:bg-amber-100/70 group-hover:text-amber-950 group-hover:border-amber-300/40"
+                                              ? "bg-surface-muted/90 text-text-muted border-border-subtle group-hover:border-amber-500/30 group-hover:text-text-main"
                                               : "bg-surface-muted text-text-muted border-border-subtle-trans group-hover:bg-surface-hover group-hover:text-text-main group-hover:border-border-main"
-                                        }`}
+                                        )}
                                       >
                                         {tag}
                                       </span>
