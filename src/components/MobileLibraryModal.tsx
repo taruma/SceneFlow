@@ -96,7 +96,7 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 300 }}
-            className="relative z-10 w-full max-h-[88vh] bg-surface-dark border-t border-border-main rounded-t-2xl flex flex-col overflow-hidden text-text-main shadow-2xl"
+            className="relative z-10 w-full max-h-[88vh] bg-surface border-t border-border-main rounded-t-2xl flex flex-col overflow-hidden text-text-main shadow-2xl"
           >
             {/* Sheet Handle */}
             <div className="pt-2.5 pb-1 flex justify-center items-center">
@@ -104,23 +104,23 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
             </div>
 
             {/* Header */}
-            <div className="px-4 py-2.5 border-b border-border-main flex items-center justify-between shrink-0">
+            <div className="px-4 py-2.5 border-b border-border-subtle flex items-center justify-between shrink-0 bg-surface-subtle">
               <div className="flex items-center gap-2.5">
-                <div className="p-1.5 bg-amber-500/10 text-amber-400 rounded-lg border border-amber-500/20">
+                <div className="p-1.5 bg-amber-500/10 text-amber-500 rounded-lg border border-amber-500/20">
                   <BookOpen size={16} />
                 </div>
                 <div>
                   <h2 className="text-xs font-black uppercase tracking-wider text-text-main">
                     Library Catalogue
                   </h2>
-                  <p className="text-[10px] text-text-faint font-mono">
+                  <p className="text-[10px] text-text-muted font-mono">
                     {itemsList.length} script{itemsList.length !== 1 ? "s" : ""} available
                   </p>
                 </div>
               </div>
               <button
                 onClick={onClose}
-                className="p-2 text-text-faint hover:text-text-main rounded-full bg-surface-muted/60 active:bg-surface-muted transition-colors"
+                className="p-1.5 text-text-faint hover:text-text-main rounded-full bg-surface-muted hover:bg-surface-hover active:scale-95 transition-all"
                 aria-label="Close modal"
               >
                 <X size={16} />
@@ -136,7 +136,7 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
                   placeholder="Search titles, tags, descriptions..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-surface-subtle border border-border-main rounded-xl pl-9 pr-8 py-2 text-xs text-text-main placeholder-text-faint focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+                  className="w-full bg-surface-subtle border border-border-main rounded-xl pl-9 pr-8 py-2 text-xs text-text-main placeholder-text-placeholder focus:outline-none focus:ring-1 focus:ring-amber-500/50"
                 />
                 {searchQuery && (
                   <button
@@ -161,7 +161,7 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
                     className={`px-3 py-1.5 rounded-full text-[11px] font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
                       isSelected
                         ? "bg-amber-500 text-stone-950 font-bold shadow-sm shadow-amber-500/20"
-                        : "bg-surface-muted/80 text-text-muted border border-border-main active:bg-surface-muted"
+                        : "bg-surface-muted text-text-muted border border-border-main hover:text-text-main active:bg-surface-hover"
                     }`}
                   >
                     <span>{cat}</span>
@@ -169,7 +169,7 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
                       className={`px-1.5 py-0.2 rounded-full text-[9px] font-mono ${
                         isSelected
                           ? "bg-stone-950/20 text-stone-950 font-bold"
-                          : "bg-surface-muted/50 text-text-faint"
+                          : "bg-surface-hover/80 text-text-faint"
                       }`}
                     >
                       {count}
@@ -180,7 +180,7 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
             </div>
 
             {/* Script List Container */}
-            <div className="flex-1 overflow-y-auto custom-dark-scrollbar px-3 py-2 space-y-2.5 divide-y divide-border-main">
+            <div className="flex-1 overflow-y-auto custom-dark-scrollbar px-3 py-2 space-y-2.5 divide-y divide-border-subtle">
               {itemsList.length === 0 ? (
                 <div className="py-12 text-center text-text-faint font-mono text-xs">
                   No scripts found matching your filter.
@@ -202,13 +202,13 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
                         <div className="flex items-center justify-between mb-1.5">
                           <div className="flex items-center gap-1.5 flex-wrap">
                             {categoryLabel && (
-                              <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-1">
+                              <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center gap-1">
                                 <Film size={8} />
                                 {categoryLabel}
                               </span>
                             )}
                             {item.featured && (
-                              <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-amber-400 text-stone-950 flex items-center gap-0.5">
+                              <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-amber-400 text-stone-950 flex items-center gap-0.5 font-bold">
                                 <Sparkles size={8} />
                                 Featured
                               </span>
@@ -223,10 +223,10 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
 
                         {/* Title & Arrow */}
                         <div className="flex items-start justify-between gap-2 mb-1">
-                          <h3 className="text-xs font-bold text-text-main group-hover:text-amber-400 transition-colors line-clamp-1">
+                          <h3 className="text-xs font-bold text-text-main group-hover:text-amber-500 transition-colors line-clamp-1">
                             {item.title}
                           </h3>
-                          <ArrowUpRight size={14} className="text-text-faint shrink-0 group-hover:text-amber-400 transition-colors" />
+                          <ArrowUpRight size={14} className="text-text-faint shrink-0 group-hover:text-amber-500 transition-colors" />
                         </div>
 
                         {/* Description */}
@@ -240,7 +240,7 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
                             {item.tags.map((tag) => (
                               <span
                                 key={tag}
-                                className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-surface-dark/80 text-text-faint border border-border-main"
+                                className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-surface-muted text-text-faint border border-border-subtle"
                               >
                                 {tag}
                               </span>
@@ -255,10 +255,10 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
             </div>
 
             {/* Bottom Footer Action */}
-            <div className="p-3 border-t border-border-main bg-surface-dark text-center shrink-0">
+            <div className="p-3 border-t border-border-subtle bg-surface-subtle text-center shrink-0">
               <button
                 onClick={onClose}
-                className="w-full py-2.5 rounded-xl bg-surface-muted text-text-muted font-bold text-xs active:bg-surface-hover transition-colors"
+                className="w-full py-2.5 rounded-xl bg-btn-secondary-bg hover:bg-btn-secondary-hover text-btn-secondary-text font-bold text-xs active:scale-[0.99] transition-all"
               >
                 Close Catalogue
               </button>
