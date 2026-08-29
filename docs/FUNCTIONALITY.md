@@ -110,10 +110,18 @@ Controls where the active cue line settles vertically within the reading contain
 
 ---
 
-## 5. Script Viewer Customization & Themes
+## 5. Script Viewer Customization & Dynamic Multi-Theming
+
+### Dynamic App Shell Theming (Light / Warm / Dark)
+The application shell features three bespoke CSS variable palettes that dynamically skin the entire workspace (Header, Left Panels, Modals, Desk Surface):
+- **Light Mode**: Crisp studio paper with neutral stone surfaces (`#ffffff`, `#f5f5f4`, `#1c1917`).
+- **Warm Mode**: Soft antique sepia & warm umber parchment (`#faf7f0`, `#f3efe6`, `#2b231d`).
+- **Dark Mode**: Midnight slate with high-contrast light text (`#171514`, `#0c0a09`, `#f5f5f4`).
+- **Auto-Sync Mode (Default)**: Changing the screenplay paper preset automatically transitions the application shell to the matching theme category.
+- **Manual Mode Toggle**: Users can click the App Theme button in the header toolbar (`Sparkles [A]`, `Sun`, `Coffee`, `Moon`) to cycle modes explicitly. Preference is persisted in `localStorage`.
 
 ### 6-Theme Script Engine
-Users can toggle between six visual themes via the `ScriptColorModal`:
+Users can toggle between six screenplay visual themes via the desktop `ScriptColorModal` or the mobile `MobileColorModal`:
 - **Light & Warm Themes**:
   - *Studio Crisp*: Neutral stone paper with crisp contrast (Default).
   - *Warm Parchment*: Vintage sepia-toned typewriter paper.
@@ -122,10 +130,12 @@ Users can toggle between six visual themes via the `ScriptColorModal`:
   - *Midnight Slate*: Refined dark slate for low-light environments.
   - *OLED Blackout*: Pure black (`#000000`) for power efficiency and high-contrast glow.
   - *Navy Slate (Cyber Matrix)*: Deep navy-tinted dark paper with atmospheric glow.
-- **Theme Modal Tabs**:
+- **Desktop Theme Modal (`ScriptColorModal`)**:
   - **Theme Presets Tab**: Shows side-by-side cards with live mini paper previews (heading banner, script text line, staging pill, and cue highlight chips).
   - **Element Inspector Tab**: Displays active paper and structural tokens alongside the full 8-category highlight spectrum.
   - Includes a single-click "Reset" button to restore the default *Studio Crisp* theme.
+- **Mobile Theme Drawer (`MobileColorModal`)**:
+  - A touch-friendly bottom-sheet drawer with a 4-segment App Shell switcher (`Auto`, `Light`, `Warm`, `Dark`) and 6 compact screenplay cards styled in their true paper colors and typography contrast.
 
 ### Configurable Screenplay Width Presets (Desktop Playback)
 Selectable via a dropdown in the script preview header:
@@ -188,7 +198,7 @@ For a complete and up-to-date list of all available sceneflow projects, release 
 
 ### Desktop App Info Modal (`AppInfoModal`)
 Accessible via the `i` (Info) icon button in the desktop header toolbar:
-- **Dynamic Version & Metadata**: Automatically loads current version (`v2.1.1`), app title, and description directly from `metadata.json`.
+- **Dynamic Version & Metadata**: Automatically loads current version (`v2.2.0`), app title, and description directly from `metadata.json`.
 - **Author Attribution**: Features creator credit for **Taruma Sakti** in header and footer linking directly to [Linktree](https://linktr.ee/tarumainfo).
 - **Interactive Resource Grid**: 2x2 resource links for GitHub Repository, Documentation / Guide, Release Notes (Changelog), and Ko-fi Support.
 - **MIT License**: License status indicator.

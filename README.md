@@ -70,18 +70,22 @@ https://github.com/user-attachments/assets/cf3a7fec-2a4b-48d8-9028-245eba49934c
 - **Example Library** — Pre-built demos to get started quickly
 - **Local Storage** — Automatic saving of your work
 
-### Script Viewer Customization
+### Script Viewer Customization & Dynamic Theming
 
-- **Theme Presets** — 6 visual themes: Studio Crisp, Warm Parchment, Midnight Slate, OLED Black, Cyber Matrix, Retro Newspaper
+- **Dynamic App Theming** — Full workspace theming in **Light**, **Warm**, and **Dark** modes with seamless 250ms CSS variable switching
+- **Auto-Sync Mode** — Application shell automatically adapts to match the active screenplay paper category
+- **Theme Presets** — 6 screenplay paper themes: Studio Crisp, Warm Parchment, Midnight Slate, OLED Blackout, Navy Slate, Newsprint
+- **Mobile Theme Drawer** — Native bottom-sheet drawer with 4-segment mode switcher and compact swatch cards
+- **Adaptive Logo** — Automatic dark/white logo switching across light, warm, and dark surfaces
 - **Width Presets** — 5 reading column widths from Narrow (384px) to Expanded (1024px)
 - **Scroll Focus** — 3 viewport alignment anchors (Top, Center, Bottom) for auto-scroll positioning
 - **In-Place Cue Editing** — Edit cue text directly without touching raw JSON
 
 ### Platform
 
-- **Mobile-Responsive** — Distinct library modals for desktop and mobile with adaptive staging badges
-- **App Info & Attribution** — Desktop information modal with dynamic versioning, author attribution, and documentation resource links
-- **Keyboard Shortcuts** — Desktop hotkeys for playback (`Space`, `K`), seeking (`← / →`, `J / L`), and modal dismissal (`Esc`)
+- **Mobile-Responsive** — Native bottom-sheet drawers for library and themes with adaptive staging badges
+- **App Info & Attribution** — Desktop information modal with dynamic versioning (`v2.2.0`), author attribution, and documentation resource links
+- **Keyboard Shortcuts** — Desktop hotkeys for playback (`Space`, `K`), seeking (`← / →`, `J / L`), and universal modal dismissal (`Esc`)
 - **Vercel Analytics** — Audience traffic insights and real-time Web Vitals monitoring
 - **PWA-Ready** — Web manifest and icon suite for standalone app installation
 

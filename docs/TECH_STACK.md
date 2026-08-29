@@ -48,9 +48,10 @@ SceneFlow is built with a modern, lightweight, and performant web stack designed
 
 ## 4. State Management, Persistence, & Data Fetching
 
-- **React Hooks**: Local component state orchestrated via `useState`, `useEffect`, `useRef`, and memoized highlighting through `useMemo`. Eight modular custom hooks (`useScriptStorage`, `useYouTubePlayer`, `useScriptPreferences`, `useAutoScroll`, `useCueEditor`, `useCueAlignment`, `useKeyboardShortcuts`, `useScriptTheme`) with a unified `src/hooks/index.ts` barrel encapsulate state lifecycle, playback control, theme resolution, and side effects, keeping `App.tsx` as a lightweight orchestrator.
+- **React Hooks**: Local component state orchestrated via `useState`, `useEffect`, `useRef`, and memoized highlighting through `useMemo`. Ten modular custom hooks (`useAppShellTheme`, `useScriptStorage`, `useYouTubePlayer`, `useScriptPreferences`, `useAutoScroll`, `useCueEditor`, `useCueAlignment`, `useKeyboardShortcuts`, `useScriptTheme`, `useEscapeKey`) with a unified `src/hooks/index.ts` barrel encapsulate state lifecycle, playback control, theme resolution, and side effects, keeping `App.tsx` as a lightweight orchestrator.
 - **LocalStorage**: Client-side persistence for:
   - `'screenplay_sync_state'`: Video source, screenplay raw text, cues array, and timing offsets.
+  - `'sceneflow_app_theme_mode'`: Active application shell theme mode (`AppThemeMode`: `'auto' | 'light' | 'warm' | 'dark'`).
   - `'sceneflow_script_theme'`: Active script viewer theme ID (`ScriptThemeId`).
   - `'sceneflow_script_width_preset'`: Desktop reading width preset (`ScriptWidthPresetId`).
   - `'sceneflow_scroll_focus_preset'`: Desktop auto-scroll viewport anchor (`ScrollFocusPresetId`).
