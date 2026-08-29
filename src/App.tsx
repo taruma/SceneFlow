@@ -22,6 +22,7 @@ import { DeleteConfirmationModal } from './components/DeleteConfirmationModal';
 import { ResetConfirmationModal } from './components/ResetConfirmationModal';
 import { TimingSettingsModal } from './components/TimingSettingsModal';
 import { ScriptColorModal } from './components/ScriptColorModal';
+import { MobileColorModal } from './components/MobileColorModal';
 import { AppInfoModal } from './components/AppInfoModal';
 import { AppHeader } from './components/AppHeader';
 import { ActiveHighlightsPanel } from './components/ActiveHighlightsPanel';
@@ -34,6 +35,7 @@ import { useScriptStorage } from './hooks/useScriptStorage';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
 import { useScriptPreferences } from './hooks/useScriptPreferences';
 import { useScriptTheme } from './hooks/useScriptTheme';
+import { useAppShellTheme } from './hooks/useAppShellTheme';
 import { useAutoScroll } from './hooks/useAutoScroll';
 import { useCueEditor } from './hooks/useCueEditor';
 import { useCueAlignment } from './hooks/useCueAlignment';
@@ -111,6 +113,12 @@ export default function App() {
   } = useScriptPreferences();
 
   const { theme: activeTheme } = useScriptTheme(scriptThemeId);
+  const {
+    themeMode,
+    setThemeMode,
+    cycleThemeMode,
+    effectiveCategory,
+  } = useAppShellTheme(scriptThemeId);
 
   const {
 
@@ -600,7 +608,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-stone-100 text-stone-900 font-sans overflow-hidden selection:bg-blue-100">
+    <div className="flex flex-col h-screen bg-app text-text-main font-sans overflow-hidden">
       {/* Header */}
       <AppHeader
         mode={mode}
@@ -617,6 +625,9 @@ export default function App() {
         setIsInfoModalOpen={setIsInfoModalOpen}
         importJson={importJson}
         exportJson={exportJson}
+        themeMode={themeMode}
+        effectiveThemeCategory={effectiveCategory}
+        onCycleThemeMode={cycleThemeMode}
       />
 
       <main className={cn(
@@ -650,7 +661,7 @@ export default function App() {
             "transition-all duration-300 z-30 sticky top-0", 
             mode === 'playback' && "space-y-4 lg:space-y-6",
             mode === 'edit' && "-mx-4 lg:-mx-10 px-4 lg:px-10",
-            mode === 'edit' && leftPanelScroll <= 80 && "bg-white border-b border-stone-100 pb-6 mb-8 space-y-4",
+            mode === 'edit' && leftPanelScroll <= 80 && "bg-surface border-b border-border-subtle pb-6 mb-8 space-y-4",
             mode === 'edit' && leftPanelScroll > 80 && "bg-transparent pointer-events-none space-y-0 pb-0 mb-0"
           )}>
             <div className={cn(
@@ -659,12 +670,12 @@ export default function App() {
               mode === 'edit' && "flex",
               mode === 'edit' && leftPanelScroll > 80 && "opacity-0 h-0 overflow-hidden mb-0"
             )}>
-               <h2 className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-stone-400 flex items-center gap-2">
+               <h2 className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-text-faint flex items-center gap-2">
                 <Video size={14} /> {mode === 'edit' ? 'Media Preview' : 'Now Playing'}
               </h2>
               {mode === 'playback' && isDesktop && (
                 <div className="flex items-center gap-3 animate-in fade-in slide-in-from-right-2 duration-500">
-                  <span className="text-[9px] font-black uppercase tracking-widest text-stone-300">Size</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-text-faint">Size</span>
                   <input 
                     type="range" 
                     min="40" 
@@ -672,15 +683,15 @@ export default function App() {
                     step="5"
                     value={videoWidth}
                     onChange={(e) => setVideoWidth(parseInt(e.target.value))}
-                    className="w-24 h-1 bg-stone-100 rounded-lg appearance-none cursor-pointer accent-stone-400 hover:accent-stone-600 transition-all"
+                    className="w-24 h-1 bg-surface-muted rounded-lg appearance-none cursor-pointer accent-text-muted hover:accent-text-main transition-all"
                   />
-                  <span className="text-[9px] font-mono font-bold text-stone-400 w-8">{videoWidth}%</span>
+                  <span className="text-[9px] font-mono font-bold text-text-faint w-8">{videoWidth}%</span>
                 </div>
               )}
             </div>
             
             <div className={cn(
-              "aspect-video bg-black overflow-hidden shadow-2xl ring-1 ring-stone-900/10 relative group transition-all duration-500 origin-top-left pointer-events-auto",
+              "aspect-video bg-black overflow-hidden shadow-2xl ring-1 ring-border-main relative group transition-all duration-500 origin-top-left pointer-events-auto",
               mode === 'edit' ? "rounded-3xl" : "rounded-none lg:rounded-3xl",
               mode === 'edit' && leftPanelScroll > 80 && "w-1/2 rounded-2xl shadow-2xl scale-90 -translate-y-2"
             )}
@@ -760,6 +771,7 @@ export default function App() {
             autoScrollTargets={autoScrollTargets}
             setAutoScrollTargets={setAutoScrollTargets}
             setIsLibraryOpen={setIsLibraryOpen}
+            setIsColorModalOpen={setIsColorModalOpen}
             scriptWidthPreset={scriptWidthPreset}
             setScriptWidthPreset={setScriptWidthPreset}
             isWidthDropdownOpen={isWidthDropdownOpen}
@@ -951,6 +963,25 @@ export default function App() {
             localStorage.setItem('sceneflow_script_theme', themeId);
           }
         }}
+        themeMode={themeMode}
+        setThemeMode={setThemeMode}
+        effectiveThemeCategory={effectiveCategory}
+      />
+
+      {/* Mobile Script Color & Theme Drawer */}
+      <MobileColorModal
+        isOpen={isColorModalOpen}
+        onClose={() => setIsColorModalOpen(false)}
+        currentThemeId={scriptThemeId}
+        onSelectTheme={(themeId) => {
+          setScriptThemeId(themeId);
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('sceneflow_script_theme', themeId);
+          }
+        }}
+        themeMode={themeMode}
+        setThemeMode={setThemeMode}
+        effectiveThemeCategory={effectiveCategory}
       />
 
       {/* App Info / About Modal */}

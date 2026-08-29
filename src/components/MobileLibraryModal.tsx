@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { X, Search, BookOpen, Film, ArrowUpRight, Sparkles } from "lucide-react";
 import { EXAMPLE_SECTIONS, Example } from "../examples";
 import { useEscapeKey } from "../hooks/useEscapeKey";
+import { cn } from "../lib/utils";
 
 function formatDateString(dateStr?: string): string {
   if (!dateStr) return "";
@@ -96,31 +97,31 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 300 }}
-            className="relative z-10 w-full max-h-[88vh] bg-stone-900 border-t border-stone-800 rounded-t-2xl flex flex-col overflow-hidden text-stone-100 shadow-2xl"
+            className="relative z-10 w-full max-h-[88vh] bg-surface border-t border-border-main rounded-t-2xl flex flex-col overflow-hidden text-text-main shadow-2xl"
           >
             {/* Sheet Handle */}
             <div className="pt-2.5 pb-1 flex justify-center items-center">
-              <div className="w-10 h-1 bg-stone-700 rounded-full" />
+              <div className="w-10 h-1 bg-surface-muted rounded-full" />
             </div>
 
             {/* Header */}
-            <div className="px-4 py-2.5 border-b border-stone-800/80 flex items-center justify-between shrink-0">
+            <div className="px-4 py-2.5 border-b border-border-subtle flex items-center justify-between shrink-0 bg-surface-subtle">
               <div className="flex items-center gap-2.5">
-                <div className="p-1.5 bg-amber-500/10 text-amber-400 rounded-lg border border-amber-500/20">
+                <div className="p-1.5 bg-amber-500/10 text-amber-500 rounded-lg border border-amber-500/20">
                   <BookOpen size={16} />
                 </div>
                 <div>
-                  <h2 className="text-xs font-black uppercase tracking-wider text-stone-100">
+                  <h2 className="text-xs font-black uppercase tracking-wider text-text-main">
                     Library Catalogue
                   </h2>
-                  <p className="text-[10px] text-stone-400 font-mono">
+                  <p className="text-[10px] text-text-muted font-mono">
                     {itemsList.length} script{itemsList.length !== 1 ? "s" : ""} available
                   </p>
                 </div>
               </div>
               <button
                 onClick={onClose}
-                className="p-2 text-stone-400 hover:text-white rounded-full bg-stone-800/60 active:bg-stone-700 transition-colors"
+                className="p-1.5 text-text-faint hover:text-text-main rounded-full bg-surface-muted hover:bg-surface-hover active:scale-95 transition-all"
                 aria-label="Close modal"
               >
                 <X size={16} />
@@ -130,18 +131,18 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
             {/* Search Input */}
             <div className="p-3 pb-2 shrink-0">
               <div className="relative">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-faint" />
                 <input
                   type="text"
                   placeholder="Search titles, tags, descriptions..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-stone-800/90 border border-stone-700/70 rounded-xl pl-9 pr-8 py-2 text-xs text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+                  className="w-full bg-surface-subtle border border-border-main rounded-xl pl-9 pr-8 py-2 text-xs text-text-main placeholder-text-placeholder focus:outline-none focus:ring-1 focus:ring-amber-500/50"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery("")}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-white"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-faint hover:text-text-main"
                   >
                     <X size={12} />
                   </button>
@@ -158,19 +159,21 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
-                    className={`px-3 py-1.5 rounded-full text-[11px] font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
+                    className={cn(
+                      "px-3 py-1.5 rounded-full text-[11px] font-semibold whitespace-nowrap transition-all inline-flex items-center gap-1.5 shrink-0 active:scale-95",
                       isSelected
                         ? "bg-amber-500 text-stone-950 font-bold shadow-sm shadow-amber-500/20"
-                        : "bg-stone-800/80 text-stone-300 border border-stone-700/50 active:bg-stone-700"
-                    }`}
+                        : "bg-surface-muted text-text-muted border border-border-main hover:text-text-main active:bg-surface-hover"
+                    )}
                   >
                     <span>{cat}</span>
                     <span
-                      className={`px-1.5 py-0.2 rounded-full text-[9px] font-mono ${
+                      className={cn(
+                        "inline-flex items-center justify-center min-w-[18px] h-4 px-1 rounded-full text-[9px] font-mono font-bold leading-none shrink-0",
                         isSelected
-                          ? "bg-stone-950/20 text-stone-950 font-bold"
-                          : "bg-stone-700/50 text-stone-400"
-                      }`}
+                          ? "bg-stone-950/20 text-stone-950"
+                          : "bg-surface-hover text-text-faint"
+                      )}
                     >
                       {count}
                     </span>
@@ -180,9 +183,9 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
             </div>
 
             {/* Script List Container */}
-            <div className="flex-1 overflow-y-auto custom-dark-scrollbar px-3 py-2 space-y-2.5 divide-y divide-stone-800/40">
+            <div className="flex-1 overflow-y-auto custom-dark-scrollbar px-3 py-2 space-y-2.5 divide-y divide-border-subtle">
               {itemsList.length === 0 ? (
-                <div className="py-12 text-center text-stone-500 font-mono text-xs">
+                <div className="py-12 text-center text-text-faint font-mono text-xs">
                   No scripts found matching your filter.
                 </div>
               ) : (
@@ -197,25 +200,25 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
                       }}
                       className="pt-2.5 first:pt-0 group active:scale-[0.99] transition-transform cursor-pointer"
                     >
-                      <div className="p-3 rounded-xl bg-stone-800/40 border border-stone-800 hover:border-amber-500/40 active:bg-stone-800/80 transition-colors">
+                      <div className="p-3 rounded-xl bg-surface-subtle border border-border-main hover:border-amber-500/40 active:bg-surface-hover transition-colors">
                         {/* Meta Tags */}
                         <div className="flex items-center justify-between mb-1.5">
                           <div className="flex items-center gap-1.5 flex-wrap">
                             {categoryLabel && (
-                              <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-1">
+                              <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center gap-1">
                                 <Film size={8} />
                                 {categoryLabel}
                               </span>
                             )}
                             {item.featured && (
-                              <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-amber-400 text-stone-950 flex items-center gap-0.5">
+                              <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-amber-400 text-stone-950 flex items-center gap-0.5 font-bold">
                                 <Sparkles size={8} />
                                 Featured
                               </span>
                             )}
                           </div>
                           {item.releaseDate && (
-                            <span className="text-[10px] text-stone-500 font-mono">
+                            <span className="text-[10px] text-text-faint font-mono">
                               {formatDateString(item.releaseDate)}
                             </span>
                           )}
@@ -223,14 +226,14 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
 
                         {/* Title & Arrow */}
                         <div className="flex items-start justify-between gap-2 mb-1">
-                          <h3 className="text-xs font-bold text-stone-100 group-hover:text-amber-400 transition-colors line-clamp-1">
+                          <h3 className="text-xs font-bold text-text-main group-hover:text-amber-500 transition-colors line-clamp-1">
                             {item.title}
                           </h3>
-                          <ArrowUpRight size={14} className="text-stone-500 shrink-0 group-hover:text-amber-400 transition-colors" />
+                          <ArrowUpRight size={14} className="text-text-faint shrink-0 group-hover:text-amber-500 transition-colors" />
                         </div>
 
                         {/* Description */}
-                        <p className="text-[11px] text-stone-400 line-clamp-2 leading-relaxed mb-2">
+                        <p className="text-[11px] text-text-muted line-clamp-2 leading-relaxed mb-2">
                           {item.description}
                         </p>
 
@@ -240,7 +243,7 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
                             {item.tags.map((tag) => (
                               <span
                                 key={tag}
-                                className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-stone-900/80 text-stone-400 border border-stone-800"
+                                className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-surface-muted text-text-faint border border-border-subtle"
                               >
                                 {tag}
                               </span>
@@ -255,10 +258,10 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
             </div>
 
             {/* Bottom Footer Action */}
-            <div className="p-3 border-t border-stone-800/80 bg-stone-900/90 text-center shrink-0">
+            <div className="p-3 border-t border-border-subtle bg-surface-subtle text-center shrink-0">
               <button
                 onClick={onClose}
-                className="w-full py-2.5 rounded-xl bg-stone-800 text-stone-300 font-bold text-xs active:bg-stone-700 transition-colors"
+                className="w-full py-2.5 rounded-xl bg-btn-secondary-bg hover:bg-btn-secondary-hover text-btn-secondary-text font-bold text-xs active:scale-[0.99] transition-all"
               >
                 Close Catalogue
               </button>

@@ -38,8 +38,8 @@ export function RawCuesModal({
                 <Clock size={20} className="text-blue-500" />
               </div>
               <div>
-                <h2 className="text-lg font-black uppercase tracking-widest text-stone-900">Edit Raw Cues</h2>
-                <p className="text-xs font-bold text-stone-400 uppercase tracking-widest">JSON Format</p>
+                <h2 className="text-lg font-black uppercase tracking-widest text-text-main">Edit Raw Cues</h2>
+                <p className="text-xs font-bold text-text-faint uppercase tracking-widest">JSON Format</p>
               </div>
             </div>
             <button 

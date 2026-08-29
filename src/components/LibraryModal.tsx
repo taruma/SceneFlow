@@ -4,6 +4,7 @@ import { X, Search, BookOpen, Film, Notebook, Compass, ArrowUpRight, Lock, Clapp
 import { EXAMPLE_SECTIONS, Example } from "../examples";
 import { UI_TOKENS } from "../styles/tokens/ui";
 import { useEscapeKey } from "../hooks/useEscapeKey";
+import { cn } from "../lib/utils";
 
 function formatDateString(dateStr?: string): string {
   if (!dateStr) return "";
@@ -142,7 +143,7 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
         const cleanLabel = label.toLowerCase();
         if (cleanLabel.includes("film") || cleanLabel.includes("short") || cleanLabel.includes("scene")) return <Film size={size} className="text-amber-500" />;
         if (cleanLabel.includes("written") || cleanLabel.includes("motion")) return <Notebook size={size} className="text-emerald-500" />;
-        return <BookOpen size={size} className="text-stone-400" />;
+        return <BookOpen size={size} className="text-text-faint" />;
     }
   };
 
@@ -155,7 +156,7 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-stone-900/45 backdrop-blur-md"
+            className="absolute inset-0 bg-overlay-bg backdrop-blur-md"
             onClick={onClose}
           />
 
@@ -170,14 +171,14 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
             {/* Header: Title & Close Button */}
             <div className={UI_TOKENS.modal.header}>
               <div className="flex items-center gap-2.5">
-                <div className="p-1.5 bg-stone-900 text-white rounded-lg">
+                <div className="p-1.5 bg-btn-primary-bg text-btn-primary-text rounded-lg">
                   <BookOpen size={14} />
                 </div>
                 <div>
-                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-stone-900 leading-none">
+                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-text-main leading-none">
                     Library Catalogue
                   </h3>
-                  <p className="text-[9px] text-stone-400 font-mono tracking-wide mt-1">Explore scripts, interactive examples & custom volumes</p>
+                  <p className="text-[9px] text-text-faint font-mono tracking-wide mt-1">Explore scripts, interactive examples & custom volumes</p>
                 </div>
               </div>
               <button
@@ -190,9 +191,9 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
             </div>
 
             {/* Filter bar: Live Search */}
-            <div className="p-3 md:p-4 border-b border-stone-100 bg-stone-50/30 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+            <div className="p-3 md:p-4 border-b border-border-subtle bg-surface-subtle flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
               <div className="relative w-full sm:max-w-md">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" size={14} />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-faint" size={14} />
                 <input
                   type="text"
                   value={searchQuery}
@@ -203,7 +204,7 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                 {searchQuery && (
                   <button
                     onClick={handleClearSearch}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[9px] font-black uppercase tracking-widest text-stone-400 hover:text-stone-900 transition-colors"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[9px] font-black uppercase tracking-widest text-text-faint hover:text-text-main transition-colors"
                   >
                     Clear
                   </button>
@@ -211,7 +212,7 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
               </div>
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
                 {/* Sort selector controls */}
-                <div className="flex items-center gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200/40 w-full sm:w-auto">
+                <div className="flex items-center gap-1 bg-surface-muted p-1 rounded-xl border border-border-subtle-trans w-full sm:w-auto">
                   <button
                     onClick={() => setSortBy("newest")}
                     className={`flex-1 sm:flex-initial text-center px-3 py-1.5 md:px-2.5 md:py-1 text-[10px] md:text-[9px] font-bold tracking-wider uppercase rounded-lg transition-all ${
@@ -243,7 +244,7 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                     A-Z
                   </button>
                 </div>
-                <div className="flex items-center justify-center gap-1.5 text-[9px] font-mono text-stone-400 px-1">
+                <div className="flex items-center justify-center gap-1.5 text-[9px] font-mono text-text-faint px-1">
                   <Compass size={12} />
                   <span>Showing {totalFilteredCount} matching entries</span>
                 </div>
@@ -253,7 +254,7 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
             {/* Main Segmented Area */}
             <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
               {/* Left Column: Category Sidebar */}
-              <div className="w-full md:w-56 bg-stone-50/50 border-b md:border-b-0 md:border-r border-stone-100 flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto p-2.5 md:p-2 gap-1.5 md:gap-1 scrollbar-hide shrink-0 touch-pan-x md:touch-pan-y">
+              <div className="w-full md:w-56 bg-surface-subtle border-b md:border-b-0 md:border-r border-border-subtle flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto p-2.5 md:p-2 gap-1.5 md:gap-1 scrollbar-hide shrink-0 touch-pan-x md:touch-pan-y">
                 {categories.map((cat) => {
                   const isActive = selectedCategory === cat;
                   const count = getCategoryCount(cat);
@@ -263,8 +264,8 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                       onClick={() => setSelectedCategory(cat)}
                       className={`flex items-center justify-between md:justify-between gap-2.5 px-3.5 py-2.5 md:px-3 md:py-2 rounded-xl text-[10px] font-bold tracking-wider uppercase transition-all shrink-0 md:shrink [content-visibility:auto] ${
                         isActive
-                          ? "bg-stone-900 text-white shadow-sm"
-                          : "text-stone-500 hover:bg-stone-100 hover:text-stone-800 select-none"
+                          ? "bg-btn-primary-bg text-btn-primary-text shadow-sm"
+                          : "text-text-muted hover:bg-surface-hover hover:text-text-main select-none"
                       }`}
                     >
                       <div className="flex items-center gap-2">
@@ -272,9 +273,12 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                         <span>{cat}</span>
                       </div>
                       <span
-                        className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-full ${
-                          isActive ? "bg-white/20 text-white" : "bg-stone-200/60 text-stone-600"
-                        }`}
+                        className={cn(
+                          "inline-flex items-center justify-center min-w-[18px] h-4.5 px-1 rounded-full text-[9px] font-mono font-bold leading-none shrink-0",
+                          isActive
+                            ? "bg-btn-primary-text/20 text-btn-primary-text"
+                            : "bg-surface-hover text-text-body"
+                        )}
                       >
                         {count}
                       </span>
@@ -288,9 +292,9 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                 {filteredSections.length > 0 ? (
                   filteredSections.map((section) => (
                     <div key={section.label} className="space-y-3">
-                      <div className="flex items-center gap-2 border-b border-stone-100 pb-2">
+                      <div className="flex items-center gap-2 border-b border-border-subtle pb-2">
                         {getCategoryIcon(section.label)}
-                        <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.15em]">
+                        <h4 className="text-[10px] font-bold text-text-faint uppercase tracking-[0.15em]">
                           {section.label}
                         </h4>
                       </div>
@@ -308,10 +312,10 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                               }}
                               className={`group flex flex-col items-start justify-between p-3 md:p-3.5 w-full text-left border rounded-xl transition-all duration-300 relative overflow-hidden ${
                                 isDisabled
-                                  ? "bg-stone-50/60 border-stone-200/50 opacity-60 cursor-not-allowed"
+                                  ? "bg-surface-subtle/60 border-border-main/50 opacity-60 cursor-not-allowed"
                                   : example.featured
-                                    ? "bg-amber-50/[0.25] border-amber-200/80 hover:border-amber-400 shadow-[0_2px_8px_rgba(245,158,11,0.02)] hover:shadow-[0_6px_22px_rgba(245,158,11,0.07)] hover:bg-amber-50/[0.45] active:scale-[0.98] cursor-pointer"
-                                    : "bg-white border-stone-100 hover:border-stone-200 hover:shadow-md active:scale-[0.98] cursor-pointer"
+                                    ? "bg-amber-500/[0.04] border-amber-500/30 hover:border-amber-500/60 shadow-[0_2px_12px_rgba(245,158,11,0.04)] hover:shadow-[0_4px_20px_rgba(245,158,11,0.08)] active:scale-[0.98] cursor-pointer"
+                                    : "bg-surface border-border-subtle hover:border-border-main hover:shadow-md active:scale-[0.98] cursor-pointer"
                               }`}
                             >
                               <div className="w-full">
@@ -319,17 +323,19 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                                 {(selectedCategory === "All" || selectedCategory === "Featured") && (() => {
                                   const itemSecLabel = getItemSectionLabel(example.id);
                                   return (
-                                    <div className={`flex items-center gap-1.5 mb-2 px-2 py-0.5 rounded-md w-fit border transition-all ${
+                                    <div className={cn(
+                                      "flex items-center gap-1.5 mb-2 px-2 py-0.5 rounded-md w-fit border transition-all",
                                       example.featured
-                                        ? "bg-amber-100/40 border-amber-200/30 text-amber-850"
-                                        : "bg-stone-100/50 border-stone-200/30 text-stone-500"
-                                    }`}>
+                                        ? "bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400"
+                                        : "bg-surface-muted border-border-subtle-trans text-text-muted"
+                                    )}>
                                       <span className="shrink-0 flex items-center justify-center">
                                         {getCategoryIcon(itemSecLabel, 10)}
                                       </span>
-                                      <span className={`text-[8.5px] font-black uppercase tracking-[0.12em] ${
-                                        example.featured ? "text-amber-900/80" : "text-stone-500/90"
-                                      }`}>
+                                      <span className={cn(
+                                        "text-[8.5px] font-black uppercase tracking-[0.12em]",
+                                        example.featured ? "text-amber-600 dark:text-amber-400" : "text-text-muted"
+                                      )}>
                                         {itemSecLabel}
                                       </span>
                                     </div>
@@ -339,27 +345,28 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                                 {/* Top Metadata: Date & Volume indicator */}
                                 <div className="flex flex-wrap items-center gap-1.5 mb-1.5 w-full">
                                   {example.featured && (
-                                    <span className="inline-flex items-center gap-1 text-[8px] font-extrabold text-amber-700 bg-amber-100/55 border border-amber-200/45 px-1.5 py-0.5 rounded-md uppercase tracking-wider">
-                                      <Sparkles size={8} className="text-amber-500 fill-amber-500/10 animate-[pulse_2s_infinite]" />
+                                    <span className="inline-flex items-center gap-1 text-[8px] font-extrabold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/25 px-1.5 py-0.5 rounded-md uppercase tracking-wider">
+                                      <Sparkles size={8} className="text-amber-500 fill-amber-500/20 animate-[pulse_2s_infinite]" />
                                       Featured
                                     </span>
                                   )}
                                   {example.releaseDate && (
-                                    <span className="text-[9px] font-mono text-stone-400 tracking-tight">
+                                    <span className="text-[9px] font-mono text-text-faint tracking-tight">
                                       {formatDateString(example.releaseDate)}
                                     </span>
                                   )}
                                   {example.releaseDate && example.volume && (
-                                    <span className="text-stone-300 select-none text-[9px]">•</span>
+                                    <span className="text-text-faint select-none text-[9px]">•</span>
                                   )}
                                   {example.volume && (
-                                    <span className={`text-[8px] font-mono font-bold tracking-wider uppercase px-1.5 py-0.5 rounded-md ${
+                                    <span className={cn(
+                                      "text-[8px] font-mono font-bold tracking-wider uppercase px-1.5 py-0.5 rounded-md border",
                                       isDisabled
-                                        ? "bg-stone-200/40 text-stone-400/80"
+                                        ? "bg-surface-hover text-text-faint border-transparent"
                                         : example.featured
-                                          ? "bg-amber-100/70 text-amber-800 border border-amber-200/20"
-                                          : "bg-amber-100/70 text-amber-700 border border-amber-200/10"
-                                    }`}>
+                                          ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                                          : "bg-surface-muted text-text-faint border-border-subtle"
+                                    )}>
                                       {example.volume}
                                     </span>
                                   )}
@@ -367,34 +374,24 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
 
                                 {/* Primary Title block */}
                                 <div className="flex items-start justify-between gap-2.5 w-full">
-                                  <span className={`text-xs font-bold leading-snug transition-colors ${
-                                    example.featured 
-                                      ? "text-amber-950 group-hover:text-amber-900" 
-                                      : "text-stone-800 group-hover:text-stone-900"
-                                  }`}>
+                                  <span className="text-xs font-bold leading-snug transition-colors text-text-main group-hover:text-amber-500">
                                     {example.title}
                                   </span>
                                   {isDisabled ? (
                                     <Lock
                                       size={11}
-                                      className="text-stone-300 group-hover:text-stone-400 transition-colors shrink-0 mt-0.5"
+                                      className="text-text-faint group-hover:text-text-muted transition-colors shrink-0 mt-0.5"
                                     />
                                   ) : (
                                     <ArrowUpRight
                                       size={12}
-                                      className={`transition-all shrink-0 mt-0.5 ${
-                                        example.featured
-                                          ? "text-amber-400 group-hover:text-amber-700 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                                          : "text-stone-300 group-hover:text-stone-800 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                                      }`}
+                                      className="transition-all shrink-0 mt-0.5 text-text-faint group-hover:text-amber-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                                     />
                                   )}
                                 </div>
 
                                 {/* Script Description */}
-                                <p className={`text-[10.5px] md:text-[10px] font-medium leading-relaxed mt-1.5 ${
-                                  example.featured ? "text-amber-800/80" : "text-stone-400"
-                                }`}>
+                                <p className="text-[10.5px] md:text-[10px] font-medium leading-relaxed mt-1.5 text-text-muted">
                                   {example.description}
                                 </p>
                                 
@@ -404,13 +401,14 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                                     {example.tags.map((tag) => (
                                       <span
                                         key={tag}
-                                        className={`text-[8px] font-mono font-semibold tracking-wider uppercase px-2 py-0.5 rounded-md border transition-all duration-200 ${
+                                        className={cn(
+                                          "text-[8px] font-mono font-semibold tracking-wider uppercase px-2 py-0.5 rounded-md border transition-all duration-200",
                                           isDisabled
-                                            ? "bg-stone-100/40 text-stone-400 border-stone-200/20"
+                                            ? "bg-surface-muted text-text-faint border-border-subtle-trans"
                                             : example.featured
-                                              ? "bg-amber-100/40 text-amber-800 border-amber-200/30 group-hover:bg-amber-100/70 group-hover:text-amber-950 group-hover:border-amber-300/40"
-                                              : "bg-stone-100 text-stone-500 border-stone-200/40 group-hover:bg-stone-200/50 group-hover:text-stone-700 group-hover:border-stone-300/60"
-                                        }`}
+                                              ? "bg-surface-muted/90 text-text-muted border-border-subtle group-hover:border-amber-500/30 group-hover:text-text-main"
+                                              : "bg-surface-muted text-text-muted border-border-subtle-trans group-hover:bg-surface-hover group-hover:text-text-main group-hover:border-border-main"
+                                        )}
                                       >
                                         {tag}
                                       </span>
@@ -426,14 +424,14 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                   ))
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center text-center p-8">
-                    <BookOpen size={24} className="text-stone-300 animate-pulse mb-3" />
-                    <h5 className="text-xs font-bold text-stone-600">No matching scripts found</h5>
-                    <p className="text-[10px] text-stone-400 max-w-xs mt-1">
+                    <BookOpen size={24} className="text-text-faint animate-pulse mb-3" />
+                    <h5 className="text-xs font-bold text-text-body">No matching scripts found</h5>
+                    <p className="text-[10px] text-text-faint max-w-xs mt-1">
                       Try resetting your search query or selecting a different category from the sidebar menu instead.
                     </p>
                     <button
                       onClick={handleClearSearch}
-                      className="mt-4 px-3 py-1.5 bg-stone-900 text-white hover:bg-stone-800 active:scale-95 text-[9px] font-bold uppercase tracking-wider rounded-lg shadow-sm transition-all"
+                      className="mt-4 px-3 py-1.5 bg-btn-primary-bg text-btn-primary-text hover:bg-btn-primary-hover active:scale-95 text-[9px] font-bold uppercase tracking-wider rounded-lg shadow-sm transition-all"
                     >
                       Reset Filter
                     </button>
@@ -443,13 +441,13 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
             </div>
 
             {/* Footer */}
-            <div className="px-5 py-3 border-t border-stone-100 bg-stone-50/50 flex items-center justify-between">
-              <span className="hidden sm:inline text-[8px] font-mono text-stone-400">
-                Press <kbd className="bg-stone-200/70 border border-stone-300/40 rounded px-1 text-[7px] text-stone-500 font-bold">ESC</kbd> to exit at any time.
+            <div className="px-5 py-3 border-t border-border-subtle bg-surface-subtle flex items-center justify-between">
+              <span className="hidden sm:inline text-[8px] font-mono text-text-faint">
+                Press <kbd className="bg-surface-muted border border-border-main rounded px-1 text-[7px] text-text-muted font-bold">ESC</kbd> to exit at any time.
               </span>
               <button
                 onClick={onClose}
-                className="text-[10px] sm:text-[9px] font-bold uppercase tracking-widest text-stone-500 hover:text-stone-900 transition-colors p-1 md:p-0 ml-auto sm:ml-0"
+                className="text-[10px] sm:text-[9px] font-bold uppercase tracking-widest text-text-muted hover:text-text-main transition-colors p-1 md:p-0 ml-auto sm:ml-0"
               >
                 Close Catalogue
               </button>

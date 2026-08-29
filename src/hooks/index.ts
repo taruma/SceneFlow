@@ -1,3 +1,4 @@
+export * from './useAppShellTheme';
 export * from './useAutoScroll';
 export * from './useCueAlignment';
 export * from './useCueEditor';

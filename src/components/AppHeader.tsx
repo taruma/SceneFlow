@@ -1,7 +1,8 @@
 import React from 'react';
-import { Plus, Book, Coffee, Play, Edit2, Palette, Clock, FolderOpen, Download, Info } from 'lucide-react';
+import { Plus, Book, Coffee, Play, Edit2, Palette, Clock, FolderOpen, Download, Info, Sun, Moon, Sparkles } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { UI_TOKENS } from '../styles/tokens/ui';
+import type { AppThemeMode, AppThemeCategory } from '../hooks/useAppShellTheme';
 
 interface AppHeaderProps {
   mode: 'playback' | 'edit';
@@ -18,6 +19,9 @@ interface AppHeaderProps {
   setIsInfoModalOpen: (open: boolean) => void;
   importJson: (e: React.ChangeEvent<HTMLInputElement>) => void;
   exportJson: () => void;
+  themeMode?: AppThemeMode;
+  effectiveThemeCategory?: AppThemeCategory;
+  onCycleThemeMode?: () => void;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
@@ -35,6 +39,9 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   setIsInfoModalOpen,
   importJson,
   exportJson,
+  themeMode = 'auto',
+  effectiveThemeCategory = 'light',
+  onCycleThemeMode,
 }) => {
   return (
     <header
@@ -48,7 +55,13 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           src="/SCENEFLOW_TAG_B.png"
           alt="SceneFlow Logo"
           referrerPolicy="no-referrer"
-          className="h-8 lg:h-9 w-auto object-contain selection:bg-transparent pointer-events-none"
+          className="logo-light h-8 lg:h-9 w-auto object-contain selection:bg-transparent pointer-events-none"
+        />
+        <img
+          src="/SCENEFLOW_TAG_WHITE.png"
+          alt="SceneFlow Logo"
+          referrerPolicy="no-referrer"
+          className="logo-dark h-8 lg:h-9 w-auto object-contain selection:bg-transparent pointer-events-none"
         />
       </div>
 
@@ -85,8 +98,8 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
         </div>
 
         <div className={UI_TOKENS.badge.currentTimePill}>
-          <span className="hidden xl:inline text-[10px] font-black text-stone-500 uppercase tracking-widest">Current Time</span>
-          <span className="text-base xl:text-lg font-mono font-bold text-white w-12 xl:w-16 text-right">{currentTime.toFixed(1)}s</span>
+          <span className="hidden xl:inline text-[10px] font-black text-text-faint uppercase tracking-widest">Current Time</span>
+          <span className="text-base xl:text-lg font-mono font-bold text-btn-primary-text w-12 xl:w-16 text-right">{currentTime.toFixed(1)}s</span>
         </div>
 
         <div className={UI_TOKENS.button.modeSwitchContainer}>
@@ -109,6 +122,31 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             <Edit2 size={12} /> Edit
           </button>
         </div>
+
+        {/* Quick App Shell Theme Switcher */}
+        {onCycleThemeMode && (
+          <div className="relative hidden lg:block">
+            <button
+              id="app-theme-cycle-button"
+              onClick={onCycleThemeMode}
+              className={UI_TOKENS.button.headerIconButton}
+              title={`App Theme: ${themeMode === 'auto' ? `Auto (Matching ${effectiveThemeCategory})` : themeMode.toUpperCase()} — Click to cycle (Auto/Light/Warm/Dark)`}
+            >
+              {themeMode === 'auto' ? (
+                <div className="relative">
+                  <Sparkles size={16} className="text-amber-500" />
+                  <span className="absolute -bottom-1 -right-1 text-[7px] font-black uppercase tracking-tighter opacity-80">A</span>
+                </div>
+              ) : effectiveThemeCategory === 'dark' ? (
+                <Moon size={17} className="text-blue-400" />
+              ) : effectiveThemeCategory === 'warm' ? (
+                <Coffee size={17} className="text-amber-600" />
+              ) : (
+                <Sun size={17} className="text-amber-500" />
+              )}
+            </button>
+          </div>
+        )}
 
         <div className="relative hidden lg:block">
           <button
@@ -141,7 +179,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           </button>
         </div>
 
-        <div className="hidden lg:block h-8 w-px bg-stone-200 mx-2" />
+        <div className="hidden lg:block h-8 w-px bg-border-main mx-2" />
 
         <div className="flex items-center gap-1">
           <label

@@ -5,16 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.2.0] - 2026-08-29
 
 ### Added
+- **Dynamic Multi-Theme System (Light / Warm / Dark App Theming) (`src/index.css`, `src/hooks/useAppShellTheme.ts`, `src/components/*`)**:
+  - Defined bespoke, semantic CSS variable color schemes in `src/index.css` under Tailwind CSS v4 `@theme` covering `--surface`, `--surface-subtle`, `--surface-muted`, `--surface-hover`, `--surface-dark`, `--border-main`, `--border-subtle`, `--text-main`, `--text-body`, `--text-muted`, `--text-faint`, `--btn-primary-*`, `--btn-secondary-*`, and overlay layers.
+  - Implemented three curated palettes:
+    - **Light Mode (`:root` / `[data-theme-category="light"]`)**: Clean studio paper with neutral stone surfaces (`#ffffff`, `#f5f5f4`, `#1c1917`).
+    - **Warm Mode (`[data-theme-category="warm"]`)**: Soft antique sepia & warm umber parchment (`#faf7f0`, `#f3efe6`, `#2b231d`).
+    - **Dark Mode (`[data-theme-category="dark"]`)**: Midnight slate with high-contrast light text (`#171514`, `#0c0a09`, `#f5f5f4`).
+  - **Automatic Screenplay Theme Synchronization**: Selecting any screenplay paper preset automatically transitions the entire application shell (Header, Left Panels, Modals, Desk Surface) to the matching theme category (*Studio Crisp* $\rightarrow$ Light, *Warm Parchment* / *Newsprint* $\rightarrow$ Warm, *Midnight Slate* / *OLED Blackout* / *Navy Slate* $\rightarrow$ Dark).
+  - **Custom Hook & Persistence (`src/hooks/useAppShellTheme.ts`)**: Manages `auto`, `light`, `warm`, and `dark` modes with `localStorage` persistence and smooth 250ms CSS color transitions.
+  - **Quick Theme Mode Switcher (`src/components/AppHeader.tsx`)**: Header button displaying `Sparkles [A]` for Auto, `Sun` for Light, `Coffee` for Warm, and `Moon` for Dark with instant cycling and descriptive tooltips.
+  - **Strict Script Paper Isolation Boundary**: Screenplay paper textures and adaptive cue highlight calculations remain completely preserved and isolated in `themes.ts`, `cues.ts`, and `helpers.ts`.
+- **Adaptive Dynamic Theme Logo (`src/index.css`, `src/components/*`)**:
+  - Implemented zero-JS-lag CSS selectors (`.logo-light`, `.logo-dark`) to automatically display `/SCENEFLOW_TAG_B.png` in Light/Warm modes and `/SCENEFLOW_TAG_WHITE.png` in Dark mode across `AppHeader`, `AppInfoModal`, and `InitializingScreen`.
+- **Streamlined Mobile Theme Drawer (`src/components/MobileColorModal.tsx`, `src/components/ScriptHeaderControls.tsx`)**:
+  - Built a dedicated bottom-sheet drawer using `motion/react` spring physics with a gesture handle, backdrop blur, and full-width "Done" button.
+  - Features a 4-segment App Shell mode selector (`[ ✨ Auto | ☀️ Light | ☕ Warm | 🌙 Dark ]`) with dynamic status badges.
+  - Features 6 compact screenplay preset cards styled in their true paper background (`theme.paperBg`) and text contrast (`theme.textColor`), omitting bulky script mockups for a clean, thumb-friendly mobile experience.
+  - Added a `<Palette size={10} /> Theme` button directly in the mobile playback control bar alongside Library.
 - **Universal Modal `Escape` Key & Backdrop Dismissal (`src/hooks/useEscapeKey.ts`, `src/components/*`)**:
   - Standardized keyboard and click dismissal across all modals via a lightweight, reusable `useEscapeKey(onClose, isOpen)` hook.
-  - Added `Escape` key listeners and backdrop click-to-dismiss handlers to `ScriptColorModal` (Visual Themes), `TimingSettingsModal` (Timing Buffers), `MobileLibraryModal`, `RawScriptModal` (Raw Screenplay), `RawCuesModal` (Raw Cues JSON), `DeleteConfirmationModal`, `ResetConfirmationModal`, and `OverlapPicker`.
+  - Added `Escape` key listeners and backdrop click-to-dismiss handlers to `ScriptColorModal` (Visual Themes), `MobileColorModal`, `TimingSettingsModal` (Timing Buffers), `MobileLibraryModal`, `RawScriptModal` (Raw Screenplay), `RawCuesModal` (Raw Cues JSON), `DeleteConfirmationModal`, `ResetConfirmationModal`, and `OverlapPicker`.
   - Refactored `AppInfoModal`, `LibraryModal`, and `StagingModal` to use the consolidated `useEscapeKey` hook for clean event cleanup and consistent lifecycle handling.
 - **Desktop App Info & About Modal (`src/components/AppInfoModal.tsx`, `src/components/AppHeader.tsx`, `src/App.tsx`)**:
   - Introduced a desktop-only About & Application Info dialog opened via a dedicated `i` (Info) icon button in the header toolbar.
-  - **Dynamic Metadata & Versioning**: Automatically reads application name, current version (`v2.1.1`), and description directly from `metadata.json`.
+  - **Dynamic Metadata & Versioning**: Automatically reads application name, current version (`v2.2.0`), and description directly from `metadata.json`.
   - **Author Attribution**: Integrated author credit for **Taruma Sakti** in the modal header and footer with direct links to [Linktree](https://linktr.ee/tarumainfo).
   - **Resource Links**: Clean 2x2 interactive badge grid linking to the GitHub Repository, Documentation & Guide, Release Notes (Changelog), and Ko-fi Support.
   - **Key Capabilities & Shortcuts Cheat Sheet**: In-app overview of core capabilities and supported keyboard shortcuts (`Space / K`, `← / →`, `J / L`, `Esc`).
@@ -22,6 +39,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Enhanced Global Keyboard Shortcuts (`src/hooks/useKeyboardShortcuts.ts`, `src/App.tsx`)**:
   - Added YouTube-standard navigation hotkeys (`KeyK` for Play/Pause, `KeyJ` for -5s seek, `KeyL` for +5s seek) alongside existing `Space` and arrow key (`ArrowLeft` / `ArrowRight`) bindings.
   - Hardened modal detection safeguards in `App.tsx` via `isAnyModalOpen` to disable background video shortcuts whenever any dialog or confirmation is active.
+
+### Fixed
+- **Visual Design System Refactoring & Contrast Hardening across all 18 Components**:
+  - Replaced hardcoded stone utility classes across the entire component suite with centralized semantic tokens in `UI_TOKENS` and `@theme`.
+  - Fixed dark preset badge contrast in `ScriptColorModal` (`bg-stone-800 text-stone-200`).
+  - Fixed modal header icon wrapper badges (`UI_TOKENS.iconWrapper.dark`) to invert with high contrast in Dark mode (`bg-btn-primary-bg text-btn-primary-text`).
+  - Harmonized `MobileLibraryModal` to dynamically follow active Light, Warm, and Dark themes.
+  - Fixed vertical alignment and font baseline shifts for category count badges across `MobileLibraryModal` and `LibraryModal`.
+  - Fixed featured card titles, descriptions, and badges in `LibraryModal` for dark mode, replacing low-contrast brown utilities with high-contrast semantic typography and glowing amber accents.
 
 
 ## [2.1.1] - 2026-08-28

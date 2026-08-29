@@ -25,7 +25,7 @@ export function StagingModal({ isOpen, onClose, label, content }: StagingModalPr
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-stone-900/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-overlay-bg backdrop-blur-sm"
           />
 
           {/* Modal Content */}
@@ -38,8 +38,8 @@ export function StagingModal({ isOpen, onClose, label, content }: StagingModalPr
             {/* Header */}
             <div className={UI_TOKENS.modal.headerSubtle}>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-stone-400 animate-pulse" />
-                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-500">
+                <div className="w-2 h-2 rounded-full bg-text-faint animate-pulse" />
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">
                   STAGING: {label}
                 </h3>
               </div>
@@ -52,8 +52,8 @@ export function StagingModal({ isOpen, onClose, label, content }: StagingModalPr
             </div>
 
             {/* Body */}
-            <div className="flex-1 overflow-y-auto p-8 bg-white selection:bg-stone-200">
-              <pre className="font-mono text-[11px] leading-relaxed text-stone-600 whitespace-pre-wrap break-words">
+            <div className="flex-1 overflow-y-auto p-8 bg-surface selection:bg-surface-hover">
+              <pre className="font-mono text-[11px] leading-relaxed text-text-body whitespace-pre-wrap break-words">
                 {content}
               </pre>
             </div>
@@ -62,7 +62,7 @@ export function StagingModal({ isOpen, onClose, label, content }: StagingModalPr
             <div className={UI_TOKENS.modal.footer}>
               <button
                 onClick={onClose}
-                className="text-[9px] font-bold uppercase tracking-widest text-stone-400 hover:text-stone-900 transition-colors"
+                className="text-[9px] font-bold uppercase tracking-widest text-text-faint hover:text-text-main transition-colors"
               >
                 Click to Close
               </button>

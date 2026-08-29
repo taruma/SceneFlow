@@ -40,7 +40,7 @@ export function AppInfoModal({ isOpen, onClose }: AppInfoModalProps) {
       url: 'https://github.com/taruma/SceneFlow',
       icon: Github,
       tag: 'Source',
-      color: 'hover:border-stone-400 hover:bg-stone-50 text-stone-800',
+      color: 'hover:border-border-main hover:bg-surface-subtle text-text-main',
     },
     {
       label: 'Documentation & Guide',
@@ -81,30 +81,30 @@ export function AppInfoModal({ isOpen, onClose }: AppInfoModalProps) {
     >
       <div className={cn(UI_TOKENS.modal.containerMd, "max-h-[90vh] flex flex-col")}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-stone-100 bg-stone-50/70 shrink-0">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-border-subtle bg-surface-subtle shrink-0">
           <div className="flex items-center gap-3">
             <div className={UI_TOKENS.iconWrapper.dark}>
-              <Info size={22} className="text-white" />
+              <Info size={22} className="text-btn-primary-text" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-black tracking-tight text-stone-900">{appName}</h2>
-                <span className="px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider bg-stone-900 text-white rounded-md">
+                <h2 className="text-lg font-black tracking-tight text-text-main">{appName}</h2>
+                <span className="px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider bg-btn-primary-bg text-btn-primary-text rounded-md">
                   v{version}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
+                <span className="text-[10px] font-bold text-text-faint uppercase tracking-widest">
                   by
                 </span>
                 <a
                   href={authorUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[10px] font-bold text-stone-700 hover:text-stone-900 hover:underline uppercase tracking-wider transition-colors inline-flex items-center gap-1"
+                  className="text-[10px] font-bold text-text-body hover:text-text-main hover:underline uppercase tracking-wider transition-colors inline-flex items-center gap-1"
                 >
                   {author}
-                  <ExternalLink size={9} className="text-stone-400" />
+                  <ExternalLink size={9} className="text-text-faint" />
                 </a>
               </div>
             </div>
@@ -121,21 +121,26 @@ export function AppInfoModal({ isOpen, onClose }: AppInfoModalProps) {
         {/* Scrollable Content */}
         <div className="p-6 lg:p-8 space-y-6 overflow-y-auto scrollbar-hide">
           {/* Hero Card */}
-          <div className="p-5 bg-gradient-to-br from-stone-50 to-stone-100/60 border border-stone-200/80 rounded-2xl space-y-3">
+          <div className="p-5 bg-surface-subtle border border-border-main rounded-2xl space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <img
                   src="/SCENEFLOW_TAG_B.png"
                   alt="SceneFlow Logo"
-                  className="h-6 w-auto object-contain pointer-events-none"
+                  className="logo-light h-6 w-auto object-contain pointer-events-none"
+                />
+                <img
+                  src="/SCENEFLOW_TAG_WHITE.png"
+                  alt="SceneFlow Logo"
+                  className="logo-dark h-6 w-auto object-contain pointer-events-none"
                 />
               </div>
-              <div className="flex items-center gap-1.5 text-[10px] font-bold text-stone-400 uppercase tracking-wider">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold text-text-faint uppercase tracking-wider">
                 <ShieldCheck size={13} className="text-emerald-500" />
                 <span>MIT License</span>
               </div>
             </div>
-            <p className="text-xs lg:text-sm text-stone-600 leading-relaxed">
+            <p className="text-xs lg:text-sm text-text-body leading-relaxed">
               {description}
             </p>
           </div>
@@ -153,21 +158,21 @@ export function AppInfoModal({ isOpen, onClose }: AppInfoModalProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className={cn(
-                      "flex items-center justify-between p-3 rounded-xl border border-stone-200 bg-white shadow-2xs transition-all active:scale-98 group cursor-pointer",
+                      "flex items-center justify-between p-3 rounded-xl border border-border-main bg-surface shadow-2xs transition-all active:scale-98 group cursor-pointer",
                       link.color
                     )}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <IconComponent size={16} className="shrink-0 text-stone-500 group-hover:text-current transition-colors" />
-                      <span className="text-xs font-semibold truncate text-stone-700 group-hover:text-current">
+                      <IconComponent size={16} className="shrink-0 text-text-muted group-hover:text-current transition-colors" />
+                      <span className="text-xs font-semibold truncate text-text-body group-hover:text-current">
                         {link.label}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0 ml-2">
-                      <span className="text-[9px] font-mono font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-stone-100 group-hover:bg-current/10 text-stone-500 group-hover:text-current transition-colors">
+                      <span className="text-[9px] font-mono font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-surface-muted group-hover:bg-current/10 text-text-muted group-hover:text-current transition-colors">
                         {link.tag}
                       </span>
-                      <ExternalLink size={12} className="text-stone-300 group-hover:text-current transition-colors" />
+                      <ExternalLink size={12} className="text-text-faint group-hover:text-current transition-colors" />
                     </div>
                   </a>
                 );
@@ -177,12 +182,12 @@ export function AppInfoModal({ isOpen, onClose }: AppInfoModalProps) {
 
           {/* Quick Features & Specs */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="p-4 bg-stone-50 border border-stone-200 rounded-xl space-y-2">
-              <div className="flex items-center gap-2 text-stone-700">
-                <Layers size={14} className="text-stone-500" />
+            <div className="p-4 bg-surface-subtle border border-border-main rounded-xl space-y-2">
+              <div className="flex items-center gap-2 text-text-main">
+                <Layers size={14} className="text-text-muted" />
                 <span className="text-[11px] font-bold uppercase tracking-wider">Key Capabilities</span>
               </div>
-              <ul className="text-xs text-stone-600 space-y-1">
+              <ul className="text-xs text-text-body space-y-1">
                 <li className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />
                   Real-time script & YouTube sync
@@ -198,18 +203,18 @@ export function AppInfoModal({ isOpen, onClose }: AppInfoModalProps) {
               </ul>
             </div>
 
-            <div className="p-4 bg-stone-50 border border-stone-200 rounded-xl space-y-2">
-              <div className="flex items-center gap-2 text-stone-700">
-                <Keyboard size={14} className="text-stone-500" />
+            <div className="p-4 bg-surface-subtle border border-border-main rounded-xl space-y-2">
+              <div className="flex items-center gap-2 text-text-main">
+                <Keyboard size={14} className="text-text-muted" />
                 <span className="text-[11px] font-bold uppercase tracking-wider">Quick Shortcuts</span>
               </div>
-              <div className="grid grid-cols-2 gap-1.5 text-xs text-stone-600">
+              <div className="grid grid-cols-2 gap-1.5 text-xs text-text-body">
                 {shortcuts.map((s) => (
                   <div key={s.key} className="flex flex-col">
-                    <span className="font-mono font-bold text-[10px] text-stone-800 bg-white border border-stone-200 rounded px-1.5 py-0.5 w-fit shadow-2xs">
+                    <span className="font-mono font-bold text-[10px] text-text-main bg-surface border border-border-main rounded px-1.5 py-0.5 w-fit shadow-2xs">
                       {s.key}
                     </span>
-                    <span className="text-[10px] text-stone-500 mt-0.5">{s.desc}</span>
+                    <span className="text-[10px] text-text-muted mt-0.5">{s.desc}</span>
                   </div>
                 ))}
               </div>
@@ -218,23 +223,23 @@ export function AppInfoModal({ isOpen, onClose }: AppInfoModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-stone-100 bg-stone-50/50 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-2 text-[11px] text-stone-400">
-            <span className="font-mono font-semibold text-stone-500">{appName} v{version}</span>
+        <div className="px-6 py-4 border-t border-border-subtle bg-surface-subtle flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2 text-[11px] text-text-faint">
+            <span className="font-mono font-semibold text-text-muted">{appName} v{version}</span>
             <span>•</span>
             <span>by</span>
             <a
               href={authorUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold text-stone-600 hover:text-stone-900 hover:underline transition-colors"
+              className="font-semibold text-text-body hover:text-text-main hover:underline transition-colors"
             >
               {author}
             </a>
           </div>
           <button
             onClick={onClose}
-            className="px-5 py-2 bg-stone-900 hover:bg-stone-800 text-white rounded-xl text-xs font-bold transition-all active:scale-95 shadow-sm"
+            className="px-5 py-2 bg-btn-primary-bg hover:bg-btn-primary-hover text-btn-primary-text rounded-xl text-xs font-bold transition-all active:scale-95 shadow-sm"
           >
             Close
           </button>

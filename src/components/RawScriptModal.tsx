@@ -33,11 +33,11 @@ export function RawScriptModal({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className={UI_TOKENS.iconWrapper.neutral}>
-                <FileText size={24} className="text-stone-600" />
+                <FileText size={24} className="text-text-body" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-stone-900">Raw Screenplay</h3>
-                <p className="text-xs text-stone-400 uppercase tracking-[0.2em] font-black">Initial Input & Bulk Edit</p>
+                <h3 className="text-xl font-bold text-text-main">Raw Screenplay</h3>
+                <p className="text-xs text-text-faint uppercase tracking-[0.2em] font-black">Initial Input & Bulk Edit</p>
               </div>
             </div>
             <button 

@@ -42,7 +42,7 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
               <button
                 onClick={onOpenRawCuesModal}
                 title="Edit raw JSON cues"
-                className="flex items-center gap-1.5 px-2.5 py-1 bg-stone-100 border border-stone-200 text-stone-500 hover:text-stone-700 hover:bg-stone-200 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95"
+                className="flex items-center gap-1.5 px-2.5 py-1 bg-surface-muted border border-border-main text-text-muted hover:text-text-main hover:bg-surface-hover rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95"
               >
                 <Edit2 size={10} /> Raw
               </button>
@@ -55,7 +55,7 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
                     "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border",
                     alignSuccess 
                       ? "bg-green-50 border-green-100 text-green-600" 
-                      : "bg-stone-100 border-stone-200 text-stone-500 hover:text-stone-700 hover:bg-stone-200"
+                      : "bg-surface-muted border-border-main text-text-muted hover:text-text-main hover:bg-surface-hover"
                   )}
                 >
                   {isAligning ? (
@@ -79,7 +79,7 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
             {COLORS.map(color => (
               <div key={color.type} className="flex items-center gap-1.5">
                 <div className={cn("w-2.5 h-2.5 rounded-full", color.class)} />
-                <span className="text-[9px] font-black uppercase tracking-widest text-stone-400">{color.type}</span>
+                <span className="text-[9px] font-black uppercase tracking-widest text-text-faint">{color.type}</span>
               </div>
             ))}
           </div>
@@ -113,10 +113,10 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
                         {cueType}
                       </span>
                     )}
-                    <span className="text-sm font-bold text-stone-800 italic leading-tight break-words">"{cue.selectedText}"</span>
+                    <span className="text-sm font-bold text-text-body italic leading-tight break-words">"{cue.selectedText}"</span>
                     <div className="flex items-center gap-2 mt-1">
                       <span className={UI_TOKENS.badge.timeTag}>{cue.startTime.toFixed(1)}s</span>
-                      <div className="w-2 h-px bg-stone-200" />
+                      <div className="w-2 h-px bg-border-main" />
                       <span className={UI_TOKENS.badge.timeTag}>{cue.endTime.toFixed(1)}s</span>
                     </div>
                   </div>
@@ -127,7 +127,7 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
                       e.stopPropagation();
                       onDeleteCue(cue.id);
                     }}
-                    className="p-2 text-stone-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 shrink-0"
+                    className="p-2 text-text-faint hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 shrink-0"
                   >
                     <Trash2 size={18} />
                   </button>
@@ -137,7 +137,7 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
           })}
           {cueList.length === 0 && (
             <div className={UI_TOKENS.panel.emptyPlaceholder}>
-              <p className="text-sm text-stone-400 font-medium italic">No cues created yet.</p>
+              <p className="text-sm text-text-faint font-medium italic">No cues created yet.</p>
             </div>
           )}
         </div>

@@ -25,18 +25,19 @@ SceneFlow follows a modular, 5-layer architecture that separates script parsing,
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
 │                          STATE / HOOKS LAYER                           │
-│  src/hooks/useScriptStorage.ts     src/hooks/useYouTubePlayer.ts       │
-│  src/hooks/useScriptPreferences.ts  src/hooks/useAutoScroll.ts         │
-│  src/hooks/useCueEditor.ts         src/hooks/useCueAlignment.ts        │
-│  src/hooks/useKeyboardShortcuts.ts  src/hooks/useScriptTheme.ts        │
-│  src/hooks/useEscapeKey.ts         src/hooks/index.ts (barrel export)  │
+│  src/hooks/useAppShellTheme.ts     src/hooks/useYouTubePlayer.ts       │
+│  src/hooks/useScriptStorage.ts     src/hooks/useScriptPreferences.ts   │
+│  src/hooks/useAutoScroll.ts        src/hooks/useCueEditor.ts           │
+│  src/hooks/useCueAlignment.ts      src/hooks/useKeyboardShortcuts.ts   │
+│  src/hooks/useScriptTheme.ts       src/hooks/useEscapeKey.ts           │
+│  src/hooks/index.ts (barrel export with 10 modular hooks)              │
 └──────────────────────────────────┬─────────────────────────────────────┘
 
                                    │ AppState, currentTime, theme, preferences
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
 │                              UI LAYER                                  │
-│  src/App.tsx (orchestrator)  •  src/components/* (19 sub-components)    │
+│  src/App.tsx (orchestrator)  •  src/components/* (20 sub-components)    │
 │  src/types/script.ts (14 domain interfaces)                            │
 └────────────────────────────────────────────────────────────────────────┘
 ```
@@ -242,6 +243,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 17. **`MobileLibraryModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a touch-friendly category filter and search interface.
 18. **`StagingModal.tsx`**: Monospace overlay displaying hidden camera, lighting, or lookbook directives from `[[STAGING]]` blocks.
 19. **`AppInfoModal.tsx`**: Desktop application info and about dialog displaying dynamic versioning from `metadata.json`, author attribution for Taruma Sakti ([Linktree](https://linktr.ee/tarumainfo)), 2x2 resource badge grid, and keyboard shortcuts cheat sheet.
+20. **`MobileColorModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a thumb-friendly 4-segment App Shell switcher and 6 compact screenplay preset cards.
 
 ### Type Definitions & Data Schemas
 - **`src/types/script.ts`**: Defines 14 domain interfaces and types: `Cue`, `TimingSettings`, `ColorCategory`, `AppState`, `ScriptWidthPresetId`, `ScriptWidthPreset`, `ScrollFocusPresetId`, `ScrollFocusPreset`, `TextSelection`, `DeleteConfirmationState`, `ResetConfirmationState`, `OverlapPickerState`, `AlternativeLocation`, and `AppMode`.
