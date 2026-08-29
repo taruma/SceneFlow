@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { X, Search, BookOpen, Film, ArrowUpRight, Sparkles } from "lucide-react";
 import { EXAMPLE_SECTIONS, Example } from "../examples";
 import { useEscapeKey } from "../hooks/useEscapeKey";
+import { cn } from "../lib/utils";
 
 function formatDateString(dateStr?: string): string {
   if (!dateStr) return "";
@@ -158,19 +159,21 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
-                    className={`px-3 py-1.5 rounded-full text-[11px] font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
+                    className={cn(
+                      "px-3 py-1.5 rounded-full text-[11px] font-semibold whitespace-nowrap transition-all inline-flex items-center gap-1.5 shrink-0 active:scale-95",
                       isSelected
                         ? "bg-amber-500 text-stone-950 font-bold shadow-sm shadow-amber-500/20"
                         : "bg-surface-muted text-text-muted border border-border-main hover:text-text-main active:bg-surface-hover"
-                    }`}
+                    )}
                   >
                     <span>{cat}</span>
                     <span
-                      className={`px-1.5 py-0.2 rounded-full text-[9px] font-mono ${
+                      className={cn(
+                        "inline-flex items-center justify-center min-w-[18px] h-4 px-1 rounded-full text-[9px] font-mono font-bold leading-none shrink-0",
                         isSelected
-                          ? "bg-stone-950/20 text-stone-950 font-bold"
-                          : "bg-surface-hover/80 text-text-faint"
-                      }`}
+                          ? "bg-stone-950/20 text-stone-950"
+                          : "bg-surface-hover text-text-faint"
+                      )}
                     >
                       {count}
                     </span>

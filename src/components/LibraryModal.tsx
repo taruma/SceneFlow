@@ -4,6 +4,7 @@ import { X, Search, BookOpen, Film, Notebook, Compass, ArrowUpRight, Lock, Clapp
 import { EXAMPLE_SECTIONS, Example } from "../examples";
 import { UI_TOKENS } from "../styles/tokens/ui";
 import { useEscapeKey } from "../hooks/useEscapeKey";
+import { cn } from "../lib/utils";
 
 function formatDateString(dateStr?: string): string {
   if (!dateStr) return "";
@@ -272,9 +273,12 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                         <span>{cat}</span>
                       </div>
                       <span
-                        className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-full ${
-                          isActive ? "bg-white/20 text-white" : "bg-surface-hover text-text-body"
-                        }`}
+                        className={cn(
+                          "inline-flex items-center justify-center min-w-[18px] h-4.5 px-1 rounded-full text-[9px] font-mono font-bold leading-none shrink-0",
+                          isActive
+                            ? "bg-btn-primary-text/20 text-btn-primary-text"
+                            : "bg-surface-hover text-text-body"
+                        )}
                       >
                         {count}
                       </span>
