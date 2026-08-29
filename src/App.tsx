@@ -22,6 +22,7 @@ import { DeleteConfirmationModal } from './components/DeleteConfirmationModal';
 import { ResetConfirmationModal } from './components/ResetConfirmationModal';
 import { TimingSettingsModal } from './components/TimingSettingsModal';
 import { ScriptColorModal } from './components/ScriptColorModal';
+import { MobileColorModal } from './components/MobileColorModal';
 import { AppInfoModal } from './components/AppInfoModal';
 import { AppHeader } from './components/AppHeader';
 import { ActiveHighlightsPanel } from './components/ActiveHighlightsPanel';
@@ -770,6 +771,7 @@ export default function App() {
             autoScrollTargets={autoScrollTargets}
             setAutoScrollTargets={setAutoScrollTargets}
             setIsLibraryOpen={setIsLibraryOpen}
+            setIsColorModalOpen={setIsColorModalOpen}
             scriptWidthPreset={scriptWidthPreset}
             setScriptWidthPreset={setScriptWidthPreset}
             isWidthDropdownOpen={isWidthDropdownOpen}
@@ -952,6 +954,22 @@ export default function App() {
       />
       {/* Script Color & Theme Modal */}
       <ScriptColorModal
+        isOpen={isColorModalOpen}
+        onClose={() => setIsColorModalOpen(false)}
+        currentThemeId={scriptThemeId}
+        onSelectTheme={(themeId) => {
+          setScriptThemeId(themeId);
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('sceneflow_script_theme', themeId);
+          }
+        }}
+        themeMode={themeMode}
+        setThemeMode={setThemeMode}
+        effectiveThemeCategory={effectiveCategory}
+      />
+
+      {/* Mobile Script Color & Theme Drawer */}
+      <MobileColorModal
         isOpen={isColorModalOpen}
         onClose={() => setIsColorModalOpen(false)}
         currentThemeId={scriptThemeId}

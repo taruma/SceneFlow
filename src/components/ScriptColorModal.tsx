@@ -44,7 +44,7 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
 
   return (
     <div 
-      className={UI_TOKENS.modal.overlayHeavy}
+      className={cn(UI_TOKENS.modal.overlayHeavy, "hidden lg:flex")}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}

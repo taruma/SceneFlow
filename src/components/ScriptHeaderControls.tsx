@@ -6,6 +6,7 @@ import {
   Check, 
   Book, 
   Coffee, 
+  Palette,
   MoveHorizontal, 
   AlignVerticalJustifyCenter 
 } from 'lucide-react';
@@ -23,6 +24,7 @@ interface ScriptHeaderControlsProps {
   autoScrollTargets: string[];
   setAutoScrollTargets: React.Dispatch<React.SetStateAction<string[]>>;
   setIsLibraryOpen: (open: boolean) => void;
+  setIsColorModalOpen?: (open: boolean) => void;
   scriptWidthPreset: ScriptWidthPresetId;
   setScriptWidthPreset: (preset: ScriptWidthPresetId) => void;
   isWidthDropdownOpen: boolean;
@@ -43,6 +45,7 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
   autoScrollTargets,
   setAutoScrollTargets,
   setIsLibraryOpen,
+  setIsColorModalOpen,
   scriptWidthPreset,
   setScriptWidthPreset,
   isWidthDropdownOpen,
@@ -141,9 +144,18 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                 </>
               )}
             </div>
+            {setIsColorModalOpen && (
+              <button 
+                onClick={() => setIsColorModalOpen(true)}
+                className="lg:hidden flex items-center gap-1 px-2 py-1 bg-surface-muted hover:bg-surface-hover rounded text-[10px] font-bold text-text-body transition-colors active:scale-95"
+                title="Screenplay & App Theme Settings"
+              >
+                <Palette size={10} /> Theme
+              </button>
+            )}
             <button 
               onClick={() => setIsLibraryOpen(true)}
-              className="lg:hidden flex items-center gap-1 px-2 py-1 bg-surface-muted hover:bg-surface-hover rounded text-[10px] font-bold text-text-body transition-colors"
+              className="lg:hidden flex items-center gap-1 px-2 py-1 bg-surface-muted hover:bg-surface-hover rounded text-[10px] font-bold text-text-body transition-colors active:scale-95"
             >
               <Book size={10} /> Library
             </button>
