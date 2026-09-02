@@ -141,6 +141,15 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         releaseDate: '2026-08-09',
         tags: ['auteur script', 'seedance 2.5'],
         featured: false
+      },
+      {
+        id: 'scene_observation_only',
+        title: 'Observation Only',
+        path: '/examples/scenes/scene_observation_only.json',
+        description: 'A father dissects cheap diner pie with surgical precision while ignoring the clear collapse of his own family.',
+        releaseDate: '2026-08-11',
+        tags: ['auteur script', 'seedance 2.5'],
+        featured: false
       }
     ]
   },
