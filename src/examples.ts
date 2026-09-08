@@ -422,6 +422,14 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         description: "Robert watches the group tear each other apart over a document that no longer exists.",
         releaseDate: '2026-08-04',
         tags: ['auteur script', 'seedance 2.5'],
+      },
+      {
+        id: 'clip_khemia',
+        title: 'Khemia',
+        path: '/examples/ai_clips/clip_khemia.json',
+        description: 'A new generation of casters ventures beyond sanctuary walls into a vast, uncharted Mediterranean realm of sky and stone.',
+        releaseDate: '2026-09-06',
+        tags: ['auteur script', 'seedance 2.5'],
       }
     ]
   }
