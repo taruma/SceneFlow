@@ -78,3 +78,35 @@ When modifying application state, storage keys, or external fetching:
 
 - **Desktop vs. Mobile Modals**: Desktop browsing uses the full-featured `src/components/LibraryModal.tsx` with search, sorting, and category sidebar. Mobile devices use the touch-optimized bottom-sheet drawer `src/components/MobileLibraryModal.tsx`. Both share state and are mutually exclusive based on viewport width (`lg` breakpoint).
 - **Header Adaptations**: On mobile screens, hide width selectors and edit toggles to prevent crowding, surfacing direct Library access and the Ko-fi support button.
+
+## 7. Adding & Managing Catalogue Examples
+
+SceneFlow maintains a curated library of built-in projects across 4 categories: **AI Scenes**, **The Written Motion (TWM Anthology)**, **FRAME Series**, and **AI Clips**. When adding or updating an example in any category:
+
+1. **JSON Asset Placement & Validation**:
+   - Place the project JSON in `public/examples/` (e.g. `public/examples/twm_vol1_the_breaking_point.json`, `public/examples/scenes/scene_observation_only.json`, or `public/examples/ai_clips/clip_khemia.json`).
+   - Ensure the JSON conforms to `AppState`:
+     - `youtubeId`: Valid YouTube video URL or ID.
+     - `scriptText`: Clean script text formatted according to screenplay or auteur staging heuristics.
+     - `cues`: Array of valid cue objects (`id`, `type`, `selectedText`, `startTime`, `endTime`, `speaker`, `colorClass`, `startIndex`, `endIndex`).
+     - `settings` (optional): Per-category timing buffer configuration.
+
+2. **Register in `src/examples.ts`**:
+   - Add the entry to the corresponding section array in `EXAMPLE_SECTIONS`.
+   - **Path Accuracy**: Ensure `path` strictly mirrors the actual file location under `public/` (e.g., `/examples/ai_clips/clip_khemia.json`, `/examples/scenes/scene_observation_only.json`, or `/examples/frame_08.json`).
+   - Populate metadata: `id` (must be unique across all sections), `title`, `description`, `releaseDate` (`YYYY-MM-DD`), and `tags`.
+
+3. **Synchronize `SCENEFLOW_CATALOGUE.md`**:
+   - Increment the section count in the target header: `## <Category Name> (N)`.
+   - Insert the new example into the section table, maintaining reverse-chronological order (newest `releaseDate` first):
+     `| Date | ID | Title | Video Model |`
+
+4. **Verification**:
+   - Run `npm run lint` (`tsc --noEmit`) to verify TypeScript integrity.
+   - Verify that the example loads properly via direct query parameter (`?example=<id>`).
+
+5. **Commit Message Convention**:
+   - Use the repository's semantic commit pattern:
+     `feat: add <Title> [<category>] example and register it in catalogue`
+     *(Examples: `feat: add Observation Only AI scene example and register it in catalogue`, `feat: add Khemia AI clip example and register it in the examples catalogue`)*
+
