@@ -84,33 +84,33 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
               onClick={() => handleModeSwitch('timeline')}
               title="Multi-Track Sync Timeline"
               className={cn(
-                "flex items-center gap-1 px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all select-none",
+                "flex items-center gap-1 px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all select-none border",
                 activeMode === 'timeline'
-                  ? "bg-surface text-text-main border border-border-main shadow-xs"
-                  : "text-text-muted hover:text-text-main"
+                  ? "bg-surface text-text-main border-border-main shadow-xs"
+                  : "text-text-muted hover:text-text-main border-transparent"
               )}
             >
               <Activity size={10} />
-              Timeline
+              <span className="leading-none">Timeline</span>
             </button>
             <button
               type="button"
               onClick={() => handleModeSwitch('cards')}
               title="Classic Cards (Legacy)"
               className={cn(
-                "flex items-center gap-1 px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all select-none",
+                "flex items-center gap-1 px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all select-none border",
                 activeMode === 'cards'
-                  ? "bg-surface text-text-main border border-border-main shadow-xs"
-                  : "text-text-muted hover:text-text-main"
+                  ? "bg-surface text-text-main border-border-main shadow-xs"
+                  : "text-text-muted hover:text-text-main border-transparent"
               )}
             >
               <Layers size={10} />
-              Cards
+              <span className="leading-none">Cards</span>
             </button>
           </div>
 
           {/* Active Count Badge */}
-          <span className={UI_TOKENS.badge.counter}>
+          <span className="flex items-center justify-center px-2.5 py-1 bg-surface-subtle border border-border-subtle rounded-lg text-[9px] font-black tracking-wider uppercase text-text-muted shadow-xs select-none">
             {visibleCues.length} active
           </span>
         </div>

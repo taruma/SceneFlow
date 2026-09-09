@@ -39,7 +39,7 @@ export const HighlightFilterBar = React.memo<HighlightFilterBarProps>(({
   resolveCueColor,
 }) => {
   return (
-    <div className="flex flex-wrap gap-1.5 mb-6">
+    <div className="flex flex-wrap items-center justify-center gap-1.5 mb-4">
       {COLORS.map(color => {
         const isActive = activeCueTypes.has(color.type);
         const isHidden = hiddenCueTypes.has(color.type);
@@ -53,7 +53,7 @@ export const HighlightFilterBar = React.memo<HighlightFilterBarProps>(({
             aria-pressed={!isHidden}
             title={isHidden ? `Show ${color.type} cues` : `Hide ${color.type} cues`}
             className={cn(
-              "flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all border relative overflow-hidden",
+              "flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-colors border relative overflow-hidden select-none",
               isHidden
                 ? "bg-surface-subtle border-border-subtle text-text-faint opacity-60"
                 : "bg-surface border-border-main text-text-muted hover:border-border-main shadow-sm",
@@ -67,10 +67,10 @@ export const HighlightFilterBar = React.memo<HighlightFilterBarProps>(({
               />
             )}
             <div
-              className="w-2 h-2 rounded-full shrink-0"
+              className="w-1.5 h-1.5 rounded-full shrink-0"
               style={{ backgroundColor: isHidden ? undefined : `rgb(${themed.rgb})` }}
             />
-            {color.type}
+            <span className="leading-none pt-px">{color.type}</span>
           </button>
         );
       })}
