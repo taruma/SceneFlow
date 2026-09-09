@@ -11,7 +11,28 @@ import { HighlightFilterBarProps } from './types';
  * - Shows an indicator dot colored with the theme's resolved RGB value.
  * - Allows users to click to mute/hide or unmute/reveal specific cue types.
  */
-export const HighlightFilterBar: React.FC<HighlightFilterBarProps> = ({
+function areFilterPropsEqual(prev: HighlightFilterBarProps, next: HighlightFilterBarProps) {
+  if (prev.onToggleCueType !== next.onToggleCueType) return false;
+  if (prev.resolveCueColor !== next.resolveCueColor) return false;
+
+  if (prev.hiddenCueTypes !== next.hiddenCueTypes) {
+    if (prev.hiddenCueTypes.size !== next.hiddenCueTypes.size) return false;
+    for (const t of prev.hiddenCueTypes) {
+      if (!next.hiddenCueTypes.has(t)) return false;
+    }
+  }
+
+  if (prev.activeCueTypes !== next.activeCueTypes) {
+    if (prev.activeCueTypes.size !== next.activeCueTypes.size) return false;
+    for (const t of prev.activeCueTypes) {
+      if (!next.activeCueTypes.has(t)) return false;
+    }
+  }
+
+  return true;
+}
+
+export const HighlightFilterBar = React.memo<HighlightFilterBarProps>(({
   activeCueTypes,
   hiddenCueTypes,
   onToggleCueType,
@@ -55,4 +76,6 @@ export const HighlightFilterBar: React.FC<HighlightFilterBarProps> = ({
       })}
     </div>
   );
-};
+}, areFilterPropsEqual);
+
+HighlightFilterBar.displayName = 'HighlightFilterBar';

@@ -91,6 +91,7 @@ export const HighlightTimelineView: React.FC<HighlightTimelineViewProps> = ({
                 selectedCueId={selectedCue?.id}
                 onCueClick={handleCueClick}
                 themedColor={themed}
+                isPlaying={isPlaying}
               />
             );
           })}
@@ -107,6 +108,7 @@ export const HighlightTimelineView: React.FC<HighlightTimelineViewProps> = ({
           <TimelinePlayheadRuler
             playheadPercent={playheadPercent}
             rulerTicks={rulerTicks}
+            isPlaying={isPlaying}
           />
         )}
       </div>

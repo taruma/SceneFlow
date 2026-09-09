@@ -4,6 +4,7 @@ import { TimelineTimecodeTick } from '../types';
 interface TimelinePlayheadRulerProps {
   playheadPercent: number;
   rulerTicks: TimelineTimecodeTick[];
+  isPlaying?: boolean;
 }
 
 /**
@@ -14,16 +15,20 @@ interface TimelinePlayheadRulerProps {
  * - Glowing playhead marker badge at the top.
  * - Bottom ruler displaying 1-second ticks and MM:SS labels sliding in real-time.
  */
-export const TimelinePlayheadRuler: React.FC<TimelinePlayheadRulerProps> = ({
+export const TimelinePlayheadRuler = React.memo<TimelinePlayheadRulerProps>(({
   playheadPercent,
   rulerTicks,
+  isPlaying = false,
 }) => {
   return (
     <>
       {/* Vertical Playhead Overlay (Stationary at ~35%) */}
       <div
-        className="absolute top-0 bottom-6 w-px pointer-events-none z-30 transition-[left] duration-75"
-        style={{ left: `${playheadPercent}%` }}
+        className="absolute top-0 bottom-6 w-px pointer-events-none z-30"
+        style={{
+          left: `${playheadPercent}%`,
+          transition: isPlaying ? 'left 100ms linear' : 'none',
+        }}
       >
         {/* Glowing playhead line */}
         <div className="w-full h-full bg-red-500/80 shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
@@ -37,8 +42,12 @@ export const TimelinePlayheadRuler: React.FC<TimelinePlayheadRulerProps> = ({
         {rulerTicks.map(tick => (
           <div
             key={`tick-${tick.timeSeconds}`}
-            className="absolute top-0 flex flex-col items-center -translate-x-1/2 transition-[left] duration-75 pointer-events-none"
-            style={{ left: `${tick.leftPercent}%` }}
+            className="absolute top-0 flex flex-col items-center -translate-x-1/2 pointer-events-none"
+            style={{
+              left: `${tick.leftPercent}%`,
+              willChange: 'left',
+              transition: isPlaying ? 'left 100ms linear' : 'none',
+            }}
           >
             {/* Tick pip */}
             <div
@@ -57,4 +66,6 @@ export const TimelinePlayheadRuler: React.FC<TimelinePlayheadRulerProps> = ({
       </div>
     </>
   );
-};
+});
+
+TimelinePlayheadRuler.displayName = 'TimelinePlayheadRuler';

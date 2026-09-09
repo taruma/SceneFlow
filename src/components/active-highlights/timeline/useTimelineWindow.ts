@@ -49,41 +49,40 @@ export function useTimelineWindow({
   // Actual playhead left percentage (anchors at playheadRatio once currentTime >= pastSpan)
   const playheadPercent = Math.min(100, Math.max(0, ((currentTime - windowStart) / totalSpanSeconds) * 100));
 
-  // Determine which cue categories exist in this script
-  const existingCategories = useMemo(() => {
-    const typesInProject = new Set<string>();
-    (cues || []).forEach(c => {
-      typesInProject.add(c.type || 'dialogue');
+  // 1. Group and pre-sort all project cues by category (runs ONLY when cues array changes)
+  const cuesByCategory = useMemo(() => {
+    const map = new Map<string, Cue[]>();
+    (cues || []).forEach(cue => {
+      const type = cue.type || 'dialogue';
+      let list = map.get(type);
+      if (!list) {
+        list = [];
+        map.set(type, list);
+      }
+      list.push(cue);
     });
 
-    // Filter to existing categories that are not hidden, preserving canonical order
-    return COLORS.filter(c => typesInProject.has(c.type) && !hiddenCueTypes.has(c.type));
-  }, [cues, hiddenCueTypes]);
+    // Pre-sort each category list once by startTime, then endTime
+    map.forEach(list => list.sort((a, b) => a.startTime - b.startTime || a.endTime - b.endTime));
+    return map;
+  }, [cues]);
 
-  // Compute normalized cue blocks mapped to percentage coordinates with interval packing (sub-lanes)
+  // 2. Determine which cue categories exist in this script
+  const existingCategories = useMemo(() => {
+    return COLORS.filter(c => cuesByCategory.has(c.type) && !hiddenCueTypes.has(c.type));
+  }, [cuesByCategory, hiddenCueTypes]);
+
+  // 3. Compute normalized cue blocks mapped to percentage coordinates with interval packing (sub-lanes)
   const calculatedCuesByLane = useMemo(() => {
     const laneMap = new Map<string, TimelineCalculatedCue[]>();
     existingCategories.forEach(cat => laneMap.set(cat.type, []));
 
-    // Group matching cues by category
-    const cuesByCategory = new Map<string, Cue[]>();
-    existingCategories.forEach(cat => cuesByCategory.set(cat.type, []));
-
-    (cues || []).forEach(cue => {
-      const type = cue.type || 'dialogue';
-      if (hiddenCueTypes.has(type)) return;
-      if (!cuesByCategory.has(type)) return;
-
-      // Check if cue intersects rolling window
-      if (cue.endTime < windowStart || cue.startTime > windowEnd) return;
-      cuesByCategory.get(type)!.push(cue);
-    });
-
-    // For each category, perform interval packing to assign sub-lane indices
+    // For each active category, only examine pre-grouped cues intersecting current window
     existingCategories.forEach(cat => {
-      const laneCues = cuesByCategory.get(cat.type) || [];
-      // Sort by start time, then end time
-      laneCues.sort((a, b) => a.startTime - b.startTime || a.endTime - b.endTime);
+      const allCategoryCues = cuesByCategory.get(cat.type) || [];
+      const laneCues = allCategoryCues.filter(
+        cue => cue.endTime >= windowStart && cue.startTime <= windowEnd
+      );
 
       const subLaneEndTimes: number[] = [];
       const packed: Array<{ cue: Cue; subLaneIndex: number }> = [];

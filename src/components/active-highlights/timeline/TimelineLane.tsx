@@ -11,6 +11,7 @@ interface TimelineLaneProps {
   selectedCueId?: string;
   onCueClick?: (cue: Cue) => void;
   themedColor?: { rgb?: string };
+  isPlaying?: boolean;
 }
 
 /**
@@ -21,12 +22,13 @@ interface TimelineLaneProps {
  * - Stationary, zero-layout-shift horizontal track container.
  * - Sliding cue blocks dynamically mapped within this lane.
  */
-export const TimelineLane: React.FC<TimelineLaneProps> = ({
+export const TimelineLane = React.memo<TimelineLaneProps>(({
   category,
   items,
   selectedCueId,
   onCueClick,
   themedColor,
+  isPlaying = false,
 }) => {
   const rgb = themedColor?.rgb || category.rgb || '150, 150, 150';
   const hasActiveCue = items.some(item => item.isPlayheadInside);
@@ -75,9 +77,12 @@ export const TimelineLane: React.FC<TimelineLaneProps> = ({
             item={item}
             onClick={onCueClick}
             isSelected={selectedCueId === item.cue.id}
+            isPlaying={isPlaying}
           />
         ))}
       </div>
     </div>
   );
-};
+});
+
+TimelineLane.displayName = 'TimelineLane';
