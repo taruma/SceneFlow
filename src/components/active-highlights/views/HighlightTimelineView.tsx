@@ -14,8 +14,8 @@ interface HighlightTimelineViewProps {
   cues: Cue[];
   hiddenCueTypes: Set<string>;
   resolveCueColor: (typeOrClass?: string) => CueThemeResolvedColor;
-  onSeekCue?: (cue: Cue) => void;
-  onSeekTo?: (seconds: number) => void;
+  onSeekCue?: (cue: Cue, autoPlay?: boolean) => void;
+  onSeekTo?: (seconds: number, autoPlay?: boolean) => void;
 }
 
 /**
@@ -67,9 +67,9 @@ export const HighlightTimelineView: React.FC<HighlightTimelineViewProps> = ({
 
   const handleReplayCue = (cue: Cue) => {
     if (onSeekTo) {
-      onSeekTo(cue.startTime);
+      onSeekTo(cue.startTime, true);
     } else if (onSeekCue) {
-      onSeekCue(cue);
+      onSeekCue(cue, true);
     }
   };
 

@@ -28,10 +28,10 @@ export interface ActiveHighlightsPanelProps {
   currentTime?: number;
   /** Whether video playback is currently active */
   isPlaying?: boolean;
-  /** Seek video playback to an exact timestamp in seconds */
-  onSeekTo?: (seconds: number) => void;
-  /** Seek video playback and synchronize screenplay canvas to a specific cue */
-  onSeekCue?: (cue: Cue) => void;
+  /** Seek video playback to an exact timestamp in seconds, optionally forcing playback */
+  onSeekTo?: (seconds: number, autoPlay?: boolean) => void;
+  /** Seek video playback and synchronize screenplay canvas to a specific cue, optionally forcing playback */
+  onSeekCue?: (cue: Cue, autoPlay?: boolean) => void;
   /** Optional controlled view presentation mode */
   viewMode?: HighlightViewMode;
   /** Callback fired when user switches view mode */

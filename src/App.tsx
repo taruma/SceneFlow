@@ -729,8 +729,8 @@ export default function App() {
                 scriptThemeId={scriptThemeId}
                 currentTime={currentTime}
                 isPlaying={playerState === 1}
-                onSeekTo={(seconds) => seekTo(seconds, true)}
-                onSeekCue={(cue) => seekTo(cue.startTime, true)}
+                onSeekTo={(seconds, autoPlay) => seekTo(seconds, true, autoPlay)}
+                onSeekCue={(cue, autoPlay) => seekTo(cue.startTime, true, autoPlay)}
               />
             )}
           </section>
