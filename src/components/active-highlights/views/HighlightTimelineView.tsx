@@ -1,0 +1,126 @@
+import React, { useState, useMemo, useEffect } from 'react';
+import { Cue } from '../../../types/script';
+import { CueThemeResolvedColor } from '../../../styles';
+import { useTimelineWindow } from '../timeline/useTimelineWindow';
+import { TimelineLane } from '../timeline/TimelineLane';
+import { TimelinePlayheadRuler } from '../timeline/TimelinePlayheadRuler';
+import { PausedInspectorCard } from '../inspector/PausedInspectorCard';
+import { UI_TOKENS } from '../../../styles/tokens/ui';
+import { cn } from '../../../lib/utils';
+
+interface HighlightTimelineViewProps {
+  currentTime: number;
+  isPlaying: boolean;
+  cues: Cue[];
+  hiddenCueTypes: Set<string>;
+  resolveCueColor: (typeOrClass?: string) => CueThemeResolvedColor;
+  onSeekCue?: (cue: Cue) => void;
+  onSeekTo?: (seconds: number) => void;
+}
+
+/**
+ * Multi-Track Sync Timeline view displaying horizontal tracks with a stationary
+ * 35% playhead, continuous timecode ruler, and docked paused cue inspector.
+ */
+export const HighlightTimelineView: React.FC<HighlightTimelineViewProps> = ({
+  currentTime,
+  isPlaying,
+  cues,
+  hiddenCueTypes,
+  resolveCueColor,
+  onSeekCue,
+  onSeekTo,
+}) => {
+  const [selectedCue, setSelectedCue] = useState<Cue | null>(null);
+
+  const {
+    playheadPercent,
+    existingCategories,
+    calculatedCuesByLane,
+    rulerTicks,
+  } = useTimelineWindow({
+    currentTime,
+    cues,
+    hiddenCueTypes,
+    resolveCueColor,
+  });
+
+  // Identify all cues currently active under the playhead
+  const activeCuesUnderPlayhead = useMemo(() => {
+    return (cues || []).filter(cue => {
+      if (hiddenCueTypes.has(cue.type || 'dialogue')) return false;
+      return currentTime >= cue.startTime && currentTime <= cue.endTime;
+    });
+  }, [cues, hiddenCueTypes, currentTime]);
+
+  // If playback resumes, clear manually selected cue so inspector follows live playhead
+  useEffect(() => {
+    if (isPlaying) {
+      setSelectedCue(null);
+    }
+  }, [isPlaying]);
+
+  const handleCueClick = (cue: Cue) => {
+    setSelectedCue(cue);
+    onSeekCue?.(cue);
+  };
+
+  const handleReplayCue = (cue: Cue) => {
+    if (onSeekTo) {
+      onSeekTo(cue.startTime);
+    } else if (onSeekCue) {
+      onSeekCue(cue);
+    }
+  };
+
+  return (
+    <div className="flex flex-col flex-1 min-h-0 space-y-2">
+      {/* Horizontal Multi-Track Container */}
+      <div className="relative p-3 bg-surface/70 border border-border-main rounded-xl shadow-xs overflow-hidden">
+        {/* Track Lanes Stack */}
+        <div className="space-y-1.5 min-h-[72px]">
+          {existingCategories.map(category => {
+            const items = calculatedCuesByLane.get(category.type) || [];
+            const themed = resolveCueColor(category.type);
+
+            return (
+              <TimelineLane
+                key={`lane-${category.type}`}
+                category={category}
+                items={items}
+                selectedCueId={selectedCue?.id}
+                onCueClick={handleCueClick}
+                themedColor={themed}
+              />
+            );
+          })}
+
+          {existingCategories.length === 0 && (
+            <div className={cn(UI_TOKENS.panel.emptyPlaceholder, "py-6 text-xs text-text-faint italic")}>
+              No cue categories enabled in filter or present in scene
+            </div>
+          )}
+        </div>
+
+        {/* Playhead Overlay & Bottom Timecode Ruler */}
+        {existingCategories.length > 0 && (
+          <TimelinePlayheadRuler
+            playheadPercent={playheadPercent}
+            rulerTicks={rulerTicks}
+          />
+        )}
+      </div>
+
+      {/* Docked Inspector Card (visible when paused or when cue is selected) */}
+      {(!isPlaying || selectedCue !== null) && (
+        <PausedInspectorCard
+          activeCues={activeCuesUnderPlayhead}
+          selectedCue={selectedCue}
+          onSelectCue={setSelectedCue}
+          onReplayCue={handleReplayCue}
+          resolveCueColor={resolveCueColor}
+        />
+      )}
+    </div>
+  );
+};

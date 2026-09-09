@@ -88,6 +88,7 @@ export default function App() {
     onStateChange,
     togglePlayPause,
     jumpBy,
+    seekTo,
   } = useYouTubePlayer({
     youtubeId: state.youtubeId,
     onPlay: () => setActiveStaging(null),
@@ -726,6 +727,10 @@ export default function App() {
                 hiddenCueTypes={hiddenCueTypes}
                 toggleCueTypeVisibility={toggleCueTypeVisibility}
                 scriptThemeId={scriptThemeId}
+                currentTime={currentTime}
+                isPlaying={playerState === 1}
+                onSeekTo={(seconds) => seekTo(seconds, true)}
+                onSeekCue={(cue) => seekTo(cue.startTime, true)}
               />
             )}
           </section>

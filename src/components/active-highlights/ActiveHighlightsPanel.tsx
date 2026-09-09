@@ -1,21 +1,24 @@
-import React, { useMemo } from 'react';
-import { Video } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Video, Activity, Layers } from 'lucide-react';
 import { COLORS } from '../../constants/script';
 import { useScriptTheme } from '../../hooks/useScriptTheme';
 import { cn } from '../../lib/utils';
 import { UI_TOKENS } from '../../styles/tokens/ui';
-import { ActiveHighlightsPanelProps } from './types';
+import { ActiveHighlightsPanelProps, HighlightViewMode } from './types';
 import { HighlightFilterBar } from './HighlightFilterBar';
-import { HighlightCard } from './HighlightCard';
+import { HighlightTimelineView } from './views/HighlightTimelineView';
+import { HighlightCardsView } from './views/HighlightCardsView';
+
+const STORAGE_KEY = 'sceneflow_highlight_view_mode';
 
 /**
- * Orchestrator panel for displaying active screenplay highlights during video playback.
+ * Top-level Active Highlights Panel orchestrator.
  *
- * Responsibilities:
- * - Computes and memoizes active, visible cues based on playback time and filter toggles.
- * - Displays active cue counter badge and cue category filter legend.
- * - Renders active highlight cards sorted according to canonical cue category order.
- * - Displays empty state placeholder when no cues are active.
+ * Features:
+ * - Segmented view mode switcher: [ 📊 Timeline | 🗂 Cards (Legacy) ] with persistent localStorage memory.
+ * - Live category filter bar with theme-resolved color pips and active pulse effects.
+ * - Zero-layout-shift Multi-Track Sync Timeline (default modern view).
+ * - Preserved Classic Cards list (legacy view).
  */
 export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
   cues,
@@ -24,11 +27,36 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
   hiddenCueTypes,
   toggleCueTypeVisibility,
   scriptThemeId,
+  currentTime = 0,
+  isPlaying = false,
+  onSeekTo,
+  onSeekCue,
+  viewMode: controlledMode,
+  onViewModeChange,
   onCueClick,
 }) => {
   const { resolveCueColor } = useScriptTheme(scriptThemeId as any);
 
-  // Memoize visible cues and category ordering to prevent unnecessary sorting on rapid ticks
+  // Persistent view mode state (default to 'timeline')
+  const [internalMode, setInternalMode] = useState<HighlightViewMode>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved === 'timeline' || saved === 'cards') return saved;
+    }
+    return 'timeline';
+  });
+
+  const activeMode = controlledMode || internalMode;
+
+  const handleModeSwitch = (newMode: HighlightViewMode) => {
+    setInternalMode(newMode);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(STORAGE_KEY, newMode);
+    }
+    onViewModeChange?.(newMode);
+  };
+
+  // Memoize visible cues for counter and legacy cards view
   const visibleCues = useMemo(() => {
     const filtered = (cues || []).filter(isCueVisible);
     const categoryOrder = COLORS.map(c => c.type);
@@ -41,15 +69,51 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
   }, [cues, isCueVisible]);
 
   return (
-    <div className="hidden lg:flex flex-col flex-1 mt-10 animate-in fade-in slide-in-from-left-4 duration-700">
-      {/* Panel Header & Counter */}
-      <div className="flex items-center justify-between mb-4">
+    <div className="hidden lg:flex flex-col flex-1 mt-6 animate-in fade-in slide-in-from-left-4 duration-700 min-h-0">
+      {/* Panel Header, View Switcher & Counter */}
+      <div className="flex items-center justify-between mb-3 gap-2">
         <h3 className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-2")}>
           <Video size={14} /> Active Highlights
         </h3>
-        <span className={UI_TOKENS.badge.counter}>
-          {visibleCues.length} active
-        </span>
+
+        <div className="flex items-center gap-2">
+          {/* Segmented View Switcher */}
+          <div className="flex items-center p-0.5 bg-surface-subtle border border-border-subtle rounded-lg shadow-xs">
+            <button
+              type="button"
+              onClick={() => handleModeSwitch('timeline')}
+              title="Multi-Track Sync Timeline"
+              className={cn(
+                "flex items-center gap-1 px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all select-none",
+                activeMode === 'timeline'
+                  ? "bg-surface text-text-main border border-border-main shadow-xs"
+                  : "text-text-muted hover:text-text-main"
+              )}
+            >
+              <Activity size={10} />
+              Timeline
+            </button>
+            <button
+              type="button"
+              onClick={() => handleModeSwitch('cards')}
+              title="Classic Cards (Legacy)"
+              className={cn(
+                "flex items-center gap-1 px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all select-none",
+                activeMode === 'cards'
+                  ? "bg-surface text-text-main border border-border-main shadow-xs"
+                  : "text-text-muted hover:text-text-main"
+              )}
+            >
+              <Layers size={10} />
+              Cards
+            </button>
+          </div>
+
+          {/* Active Count Badge */}
+          <span className={UI_TOKENS.badge.counter}>
+            {visibleCues.length} active
+          </span>
+        </div>
       </div>
 
       {/* Category Legend & Filter Controls */}
@@ -60,29 +124,24 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
         resolveCueColor={resolveCueColor}
       />
 
-      {/* Cue Display Stream / Cards List */}
-      <div className="flex-1 space-y-3 overflow-y-auto pr-2 scrollbar-hide">
-        {visibleCues.map((cue, idx) => {
-          const themed = resolveCueColor(cue.type || cue.colorClass || '');
-          const itemKey = cue.id ? `highlight-${cue.id}-${idx}` : `highlight-idx-${idx}`;
-
-          return (
-            <HighlightCard
-              key={itemKey}
-              cue={cue}
-              themedColor={themed}
-              index={idx}
-              onClick={onCueClick}
-            />
-          );
-        })}
-
-        {visibleCues.length === 0 && (
-          <div className={cn(UI_TOKENS.panel.emptyPlaceholder, "py-8")}>
-            <p className="text-xs text-text-faint italic">No active highlights at this time</p>
-          </div>
-        )}
-      </div>
+      {/* View Presentation Switcher */}
+      {activeMode === 'timeline' ? (
+        <HighlightTimelineView
+          currentTime={currentTime}
+          isPlaying={isPlaying}
+          cues={cues}
+          hiddenCueTypes={hiddenCueTypes}
+          resolveCueColor={resolveCueColor}
+          onSeekCue={onSeekCue || onCueClick}
+          onSeekTo={onSeekTo}
+        />
+      ) : (
+        <HighlightCardsView
+          visibleCues={visibleCues}
+          resolveCueColor={resolveCueColor}
+          onCueClick={onSeekCue || onCueClick}
+        />
+      )}
     </div>
   );
 };

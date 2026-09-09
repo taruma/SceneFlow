@@ -3,11 +3,10 @@ import { CueThemeResolvedColor, ScriptThemeId } from '../../styles';
 
 /**
  * View presentation modes for active highlights during video playback.
- * - `cards`: Standard card view featuring quotes, accent bars, and category tags.
- * - `compact`: Dense single-line badges optimized for scenes with many simultaneous cues.
- * - `stream`: Real-time HUD view focusing on primary dialogue with micro technical indicators.
+ * - `timeline`: Modern horizontal multi-track sync timeline with stationary playhead.
+ * - `cards`: Classic floating cards view (legacy mode).
  */
-export type HighlightViewMode = 'cards' | 'compact' | 'stream';
+export type HighlightViewMode = 'timeline' | 'cards';
 
 /**
  * Props for the main ActiveHighlightsPanel orchestrator.
@@ -25,10 +24,64 @@ export interface ActiveHighlightsPanelProps {
   toggleCueTypeVisibility: (type: string) => void;
   /** Active script theme ID used to resolve CSS/RGB accent colors */
   scriptThemeId: ScriptThemeId | string;
-  /** Optional layout view mode (defaults to 'cards') */
+  /** Current video playback timestamp in seconds */
+  currentTime?: number;
+  /** Whether video playback is currently active */
+  isPlaying?: boolean;
+  /** Seek video playback to an exact timestamp in seconds */
+  onSeekTo?: (seconds: number) => void;
+  /** Seek video playback and synchronize screenplay canvas to a specific cue */
+  onSeekCue?: (cue: Cue) => void;
+  /** Optional controlled view presentation mode */
   viewMode?: HighlightViewMode;
-  /** Optional click handler for a cue item (e.g., jump video to cue.startTime) */
+  /** Callback fired when user switches view mode */
+  onViewModeChange?: (mode: HighlightViewMode) => void;
+  /** Optional click handler for a cue item (legacy compatibility) */
   onCueClick?: (cue: Cue) => void;
+}
+
+/**
+ * Configuration for the rolling timeline window calculation.
+ */
+export interface TimelineWindowConfig {
+  /** Total visible window duration in seconds (default: 8.0s) */
+  totalSpanSeconds?: number;
+  /** Playhead horizontal position ratio from left edge (default: 0.35 for 35% anticipation) */
+  playheadRatio?: number;
+}
+
+/**
+ * Normalized cue positioned on a horizontal timeline track with percentage coordinates.
+ */
+export interface TimelineCalculatedCue {
+  /** Source cue data */
+  cue: Cue;
+  /** Horizontal start coordinate in percent [0, 100] */
+  leftPercent: number;
+  /** Horizontal width in percent [0, 100] */
+  widthPercent: number;
+  /** Whether the stationary playhead is currently intersecting this cue block */
+  isPlayheadInside: boolean;
+  /** Resolved cue theme color tokens */
+  themedColor: CueThemeResolvedColor;
+  /** Sub-lane vertical index when multiple cues in the same category overlap */
+  subLaneIndex: number;
+  /** Total number of sub-lanes required by this category in current window */
+  totalSubLanes: number;
+}
+
+/**
+ * Timecode tick mark along the timeline ruler.
+ */
+export interface TimelineTimecodeTick {
+  /** Time in seconds */
+  timeSeconds: number;
+  /** Formatted timecode label (e.g., "00:14") */
+  label: string;
+  /** Horizontal position in percent [0, 100] */
+  leftPercent: number;
+  /** Whether this tick corresponds to a full second or key interval */
+  isMajor: boolean;
 }
 
 /**
@@ -56,5 +109,21 @@ export interface HighlightFilterBarProps {
   /** Handler to toggle category visibility */
   onToggleCueType: (type: string) => void;
   /** Function resolving theme color for a given cue category */
+  resolveCueColor: (typeOrClass?: string) => CueThemeResolvedColor;
+}
+
+/**
+ * Props for the docked paused inspector card.
+ */
+export interface PausedInspectorCardProps {
+  /** List of cues currently active at the paused playhead position */
+  activeCues: Cue[];
+  /** Currently selected/inspected cue */
+  selectedCue: Cue | null;
+  /** Handler to select a specific cue if multiple overlap */
+  onSelectCue: (cue: Cue) => void;
+  /** Handler to replay this cue from its start time */
+  onReplayCue: (cue: Cue) => void;
+  /** Theme color resolver */
   resolveCueColor: (typeOrClass?: string) => CueThemeResolvedColor;
 }
