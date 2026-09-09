@@ -1,0 +1,58 @@
+import React from 'react';
+import { COLORS } from '../../constants/script';
+import { cn } from '../../lib/utils';
+import { HighlightFilterBarProps } from './types';
+
+/**
+ * Filter pill bar displaying all screenplay cue categories.
+ *
+ * Features:
+ * - Shows a pulsing background glow when a category has cues active in current playback.
+ * - Shows an indicator dot colored with the theme's resolved RGB value.
+ * - Allows users to click to mute/hide or unmute/reveal specific cue types.
+ */
+export const HighlightFilterBar: React.FC<HighlightFilterBarProps> = ({
+  activeCueTypes,
+  hiddenCueTypes,
+  onToggleCueType,
+  resolveCueColor,
+}) => {
+  return (
+    <div className="flex flex-wrap gap-1.5 mb-6">
+      {COLORS.map(color => {
+        const isActive = activeCueTypes.has(color.type);
+        const isHidden = hiddenCueTypes.has(color.type);
+        const themed = resolveCueColor(color.type);
+
+        return (
+          <button
+            key={color.type}
+            type="button"
+            onClick={() => onToggleCueType(color.type)}
+            aria-pressed={!isHidden}
+            title={isHidden ? `Show ${color.type} cues` : `Hide ${color.type} cues`}
+            className={cn(
+              "flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all border relative overflow-hidden",
+              isHidden
+                ? "bg-surface-subtle border-border-subtle text-text-faint opacity-60"
+                : "bg-surface border-border-main text-text-muted hover:border-border-main shadow-sm",
+              isActive && !isHidden && "bg-surface-subtle"
+            )}
+          >
+            {isActive && !isHidden && (
+              <span
+                className="absolute inset-0 opacity-30 animate-pulse pointer-events-none"
+                style={{ backgroundColor: `rgb(${themed.rgb})` }}
+              />
+            )}
+            <div
+              className="w-2 h-2 rounded-full shrink-0"
+              style={{ backgroundColor: isHidden ? undefined : `rgb(${themed.rgb})` }}
+            />
+            {color.type}
+          </button>
+        );
+      })}
+    </div>
+  );
+};
