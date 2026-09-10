@@ -37,7 +37,7 @@ If you need to add a new script line type (e.g., `lyrics`, `transition`, or a sp
   - `typography.ts`: Theme-specific structural classes and typography generated dynamically via `getScriptThemeStyles(themeId)`.
   - `helpers.ts`: Color manipulation and dynamic badge style generators (`hexToRgba`, `createCueBadgeStyle`, `createInlineCueStyle`).
 - **Hook Integration (`useScriptTheme`)**: Use the `useScriptTheme(scriptThemeId)` hook in components to access active `themeStyles`, `themeMetadata`, `isDark`, and `resolveCueColor` helpers.
-- **Pure Black Overlay Invariant**: When `pureBlackMode` is active on dark themes (`data-pure-black="true"`), `--app-bg` and `--surface` collapse to `#000000`, paper drop shadows are stripped, and punch holes are hidden. However, `activeTheme.paperBorder` must remain visible to frame the manuscript, and light/warm themes must never be modified by pure black rules.
+- **Theming & Video Overlay Invariants (`.agents/rules/theming-and-overlay-invariants.md`)**: Strictly maintain two-tier independence between the App Shell (`themeMode` $\to$ `effectiveCategory`) and the Script Paper (`scriptThemeId` $\to$ `activeTheme.category`). When `pureBlackMode` is active on dark themes, DOM attributes (`data-pure-black-script` and `data-pure-black-shell`) ensure `#000000` backgrounds, stripped drop shadows, and hidden punch holes, while preserving `activeTheme.paperBorder`. Light and warm themes must remain completely untouched.
 - **Base Typography**: Maintain the `baseStyle` constant (`"whitespace-pre-wrap min-h-[1em] leading-snug"`) to preserve consistent line height and wrapping behavior.
 
 ## 3. Regex & Parsing Standards

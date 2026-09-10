@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.3.0-dev] - Unreleased
 
 ### Added
+- **Theming & Video Overlay Invariants Rule (`.agents/rules/theming-and-overlay-invariants.md`, `docs/AGENTS.md`)**:
+  - Codified the two-tier theming independence invariant ensuring that App Shell theme modes (`themeMode`) and Script Paper presets (`scriptThemeId`) remain decoupled without cross-layer visual leakage.
+  - Documented video compositing and screen recording invariants: absolute `#000000` luminance requirements, fuzzy drop shadow removal, 1px paper border preservation, artifact suppression (hole punches, heading fills), and non-destructive dark theme scoping.
 - **Pure Black Canvas / Video Overlay Mode (`src/components/ScriptColorModal.tsx`, `src/components/MobileColorModal.tsx`, `src/hooks/useScriptPreferences.ts`, `src/index.css`)**:
   - Added an opt-in **Pure Black Canvas (Video Overlay Mode)** toggle inside both desktop `ScriptColorModal` and `MobileColorModal`, explicitly designed for screen recording and NLE compositing using **Screen** or **Lighten** blend modes.
   - **Dark-Theme-Scoped True Black (`#000000`)**: When enabled alongside dark themes (`Midnight Slate`, `OLED Blackout`, `Navy Slate`), forces absolute `#000000` (RGB: `0, 0, 0`) backgrounds across the entire workspace (`--app-bg`, `--surface`, `--surface-dark`), eliminating the milky grey box or foggy wash caused by off-black values (`#0c0a09` / `#18181b`) in video overlay blending.
