@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0-dev] - Unreleased
+
+### Added
+- **Multi-Track Sync Timeline (`src/components/active-highlights/`)**:
+  - Re-architected the playback Active Highlights panel from vertical cards into a modern, zero-layout-shift horizontal multi-track sync timeline inspired by NLEs and DAWs.
+  - **Stationary Anticipation Playhead (`TimelinePlayheadRuler.tsx`)**: Anchored at 35% from the left edge with a glowing vertical laser marker and pip, giving visual room for upcoming dialogue anticipation.
+  - **Sliding Continuous Timecode Ruler (`TimelinePlayheadRuler.tsx`)**: Dynamically renders 1-second ticks and major MM:SS labels smoothly gliding in real-time.
+  - **Deterministic Global Sub-Lane Stacking (`useTimelineWindow.ts`)**: Implemented greedy interval scheduling across all script cues to assign fixed, permanent sub-lane indices, completely eliminating vertical row-jumping or card juggling during scrubbing and playback.
+  - **Docked Paused Cue Inspector (`PausedInspectorCard.tsx`)**: Automatically docks below the timeline whenever playback is paused or a cue block is clicked, featuring multi-cue tab switching, category-themed badges, large serif italic screenplay quotes, precision timestamps (`MM:SS.s`), and a dedicated "Replay" action.
+  - **Segmented View Mode Switcher (`ActiveHighlightsPanel.tsx`)**: Added a persistent header toggle (`[ 📊 Timeline | 🗂 Cards ]`) stored in `localStorage` (`sceneflow_highlight_view_mode`), allowing users to switch between the modern multi-track timeline and the classic floating cards view at any time.
+  - **High-Craft Sub-Package Modularization**: Fully decomposed the monolithic highlights component into a dedicated, modular folder structure (`src/components/active-highlights/`) with a public API barrel export (`index.ts`), clean contracts (`types.ts`), headless calculation hook (`useTimelineWindow.ts`), and isolated track primitives (`TimelineLane.tsx`, `TimelineCueBlock.tsx`).
+- **Timing Buffers Activation Synchronization (The Dual-Time Principle) (`useTimelineWindow.ts`, `HighlightTimelineView.tsx`, `ActiveHighlightsPanel.tsx`)**:
+  - Integrated `state.settings` into the timeline so that cue blocks and category indicator dots illuminate (`isPlayheadInside`) across the full `before` lead-in and `after` hold buffers via `isCueActive()`.
+  - Docked paused cue inspector displays active cues in lockstep with the highlighted screenplay text while preserving physical audio media boundaries (`startTime` $\to$ `endTime`) on the timecode ruler.
+
+### Fixed
+- **Playback State-Aware Seeking & Auto-Play Suppression (`src/hooks/useYouTubePlayer.ts`, `src/App.tsx`, `src/hooks/useCueEditor.ts`)**:
+  - Fixed an issue where clicking a cue on the timeline or in the script while paused triggered YouTube's unbuffered seek autoplay quirk (`BUFFERING (3) -> PLAYING (1)`).
+  - Implemented pre-emptive and post-seek `player.pauseVideo()` enforcement alongside `player.seekTo()`.
+  - Added an auto-expiring 600ms seek guard timeout to prevent the "ghost pause" bug, ensuring that subsequent clicks on the YouTube player frame start playback immediately on the first click.
+  - Propagated explicit `autoPlay: true` intent through props so the inspector's "Replay" action immediately seeks and begins playback.
+  - Protected edit-mode cue selection in `useCueEditor.ts` against involuntary playback when paused.
+- **Filter Bar & Header Optical Alignment (`HighlightFilterBar.tsx`, `ActiveHighlightsPanel.tsx`)**:
+  - Centered and optically aligned filter badge pills and active indicator dots.
+  - Harmonized header mode toggle buttons and active count badges for consistent vertical baselines.
+
 ## [2.2.0] - 2026-08-29
 
 ### Added

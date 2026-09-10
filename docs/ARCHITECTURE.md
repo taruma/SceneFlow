@@ -238,7 +238,15 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 12. **`TimingSettingsModal.tsx`**: Full-screen configuration modal for per-category timing buffers (before/after offsets) and General Master Offset using `UI_TOKENS`.
 13. **`ScriptColorModal.tsx`**: Theme picker featuring a "Theme Presets" tab with mini live paper preview cards and an "Element Inspector" tab displaying token details and the 8-category highlight spectrum using `UI_TOKENS.swatch`.
 14. **`ScriptHeaderControls.tsx`**: Playback-mode control bar with auto-scroll toggle, target-type multi-select dropdown, reading width preset selector, and scroll focus preset selector.
-15. **`ActiveHighlightsPanel.tsx`**: Desktop playback sidebar showing active highlight cards sorted by type, with per-type filter toggle chips and animated pulse indicators, consuming `useScriptTheme`.
+15. **`ActiveHighlightsPanel` (`src/components/active-highlights/`)**: Modular playback visualization sub-package featuring:
+    - **`ActiveHighlightsPanel.tsx`**: Main orchestrator with persistent segmented view switcher (`[ 📊 Timeline | 🗂 Cards ]`).
+    - **`HighlightTimelineView.tsx`**: Multi-Track Sync Timeline view with dynamic lane height, stationary 35% anticipation playhead, and docked inspector card.
+    - **`HighlightCardsView.tsx`**: Classic floating cards presentation for legacy playback visualization.
+    - **`useTimelineWindow.ts`**: Headless rolling window hook with global greedy interval scheduling for sub-lanes and timecode tick marks.
+    - **`TimelineLane.tsx` & `TimelineCueBlock.tsx`**: Isolated track components with hardware-accelerated CSS transitions and theme coloring.
+    - **`TimelinePlayheadRuler.tsx`**: Gliding timecode ruler and glowing vertical playhead marker.
+    - **`PausedInspectorCard.tsx`**: Docked paused cue inspector with multi-cue tabs, screenplay quote, and instant replay action.
+    - **`HighlightFilterBar.tsx`**: Centered category filter pills with active pulsing state dots.
 16. **`LibraryModal.tsx`**: Desktop library catalogue modal featuring real-time search, category navigation, sorting (Latest, Oldest, A-Z), section badges, and featured curations.
 17. **`MobileLibraryModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a touch-friendly category filter and search interface.
 18. **`StagingModal.tsx`**: Monospace overlay displaying hidden camera, lighting, or lookbook directives from `[[STAGING]]` blocks.

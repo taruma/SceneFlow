@@ -85,7 +85,38 @@ When script text is edited or pasted, the "Align" tool sorts cues chronologicall
 
 ---
 
-## 4. Auto-Scroll & Viewport Alignment Engine
+## 4. Multi-Track Sync Timeline & Active Highlights
+
+During video playback, the sidebar presents a real-time visualization of all active and upcoming cues:
+
+### Multi-Track Sync Timeline (`HighlightTimelineView`)
+Inspired by professional Non-Linear Editors (NLEs), the timeline maps cues onto horizontal category tracks (Dialogue, Action, Camera, Audio, etc.):
+- **Stationary 35% Anticipation Playhead**: The vertical laser line and top pip marker remain anchored at 35% of the container width, providing generous lookahead space for approaching dialogue and sound cues.
+- **Continuous Real-Time Timecode Ruler**: Glides underneath the tracks in real-time, displaying 1-second ticks and major `MM:SS` timecode labels.
+- **Global Greedy Interval Scheduling**: Multiple overlapping cues within the same category automatically stack into stable sub-lanes (`subLaneIndex`), calculated globally across the script to prevent any row-jumping or vertical layout shifting during scrubbing.
+- **Zero Layout Shift & Micro-Performance**: Uses hardware-accelerated linear CSS transitions (`100ms linear`) and `will-change: left, width` in tight sync with the YouTube player clock.
+- **Seek Without Unwanted Playback**: Clicking any cue block seeks the player to that timestamp while preserving the paused state without triggering YouTube's unbuffered autoplay quirk.
+
+### Docked Paused Cue Inspector (`PausedInspectorCard`)
+Reveals smoothly below the timeline whenever video playback is paused or a cue block is clicked:
+- **Multi-Cue Tabs**: If multiple cues are active at the same timestamp, horizontal tabs allow instant cycling between them.
+- **Themed Accent Header**: Features category pill badge, theme-colored top bar, and precise timecode range (`MM:SS.s`) with duration badge.
+- **Screenplay Quote**: Displays the full screenplay excerpt in large, readable serif italics.
+- **Instant Replay**: Clicking "Replay" jumps to the cue's start time and immediately initiates playback.
+
+### View Mode Switcher (Timeline vs. Cards)
+- **Segmented Control**: The panel header features a `[ 📊 Timeline | 🗂 Cards ]` switcher.
+- **Classic Cards View**: Users can switch back to the legacy floating cards presentation at any time.
+- **Persistence**: View mode selection persists across sessions in `localStorage` (`sceneflow_highlight_view_mode`).
+
+### Category Legend & Filter Controls (`HighlightFilterBar`)
+- Clickable pills for each cue category with dynamic count indicators.
+- Pulsing animated glow indicates which categories have cues currently active under the playhead.
+- Clicking a category pill toggles its visibility in both the timeline tracks and the script viewer.
+
+---
+
+## 5. Auto-Scroll & Viewport Alignment Engine
 
 During video playback, the script auto-scrolls to follow active dialogue and narrative cues.
 
@@ -110,7 +141,7 @@ Controls where the active cue line settles vertically within the reading contain
 
 ---
 
-## 5. Script Viewer Customization & Dynamic Multi-Theming
+## 6. Script Viewer Customization & Dynamic Multi-Theming
 
 ### Dynamic App Shell Theming (Light / Warm / Dark)
 The application shell features three bespoke CSS variable palettes that dynamically skin the entire workspace (Header, Left Panels, Modals, Desk Surface):
@@ -151,21 +182,22 @@ Desktop playback mode includes a range slider (40% to 100%) to scale video previ
 
 ---
 
-## 6. Timing Settings & Buffer Engine
+## 7. Timing Settings & Buffer Engine
 
 Fine-tunes highlight visibility timing before and after actual cue timestamps:
 - **General Master Offset**: Global `before` and `after` buffers applied across all cue categories.
 - **Category-Specific Offsets**: Individual `before` and `after` buffers for each of the 8 cue types.
 - **Negative Offsets**: Supports negative values to display highlights earlier or end them sooner.
 - **Formula**: `Effective Visibility Window = [StartTime - (GlobalBefore + CategoryBefore), EndTime + (GlobalAfter + CategoryAfter)]`.
+- **Timeline & Inspector Synchronization**: The timeline's active playhead detection and docked inspector honor the full visibility window, illuminating cues across their `before`/`after` lead-in while maintaining accurate audio media positions on the ruler.
 - Reset button restores all timing settings to `0.0s` defaults.
 
 ---
 
-## 7. Persistence, Sharing, & Library Catalogue
+## 8. Persistence, Sharing, & Library Catalogue
 
 ### Local Persistence
-All project states (`screenplay_sync_state`), theme preferences (`sceneflow_script_theme`), width presets (`sceneflow_script_width_preset`), and scroll focus settings (`sceneflow_scroll_focus_preset`) persist in `localStorage`.
+All project states (`screenplay_sync_state`), theme preferences (`sceneflow_script_theme`), width presets (`sceneflow_script_width_preset`), scroll focus settings (`sceneflow_scroll_focus_preset`), and timeline view mode (`sceneflow_highlight_view_mode`) persist in `localStorage`.
 
 ### Default Project & Quick Start Guide
 - Fresh visits default to loading the **Scene Frequency** (`scene_frequency.json`) guide script.
@@ -194,11 +226,11 @@ For a complete and up-to-date list of all available sceneflow projects, release 
 
 ---
 
-## 8. Application Information & Keyboard Navigation
+## 9. Application Information & Keyboard Navigation
 
 ### Desktop App Info Modal (`AppInfoModal`)
 Accessible via the `i` (Info) icon button in the desktop header toolbar:
-- **Dynamic Version & Metadata**: Automatically loads current version (`v2.2.0`), app title, and description directly from `metadata.json`.
+- **Dynamic Version & Metadata**: Automatically loads current version (`v2.3.0-dev`), app title, and description directly from `metadata.json`.
 - **Author Attribution**: Features creator credit for **Taruma Sakti** in header and footer linking directly to [Linktree](https://linktr.ee/tarumainfo).
 - **Interactive Resource Grid**: 2x2 resource links for GitHub Repository, Documentation / Guide, Release Notes (Changelog), and Ko-fi Support.
 - **MIT License**: License status indicator.

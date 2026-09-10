@@ -65,9 +65,11 @@ When modifying application state, storage keys, or external fetching:
 - **State Schema**: Maintain the `AppState` interface in `src/types/script.ts` (`youtubeId`, `scriptText`, `cues: Cue[]`, `settings?: Record<string, TimingSettings>`).
 - **LocalStorage Keys**:
   - `'screenplay_sync_state'`: Core project data (video ID, script text, cues, timing settings).
+  - `'sceneflow_app_theme_mode'`: Active application shell theme mode (`AppThemeMode`: `'auto' | 'light' | 'warm' | 'dark'`).
   - `'sceneflow_script_theme'`: Active script viewer theme ID (`ScriptThemeId`).
   - `'sceneflow_script_width_preset'`: Active desktop script width preset (`ScriptWidthPresetId`).
   - `'sceneflow_scroll_focus_preset'`: Active desktop auto-scroll focus anchor (`ScrollFocusPresetId`).
+  - `'sceneflow_highlight_view_mode'`: Active highlights presentation mode (`HighlightViewMode`: `'timeline' | 'cards'`).
 - **Query Parameters**: On application mount, inspect `window.location.search`:
   - `?example=ID`: Matches an example `id` from `EXAMPLE_SECTIONS` in `src/examples.ts`.
   - `?project=URL`: Loads a remote CORS-enabled JSON project.
@@ -109,4 +111,26 @@ SceneFlow maintains a curated library of built-in projects across 4 categories: 
    - Use the repository's semantic commit pattern:
      `feat: add <Title> [<category>] example and register it in catalogue`
      *(Examples: `feat: add Observation Only AI scene example and register it in catalogue`, `feat: add Khemia AI clip example and register it in the examples catalogue`)*
+
+## 8. Media Timeline Synchronization & Playback Invariants
+
+When developing or modifying playback, cue synchronization, or timeline visualization in SceneFlow:
+
+1. **The Dual-Time Principle**:
+   - **Physical Media Time (`[startTime, endTime]`)**: Strictly dictates timeline block geometry (`leftPercent`, `widthPercent`), timecode ruler ticks, duration badges, and sub-lane collision intervals. Blocks are never physically stretched or shifted by `before`/`after` buffers to avoid distorting audio timing.
+   - **Perceptual Activation Buffers (`isCueActive(cue, currentTime, settings)`)**: Governs visual activation states: cue illumination outlines, pulsing lane indicator dots, inspector card docking, and screenplay text highlighting.
+
+2. **YouTube IFrame API `seekTo()` State Preservation**:
+   - YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds, true)` is called while paused.
+   - **Dual Pause**: Enforce `player.pauseVideo()` before and after `player.seekTo()`.
+   - **Auto-Expiring Guard**: Intercept unwanted `BUFFERING (3) -> PLAYING (1)` transitions using an auto-expiring timer (600ms). Never leave a seek-pause flag armed indefinitely, or users will experience the "ghost pause" bug requiring two clicks to play.
+   - **Explicit Playback Intent**: Clear the suppression flag immediately on all deliberate play triggers (`playVideo`, `togglePlayPause`, or explicit "Replay" actions).
+
+3. **Deterministic Sub-Lane Allocation**:
+   - Compute sub-lane indices **globally** across the entire script once using greedy interval scheduling (`useTimelineWindow.ts`).
+   - Never compute sub-lane packing dynamically inside a rolling time window, as this causes cue blocks to juggle or swap rows when neighboring cues enter or exit the viewport.
+
+4. **Modular Sub-Package Architecture**:
+   - Keep playback visualization components modularized inside `src/components/active-highlights/` rather than expanding `App.tsx`.
+   - Consume the public API barrel export (`src/components/active-highlights/index.ts`).
 
