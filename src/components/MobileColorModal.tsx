@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Check, Palette, Sun, Moon, Coffee, Sparkles, Video } from 'lucide-react';
+import { X, Check, Palette, Sun, Moon, Coffee, Sparkles, Video, Eye } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { SCRIPT_THEMES, type ScriptThemeId, type ScriptTheme } from '../lib/scriptStyles';
+import { SCRIPT_THEMES, type ScriptThemeId, type ScriptTheme, type CuePaletteProfile } from '../lib/scriptStyles';
 import { useEscapeKey } from '../hooks/useEscapeKey';
 import type { AppThemeMode, AppThemeCategory } from '../hooks/useAppShellTheme';
 
@@ -16,6 +16,8 @@ interface MobileColorModalProps {
   effectiveThemeCategory?: AppThemeCategory;
   pureBlackMode?: boolean;
   setPureBlackMode?: (enabled: boolean) => void;
+  cuePaletteProfile?: CuePaletteProfile;
+  onSelectPaletteProfile?: (profile: CuePaletteProfile) => void;
 }
 
 const THEME_MODE_OPTIONS: Array<{
@@ -39,6 +41,8 @@ export function MobileColorModal({
   effectiveThemeCategory = 'light',
   pureBlackMode = false,
   setPureBlackMode,
+  cuePaletteProfile = 'standard',
+  onSelectPaletteProfile,
 }: MobileColorModalProps) {
   useEscapeKey(onClose, isOpen);
 
@@ -97,6 +101,48 @@ export function MobileColorModal({
 
             {/* Scrollable Content */}
             <div className="flex-1 overflow-y-auto custom-dark-scrollbar p-4 space-y-4">
+              {/* Cue Palette Accessibility Profile */}
+              {onSelectPaletteProfile && (
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between px-0.5">
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-text-faint flex items-center gap-1.5">
+                      <Eye size={12} /> Palette Profile
+                    </span>
+                    <span className="text-[9px] font-mono text-text-muted">
+                      {cuePaletteProfile === 'protanopia' ? 'Protan & Deutan Safe' : 'Standard'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-1 p-1 bg-surface-muted rounded-xl border border-border-main">
+                    <button
+                      type="button"
+                      onClick={() => onSelectPaletteProfile('standard')}
+                      className={cn(
+                        'py-2 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center gap-1.5 active:scale-95',
+                        cuePaletteProfile === 'standard'
+                          ? 'bg-btn-primary-bg text-btn-primary-text shadow-sm'
+                          : 'text-text-muted hover:text-text-main'
+                      )}
+                    >
+                      <span>Standard</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onSelectPaletteProfile('protanopia')}
+                      className={cn(
+                        'py-2 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center gap-1.5 active:scale-95',
+                        cuePaletteProfile === 'protanopia'
+                          ? 'bg-btn-primary-bg text-btn-primary-text shadow-sm'
+                          : 'text-text-muted hover:text-text-main'
+                      )}
+                    >
+                      <Eye size={12} />
+                      <span>Protan Safe</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* App Shell Mode Selector */}
               {setThemeMode && (
                 <div className="space-y-1.5">

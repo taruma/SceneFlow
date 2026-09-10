@@ -10,6 +10,7 @@ import type {
   AppMode 
 } from '../types/script';
 import { COLORS } from '../constants/script';
+import { LEGACY_CLASS_MAP } from '../styles/tokens/cues';
 import { generateId } from '../lib/utils';
 import { getSelectionIndicesFromDOM, findAlternativeLocations as searchAlternativeLocations } from '../lib/cueUtils';
 
@@ -98,8 +99,8 @@ export function useCueEditor({
       return;
     }
 
-    const cueType = newCue.type || (newCue.colorClass ? COLORS.find(c => c.class === newCue.colorClass)?.type : 'dialogue') || 'dialogue';
-    const colorClass = newCue.colorClass || COLORS.find(c => c.type === cueType)?.class || COLORS[0].class;
+    const cueType = newCue.type || (newCue.colorClass ? (LEGACY_CLASS_MAP[newCue.colorClass] || COLORS.find(c => c.class === newCue.colorClass)?.type) : 'dialogue') || 'dialogue';
+    const colorClass = COLORS.find(c => c.type === cueType)?.class || newCue.colorClass || COLORS[0].class;
 
     const cue: Cue = {
       id: newCue.id || generateId(),
@@ -155,8 +156,8 @@ export function useCueEditor({
   }, [deleteConfirmation.cue, newCue.id, setState, cancelEdit]);
 
   const selectCueForEdit = useCallback((cue: Cue) => {
-    const cueType = cue.type || (cue.colorClass ? COLORS.find(c => c.class === cue.colorClass)?.type : 'dialogue') || 'dialogue';
-    const colorClass = cue.colorClass || COLORS.find(c => c.type === cueType)?.class || COLORS[0].class;
+    const cueType = cue.type || (cue.colorClass ? (LEGACY_CLASS_MAP[cue.colorClass] || COLORS.find(c => c.class === cue.colorClass)?.type) : 'dialogue') || 'dialogue';
+    const colorClass = COLORS.find(c => c.type === cueType)?.class || cue.colorClass || COLORS[0].class;
     setNewCue({ ...cue, type: cueType, colorClass });
     setSelection({ text: cue.selectedText, start: cue.startIndex, end: cue.endIndex });
     if (player) {

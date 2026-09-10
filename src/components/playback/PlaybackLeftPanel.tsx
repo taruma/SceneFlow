@@ -4,6 +4,7 @@ import { Video, VideoOff, Play, Pause, RotateCcw } from 'lucide-react';
 import { Cue, TimingSettings } from '../../types/script';
 import { extractYoutubeId, cn } from '../../lib/utils';
 import { UI_TOKENS } from '../../styles/tokens/ui';
+import { CuePaletteProfile } from '../../styles';
 import { ActiveHighlightsPanel } from '../ActiveHighlightsPanel';
 import { TimelineDensity } from '../active-highlights/types';
 
@@ -33,6 +34,7 @@ export interface PlaybackLeftPanelProps {
   hiddenCueTypes: Set<string>;
   toggleCueTypeVisibility: (type: string) => void;
   scriptThemeId: string;
+  cuePaletteProfile?: CuePaletteProfile;
   density?: TimelineDensity;
   style?: React.CSSProperties;
   className?: string;
@@ -65,6 +67,7 @@ export const PlaybackLeftPanel: React.FC<PlaybackLeftPanelProps> = ({
   hiddenCueTypes,
   toggleCueTypeVisibility,
   scriptThemeId,
+  cuePaletteProfile = 'standard',
   density = 'comfortable',
   style,
   className,
@@ -261,6 +264,7 @@ export const PlaybackLeftPanel: React.FC<PlaybackLeftPanelProps> = ({
           hiddenCueTypes={hiddenCueTypes}
           toggleCueTypeVisibility={toggleCueTypeVisibility}
           scriptThemeId={scriptThemeId}
+          cuePaletteProfile={cuePaletteProfile}
           currentTime={currentTime}
           isPlaying={playerState === 1}
           onSeekTo={(seconds, autoPlay) => seekTo(seconds, true, autoPlay)}

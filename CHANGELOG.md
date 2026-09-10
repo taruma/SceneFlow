@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.3.0-dev] - Unreleased
 
 ### Added
+- **Cue Palette Accessibility Profile & Protanopia/Deuteranopia Safe Mode (`src/styles/tokens/cues.ts`, `src/components/ScriptColorModal.tsx`, `src/components/MobileColorModal.tsx`, `src/hooks/useScriptPreferences.ts`)**:
+  - Added an opt-in **Cue Palette Accessibility Profile** selector (`CuePaletteProfile`: `'standard' | 'protanopia'`) directly inside both desktop `ScriptColorModal` and `MobileColorModal`.
+  - **Protanopia & Deuteranopia Accessibility**: Solved Red-Green Color Vision Deficiency where Indigo and Blue collapse into identical hues due to reduced L/M cone sensitivity, by remapping **Shot** to **Deep Wine / Burgundy** (`rgb(136, 19, 55)` in light paper / `rgb(225, 29, 72)` in dark paper). In Protanopia, this registers as a warm, rich chocolate-wine tone ($L^* \approx 25$) with massive luminance separation from **Action Blue** ($L^* \approx 50$), eliminating blue-indigo ambiguity.
+  - **High-Luminance Ice Aqua & Vermilion Coral**: Saturated **Action** to firm Cobalt Blue (`rgb(37, 99, 235)`), elevated **VFX** to radiant high-luminance Ice Aqua (`rgb(103, 232, 249)` in dark themes, $L^* \approx 85$), and calibrated **Transition** to warm Vermilion Coral (`rgb(234, 88, 12)`).
+  - **Instant Live Synchronization & Persistence**: Switching profiles immediately updates the screenplay text highlights, multi-track timeline lanes, Active Highlights VU meter and cards, and modal inspector swatches, persisted across sessions in `localStorage` (`sceneflow_cue_palette_profile`).
+- **Harmonized 360° Standard Cue Color Palette Overhaul (`src/styles/tokens/cues.ts`, `src/styles/helpers.ts`, `src/lib/cueUtils.ts`)**:
+  - Overhauled the default 8-category screenplay cue palette to distribute all categories evenly across the 360° color wheel, eliminating pastel hue crowding between Shot, Transition, and VFX.
+  - **Transition (Crimson Rose `bg-rose-500/50`)**: Replaced ambiguous soft pastel pink (`bg-pink-400`) with crisp Crimson Rose (`rgb(244, 63, 94)`), introducing an authoritative editorial cut mark that never blurs into purple.
+  - **Shot (Deep Iris / Indigo `bg-indigo-400/50`)**: Shifted from lilac purple to Deep Iris (`rgb(129, 140, 248)`), providing framing cues (CU, Wide, POV) with a deliberate architectural cool tone.
+  - **VFX (Electric Aqua `bg-cyan-400/50`)**: Calibrated to sharp Electric Aqua (`rgb(6, 182, 212)` light / `rgb(34, 211, 238)` dark), removing previous dark-mode teal drift (`rgb(45, 212, 191)`) that previously clashed with camera emerald green.
+  - **Action & Camera Buffer Widening**: Deepened **Action** to Royal Cobalt Blue (`bg-blue-500/50`, `rgb(59, 130, 246)`) and **Camera** to crisp Emerald Green (`bg-green-500/50`, `rgb(34, 197, 94)`).
+  - **Backward Compatibility Engine (`LEGACY_CLASS_MAP`)**: Added seamless fallback normalization for older script files and localStorage states referencing legacy classes (`bg-purple-400/50`, `bg-pink-400/50`, `bg-blue-400/50`, `bg-green-400/50`), automatically upgrading them to the new canonical color classes on edit.
 - **Theming & Video Overlay Invariants Rule (`.agents/rules/theming-and-overlay-invariants.md`, `docs/AGENTS.md`)**:
   - Codified the two-tier theming independence invariant ensuring that App Shell theme modes (`themeMode`) and Script Paper presets (`scriptThemeId`) remain decoupled without cross-layer visual leakage.
   - Documented video compositing and screen recording invariants: absolute `#000000` luminance requirements, fuzzy drop shadow removal, 1px paper border preservation, artifact suppression (hole punches, heading fills), and non-destructive dark theme scoping.

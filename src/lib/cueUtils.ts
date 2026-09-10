@@ -1,5 +1,6 @@
 import type { Cue, TimingSettings, AppState, AlternativeLocation } from '../types/script';
 import { COLORS, DEFAULT_SETTINGS } from '../constants/script';
+import { LEGACY_CLASS_MAP } from '../styles/tokens/cues';
 import { processScript } from './scriptProcessor';
 import { generateId } from './utils';
 
@@ -17,8 +18,8 @@ export function sanitizeCues(cues: any[]): Cue[] {
     }
     seenIds.add(id);
 
-    const cueType = c?.type || (c?.colorClass ? COLORS.find(col => col.class === c.colorClass)?.type : 'dialogue') || 'dialogue';
-    const colorClass = c?.colorClass || COLORS.find(col => col.type === cueType)?.class || COLORS[0].class;
+    const cueType = c?.type || (c?.colorClass ? (LEGACY_CLASS_MAP[c.colorClass] || COLORS.find(col => col.class === c.colorClass)?.type) : 'dialogue') || 'dialogue';
+    const colorClass = COLORS.find(col => col.type === cueType)?.class || c?.colorClass || COLORS[0].class;
 
     return {
       ...c,

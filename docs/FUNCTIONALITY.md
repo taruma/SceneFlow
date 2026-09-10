@@ -61,14 +61,15 @@ Cues link specific text segments in the screenplay to video playback timestamps.
 
 ### Cue Categories & Themes
 Supports eight color-coded cue categories, each calibrated with theme-specific RGB values:
-1. 🟡 **Dialogue**: Spoken character dialogue.
-2. 🔵 **Action**: Physical action beats and actor movements.
-3. 🟢 **Camera**: Camera moves, gimbal directions, and framing.
-4. 🟣 **Shot**: Shot scale descriptions (CU, WIDE, OTS, ESTABLISHING).
-5. 🟠 **Audio**: Sound effects, foley, and soundtrack cues.
-6. 🔷 **VFX**: Visual effects and CGI instructions.
-7. 🩷 **Transition**: Scene cuts, dissolves, and pacing transitions.
-8. ⚪ **Environment**: Atmospheric lighting and weather conditions.
+1. 🟡 **Dialogue**: Spoken character dialogue (Amber Gold).
+2. 🔵 **Action**: Physical action beats and actor movements (Royal Cobalt Blue).
+3. 🟢 **Camera**: Camera moves, gimbal directions, and framing (Emerald Green).
+4. 🟣 **Shot**: Shot scale descriptions (CU, WIDE, OTS, ESTABLISHING) (Deep Iris).
+5. 🟠 **Audio**: Sound effects, foley, and soundtrack cues (Bright Amber Orange).
+6. 🔷 **VFX**: Visual effects and CGI instructions (Electric Aqua).
+7. 🌹 **Transition**: Scene cuts, dissolves, and pacing transitions (Crimson Rose).
+8. ⚪ **Environment**: Atmospheric lighting and weather conditions (Steel Slate).
+
 
 ### Cue Creation & In-Place Text Editing
 - **Creation**: In Edit Mode, highlight text in the script preview to populate the "New Sync Cue" panel with calculated start and end character offsets.
@@ -226,6 +227,16 @@ Users can toggle between six screenplay visual themes via the desktop `ScriptCol
 - **Mobile Theme Drawer (`MobileColorModal`)**:
   - A touch-friendly bottom-sheet drawer with a 4-segment App Shell switcher (`Auto`, `Light`, `Warm`, `Dark`) and 6 compact screenplay cards styled in their true paper colors and typography contrast.
 
+### Cue Palette Accessibility Profile (Standard vs. Protan & Deutan Safe)
+Accessible directly inside both `ScriptColorModal` and `MobileColorModal`:
+- **Standard Cinema (`standard`)**: Default 360° color-wheel balanced palette across all 8 cue categories (Transition: Crimson Rose, Shot: Deep Iris, VFX: Electric Aqua, Action: Royal Cobalt Blue, Camera: Emerald Green, Audio: Bright Amber Orange, Dialogue: Amber Gold, Environment: Steel Slate).
+- **Protan & Deutan Safe (`protanopia`)**: Designed specifically for Red-Green Color Vision Deficiency (Protanopia and Deuteranopia).
+  - **The CVD Challenge**: Reduced L/M-cone sensitivity causes purple/indigo and blue to collapse into identical blue tones when luminance levels match. Users with protanopia cannot distinguish between Action (Blue) and Shot (Indigo/Purple).
+  - **Deep Wine / Burgundy Remapping**: Remaps **Shot** away from the blue/indigo family to **Deep Wine / Burgundy** (`rgb(136, 19, 55)` in light paper / `rgb(225, 29, 72)` in dark paper). In protanopia, this registers as a warm, rich chocolate-wine tone ($L^* \approx 25$) with massive luminance and chromatic contrast against Cobalt Blue Action ($L^* \approx 50$), eliminating ambiguity.
+  - **Radiant Ice Aqua VFX & Vermilion Coral Transition**: Elevates VFX to ultra-high-luminance Ice Aqua (`rgb(103, 232, 249)` in dark themes, $L^* \approx 85$) and Transition to warm Vermilion Coral (`rgb(234, 88, 12)`).
+- **Live Synchronization**: Toggling the accessibility profile immediately updates screenplay text highlights, multi-track timeline lanes, Active Highlights VU meter and cards, and modal inspector swatches without page reloads.
+- **Session Persistence**: User preference is preserved in `localStorage` (`sceneflow_cue_palette_profile`).
+
 ### Pure Black Canvas (Video Overlay Mode)
 - **Engineered for Video Compositing**: An opt-in toggle within both `ScriptColorModal` and `MobileColorModal` designed specifically for creators recording the screenplay, filter badges, or timeline as video overlays.
 - **True `#000000` on Dark Themes**: When toggled ON with any dark theme (`Midnight Slate`, `OLED Blackout`, `Navy Slate`), forces literal RGB `0, 0, 0` backgrounds across the entire app (`--app-bg`, `--surface`, `--surface-dark`), allowing Screen or Lighten blend modes in editing software (Premiere Pro, DaVinci Resolve, Final Cut, OBS) to key out the background with 100% transparency without hazy rectangular artifacts.
@@ -263,7 +274,7 @@ Fine-tunes highlight visibility timing before and after actual cue timestamps:
 ## 8. Persistence, Sharing, & Library Catalogue
 
 ### Local Persistence
-All project states (`screenplay_sync_state`), theme preferences (`sceneflow_script_theme`), width presets (`sceneflow_script_width_preset`), scroll focus settings (`sceneflow_scroll_focus_preset`), timeline view mode (`sceneflow_highlight_view_mode`), and filter drawer state (`sceneflow_highlight_filter_expanded`) persist in `localStorage`.
+All project states (`screenplay_sync_state`), theme preferences (`sceneflow_script_theme`), cue palette accessibility profile (`sceneflow_cue_palette_profile`), width presets (`sceneflow_script_width_preset`), scroll focus settings (`sceneflow_scroll_focus_preset`), timeline view mode (`sceneflow_highlight_view_mode`), and filter drawer state (`sceneflow_highlight_filter_expanded`) persist in `localStorage`.
 
 ### Default Project & Quick Start Guide
 - Fresh visits default to loading the **Scene Frequency** (`scene_frequency.json`) guide script.

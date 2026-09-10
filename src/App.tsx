@@ -110,6 +110,8 @@ export default function App() {
     setIsScrollFocusDropdownOpen,
     scriptThemeId,
     setScriptThemeId,
+    cuePaletteProfile,
+    setCuePaletteProfile,
     isColorModalOpen,
     setIsColorModalOpen,
     hiddenCueTypes,
@@ -125,7 +127,7 @@ export default function App() {
     setPureBlackMode,
   } = useScriptPreferences();
 
-  const { theme: activeTheme } = useScriptTheme(scriptThemeId);
+  const { theme: activeTheme } = useScriptTheme(scriptThemeId, cuePaletteProfile);
   const {
     themeMode,
     setThemeMode,
@@ -569,7 +571,7 @@ export default function App() {
         const primaryCue = editingCue || segmentCues[0];
         
         const activeTheme = getScriptTheme(scriptThemeId);
-        const themedColor = getCueColorForTheme(primaryCue.type || primaryCue.colorClass || '', scriptThemeId);
+        const themedColor = getCueColorForTheme(primaryCue.type || primaryCue.colorClass || '', scriptThemeId, cuePaletteProfile);
         
         const rgb = isTemp 
           ? (activeTheme.isDark ? '56, 189, 248' : (activeTheme.category === 'warm' ? '120, 160, 200' : '191, 219, 254')) 
@@ -637,7 +639,7 @@ export default function App() {
     });
 
     return scriptElements;
-  }, [state.scriptText, state.cues, currentTime, selection, mode, newCue.id, player, playerState, isDesktop, scriptThemeId]);
+  }, [state.scriptText, state.cues, currentTime, selection, mode, newCue.id, player, playerState, isDesktop, scriptThemeId, cuePaletteProfile]);
 
   const canSave = newCue.selectedText && newCue.startTime !== undefined && newCue.endTime !== undefined && newCue.startIndex !== undefined && newCue.endIndex !== undefined;
 
@@ -698,6 +700,7 @@ export default function App() {
             hiddenCueTypes={hiddenCueTypes}
             toggleCueTypeVisibility={toggleCueTypeVisibility}
             scriptThemeId={scriptThemeId}
+            cuePaletteProfile={cuePaletteProfile}
             style={isDesktop ? { width: `${splitRatio}%` } : undefined}
           />
         ) : (
@@ -769,6 +772,7 @@ export default function App() {
             <TimelineCuesPanel
               cues={state.cues}
               scriptThemeId={scriptThemeId}
+              cuePaletteProfile={cuePaletteProfile}
               selectedCueId={newCue.id}
               onSelectCue={selectCueForEdit}
               onDeleteCue={deleteCue}
@@ -838,6 +842,7 @@ export default function App() {
               canSave={canSave}
               scriptText={state.scriptText}
               scriptThemeId={scriptThemeId}
+              cuePaletteProfile={cuePaletteProfile}
               player={player}
             />
           )}
@@ -937,6 +942,7 @@ export default function App() {
         isOpen={overlapPicker.isOpen}
         position={overlapPicker.position}
         cues={overlapPicker.cues}
+        cuePaletteProfile={cuePaletteProfile}
         onSelectCue={(cue) => {
           selectCueForEdit(cue);
           setOverlapPicker({ ...overlapPicker, isOpen: false });
@@ -1010,6 +1016,8 @@ export default function App() {
         effectiveThemeCategory={effectiveCategory}
         pureBlackMode={pureBlackMode}
         setPureBlackMode={setPureBlackMode}
+        cuePaletteProfile={cuePaletteProfile}
+        onSelectPaletteProfile={setCuePaletteProfile}
       />
 
       {/* Mobile Script Color & Theme Drawer */}
@@ -1028,6 +1036,8 @@ export default function App() {
         effectiveThemeCategory={effectiveCategory}
         pureBlackMode={pureBlackMode}
         setPureBlackMode={setPureBlackMode}
+        cuePaletteProfile={cuePaletteProfile}
+        onSelectPaletteProfile={setCuePaletteProfile}
       />
 
       {/* App Info / About Modal */}
