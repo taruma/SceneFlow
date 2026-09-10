@@ -8,6 +8,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.3.0-dev] - Unreleased
 
 ### Added
+- **Cue Palette Accessibility Profile & Protanopia/Deuteranopia Safe Mode (`src/styles/tokens/cues.ts`, `src/components/ScriptColorModal.tsx`, `src/components/MobileColorModal.tsx`, `src/hooks/useScriptPreferences.ts`)**:
+  - Added an opt-in **Cue Palette Accessibility Profile** selector (`CuePaletteProfile`: `'standard' | 'protanopia'`) directly inside both desktop `ScriptColorModal` and `MobileColorModal`.
+  - **Protanopia & Deuteranopia Accessibility**: Solved Red-Green Color Vision Deficiency where Indigo and Blue collapse into identical hues due to reduced L/M cone sensitivity, by remapping **Shot** to **Deep Wine / Burgundy** (`rgb(136, 19, 55)` in light paper / `rgb(225, 29, 72)` in dark paper). In Protanopia, this registers as a warm, rich chocolate-wine tone ($L^* \approx 25$) with massive luminance separation from **Action Blue** ($L^* \approx 50$), eliminating blue-indigo ambiguity.
+  - **High-Luminance Ice Aqua & Vermilion Coral**: Saturated **Action** to firm Cobalt Blue (`rgb(37, 99, 235)`), elevated **VFX** to radiant high-luminance Ice Aqua (`rgb(103, 232, 249)` in dark themes, $L^* \approx 85$), and calibrated **Transition** to warm Vermilion Coral (`rgb(234, 88, 12)`).
+  - **Instant Live Synchronization & Persistence**: Switching profiles immediately updates the screenplay text highlights, multi-track timeline lanes, Active Highlights VU meter and cards, and modal inspector swatches, persisted across sessions in `localStorage` (`sceneflow_cue_palette_profile`).
+- **Harmonized 360° Standard Cue Color Palette Overhaul (`src/styles/tokens/cues.ts`, `src/styles/helpers.ts`, `src/lib/cueUtils.ts`)**:
+  - Overhauled the default 8-category screenplay cue palette to distribute all categories evenly across the 360° color wheel, eliminating pastel hue crowding between Shot, Transition, and VFX.
+  - **Transition (Crimson Rose `bg-rose-500/50`)**: Replaced ambiguous soft pastel pink (`bg-pink-400`) with crisp Crimson Rose (`rgb(244, 63, 94)`), introducing an authoritative editorial cut mark that never blurs into purple.
+  - **Shot (Deep Iris / Indigo `bg-indigo-400/50`)**: Shifted from lilac purple to Deep Iris (`rgb(129, 140, 248)`), providing framing cues (CU, Wide, POV) with a deliberate architectural cool tone.
+  - **VFX (Electric Aqua `bg-cyan-400/50`)**: Calibrated to sharp Electric Aqua (`rgb(6, 182, 212)` light / `rgb(34, 211, 238)` dark), removing previous dark-mode teal drift (`rgb(45, 212, 191)`) that previously clashed with camera emerald green.
+  - **Action & Camera Buffer Widening**: Deepened **Action** to Royal Cobalt Blue (`bg-blue-500/50`, `rgb(59, 130, 246)`) and **Camera** to crisp Emerald Green (`bg-green-500/50`, `rgb(34, 197, 94)`).
+  - **Backward Compatibility Engine (`LEGACY_CLASS_MAP`)**: Added seamless fallback normalization for older script files and localStorage states referencing legacy classes (`bg-purple-400/50`, `bg-pink-400/50`, `bg-blue-400/50`, `bg-green-400/50`), automatically upgrading them to the new canonical color classes on edit.
+- **Theming & Video Overlay Invariants Rule (`.agents/rules/theming-and-overlay-invariants.md`, `docs/AGENTS.md`)**:
+  - Codified the two-tier theming independence invariant ensuring that App Shell theme modes (`themeMode`) and Script Paper presets (`scriptThemeId`) remain decoupled without cross-layer visual leakage.
+  - Documented video compositing and screen recording invariants: absolute `#000000` luminance requirements, fuzzy drop shadow removal, 1px paper border preservation, artifact suppression (hole punches, heading fills), and non-destructive dark theme scoping.
+- **Pure Black Canvas / Video Overlay Mode (`src/components/ScriptColorModal.tsx`, `src/components/MobileColorModal.tsx`, `src/hooks/useScriptPreferences.ts`, `src/index.css`)**:
+  - Added an opt-in **Pure Black Canvas (Video Overlay Mode)** toggle inside both desktop `ScriptColorModal` and `MobileColorModal`, explicitly designed for screen recording and NLE compositing using **Screen** or **Lighten** blend modes.
+  - **Dark-Theme-Scoped True Black (`#000000`)**: When enabled alongside dark themes (`Midnight Slate`, `OLED Blackout`, `Navy Slate`), forces absolute `#000000` (RGB: `0, 0, 0`) backgrounds across the entire workspace (`--app-bg`, `--surface`, `--surface-dark`), eliminating the milky grey box or foggy wash caused by off-black values (`#0c0a09` / `#18181b`) in video overlay blending.
+  - **Paper Border Preservation & Shadow Stripping**: Automatically removes fuzzy drop shadow halos (`!shadow-none`) to prevent blurred boundary artifacts during screen capture, while cleanly preserving the 1px paper border (`activeTheme.paperBorder`) to maintain manuscript framing.
+  - **Distraction-Free Manuscript Elements**: Hides decorative hole-punches (`display: none`), neutralizes scene heading banner strips to transparent (`script-heading-banner`), and renders brief summary cards on pure black (`script-brief-card`), preventing unintended background blocks from appearing over video footage.
+  - **Full-App Overlay Alignment**: Extends `#000000` background styling to the left panel, category filter pills (`HighlightFilterBar`), and horizontal multi-track timeline lanes (`.timeline-track-field`), allowing creators to screen record cropped sections of the timeline or category badges with 100% background transparency.
+  - **Decoupled Paper vs. Shell Theme Scope**: Completely decoupled script paper pure black styling from the application shell's theme mode. When Auto Color is turned off (e.g. setting the app shell explicitly to Light or Warm), selecting a dark script theme in the Color Modal still renders pure `#000000` canvas and paper independently, and vice-versa, ensuring theme independence without cross-layer visual leakage.
+  - **Light/Warm Theme Safety**: Non-destructive behavior that strictly leaves light and warm themes (`Studio Crisp`, `Warm Parchment`, `Newsprint`) completely untouched; switching back to dark themes automatically re-engages pure black rendering.
+  - **Session Persistence**: Stored in `localStorage` (`sceneflow_pure_black_bg`) to preserve creator preferences across browser sessions.
 - **Persistent Playback Header Transport Controls (`src/components/playback/PlaybackLeftPanel.tsx`, `src/App.tsx`)**:
   - Added dedicated, ergonomic playback transport controls directly in the `PlaybackLeftPanel` header alongside the video collapse toggle.
   - **Play / Pause Toggle**: Integrated a dynamic transport button displaying `Play` or `Pause` with distinct icons and active accent styling, synchronized with player state and keyboard shortcuts (<kbd>Space</kbd> / <kbd>K</kbd>).
@@ -70,6 +94,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Dynamically wired the header `AppHeader` "Reset View" button tooltip to `DEFAULT_SPLIT_RATIO` (`Default 65:35`).
 
 ### Fixed
+- **Dark Mode Current Time Counter Contrast (`src/styles/tokens/ui.ts`, `src/components/AppHeader.tsx`, `src/components/ScriptHeaderControls.tsx`)**:
+  - Fixed an issue where the current time counter digits in dark mode rendered in near-black charcoal (`#1c1917`) on top of a dark pill (`bg-surface-dark`, `#0f0e0d` / `#000000`), resulting in an unreadable ~1.1:1 contrast ratio.
+  - Decoupled `UI_TOKENS.badge.currentTimePill` and the digit spans from the inverted `btn-primary-text` button token, applying high-contrast `text-white` across all themes.
+  - Added centralized `UI_TOKENS.badge.currentTimePillSm` token to ensure consistent desktop and mobile current time pill styling.
 - **Timeline Sub-Lane Density Synchronization (`src/components/active-highlights/timeline/`)**:
   - Fixed a sub-lane clipping bug where compact density shortened track container heights while cue blocks remained at 26px vertical offsets.
   - Forwarded `density` from `TimelineLane` into `TimelineCueBlock`, ensuring top offsets (`subLaneIndex * step + padding`) and block heights (18px vs 22px) stay strictly in lockstep with container bounds.

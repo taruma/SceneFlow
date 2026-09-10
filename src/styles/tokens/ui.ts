@@ -98,7 +98,8 @@ export const UI_TOKENS = {
     counter: "text-[10px] font-bold text-text-faint bg-surface-muted px-2 py-0.5 rounded uppercase",
     counterFaint: "text-[10px] font-bold text-text-placeholder bg-surface-muted px-2 py-0.5 rounded uppercase",
     timeTag: "text-[10px] font-mono font-bold text-text-faint bg-surface-muted px-1.5 py-0.5 rounded",
-    currentTimePill: "hidden lg:flex items-center gap-2 px-3 xl:px-4 py-2 bg-surface-dark rounded-xl shadow-inner animate-in fade-in zoom-in duration-500 text-btn-primary-text",
+    currentTimePill: "hidden lg:flex items-center gap-2 px-3 xl:px-4 py-2 bg-surface-dark rounded-xl shadow-inner animate-in fade-in zoom-in duration-500 text-white",
+    currentTimePillSm: "lg:hidden flex items-center gap-1 px-2 py-1 bg-surface-dark rounded-lg shadow-inner text-white",
   },
 
   // Panel & banner containers

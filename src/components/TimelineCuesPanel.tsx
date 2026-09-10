@@ -2,6 +2,7 @@ import React from 'react';
 import { Edit2, RefreshCw, Check, Loader2, Trash2 } from 'lucide-react';
 import { Cue } from '../types/script';
 import { COLORS } from '../constants/script';
+import { LEGACY_CLASS_MAP, type CuePaletteProfile } from '../styles/tokens/cues';
 import { useScriptTheme } from '../hooks/useScriptTheme';
 import { cn } from '../lib/utils';
 import { UI_TOKENS } from '../styles/tokens/ui';
@@ -9,6 +10,7 @@ import { UI_TOKENS } from '../styles/tokens/ui';
 interface TimelineCuesPanelProps {
   cues: Cue[];
   scriptThemeId: string;
+  cuePaletteProfile?: CuePaletteProfile;
   selectedCueId?: string;
   onSelectCue: (cue: Cue) => void;
   onDeleteCue: (id: string) => void;
@@ -21,6 +23,7 @@ interface TimelineCuesPanelProps {
 export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
   cues,
   scriptThemeId,
+  cuePaletteProfile = 'standard',
   selectedCueId,
   onSelectCue,
   onDeleteCue,
@@ -29,7 +32,7 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
   isAligning,
   alignSuccess,
 }) => {
-  const { resolveCueColor } = useScriptTheme(scriptThemeId as any);
+  const { resolveCueColor } = useScriptTheme(scriptThemeId as any, cuePaletteProfile);
   const cueList = cues || [];
 
   return (
@@ -76,18 +79,24 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
 
           {/* Legend */}
           <div className={UI_TOKENS.panel.legendContainer}>
-            {COLORS.map(color => (
-              <div key={color.type} className="flex items-center gap-1.5">
-                <div className={cn("w-2.5 h-2.5 rounded-full", color.class)} />
-                <span className="text-[9px] font-black uppercase tracking-widest text-text-faint">{color.type}</span>
-              </div>
-            ))}
+            {COLORS.map(color => {
+              const themed = resolveCueColor(color.type);
+              return (
+                <div key={color.type} className="flex items-center gap-1.5">
+                  <div 
+                    className="w-2.5 h-2.5 rounded-full shadow-2xs shrink-0" 
+                    style={{ backgroundColor: themed.dotColor }}
+                  />
+                  <span className="text-[9px] font-black uppercase tracking-widest text-text-faint">{color.type}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
 
         <div className="grid gap-3">
           {cueList.map((cue, idx) => {
-            const cueType = cue.type || (cue.colorClass ? COLORS.find(c => c.class === cue.colorClass)?.type : 'dialogue') || 'dialogue';
+            const cueType = cue.type || (cue.colorClass ? (LEGACY_CLASS_MAP[cue.colorClass] || COLORS.find(c => c.class === cue.colorClass)?.type) : 'dialogue') || 'dialogue';
             const themed = resolveCueColor(cueType);
             return (
               <div 

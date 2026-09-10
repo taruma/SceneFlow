@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Check, Palette, Sun, Moon, Coffee, Sparkles } from 'lucide-react';
+import { X, Check, Palette, Sun, Moon, Coffee, Sparkles, Video, Eye } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { SCRIPT_THEMES, type ScriptThemeId, type ScriptTheme } from '../lib/scriptStyles';
+import { SCRIPT_THEMES, type ScriptThemeId, type ScriptTheme, type CuePaletteProfile } from '../lib/scriptStyles';
 import { useEscapeKey } from '../hooks/useEscapeKey';
 import type { AppThemeMode, AppThemeCategory } from '../hooks/useAppShellTheme';
 
@@ -14,6 +14,10 @@ interface MobileColorModalProps {
   themeMode?: AppThemeMode;
   setThemeMode?: (mode: AppThemeMode) => void;
   effectiveThemeCategory?: AppThemeCategory;
+  pureBlackMode?: boolean;
+  setPureBlackMode?: (enabled: boolean) => void;
+  cuePaletteProfile?: CuePaletteProfile;
+  onSelectPaletteProfile?: (profile: CuePaletteProfile) => void;
 }
 
 const THEME_MODE_OPTIONS: Array<{
@@ -35,6 +39,10 @@ export function MobileColorModal({
   themeMode = 'auto',
   setThemeMode,
   effectiveThemeCategory = 'light',
+  pureBlackMode = false,
+  setPureBlackMode,
+  cuePaletteProfile = 'standard',
+  onSelectPaletteProfile,
 }: MobileColorModalProps) {
   useEscapeKey(onClose, isOpen);
 
@@ -93,6 +101,48 @@ export function MobileColorModal({
 
             {/* Scrollable Content */}
             <div className="flex-1 overflow-y-auto custom-dark-scrollbar p-4 space-y-4">
+              {/* Cue Palette Accessibility Profile */}
+              {onSelectPaletteProfile && (
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between px-0.5">
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-text-faint flex items-center gap-1.5">
+                      <Eye size={12} /> Palette Profile
+                    </span>
+                    <span className="text-[9px] font-mono text-text-muted">
+                      {cuePaletteProfile === 'protanopia' ? 'Protan & Deutan Safe' : 'Standard'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-1 p-1 bg-surface-muted rounded-xl border border-border-main">
+                    <button
+                      type="button"
+                      onClick={() => onSelectPaletteProfile('standard')}
+                      className={cn(
+                        'py-2 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center gap-1.5 active:scale-95',
+                        cuePaletteProfile === 'standard'
+                          ? 'bg-btn-primary-bg text-btn-primary-text shadow-sm'
+                          : 'text-text-muted hover:text-text-main'
+                      )}
+                    >
+                      <span>Standard</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onSelectPaletteProfile('protanopia')}
+                      className={cn(
+                        'py-2 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center gap-1.5 active:scale-95',
+                        cuePaletteProfile === 'protanopia'
+                          ? 'bg-btn-primary-bg text-btn-primary-text shadow-sm'
+                          : 'text-text-muted hover:text-text-main'
+                      )}
+                    >
+                      <Eye size={12} />
+                      <span>Protan Safe</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* App Shell Mode Selector */}
               {setThemeMode && (
                 <div className="space-y-1.5">
@@ -199,6 +249,46 @@ export function MobileColorModal({
                       </button>
                     );
                   })}
+                </div>
+
+                {/* Pure Black Canvas Toggle in Mobile */}
+                <div className="mt-3 p-3 rounded-xl border border-border-main bg-surface-subtle flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className={cn(
+                      "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border",
+                      pureBlackMode && currentTheme.category === 'dark'
+                        ? "bg-black border-neutral-700 text-white"
+                        : "bg-surface border-border-main text-text-muted"
+                    )}>
+                      <Video size={14} />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-xs font-bold text-text-main">Pure Black Canvas</span>
+                        <span className="text-[8px] font-mono uppercase px-1 py-0.2 rounded bg-neutral-900 text-neutral-200 border border-neutral-700">Overlay</span>
+                      </div>
+                      <p className="text-[10px] text-text-muted truncate">#000000 on dark themes for video overlay</p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={pureBlackMode}
+                    onClick={() => setPureBlackMode?.(!pureBlackMode)}
+                    className={cn(
+                      "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
+                      pureBlackMode ? "bg-black ring-1 ring-neutral-600" : "bg-surface-muted"
+                    )}
+                  >
+                    <span className="sr-only">Toggle Pure Black Video Overlay Mode</span>
+                    <span
+                      className={cn(
+                        "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out",
+                        pureBlackMode ? "translate-x-5" : "translate-x-0"
+                      )}
+                    />
+                  </button>
                 </div>
               </div>
             </div>

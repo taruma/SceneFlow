@@ -11,7 +11,7 @@ export function getLineClass(line: ProcessedLine, themeId: ScriptThemeId = 'stud
   const theme = getScriptTheme(themeId);
   
   if (isBrief) {
-    return `${SCREENPLAY_BASE_STYLE} font-mono text-[12px] border border-dashed rounded-lg px-3.5 py-2.5 my-2.5 transition-colors ${theme.briefBorder} ${theme.briefBg} ${theme.textColor}`;
+    return `${SCREENPLAY_BASE_STYLE} script-brief-card font-mono text-[12px] border border-dashed rounded-lg px-3.5 py-2.5 my-2.5 transition-colors ${theme.briefBorder} ${theme.briefBg} ${theme.textColor}`;
   }
 
   switch (type) {
@@ -30,7 +30,7 @@ export function getLineClass(line: ProcessedLine, themeId: ScriptThemeId = 'stud
       return `${SCREENPLAY_BASE_STYLE} italic mb-0.5 text-[13px] ${theme.textMutedColor}`;
     
     case 'heading':
-      return `${SCREENPLAY_BASE_STYLE} font-bold mt-5 mb-2 tracking-tight uppercase ${theme.headingBg} ${theme.headingBorder} ${theme.textColor} -mx-6 md:-mx-8 lg:-mx-12 px-6 md:px-8 lg:px-12 py-2.5`;
+      return `${SCREENPLAY_BASE_STYLE} script-heading-banner font-bold mt-5 mb-2 tracking-tight uppercase ${theme.headingBg} ${theme.headingBorder} ${theme.textColor} -mx-6 md:-mx-8 lg:-mx-12 px-6 md:px-8 lg:px-12 py-2.5`;
     
     case 'note':
       return `${SCREENPLAY_BASE_STYLE} font-mono text-[11px] uppercase tracking-tight mb-1 ${theme.textMutedColor}`;

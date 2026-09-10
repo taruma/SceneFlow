@@ -33,6 +33,7 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
   hiddenCueTypes,
   toggleCueTypeVisibility,
   scriptThemeId,
+  cuePaletteProfile = 'standard',
   currentTime = 0,
   isPlaying = false,
   onSeekTo,
@@ -46,7 +47,7 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
   heightMode: controlledHeightMode,
   onHeightModeChange,
 }) => {
-  const { resolveCueColor } = useScriptTheme(scriptThemeId as any);
+  const { resolveCueColor } = useScriptTheme(scriptThemeId as any, cuePaletteProfile);
 
   // Persistent track height mode state (default to 'flexible')
   const [internalHeightMode, setInternalHeightMode] = useState<TimelineHeightMode>(() => {

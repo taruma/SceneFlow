@@ -1,5 +1,5 @@
 import { Cue, TimingSettings } from '../../types/script';
-import { CueThemeResolvedColor, ScriptThemeId } from '../../styles';
+import { CueThemeResolvedColor, ScriptThemeId, CuePaletteProfile } from '../../styles';
 
 /**
  * View presentation modes for active highlights during video playback.
@@ -60,6 +60,8 @@ export interface ActiveHighlightsPanelProps {
   toggleCueTypeVisibility: (type: string) => void;
   /** Active script theme ID used to resolve CSS/RGB accent colors */
   scriptThemeId: ScriptThemeId | string;
+  /** Optional active cue palette profile (standard or accessibility variants) */
+  cuePaletteProfile?: CuePaletteProfile;
   /** Current video playback timestamp in seconds */
   currentTime?: number;
   /** Whether video playback is currently active */

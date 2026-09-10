@@ -110,6 +110,8 @@ export default function App() {
     setIsScrollFocusDropdownOpen,
     scriptThemeId,
     setScriptThemeId,
+    cuePaletteProfile,
+    setCuePaletteProfile,
     isColorModalOpen,
     setIsColorModalOpen,
     hiddenCueTypes,
@@ -121,15 +123,40 @@ export default function App() {
     isViewCustomized,
     isVideoCollapsed,
     toggleVideoCollapsed,
+    pureBlackMode,
+    setPureBlackMode,
   } = useScriptPreferences();
 
-  const { theme: activeTheme } = useScriptTheme(scriptThemeId);
+  const { theme: activeTheme } = useScriptTheme(scriptThemeId, cuePaletteProfile);
   const {
     themeMode,
     setThemeMode,
     cycleThemeMode,
     effectiveCategory,
   } = useAppShellTheme(scriptThemeId);
+
+  const isScriptPureBlack = pureBlackMode && activeTheme.category === 'dark';
+  const isShellPureBlack = pureBlackMode && effectiveCategory === 'dark';
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      if (isScriptPureBlack) {
+        document.documentElement.setAttribute('data-pure-black-script', 'true');
+        document.body.setAttribute('data-pure-black-script', 'true');
+      } else {
+        document.documentElement.removeAttribute('data-pure-black-script');
+        document.body.removeAttribute('data-pure-black-script');
+      }
+
+      if (isShellPureBlack) {
+        document.documentElement.setAttribute('data-pure-black-shell', 'true');
+        document.body.setAttribute('data-pure-black-shell', 'true');
+      } else {
+        document.documentElement.removeAttribute('data-pure-black-shell');
+        document.body.removeAttribute('data-pure-black-shell');
+      }
+    }
+  }, [isScriptPureBlack, isShellPureBlack]);
 
   const {
 
@@ -544,7 +571,7 @@ export default function App() {
         const primaryCue = editingCue || segmentCues[0];
         
         const activeTheme = getScriptTheme(scriptThemeId);
-        const themedColor = getCueColorForTheme(primaryCue.type || primaryCue.colorClass || '', scriptThemeId);
+        const themedColor = getCueColorForTheme(primaryCue.type || primaryCue.colorClass || '', scriptThemeId, cuePaletteProfile);
         
         const rgb = isTemp 
           ? (activeTheme.isDark ? '56, 189, 248' : (activeTheme.category === 'warm' ? '120, 160, 200' : '191, 219, 254')) 
@@ -612,7 +639,7 @@ export default function App() {
     });
 
     return scriptElements;
-  }, [state.scriptText, state.cues, currentTime, selection, mode, newCue.id, player, playerState, isDesktop, scriptThemeId]);
+  }, [state.scriptText, state.cues, currentTime, selection, mode, newCue.id, player, playerState, isDesktop, scriptThemeId, cuePaletteProfile]);
 
   const canSave = newCue.selectedText && newCue.startTime !== undefined && newCue.endTime !== undefined && newCue.startIndex !== undefined && newCue.endIndex !== undefined;
 
@@ -673,6 +700,7 @@ export default function App() {
             hiddenCueTypes={hiddenCueTypes}
             toggleCueTypeVisibility={toggleCueTypeVisibility}
             scriptThemeId={scriptThemeId}
+            cuePaletteProfile={cuePaletteProfile}
             style={isDesktop ? { width: `${splitRatio}%` } : undefined}
           />
         ) : (
@@ -744,6 +772,7 @@ export default function App() {
             <TimelineCuesPanel
               cues={state.cues}
               scriptThemeId={scriptThemeId}
+              cuePaletteProfile={cuePaletteProfile}
               selectedCueId={newCue.id}
               onSelectCue={selectCueForEdit}
               onDeleteCue={deleteCue}
@@ -773,6 +802,7 @@ export default function App() {
           style={isDesktop ? { width: `${100 - splitRatio}%` } : undefined}
           className={cn(
             UI_TOKENS.layout.rightPanelBase,
+            isScriptPureBlack && "!bg-black",
             mode === 'edit' ? "hidden lg:flex w-full h-full" : "w-full flex-1"
           )}
         >
@@ -812,6 +842,7 @@ export default function App() {
               canSave={canSave}
               scriptText={state.scriptText}
               scriptThemeId={scriptThemeId}
+              cuePaletteProfile={cuePaletteProfile}
               player={player}
             />
           )}
@@ -821,14 +852,14 @@ export default function App() {
             onMouseUp={handleSelection}
             className={cn(
               "flex-1 overflow-y-auto font-serif text-[14px] leading-snug scrollbar-hide",
+              isScriptPureBlack && "bg-black",
               mode === 'edit' ? "p-2 md:p-4" : "p-4 lg:p-10"
             )}
           >
             <div className={cn(
-              "mx-auto min-h-full rounded-sm relative transition-all duration-300",
-              activeTheme.paperBg,
+              "script-paper-container mx-auto min-h-full rounded-sm relative transition-all duration-300",
+              isScriptPureBlack ? "!bg-black !shadow-none" : cn(activeTheme.paperBg, activeTheme.paperShadow),
               activeTheme.paperBorder,
-              activeTheme.paperShadow,
               activeTheme.textColor,
               mode === 'edit' 
                 ? "max-w-xl p-6 md:p-8" 
@@ -838,11 +869,13 @@ export default function App() {
                   )
             )}>
               {/* Page punch holes effect */}
-              <div className="absolute left-2 top-12 flex flex-col gap-8 opacity-20">
-                <div className={cn("w-2 h-2 rounded-full shadow-inner", activeTheme.punchHoleBg)} />
-                <div className={cn("w-2 h-2 rounded-full shadow-inner", activeTheme.punchHoleBg)} />
-                <div className={cn("w-2 h-2 rounded-full shadow-inner", activeTheme.punchHoleBg)} />
-              </div>
+              {!isScriptPureBlack && (
+                <div className="script-punch-hole absolute left-2 top-12 flex flex-col gap-8 opacity-20">
+                  <div className={cn("w-2 h-2 rounded-full shadow-inner", activeTheme.punchHoleBg)} />
+                  <div className={cn("w-2 h-2 rounded-full shadow-inner", activeTheme.punchHoleBg)} />
+                  <div className={cn("w-2 h-2 rounded-full shadow-inner", activeTheme.punchHoleBg)} />
+                </div>
+              )}
               
               <div className="relative z-10" style={{ paddingBottom: mode === 'playback' ? '70vh' : '0' }}>
                 {renderedScript}
@@ -909,6 +942,7 @@ export default function App() {
         isOpen={overlapPicker.isOpen}
         position={overlapPicker.position}
         cues={overlapPicker.cues}
+        cuePaletteProfile={cuePaletteProfile}
         onSelectCue={(cue) => {
           selectCueForEdit(cue);
           setOverlapPicker({ ...overlapPicker, isOpen: false });
@@ -980,6 +1014,10 @@ export default function App() {
         themeMode={themeMode}
         setThemeMode={setThemeMode}
         effectiveThemeCategory={effectiveCategory}
+        pureBlackMode={pureBlackMode}
+        setPureBlackMode={setPureBlackMode}
+        cuePaletteProfile={cuePaletteProfile}
+        onSelectPaletteProfile={setCuePaletteProfile}
       />
 
       {/* Mobile Script Color & Theme Drawer */}
@@ -996,6 +1034,10 @@ export default function App() {
         themeMode={themeMode}
         setThemeMode={setThemeMode}
         effectiveThemeCategory={effectiveCategory}
+        pureBlackMode={pureBlackMode}
+        setPureBlackMode={setPureBlackMode}
+        cuePaletteProfile={cuePaletteProfile}
+        onSelectPaletteProfile={setCuePaletteProfile}
       />
 
       {/* App Info / About Modal */}

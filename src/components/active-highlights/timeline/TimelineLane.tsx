@@ -81,7 +81,7 @@ export const TimelineLane = React.memo<TimelineLaneProps>(({
       {!isHidden && (
         <div 
           style={{ height: `${trackHeightPx}px` }}
-          className="relative flex-1 rounded-lg bg-surface-subtle/60 border border-border-subtle/50 overflow-hidden shadow-inner transition-[height] duration-200"
+          className="timeline-track-field relative flex-1 rounded-lg bg-surface-subtle/60 border border-border-subtle/50 overflow-hidden shadow-inner transition-[height] duration-200"
         >
           {/* Track subtle center guide lines for sub-lanes */}
           {totalSubLanes > 1 && Array.from({ length: totalSubLanes - 1 }).map((_, idx) => (

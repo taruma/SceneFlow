@@ -104,7 +104,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
 
         <div className={UI_TOKENS.badge.currentTimePill}>
           <span className="hidden xl:inline text-[10px] font-black text-text-faint uppercase tracking-widest">Current Time</span>
-          <span className="text-base xl:text-lg font-mono font-bold text-btn-primary-text w-12 xl:w-16 text-right">{currentTime.toFixed(1)}s</span>
+          <span className="text-base xl:text-lg font-mono font-bold text-white w-12 xl:w-16 text-right">{currentTime.toFixed(1)}s</span>
         </div>
 
         <div className={UI_TOKENS.button.modeSwitchContainer}>

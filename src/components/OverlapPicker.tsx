@@ -1,6 +1,6 @@
 import React from 'react';
 import { Cue } from '../types/script';
-import { getCueColorForTheme } from '../lib/scriptStyles';
+import { getCueColorForTheme, type CuePaletteProfile } from '../lib/scriptStyles';
 import { UI_TOKENS } from '../styles/tokens/ui';
 import { useEscapeKey } from '../hooks/useEscapeKey';
 
@@ -8,6 +8,7 @@ interface OverlapPickerProps {
   isOpen: boolean;
   position: { x: number; y: number };
   cues: Cue[];
+  cuePaletteProfile?: CuePaletteProfile;
   onSelectCue: (cue: Cue) => void;
   onClose: () => void;
 }
@@ -16,6 +17,7 @@ export function OverlapPicker({
   isOpen,
   position,
   cues,
+  cuePaletteProfile = 'standard',
   onSelectCue,
   onClose,
 }: OverlapPickerProps) {
@@ -32,7 +34,7 @@ export function OverlapPicker({
         <p className="text-[10px] font-black uppercase tracking-widest text-text-faint">Select Cue to Edit</p>
       </div>
       {cues.map(cue => {
-        const themed = getCueColorForTheme(cue.type || cue.colorClass || '');
+        const themed = getCueColorForTheme(cue.type || cue.colorClass || '', undefined, cuePaletteProfile);
         return (
           <button
             key={cue.id}

@@ -112,12 +112,12 @@ The visuals layer encapsulates all styling tokens, color schemes, UI chrome toke
   - `dropdown`: Focus mode, width preset, and scroll focus preset dropdown menus, headers, and interactive items.
   - `button`: Primary, secondary, danger, header icon action buttons, mode switchers, sort toggles, action pills, support pills, and close buttons.
   - `input`: Search inputs, multiline textareas, code boxes, number boxes, and label typography.
-  - `badge`: Counter tags, timestamp pills, and header current time pill badge.
+  - `badge`: Counter tags, timestamp pills, and desktop/mobile current time pill badges (`currentTimePill`, `currentTimePillSm`).
   - `panel`: Banners, interactive cards, empty placeholders, and legend containers.
   - `swatch` & `alert`: Theme preview swatches and notification banners.
 - **`src/index.css`**: Semantic CSS custom properties defined in `:root` (`--app-bg`, `--surface`, `--surface-subtle`, `--border-main`, `--text-main`, `--overlay-bg`, `--color-support`, etc.) and mapped directly into Tailwind CSS v4's `@theme` directive.
 - **`src/styles/tokens/themes.ts` (`SCRIPT_THEMES`)**: Defines six visual themes categorized into `light`, `warm`, and `dark` alongside `SCRIPT_THEME_MAP`, `DEFAULT_SCRIPT_THEME`, and `THEME_CATEGORIES`.
-- **`src/styles/tokens/cues.ts` (`CUE_THEME_COLORS`)**: Calibrates the 8 cue categories across light, warm, and dark theme palettes and provides `getCueColorForTheme()`.
+- **`src/styles/tokens/cues.ts`**: Calibrates the 8 cue categories across light, warm, and dark theme palettes under two curated profiles (`CUE_COLOR_DEFINITIONS_STANDARD` and `CUE_COLOR_DEFINITIONS_PROTANOPIA`), provides `getCueColorForTheme()`, and exposes `LEGACY_CLASS_MAP` for backwards compatibility.
 - **`src/styles/tokens/typography.ts` (`getScriptThemeStyles`)**: Generates theme-specific typography, headings, title lines, staging badges, and cue wrapper styles.
 - **`src/styles/helpers.ts`**: Color conversion utilities (`hexToRgba`) and dynamic badge/inline cue styling factories (`createCueBadgeStyle`, `createInlineCueStyle`).
 - **`src/styles/index.ts`**: Canonical barrel export unifying all design tokens, theme definitions, and helpers.
@@ -134,18 +134,23 @@ Supports six distinct visual themes categorized into `light`, `warm`, and `dark`
 
 Each theme provides tokens for `paperBg`, `paperBorder`, `paperShadow`, `textColor`, `textMutedColor`, `headingBg`, `headingBorder`, `separatorBorder`, `titleTextColor`, `titleLineBg`, `stagingBadgeBg`, `stagingBadgeBorder`, `stagingBadgeText`, `stagingBadgeIcon`, `punchHoleBg`, `isDark`, `briefBg`, `briefBorder`, `briefBadgeBg`, `briefBadgeBorder`, and `briefBadgeText`.
 
-### Cue Theme Color Calibration (`CUE_THEME_COLORS` & `getCueColorForTheme`)
-Defines the eight cue categories with theme-calibrated RGB palettes:
-- **Dialogue**: Yellow (`lightRgb: 250, 204, 21`, `warmRgb: 222, 160, 24`, `darkRgb: 253, 224, 71`)
-- **Action**: Blue (`lightRgb: 96, 165, 250`, `warmRgb: 88, 134, 185`, `darkRgb: 56, 189, 248`)
-- **Camera**: Green (`lightRgb: 74, 222, 128`, `warmRgb: 110, 158, 90`, `darkRgb: 52, 211, 153`)
-- **Shot**: Purple (`lightRgb: 192, 132, 252`, `warmRgb: 168, 115, 172`, `darkRgb: 168, 85, 247`)
-- **Audio**: Orange (`lightRgb: 251, 146, 60`, `warmRgb: 216, 108, 54`, `darkRgb: 249, 115, 22`)
-- **VFX**: Cyan (`lightRgb: 34, 211, 238`, `warmRgb: 52, 160, 170`, `darkRgb: 45, 212, 191`)
-- **Transition**: Pink (`lightRgb: 244, 114, 182`, `warmRgb: 216, 102, 136`, `darkRgb: 244, 114, 182`)
-- **Environment**: Slate (`lightRgb: 148, 163, 184`, `warmRgb: 158, 146, 130`, `darkRgb: 148, 163, 184`)
+- **Pure Black Canvas Mode (`data-pure-black="true"`)**: An opt-in modifier strictly applied when using dark themes. Overrides `--app-bg` and `--surface` to `#000000`, strips fuzzy drop shadow halos (`!shadow-none`), hides decorative punch holes, neutralizes heading banner fills to transparent, and aligns timeline tracks to pitch black. The 1px paper border (`activeTheme.paperBorder`) remains visible to frame the manuscript, producing 100% background transparency for Screen/Lighten blend mode video recording without compromising structure. Light and warm themes remain completely untouched.
 
-The `getCueColorForTheme` helper returns the appropriate RGB values, contrast classes, and theme-adjusted opacity multipliers.
+### Cue Theme Color Calibration & Accessibility Engine
+Defines the eight cue categories with theme-calibrated RGB palettes under two distinct `CuePaletteProfile` configurations (`'standard'` and `'protanopia'`) resolved via `getCueColorForTheme(typeOrClass, themeId, paletteProfile)`:
+- **Standard Cinema Profile (`CUE_COLOR_DEFINITIONS_STANDARD`)**:
+  - **Dialogue**: Amber Gold (`lightRgb: 245, 158, 11`, `warmRgb: 217, 119, 6`, `darkRgb: 251, 191, 36`)
+  - **Action**: Royal Cobalt Blue (`lightRgb: 37, 99, 235`, `warmRgb: 29, 78, 216`, `darkRgb: 59, 130, 246`)
+  - **Camera**: Emerald Green (`lightRgb: 22, 163, 74`, `warmRgb: 21, 128, 61`, `darkRgb: 34, 197, 94`)
+  - **Shot**: Deep Iris / Indigo (`lightRgb: 99, 102, 241`, `warmRgb: 79, 70, 229`, `darkRgb: 129, 140, 248`)
+  - **Audio**: Bright Amber Orange (`lightRgb: 234, 88, 12`, `warmRgb: 194, 65, 12`, `darkRgb: 249, 115, 22`)
+  - **VFX**: Electric Aqua (`lightRgb: 6, 182, 212`, `warmRgb: 14, 116, 144`, `darkRgb: 34, 211, 238`)
+  - **Transition**: Crimson Rose (`lightRgb: 225, 29, 72`, `warmRgb: 190, 18, 60`, `darkRgb: 244, 63, 94`)
+  - **Environment**: Steel Slate (`lightRgb: 100, 116, 139`, `warmRgb: 120, 113, 108`, `darkRgb: 148, 163, 184`)
+- **Protanopia & Deuteranopia Safe Profile (`CUE_COLOR_DEFINITIONS_PROTANOPIA`)**:
+  - Remaps **Shot** away from the Blue/Indigo spectrum to **Deep Wine / Burgundy** (`rgb(136, 19, 55)` light, `rgb(225, 29, 72)` dark), establishing a distinct $L^* \approx 25$ dark tone that eliminates confusion with Action Blue ($L^* \approx 50$).
+  - Elevates **VFX** to radiant high-luminance Ice Aqua (`rgb(103, 232, 249)` dark, $L^* \approx 85$) and **Transition** to Vermilion Coral (`rgb(234, 88, 12)`).
+- **Backward Compatibility Normalization (`LEGACY_CLASS_MAP`)**: Maps legacy Tailwind color classes (`bg-purple-400`, `bg-pink-400`, `bg-blue-400`, `bg-green-400`) seamlessly to modern canonical cue categories.
 
 ---
 
@@ -168,11 +173,11 @@ YouTube IFrame Player API wrapper:
 
 ### `useScriptPreferences`
 Persistent visual customization and layout management:
-- Stored in `localStorage`: reading column width preset (`sceneflow_script_width_preset`), auto-scroll focus preset (`sceneflow_scroll_focus_preset`), active theme ID (`sceneflow_script_theme`), asymmetric split ratio (`sceneflow_split_ratio`, default 65%), video player height (`sceneflow_video_height`, default 220px), and video collapse state (`sceneflow_playback_video_collapsed`).
+- Stored in `localStorage`: reading column width preset (`sceneflow_script_width_preset`), auto-scroll focus preset (`sceneflow_scroll_focus_preset`), active theme ID (`sceneflow_script_theme`), cue palette accessibility profile (`sceneflow_cue_palette_profile`), asymmetric split ratio (`sceneflow_split_ratio`, default 65%), video player height (`sceneflow_video_height`, default 220px), and video collapse state (`sceneflow_playback_video_collapsed`).
 - Provides `resetViewLayout()` to instantly restore default 65:35 panel split, 220px video height, and expand the video player if collapsed.
 - Exposes `isVideoCollapsed`, `setIsVideoCollapsed`, and `toggleVideoCollapsed` helpers.
 - Exposes `isViewCustomized` flag to drive the active status dot on the header "Reset View" button.
-- Manages dropdown visibility toggles, cue type category filter sets, and color picker modal state.
+- Manages dropdown visibility toggles, cue type category filter sets, cue palette accessibility profile (`cuePaletteProfile`, `setCuePaletteProfile`), and color picker modal state.
 
 ### `useAutoScroll`
 Real-time playback auto-scroll engine:
@@ -200,7 +205,7 @@ Global keyboard shortcut handler:
 ### `useScriptTheme`
 Theme metadata and color resolution hook:
 - Resolves active theme metadata (`ScriptThemeMetadata`), computed theme styles (`themeStyles`), and dark mode state (`isDark`).
-- Provides dynamic cue color resolution helper (`resolveCueColor: (typeOrClass) => CueColorInfo`).
+- Accepts `(scriptThemeId, cuePaletteProfile)` and provides dynamic cue color resolution helper (`resolveCueColor: (typeOrClass) => CueColorInfo`) dynamically adjusted to both the active theme and accessibility profile.
 - Encapsulates theme-dependent styling logic for seamless integration across components.
 
 ### `useEscapeKey`
@@ -237,7 +242,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 10. **`DeleteConfirmationModal.tsx`**: Confirmation dialog with cue text preview prior to permanent deletion styled via `UI_TOKENS`.
 11. **`ResetConfirmationModal.tsx`**: Multi-purpose confirmation dialog for resetting settings, loading guide scripts, loading examples, or fetching remote projects, featuring integrated CORS error reporting and styled via `UI_TOKENS`.
 12. **`TimingSettingsModal.tsx`**: Full-screen configuration modal for per-category timing buffers (before/after offsets) and General Master Offset using `UI_TOKENS`.
-13. **`ScriptColorModal.tsx`**: Theme picker featuring a "Theme Presets" tab with mini live paper preview cards and an "Element Inspector" tab displaying token details and the 8-category highlight spectrum using `UI_TOKENS.swatch`.
+13. **`ScriptColorModal.tsx`**: Theme and color management dialog featuring a "Theme Presets" tab with mini live paper preview cards, a segmented Cue Palette Accessibility Profile toggle (`Standard Cinema` vs. `Protan & Deutan Safe`), and an "Element Inspector" tab displaying token details and the 8-category highlight spectrum using `UI_TOKENS.swatch`.
 14. **`ScriptHeaderControls.tsx`**: Playback-mode control bar with auto-scroll toggle, target-type multi-select dropdown, reading width preset selector, and scroll focus preset selector.
 15. **`ActiveHighlightsPanel` (`src/components/active-highlights/`)**: Modular playback visualization sub-package featuring:
     - **`ActiveHighlightsPanel.tsx`**: Main orchestrator featuring an **Adaptive Header** layout via `ResizeObserver` (560px threshold): consolidates into a single unified row when wide ($\ge 560\text{px}$) to save vertical headroom, and automatically splits into a Two-Tier Header when narrow ($< 560\text{px}$) where Tier 1 houses `Highlights` + Studio VU Meter + View Switcher, and Tier 2 houses Track Height + Zoom presets + Filters toggle button.
@@ -255,7 +260,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 20. **`MobileLibraryModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a touch-friendly category filter and search interface.
 21. **`StagingModal.tsx`**: Monospace overlay displaying hidden camera, lighting, or lookbook directives from `[[STAGING]]` blocks.
 22. **`AppInfoModal.tsx`**: Desktop application info and about dialog displaying dynamic versioning from `metadata.json`, author attribution for Taruma Sakti ([Linktree](https://linktr.ee/tarumainfo)), 2x2 resource badge grid, and keyboard shortcuts cheat sheet.
-23. **`MobileColorModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a thumb-friendly 4-segment App Shell switcher and 6 compact screenplay preset cards.
+23. **`MobileColorModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a thumb-friendly 4-segment App Shell switcher, the Cue Palette Accessibility Profile selector (`Standard` vs. `Protan Safe`), and 6 compact screenplay preset cards.
 
 ### Type Definitions & Data Schemas
 - **`src/types/script.ts`**: Defines 14 domain interfaces and types: `Cue`, `TimingSettings`, `ColorCategory`, `AppState`, `ScriptWidthPresetId`, `ScriptWidthPreset`, `ScrollFocusPresetId`, `ScrollFocusPreset`, `TextSelection`, `DeleteConfirmationState`, `ResetConfirmationState`, `OverlapPickerState`, `AlternativeLocation`, and `AppMode`.

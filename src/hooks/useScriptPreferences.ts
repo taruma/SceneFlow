@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { ScriptWidthPresetId, ScrollFocusPresetId } from '../types/script';
 import { SCRIPT_WIDTH_PRESETS, SCROLL_FOCUS_PRESETS } from '../constants/script';
-import { DEFAULT_SCRIPT_THEME_ID, type ScriptThemeId } from '../lib/scriptStyles';
+import { DEFAULT_SCRIPT_THEME_ID, type ScriptThemeId, type CuePaletteProfile } from '../lib/scriptStyles';
 
 export const DEFAULT_SPLIT_RATIO = 65;
 export const MIN_SPLIT_RATIO = 30;
@@ -167,6 +167,40 @@ export function useScriptPreferences() {
     }
   }, []);
 
+  const [cuePaletteProfile, setCuePaletteProfileState] = useState<CuePaletteProfile>(() => {
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem('sceneflow_cue_palette_profile');
+      if (saved === 'protanopia' || saved === 'standard') {
+        return saved as CuePaletteProfile;
+      }
+    }
+    return 'standard';
+  });
+
+  const setCuePaletteProfile = useCallback((profile: CuePaletteProfile) => {
+    setCuePaletteProfileState(profile);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('sceneflow_cue_palette_profile', profile);
+    }
+  }, []);
+
+  const [pureBlackMode, setPureBlackModeState] = useState<boolean>(() => {
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem('sceneflow_pure_black_bg');
+      if (saved !== null) {
+        return saved === 'true';
+      }
+    }
+    return false;
+  });
+
+  const setPureBlackMode = useCallback((enabled: boolean) => {
+    setPureBlackModeState(enabled);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('sceneflow_pure_black_bg', String(enabled));
+    }
+  }, []);
+
   const toggleCueTypeVisibility = useCallback((type: string) => {
     setHiddenCueTypes(prev => {
       const next = new Set(prev);
@@ -193,6 +227,10 @@ export function useScriptPreferences() {
     setIsScrollFocusDropdownOpen,
     scriptThemeId,
     setScriptThemeId,
+    cuePaletteProfile,
+    setCuePaletteProfile,
+    pureBlackMode,
+    setPureBlackMode,
     isColorModalOpen,
     setIsColorModalOpen,
     hiddenCueTypes,
