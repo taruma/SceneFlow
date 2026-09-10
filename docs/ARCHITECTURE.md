@@ -37,7 +37,7 @@ SceneFlow follows a modular, 5-layer architecture that separates script parsing,
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
 │                              UI LAYER                                  │
-│  src/App.tsx (orchestrator)  •  src/components/* (20 sub-components)    │
+│  src/App.tsx (orchestrator)  •  src/components/* (21 sub-components)    │
 │  src/types/script.ts (14 domain interfaces)                            │
 └────────────────────────────────────────────────────────────────────────┘
 ```
@@ -112,12 +112,12 @@ The visuals layer encapsulates all styling tokens, color schemes, UI chrome toke
   - `dropdown`: Focus mode, width preset, and scroll focus preset dropdown menus, headers, and interactive items.
   - `button`: Primary, secondary, danger, header icon action buttons, mode switchers, sort toggles, action pills, support pills, and close buttons.
   - `input`: Search inputs, multiline textareas, code boxes, number boxes, and label typography.
-  - `badge`: Counter tags, timestamp pills, and header current time pill badge.
+  - `badge`: Counter tags, timestamp pills, and desktop/mobile current time pill badges (`currentTimePill`, `currentTimePillSm`).
   - `panel`: Banners, interactive cards, empty placeholders, and legend containers.
   - `swatch` & `alert`: Theme preview swatches and notification banners.
 - **`src/index.css`**: Semantic CSS custom properties defined in `:root` (`--app-bg`, `--surface`, `--surface-subtle`, `--border-main`, `--text-main`, `--overlay-bg`, `--color-support`, etc.) and mapped directly into Tailwind CSS v4's `@theme` directive.
 - **`src/styles/tokens/themes.ts` (`SCRIPT_THEMES`)**: Defines six visual themes categorized into `light`, `warm`, and `dark` alongside `SCRIPT_THEME_MAP`, `DEFAULT_SCRIPT_THEME`, and `THEME_CATEGORIES`.
-- **`src/styles/tokens/cues.ts` (`CUE_THEME_COLORS`)**: Calibrates the 8 cue categories across light, warm, and dark theme palettes and provides `getCueColorForTheme()`.
+- **`src/styles/tokens/cues.ts`**: Calibrates the 8 cue categories across light, warm, and dark theme palettes under two curated profiles (`CUE_COLOR_DEFINITIONS_STANDARD` and `CUE_COLOR_DEFINITIONS_PROTANOPIA`), provides `getCueColorForTheme()`, and exposes `LEGACY_CLASS_MAP` for backwards compatibility.
 - **`src/styles/tokens/typography.ts` (`getScriptThemeStyles`)**: Generates theme-specific typography, headings, title lines, staging badges, and cue wrapper styles.
 - **`src/styles/helpers.ts`**: Color conversion utilities (`hexToRgba`) and dynamic badge/inline cue styling factories (`createCueBadgeStyle`, `createInlineCueStyle`).
 - **`src/styles/index.ts`**: Canonical barrel export unifying all design tokens, theme definitions, and helpers.
@@ -134,18 +134,23 @@ Supports six distinct visual themes categorized into `light`, `warm`, and `dark`
 
 Each theme provides tokens for `paperBg`, `paperBorder`, `paperShadow`, `textColor`, `textMutedColor`, `headingBg`, `headingBorder`, `separatorBorder`, `titleTextColor`, `titleLineBg`, `stagingBadgeBg`, `stagingBadgeBorder`, `stagingBadgeText`, `stagingBadgeIcon`, `punchHoleBg`, `isDark`, `briefBg`, `briefBorder`, `briefBadgeBg`, `briefBadgeBorder`, and `briefBadgeText`.
 
-### Cue Theme Color Calibration (`CUE_THEME_COLORS` & `getCueColorForTheme`)
-Defines the eight cue categories with theme-calibrated RGB palettes:
-- **Dialogue**: Yellow (`lightRgb: 250, 204, 21`, `warmRgb: 222, 160, 24`, `darkRgb: 253, 224, 71`)
-- **Action**: Blue (`lightRgb: 96, 165, 250`, `warmRgb: 88, 134, 185`, `darkRgb: 56, 189, 248`)
-- **Camera**: Green (`lightRgb: 74, 222, 128`, `warmRgb: 110, 158, 90`, `darkRgb: 52, 211, 153`)
-- **Shot**: Purple (`lightRgb: 192, 132, 252`, `warmRgb: 168, 115, 172`, `darkRgb: 168, 85, 247`)
-- **Audio**: Orange (`lightRgb: 251, 146, 60`, `warmRgb: 216, 108, 54`, `darkRgb: 249, 115, 22`)
-- **VFX**: Cyan (`lightRgb: 34, 211, 238`, `warmRgb: 52, 160, 170`, `darkRgb: 45, 212, 191`)
-- **Transition**: Pink (`lightRgb: 244, 114, 182`, `warmRgb: 216, 102, 136`, `darkRgb: 244, 114, 182`)
-- **Environment**: Slate (`lightRgb: 148, 163, 184`, `warmRgb: 158, 146, 130`, `darkRgb: 148, 163, 184`)
+- **Pure Black Canvas Mode (`data-pure-black="true"`)**: An opt-in modifier strictly applied when using dark themes. Overrides `--app-bg` and `--surface` to `#000000`, strips fuzzy drop shadow halos (`!shadow-none`), hides decorative punch holes, neutralizes heading banner fills to transparent, and aligns timeline tracks to pitch black. The 1px paper border (`activeTheme.paperBorder`) remains visible to frame the manuscript, producing 100% background transparency for Screen/Lighten blend mode video recording without compromising structure. Light and warm themes remain completely untouched.
 
-The `getCueColorForTheme` helper returns the appropriate RGB values, contrast classes, and theme-adjusted opacity multipliers.
+### Cue Theme Color Calibration & Accessibility Engine
+Defines the eight cue categories with theme-calibrated RGB palettes under two distinct `CuePaletteProfile` configurations (`'standard'` and `'protanopia'`) resolved via `getCueColorForTheme(typeOrClass, themeId, paletteProfile)`:
+- **Standard Cinema Profile (`CUE_COLOR_DEFINITIONS_STANDARD`)**:
+  - **Dialogue**: Amber Gold (`lightRgb: 245, 158, 11`, `warmRgb: 217, 119, 6`, `darkRgb: 251, 191, 36`)
+  - **Action**: Royal Cobalt Blue (`lightRgb: 37, 99, 235`, `warmRgb: 29, 78, 216`, `darkRgb: 59, 130, 246`)
+  - **Camera**: Emerald Green (`lightRgb: 22, 163, 74`, `warmRgb: 21, 128, 61`, `darkRgb: 34, 197, 94`)
+  - **Shot**: Deep Iris / Indigo (`lightRgb: 99, 102, 241`, `warmRgb: 79, 70, 229`, `darkRgb: 129, 140, 248`)
+  - **Audio**: Bright Amber Orange (`lightRgb: 234, 88, 12`, `warmRgb: 194, 65, 12`, `darkRgb: 249, 115, 22`)
+  - **VFX**: Electric Aqua (`lightRgb: 6, 182, 212`, `warmRgb: 14, 116, 144`, `darkRgb: 34, 211, 238`)
+  - **Transition**: Crimson Rose (`lightRgb: 225, 29, 72`, `warmRgb: 190, 18, 60`, `darkRgb: 244, 63, 94`)
+  - **Environment**: Steel Slate (`lightRgb: 100, 116, 139`, `warmRgb: 120, 113, 108`, `darkRgb: 148, 163, 184`)
+- **Protanopia & Deuteranopia Safe Profile (`CUE_COLOR_DEFINITIONS_PROTANOPIA`)**:
+  - Remaps **Shot** away from the Blue/Indigo spectrum to **Deep Wine / Burgundy** (`rgb(136, 19, 55)` light, `rgb(225, 29, 72)` dark), establishing a distinct $L^* \approx 25$ dark tone that eliminates confusion with Action Blue ($L^* \approx 50$).
+  - Elevates **VFX** to radiant high-luminance Ice Aqua (`rgb(103, 232, 249)` dark, $L^* \approx 85$) and **Transition** to Vermilion Coral (`rgb(234, 88, 12)`).
+- **Backward Compatibility Normalization (`LEGACY_CLASS_MAP`)**: Maps legacy Tailwind color classes (`bg-purple-400`, `bg-pink-400`, `bg-blue-400`, `bg-green-400`) seamlessly to modern canonical cue categories.
 
 ---
 
@@ -167,11 +172,12 @@ YouTube IFrame Player API wrapper:
 - Exposes `seekTo`, `playVideo`, `pauseVideo`, `togglePlayPause`, and `jumpBy(seconds)` transport controls.
 
 ### `useScriptPreferences`
-User preference management with `localStorage` synchronization:
-- `scriptWidthPreset` → key `sceneflow_script_width_preset` (5 presets).
-- `scrollFocusPreset` → key `sceneflow_scroll_focus_preset` (3 presets).
-- `scriptThemeId` → key `sceneflow_script_theme` (6 themes).
-- `hiddenCueTypes` → per-type visibility toggle with `toggleCueTypeVisibility()`.
+Persistent visual customization and layout management:
+- Stored in `localStorage`: reading column width preset (`sceneflow_script_width_preset`), auto-scroll focus preset (`sceneflow_scroll_focus_preset`), active theme ID (`sceneflow_script_theme`), cue palette accessibility profile (`sceneflow_cue_palette_profile`), asymmetric split ratio (`sceneflow_split_ratio`, default 65%), video player height (`sceneflow_video_height`, default 220px), and video collapse state (`sceneflow_playback_video_collapsed`).
+- Provides `resetViewLayout()` to instantly restore default 65:35 panel split, 220px video height, and expand the video player if collapsed.
+- Exposes `isVideoCollapsed`, `setIsVideoCollapsed`, and `toggleVideoCollapsed` helpers.
+- Exposes `isViewCustomized` flag to drive the active status dot on the header "Reset View" button.
+- Manages dropdown visibility toggles, cue type category filter sets, cue palette accessibility profile (`cuePaletteProfile`, `setCuePaletteProfile`), and color picker modal state.
 
 ### `useAutoScroll`
 Real-time playback auto-scroll engine:
@@ -192,14 +198,14 @@ Automated cue realignment orchestration:
 
 ### `useKeyboardShortcuts`
 Global keyboard shortcut handler:
-- `Space` / `KeyK` = play/pause toggle, `ArrowLeft` / `KeyJ` = -5s seek, `ArrowRight` / `KeyL` = +5s seek.
+- `Space` / `KeyK` = play/pause toggle, `ArrowLeft` / `KeyJ` = -5s seek, `ArrowRight` / `KeyL` = +5s seek, `KeyV` = toggle video player collapse in Playback mode.
 - Gates execution when input/textarea elements are focused or any modal is open.
 - Also tracks `isDesktop` via `window.innerWidth >= 1024` resize listener.
 
 ### `useScriptTheme`
 Theme metadata and color resolution hook:
 - Resolves active theme metadata (`ScriptThemeMetadata`), computed theme styles (`themeStyles`), and dark mode state (`isDark`).
-- Provides dynamic cue color resolution helper (`resolveCueColor: (typeOrClass) => CueColorInfo`).
+- Accepts `(scriptThemeId, cuePaletteProfile)` and provides dynamic cue color resolution helper (`resolveCueColor: (typeOrClass) => CueColorInfo`) dynamically adjusted to both the active theme and accessibility profile.
 - Encapsulates theme-dependent styling logic for seamless integration across components.
 
 ### `useEscapeKey`
@@ -216,7 +222,7 @@ Modal and dialog `Escape` key dismissal hook:
 The UI layer coordinates video playback, real-time highlighting, user interaction, and modal dialogs.
 
 ### Core Orchestrator (`src/App.tsx`)
-- **Lightweight Composition**: `App.tsx` imports the custom hook suite and nineteen sub-components, composing them into the full application shell while keeping its own logic to a minimum (mode toggling, library state, modal visibility).
+- **Lightweight Composition**: `App.tsx` imports the custom hook suite and twenty-three sub-components, composing them into the full application shell while keeping its own logic to a minimum (mode toggling, library state, modal visibility).
 - **Hook Integration**: State, playback, preferences, auto-scroll, cue editing, alignment, keyboard shortcuts, and active script theme are fully delegated to the hooks layer. `App.tsx` only wires hook return values to component props.
 - **Sync Engine (`renderedScript` `useMemo`)**: Computes line segments and active cue overlaps in real-time, calculating dynamic opacity based on per-category timing buffers.
 - **Auto-Scroll Engine**: Delegates to `useAutoScroll`, which automatically scrolls the screenplay during playback, prioritizing the most recent active cue, supporting multi-selected focus categories, and aligning to the user's selected vertical focus ratio (35% Top, 50% Center, 65% Bottom).
@@ -224,7 +230,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 - **Cue Sanitization Pipeline**: All data ingress paths (localStorage restore, default load, blank, example, remote fetch) route through `sanitizeCues()` in `useScriptStorage`, guaranteeing deterministic IDs and `type`/`colorClass` normalization.
 
 ### Modular Sub-components (`src/components/`)
-1. **`AppHeader.tsx`**: Global navigation header with SceneFlow logo, Guide/Library/Ko-fi action buttons, real-time playback clock, and Playback/Edit mode toggle.
+1. **`AppHeader.tsx`**: Global navigation header with SceneFlow logo, Guide/Library/Ko-fi action buttons, real-time playback clock, Playback/Edit mode toggle, and the "Reset View" layout button (`RotateCcw`).
 2. **`InitializingScreen.tsx`**: Branded initial load screen displaying the SceneFlow logo with subtle animation.
 3. **`YoutubeSourceInput.tsx`**: YouTube URL/ID input with live player connection indicator and automatic ID extraction using `UI_TOKENS.input`.
 4. **`ScriptManagementBar.tsx`**: Screenplay status banner showing loaded line count with an "Edit Raw" action button styled with `UI_TOKENS`.
@@ -236,14 +242,25 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 10. **`DeleteConfirmationModal.tsx`**: Confirmation dialog with cue text preview prior to permanent deletion styled via `UI_TOKENS`.
 11. **`ResetConfirmationModal.tsx`**: Multi-purpose confirmation dialog for resetting settings, loading guide scripts, loading examples, or fetching remote projects, featuring integrated CORS error reporting and styled via `UI_TOKENS`.
 12. **`TimingSettingsModal.tsx`**: Full-screen configuration modal for per-category timing buffers (before/after offsets) and General Master Offset using `UI_TOKENS`.
-13. **`ScriptColorModal.tsx`**: Theme picker featuring a "Theme Presets" tab with mini live paper preview cards and an "Element Inspector" tab displaying token details and the 8-category highlight spectrum using `UI_TOKENS.swatch`.
+13. **`ScriptColorModal.tsx`**: Theme and color management dialog featuring a "Theme Presets" tab with mini live paper preview cards, a segmented Cue Palette Accessibility Profile toggle (`Standard Cinema` vs. `Protan & Deutan Safe`), and an "Element Inspector" tab displaying token details and the 8-category highlight spectrum using `UI_TOKENS.swatch`.
 14. **`ScriptHeaderControls.tsx`**: Playback-mode control bar with auto-scroll toggle, target-type multi-select dropdown, reading width preset selector, and scroll focus preset selector.
-15. **`ActiveHighlightsPanel.tsx`**: Desktop playback sidebar showing active highlight cards sorted by type, with per-type filter toggle chips and animated pulse indicators, consuming `useScriptTheme`.
-16. **`LibraryModal.tsx`**: Desktop library catalogue modal featuring real-time search, category navigation, sorting (Latest, Oldest, A-Z), section badges, and featured curations.
-17. **`MobileLibraryModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a touch-friendly category filter and search interface.
-18. **`StagingModal.tsx`**: Monospace overlay displaying hidden camera, lighting, or lookbook directives from `[[STAGING]]` blocks.
-19. **`AppInfoModal.tsx`**: Desktop application info and about dialog displaying dynamic versioning from `metadata.json`, author attribution for Taruma Sakti ([Linktree](https://linktr.ee/tarumainfo)), 2x2 resource badge grid, and keyboard shortcuts cheat sheet.
-20. **`MobileColorModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a thumb-friendly 4-segment App Shell switcher and 6 compact screenplay preset cards.
+15. **`ActiveHighlightsPanel` (`src/components/active-highlights/`)**: Modular playback visualization sub-package featuring:
+    - **`ActiveHighlightsPanel.tsx`**: Main orchestrator featuring an **Adaptive Header** layout via `ResizeObserver` (560px threshold): consolidates into a single unified row when wide ($\ge 560\text{px}$) to save vertical headroom, and automatically splits into a Two-Tier Header when narrow ($< 560\text{px}$) where Tier 1 houses `Highlights` + Studio VU Meter + View Switcher, and Tier 2 houses Track Height + Zoom presets + Filters toggle button.
+    - **`HighlightTimelineView.tsx`**: Multi-Track Sync Timeline view with dynamic density scaling (`TimelineDensity`: `'comfortable'` 32px vs. `'compact'` 24px), timeline zoom preset integration (`zoomPreset`), height mode integration (`heightMode`: `'flexible' | 'fixed'`), stationary 35% anticipation playhead, and docked inspector card.
+    - **`HighlightCardsView.tsx`**: Classic floating cards presentation for legacy playback visualization.
+    - **`useTimelineWindow.ts`**: Headless rolling window hook with global greedy interval scheduling for sub-lanes, per-category sub-lane pre-allocation (`subLanesByCategory`), adaptive timecode tick marks, and exposure of `scriptCategories`.
+    - **`TimelineLane.tsx` & `TimelineCueBlock.tsx`**: Isolated track components with hardware-accelerated CSS transitions, compact track header geometry (`w-18` / 72px), theme coloring, synchronized density offsets, stable category-level sub-lane height preservation (`totalSubLanes`), narrow block label elision (`widthPercent < 3.5%`), and interactive lane headers that toggle category visibility.
+    - **`TimelinePlayheadRuler.tsx`**: Gliding timecode ruler and glowing vertical playhead marker.
+    - **`PausedInspectorCard.tsx`**: Docked paused cue inspector with multi-cue tabs, screenplay quote, and instant replay action.
+    - **`HighlightFilterBar.tsx`**: Centered category filter pills with active pulsing state dots and smooth collapsible drawer integration.
+16. **`PlaybackLeftPanel.tsx` (`src/components/playback/PlaybackLeftPanel.tsx`)**: Dedicated playback left panel container encapsulating the media player viewport, proportional 16:9 vertical scaling, zero-scroll vertical padding, persistent header transport controls (`Play`, `Pause`, `Replay 0:00`), active highlights synchronization, and collapsible video player toggle with background audio continuity for screen recording, cleanly decoupled from edit-mode sticky scroll behaviors.
+17. **`SplitPaneDivider.tsx` (`src/components/common/SplitPaneDivider.tsx`)**: Desktop-only draggable vertical split pane divider with pointer capture, `requestAnimationFrame` VSync throttling, `.is-resizing-split` CSS transition suppression, double-click reset, transparent iframe drag guard, and absolute pixel minimum constraint (`MIN_PANEL_PIXEL_WIDTH = 380`).
+18. **`VideoSplitDivider.tsx` (`src/components/playback/VideoSplitDivider.tsx`)**: Desktop-only draggable horizontal split divider between the Video Player and Active Highlights timeline with pointer capture, `requestAnimationFrame` VSync throttling, double-click reset to 240px, and keyboard accessibility (`ArrowUp`/`ArrowDown`).
+19. **`LibraryModal.tsx`**: Desktop library catalogue modal featuring real-time search, category navigation, sorting (Latest, Oldest, A-Z), section badges, and featured curations.
+20. **`MobileLibraryModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a touch-friendly category filter and search interface.
+21. **`StagingModal.tsx`**: Monospace overlay displaying hidden camera, lighting, or lookbook directives from `[[STAGING]]` blocks.
+22. **`AppInfoModal.tsx`**: Desktop application info and about dialog displaying dynamic versioning from `metadata.json`, author attribution for Taruma Sakti ([Linktree](https://linktr.ee/tarumainfo)), 2x2 resource badge grid, and keyboard shortcuts cheat sheet.
+23. **`MobileColorModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a thumb-friendly 4-segment App Shell switcher, the Cue Palette Accessibility Profile selector (`Standard` vs. `Protan Safe`), and 6 compact screenplay preset cards.
 
 ### Type Definitions & Data Schemas
 - **`src/types/script.ts`**: Defines 14 domain interfaces and types: `Cue`, `TimingSettings`, `ColorCategory`, `AppState`, `ScriptWidthPresetId`, `ScriptWidthPreset`, `ScrollFocusPresetId`, `ScrollFocusPreset`, `TextSelection`, `DeleteConfirmationState`, `ResetConfirmationState`, `OverlapPickerState`, `AlternativeLocation`, and `AppMode`.

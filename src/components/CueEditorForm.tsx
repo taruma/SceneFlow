@@ -3,6 +3,7 @@ import { Edit2, Plus, Search, Check, Clock, Trash2 } from 'lucide-react';
 import { Cue } from '../types/script';
 import { COLORS } from '../constants/script';
 import { useScriptTheme } from '../hooks/useScriptTheme';
+import { CuePaletteProfile } from '../styles';
 import { cn } from '../lib/utils';
 import { UI_TOKENS } from '../styles/tokens/ui';
 
@@ -19,6 +20,7 @@ interface CueEditorFormProps {
   canSave: boolean;
   scriptText: string;
   scriptThemeId: string;
+  cuePaletteProfile?: CuePaletteProfile;
   player: any;
 }
 
@@ -35,9 +37,10 @@ export const CueEditorForm: React.FC<CueEditorFormProps> = ({
   canSave,
   scriptText,
   scriptThemeId,
+  cuePaletteProfile = 'standard',
   player,
 }) => {
-  const { resolveCueColor } = useScriptTheme(scriptThemeId as any);
+  const { resolveCueColor } = useScriptTheme(scriptThemeId as any, cuePaletteProfile);
 
   return (
     <div className="bg-surface border-b border-border-main text-text-main p-4 lg:p-6 shrink-0 z-10 shadow-sm animate-in slide-in-from-top duration-500">

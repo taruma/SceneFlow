@@ -4,6 +4,7 @@ interface UseKeyboardShortcutsOptions {
   player: any;
   togglePlayPause: () => void;
   jumpBy: (seconds: number) => void;
+  onToggleVideo?: () => void;
   disabled?: boolean;
 }
 
@@ -11,6 +12,7 @@ export function useKeyboardShortcuts({
   player,
   togglePlayPause,
   jumpBy,
+  onToggleVideo,
   disabled = false,
 }: UseKeyboardShortcutsOptions) {
   const [isDesktop, setIsDesktop] = useState(
@@ -24,7 +26,7 @@ export function useKeyboardShortcuts({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Playback shortcuts: Space (play/pause), ArrowLeft (-5s), ArrowRight (+5s)
+  // Playback shortcuts: Space (play/pause), ArrowLeft (-5s), ArrowRight (+5s), V (toggle video)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't trigger shortcuts if user is typing in an input or if modal is open
@@ -54,12 +56,18 @@ export function useKeyboardShortcuts({
           e.preventDefault();
           jumpBy(5);
           break;
+        case 'KeyV':
+          if (onToggleVideo) {
+            e.preventDefault();
+            onToggleVideo();
+          }
+          break;
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [player, togglePlayPause, jumpBy, disabled]);
+  }, [player, togglePlayPause, jumpBy, disabled, onToggleVideo]);
 
   return { isDesktop };
 }

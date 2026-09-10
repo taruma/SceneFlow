@@ -1,8 +1,9 @@
 import React from 'react';
-import { Plus, Book, Coffee, Play, Edit2, Palette, Clock, FolderOpen, Download, Info, Sun, Moon, Sparkles } from 'lucide-react';
+import { Plus, Book, Coffee, Play, Edit2, Palette, Clock, FolderOpen, Download, Info, Sun, Moon, Sparkles, RotateCcw } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { UI_TOKENS } from '../styles/tokens/ui';
 import type { AppThemeMode, AppThemeCategory } from '../hooks/useAppShellTheme';
+import { DEFAULT_SPLIT_RATIO } from '../hooks/useScriptPreferences';
 
 interface AppHeaderProps {
   mode: 'playback' | 'edit';
@@ -22,6 +23,8 @@ interface AppHeaderProps {
   themeMode?: AppThemeMode;
   effectiveThemeCategory?: AppThemeCategory;
   onCycleThemeMode?: () => void;
+  isViewCustomized?: boolean;
+  onResetView?: () => void;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
@@ -42,6 +45,8 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   themeMode = 'auto',
   effectiveThemeCategory = 'light',
   onCycleThemeMode,
+  isViewCustomized = false,
+  onResetView,
 }) => {
   return (
     <header
@@ -99,7 +104,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
 
         <div className={UI_TOKENS.badge.currentTimePill}>
           <span className="hidden xl:inline text-[10px] font-black text-text-faint uppercase tracking-widest">Current Time</span>
-          <span className="text-base xl:text-lg font-mono font-bold text-btn-primary-text w-12 xl:w-16 text-right">{currentTime.toFixed(1)}s</span>
+          <span className="text-base xl:text-lg font-mono font-bold text-white w-12 xl:w-16 text-right">{currentTime.toFixed(1)}s</span>
         </div>
 
         <div className={UI_TOKENS.button.modeSwitchContainer}>
@@ -178,6 +183,29 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             <Info size={18} />
           </button>
         </div>
+
+        {/* Reset View Layout Button */}
+        {onResetView && (
+          <div className="relative hidden lg:block">
+            <button
+              onClick={onResetView}
+              className={cn(
+                UI_TOKENS.button.headerIconButton,
+                isViewCustomized && "text-blue-500 hover:text-blue-600 dark:text-blue-400"
+              )}
+              title={
+                isViewCustomized
+                  ? "Reset View Layout & Video Size (Customized)"
+                  : `Reset View Layout & Video Size (Default ${DEFAULT_SPLIT_RATIO}:${100 - DEFAULT_SPLIT_RATIO})`
+              }
+            >
+              <RotateCcw size={16} className={cn(isViewCustomized && "transition-transform active:-rotate-45")} />
+              {isViewCustomized && (
+                <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+              )}
+            </button>
+          </div>
+        )}
 
         <div className="hidden lg:block h-8 w-px bg-border-main mx-2" />
 

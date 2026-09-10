@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Sparkles, Check, RotateCcw, X, Moon, Sun, Coffee, Eye, Layers, Palette } from 'lucide-react';
+import { Sparkles, Check, RotateCcw, X, Moon, Sun, Coffee, Eye, Layers, Palette, Video } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { SCRIPT_THEMES, getCueColorForTheme, CUE_THEME_COLORS, type ScriptThemeId, type ScriptTheme } from '../lib/scriptStyles';
+import { SCRIPT_THEMES, getCueColorForTheme, CUE_THEME_COLORS, type ScriptThemeId, type ScriptTheme, type CuePaletteProfile } from '../lib/scriptStyles';
 import { UI_TOKENS } from '../styles/tokens/ui';
 import { useEscapeKey } from '../hooks/useEscapeKey';
 import type { AppThemeMode, AppThemeCategory } from '../hooks/useAppShellTheme';
@@ -14,6 +14,10 @@ interface ScriptColorModalProps {
   themeMode?: AppThemeMode;
   setThemeMode?: (mode: AppThemeMode) => void;
   effectiveThemeCategory?: AppThemeCategory;
+  pureBlackMode?: boolean;
+  setPureBlackMode?: (enabled: boolean) => void;
+  cuePaletteProfile?: CuePaletteProfile;
+  onSelectPaletteProfile?: (profile: CuePaletteProfile) => void;
 }
 
 const PREVIEW_CUE_CHIPS = [
@@ -32,6 +36,10 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
   themeMode = 'auto',
   setThemeMode,
   effectiveThemeCategory = 'light',
+  pureBlackMode = false,
+  setPureBlackMode,
+  cuePaletteProfile = 'standard',
+  onSelectPaletteProfile,
 }) => {
   useEscapeKey(onClose, isOpen);
 
@@ -120,7 +128,66 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
         </div>
 
         {/* Modal Body */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
+          {/* Vision & Palette Profile Selector - accessible across tabs */}
+          <div className="bg-surface-subtle border border-border-main rounded-2xl p-3.5 sm:p-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-lg bg-btn-primary-bg/10 text-btn-primary-bg flex items-center justify-center shrink-0">
+                    <Eye size={13} />
+                  </div>
+                  <h4 className="text-xs font-bold text-text-main">
+                    Cue Palette Accessibility Profile
+                  </h4>
+                  <span className={cn(
+                    "text-[8px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full font-semibold border",
+                    cuePaletteProfile === 'protanopia' 
+                      ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" 
+                      : "bg-surface-muted text-text-muted border-border-main"
+                  )}>
+                    {cuePaletteProfile === 'protanopia' ? 'Protan & Deutan Safe' : 'Standard'}
+                  </span>
+                </div>
+                <p className="text-[11px] text-text-muted mt-1 leading-relaxed">
+                  {cuePaletteProfile === 'protanopia' 
+                    ? 'Calibrated for Red-Green Color Vision Deficiency: Shot is rendered in high-contrast Deep Wine / Burgundy to eliminate collision with Cobalt Blue Action.' 
+                    : 'Standard cinema spectrum calibrated across Studio, Warm Parchment, and Midnight themes.'}
+                </p>
+              </div>
+
+              {onSelectPaletteProfile && (
+                <div className="inline-flex p-1 bg-surface border border-border-main rounded-xl shrink-0 self-start sm:self-center shadow-2xs">
+                  <button
+                    type="button"
+                    onClick={() => onSelectPaletteProfile('standard')}
+                    className={cn(
+                      "px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5",
+                      cuePaletteProfile === 'standard'
+                        ? "bg-btn-primary-bg text-btn-primary-text shadow-xs"
+                        : "text-text-muted hover:text-text-main"
+                    )}
+                  >
+                    Standard Cinema
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onSelectPaletteProfile('protanopia')}
+                    className={cn(
+                      "px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5",
+                      cuePaletteProfile === 'protanopia'
+                        ? "bg-btn-primary-bg text-btn-primary-text shadow-xs"
+                        : "text-text-muted hover:text-text-main"
+                    )}
+                  >
+                    <Eye size={12} />
+                    Protan / Deutan Safe
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
           {activeTab === 'presets' ? (
             <div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
@@ -195,7 +262,7 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                           
                           <div className="flex items-center gap-0.5">
                             {PREVIEW_CUE_CHIPS.map(chip => {
-                              const themed = getCueColorForTheme(chip.type, theme.id);
+                              const themed = getCueColorForTheme(chip.type, theme.id, cuePaletteProfile);
                               return (
                                 <span 
                                   key={chip.name}
@@ -220,8 +287,62 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                 })}
               </div>
 
+              {/* Pure Black Canvas (Video Overlay Mode) Toggle Card */}
+              <div className="mt-4 p-4 rounded-xl border border-border-main bg-surface-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
+                <div className="flex items-start sm:items-center gap-3.5">
+                  <div className={cn(
+                    "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors shadow-xs border",
+                    pureBlackMode && currentTheme.category === 'dark'
+                      ? "bg-black border-neutral-700 text-white ring-2 ring-neutral-700/50"
+                      : "bg-surface border-border-main text-text-muted"
+                  )}>
+                    <Video size={18} />
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs font-bold text-text-main">
+                        Pure Black Canvas
+                      </span>
+                      <span className="text-[9px] font-mono font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-neutral-900 text-neutral-200 border border-neutral-700">
+                        Video Overlay Mode
+                      </span>
+                      {currentTheme.category !== 'dark' && pureBlackMode && (
+                        <span className="text-[9px] font-medium text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded">
+                          Applies on dark script themes
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-text-muted leading-relaxed max-w-xl">
+                      Forces absolute <code className="font-mono text-[10px] bg-surface-muted px-1 py-0.5 rounded text-text-main">#000000</code> backgrounds across the app while keeping clean paper borders, removing drop shadows, punch holes, and heading strips. Optimized for <strong className="text-text-main">Screen / Lighten</strong> video overlay recording.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
+                  <button
+                    type="button"
+                    role="switch"
+                    id="pure-black-mode-toggle"
+                    aria-checked={pureBlackMode}
+                    onClick={() => setPureBlackMode?.(!pureBlackMode)}
+                    className={cn(
+                      "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-text-main focus:ring-offset-2",
+                      pureBlackMode ? "bg-black ring-1 ring-neutral-600" : "bg-surface-muted"
+                    )}
+                  >
+                    <span className="sr-only">Toggle Pure Black Video Overlay Mode</span>
+                    <span
+                      className={cn(
+                        "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out",
+                        pureBlackMode ? "translate-x-5" : "translate-x-0"
+                      )}
+                    />
+                  </button>
+                </div>
+              </div>
+
               {/* Active Theme Summary footer note */}
-              <div className="mt-4 p-3 bg-surface-subtle rounded-xl border border-border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-text-muted">
+              <div className="mt-3 p-3 bg-surface-subtle rounded-xl border border-border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-text-muted">
                 <div className="flex items-center gap-2">
                   <Eye size={14} className="text-text-faint shrink-0" />
                   <span>Script Paper: <strong className="text-text-main">{currentTheme.name}</strong> ({currentTheme.category})</span>
@@ -330,7 +451,7 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {CUE_THEME_COLORS.map(c => {
-                    const themed = getCueColorForTheme(c.type, currentThemeId);
+                    const themed = getCueColorForTheme(c.type, currentThemeId, cuePaletteProfile);
                     return (
                       <div key={c.type} className="p-2.5 bg-surface-subtle border border-border-main rounded-xl flex items-center gap-2.5">
                         <div 

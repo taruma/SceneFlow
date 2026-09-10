@@ -83,6 +83,43 @@
   --color-support-hover: #e04e4b;
 }
 
+/* Pure Black Shell tokens (when App Shell is dark and pureBlackMode is on) */
+[data-pure-black-shell="true"],
+[data-pure-black-shell="true"] [data-theme-category="dark"] {
+  --app-bg: #000000;
+  --surface: #000000;
+  --surface-subtle: #050505;
+  --surface-muted: #111111;
+  --surface-hover: #1a1a1a;
+  --surface-dark: #000000;
+  --border-main: #242424;
+  --border-subtle: #141414;
+  --border-subtle-trans: rgba(255, 255, 255, 0.08);
+}
+
+[data-pure-black-shell="true"] .timeline-track-field {
+  background-color: #000000 !important;
+  box-shadow: none !important;
+}
+
+/* Pure Black Script Paper tokens (when active Script Theme is dark and pureBlackMode is on) */
+[data-pure-black-script="true"] .script-paper-container {
+  background-color: #000000 !important;
+}
+
+[data-pure-black-script="true"] .script-punch-hole {
+  display: none !important;
+}
+
+[data-pure-black-script="true"] .script-heading-banner {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+[data-pure-black-script="true"] .script-brief-card {
+  background-color: #000000 !important;
+}
+
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Libre Baskerville", serif;
@@ -171,4 +208,15 @@ body {
 .custom-dark-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: #44403c #1c1917;
+}
+
+/* Disable all transitions and pointer events while resizing split panels for 60fps drag performance */
+body.is-resizing-split,
+body.is-resizing-split * {
+  transition: none !important;
+  user-select: none !important;
+}
+
+body.is-resizing-split iframe {
+  pointer-events: none !important;
 }

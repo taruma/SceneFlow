@@ -5,6 +5,128 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-09-10
+
+### Added
+- **Cue Palette Accessibility Profile & Protanopia/Deuteranopia Safe Mode (`src/styles/tokens/cues.ts`, `src/components/ScriptColorModal.tsx`, `src/components/MobileColorModal.tsx`, `src/hooks/useScriptPreferences.ts`)**:
+  - Added an opt-in **Cue Palette Accessibility Profile** selector (`CuePaletteProfile`: `'standard' | 'protanopia'`) directly inside both desktop `ScriptColorModal` and `MobileColorModal`.
+  - **Protanopia & Deuteranopia Accessibility**: Solved Red-Green Color Vision Deficiency where Indigo and Blue collapse into identical hues due to reduced L/M cone sensitivity, by remapping **Shot** to **Deep Wine / Burgundy** (`rgb(136, 19, 55)` in light paper / `rgb(225, 29, 72)` in dark paper). In Protanopia, this registers as a warm, rich chocolate-wine tone ($L^* \approx 25$) with massive luminance separation from **Action Blue** ($L^* \approx 50$), eliminating blue-indigo ambiguity.
+  - **High-Luminance Ice Aqua & Vermilion Coral**: Saturated **Action** to firm Cobalt Blue (`rgb(37, 99, 235)`), elevated **VFX** to radiant high-luminance Ice Aqua (`rgb(103, 232, 249)` in dark themes, $L^* \approx 85$), and calibrated **Transition** to warm Vermilion Coral (`rgb(234, 88, 12)`).
+  - **Instant Live Synchronization & Persistence**: Switching profiles immediately updates the screenplay text highlights, multi-track timeline lanes, Active Highlights VU meter and cards, and modal inspector swatches, persisted across sessions in `localStorage` (`sceneflow_cue_palette_profile`).
+- **Harmonized 360° Standard Cue Color Palette Overhaul (`src/styles/tokens/cues.ts`, `src/styles/helpers.ts`, `src/lib/cueUtils.ts`)**:
+  - Overhauled the default 8-category screenplay cue palette to distribute all categories evenly across the 360° color wheel, eliminating pastel hue crowding between Shot, Transition, and VFX.
+  - **Transition (Crimson Rose `bg-rose-500/50`)**: Replaced ambiguous soft pastel pink (`bg-pink-400`) with crisp Crimson Rose (`rgb(244, 63, 94)`), introducing an authoritative editorial cut mark that never blurs into purple.
+  - **Shot (Deep Iris / Indigo `bg-indigo-400/50`)**: Shifted from lilac purple to Deep Iris (`rgb(129, 140, 248)`), providing framing cues (CU, Wide, POV) with a deliberate architectural cool tone.
+  - **VFX (Electric Aqua `bg-cyan-400/50`)**: Calibrated to sharp Electric Aqua (`rgb(6, 182, 212)` light / `rgb(34, 211, 238)` dark), removing previous dark-mode teal drift (`rgb(45, 212, 191)`) that previously clashed with camera emerald green.
+  - **Action & Camera Buffer Widening**: Deepened **Action** to Royal Cobalt Blue (`bg-blue-500/50`, `rgb(59, 130, 246)`) and **Camera** to crisp Emerald Green (`bg-green-500/50`, `rgb(34, 197, 94)`).
+  - **Backward Compatibility Engine (`LEGACY_CLASS_MAP`)**: Added seamless fallback normalization for older script files and localStorage states referencing legacy classes (`bg-purple-400/50`, `bg-pink-400/50`, `bg-blue-400/50`, `bg-green-400/50`), automatically upgrading them to the new canonical color classes on edit.
+- **Theming & Video Overlay Invariants Rule (`.agents/rules/theming-and-overlay-invariants.md`, `docs/AGENTS.md`)**:
+  - Codified the two-tier theming independence invariant ensuring that App Shell theme modes (`themeMode`) and Script Paper presets (`scriptThemeId`) remain decoupled without cross-layer visual leakage.
+  - Documented video compositing and screen recording invariants: absolute `#000000` luminance requirements, fuzzy drop shadow removal, 1px paper border preservation, artifact suppression (hole punches, heading fills), and non-destructive dark theme scoping.
+- **Pure Black Canvas / Video Overlay Mode (`src/components/ScriptColorModal.tsx`, `src/components/MobileColorModal.tsx`, `src/hooks/useScriptPreferences.ts`, `src/index.css`)**:
+  - Added an opt-in **Pure Black Canvas (Video Overlay Mode)** toggle inside both desktop `ScriptColorModal` and `MobileColorModal`, explicitly designed for screen recording and NLE compositing using **Screen** or **Lighten** blend modes.
+  - **Dark-Theme-Scoped True Black (`#000000`)**: When enabled alongside dark themes (`Midnight Slate`, `OLED Blackout`, `Navy Slate`), forces absolute `#000000` (RGB: `0, 0, 0`) backgrounds across the entire workspace (`--app-bg`, `--surface`, `--surface-dark`), eliminating the milky grey box or foggy wash caused by off-black values (`#0c0a09` / `#18181b`) in video overlay blending.
+  - **Paper Border Preservation & Shadow Stripping**: Automatically removes fuzzy drop shadow halos (`!shadow-none`) to prevent blurred boundary artifacts during screen capture, while cleanly preserving the 1px paper border (`activeTheme.paperBorder`) to maintain manuscript framing.
+  - **Distraction-Free Manuscript Elements**: Hides decorative hole-punches (`display: none`), neutralizes scene heading banner strips to transparent (`script-heading-banner`), and renders brief summary cards on pure black (`script-brief-card`), preventing unintended background blocks from appearing over video footage.
+  - **Full-App Overlay Alignment**: Extends `#000000` background styling to the left panel, category filter pills (`HighlightFilterBar`), and horizontal multi-track timeline lanes (`.timeline-track-field`), allowing creators to screen record cropped sections of the timeline or category badges with 100% background transparency.
+  - **Decoupled Paper vs. Shell Theme Scope**: Completely decoupled script paper pure black styling from the application shell's theme mode. When Auto Color is turned off (e.g. setting the app shell explicitly to Light or Warm), selecting a dark script theme in the Color Modal still renders pure `#000000` canvas and paper independently, and vice-versa, ensuring theme independence without cross-layer visual leakage.
+  - **Light/Warm Theme Safety**: Non-destructive behavior that strictly leaves light and warm themes (`Studio Crisp`, `Warm Parchment`, `Newsprint`) completely untouched; switching back to dark themes automatically re-engages pure black rendering.
+  - **Session Persistence**: Stored in `localStorage` (`sceneflow_pure_black_bg`) to preserve creator preferences across browser sessions.
+- **Persistent Playback Header Transport Controls (`src/components/playback/PlaybackLeftPanel.tsx`, `src/App.tsx`)**:
+  - Added dedicated, ergonomic playback transport controls directly in the `PlaybackLeftPanel` header alongside the video collapse toggle.
+  - **Play / Pause Toggle**: Integrated a dynamic transport button displaying `Play` or `Pause` with distinct icons and active accent styling, synchronized with player state and keyboard shortcuts (<kbd>Space</kbd> / <kbd>K</kbd>).
+  - **Replay From Beginning (`0:00`)**: Added a single-click `Replay` button (`RotateCcw`) that instantly seeks to `0:00` and begins playback without paused-seek suppression guards interfering.
+  - **Unobstructed Media Control**: Transport controls remain persistently mounted and fully operable even when the video player is collapsed (`isVideoCollapsed`), providing seamless audio control during timeline screen recording.
+  - **Responsive Layout**: Button labels collapse gracefully to compact icon-only buttons on small viewports (`hidden sm:inline`), preventing header wrapping or layout shifts.
+- **Collapsible Video Player in Playback Mode (`src/components/playback/PlaybackLeftPanel.tsx`, `src/hooks/useScriptPreferences.ts`, `src/hooks/useKeyboardShortcuts.ts`)**:
+  - Added the ability to hide/collapse the YouTube video player in Playback Mode, providing an unobstructed full-height viewport for the Multi-Track Sync Timeline specifically tailored for timeline screen recording and video analysis.
+  - **Zero-Height Audio & Sync Continuity**: Implemented zero-height CSS clipping (`h-0 min-h-0 max-h-0 opacity-0 pointer-events-none !m-0 !p-0 overflow-hidden`) keeping the `<YouTube>` iframe mounted in the DOM, guaranteeing uninterrupted audio playback, real-time playhead advancement, cue highlighting, and screenplay auto-scroll.
+  - **Interactive Playback Header Controls**: Added a header toggle button (`[ Hide Video ]` ⇋ `[ Show Video ]`) with distinct visual feedback, an animated amber status pill (`Video Hidden`) when collapsed, and automatic suppression of the vertical `VideoSplitDivider` handle.
+  - **Global Keyboard Shortcut (`V`)**: Bound the <kbd>V</kbd> key to toggle video visibility instantly during playback when not typing in text fields, with tooltip hints and documentation in `AppInfoModal`.
+  - **Layout State Persistence & Reset Integration**: Stored collapsed state in `localStorage` (`sceneflow_playback_video_collapsed`), wired into `isViewCustomized` indicator logic, and unified with the header "Reset View" button to restore default video visibility in one click.
+- **Multi-Track Sync Timeline (`src/components/active-highlights/`)**:
+  - Re-architected the playback Active Highlights panel from vertical cards into a modern, zero-layout-shift horizontal multi-track sync timeline inspired by NLEs and DAWs.
+  - **Stationary Anticipation Playhead (`TimelinePlayheadRuler.tsx`)**: Anchored at 35% from the left edge with a glowing vertical laser marker and pip, giving visual room for upcoming dialogue anticipation.
+  - **Sliding Continuous Timecode Ruler (`TimelinePlayheadRuler.tsx`)**: Dynamically renders 1-second ticks and major MM:SS labels smoothly gliding in real-time.
+  - **Deterministic Global Sub-Lane Stacking (`useTimelineWindow.ts`)**: Implemented greedy interval scheduling across all script cues to assign fixed, permanent sub-lane indices, completely eliminating vertical row-jumping or card juggling during scrubbing and playback.
+  - **Docked Paused Cue Inspector (`PausedInspectorCard.tsx`)**: Automatically docks below the timeline whenever playback is paused or a cue block is clicked, featuring multi-cue tab switching, category-themed badges, large serif italic screenplay quotes, precision timestamps (`MM:SS.s`), and a dedicated "Replay" action.
+  - **Segmented View Mode Switcher (`ActiveHighlightsPanel.tsx`)**: Added a persistent header toggle (`[ 📊 Timeline | 🗂 Cards ]`) stored in `localStorage` (`sceneflow_highlight_view_mode`), allowing users to switch between the modern multi-track timeline and the classic floating cards view at any time.
+  - **Active Highlights Header Redesign & Studio VU Meter (`ActiveHighlightsPanel.tsx`)**:
+    - Re-architected the panel header into a unified two-column layout: left side groups the section title with the active counter, while the right side consolidates interactive toolbar controls.
+    - **Studio VU Meter (Fixed-Slot Category LED Strip)**: Implemented an 8-slot category LED indicator strip (`Dialogue`, `Action`, `Camera`, `Shot`, `Audio`, `VFX`, `Transition`, `Environment`) anchored beside the count, illuminating dynamically in theme-calibrated colors (`resolveCueColor`) with zero layout shift during playback.
+    - **Jitter-Free Numerical Isolation**: Isolated the active cue counter in a dedicated fixed-width slot (`min-w-[14px] font-mono tabular-nums`), preventing horizontal width jumping when cue counts oscillate between single and double digits.
+    - **Collapsible Filter Drawer**: Converted the 8-category pill filter bar into a smoothly collapsible drawer (`max-h-32 opacity-100` ⇋ `max-h-0 opacity-0`), reclaiming ~35–40px of vertical space for the timeline tracks.
+    - **Persistent Toolbar Button & Mute Indicator**: Added a dedicated `Filters` button to the right toolbar with `localStorage` memory (`sceneflow_highlight_filter_expanded`) and an animated pulsing dot indicator when any categories are actively muted.
+  - **Timeline Window Zoom Presets (`src/components/active-highlights/`)**:
+    - Added discrete zoom window presets (`4s`, `8s`, `16s`) to the Multi-Track Sync Timeline, allowing users to alternate between close-up dialogue inspection and macro scene overview.
+    - **Context-Aware Header Controls (`ActiveHighlightsPanel.tsx`)**: Placed a compact segmented preset switcher (`[ 4s | 8s | 16s ]`) immediately to the left of the `Filters` toggle button, conditionally visible only in Timeline view and persisted in `localStorage` (`sceneflow_timeline_zoom_preset`).
+    - **Adaptive Timecode Ruler (`useTimelineWindow.ts`)**: Dynamically scales tick frequency and label intervals (1s labels for `4s`, 2s labels for `8s`, and 2s ticks / 4s labels for `16s`), completely preventing horizontal label collisions and eliminating unnecessary DOM elements at wide zoom levels.
+    - **Narrow Block Visual Optimization (`TimelineCueBlock.tsx`)**: Automatically centers category indicator dots and hides clipped snippet text on narrow blocks (`widthPercent < 3.5%`) during wide zooms, keeping the full cue text accessible on hover tooltip.
+  - **Fixed vs. Flexible Track Height Mode (`src/components/active-highlights/`)**:
+    - Introduced `TimelineHeightMode` (`'flexible' | 'fixed'`) allowing users to choose between dynamic track expansion and pre-allocated zero-layout-shift track heights.
+    - **Per-Category Pre-Allocation (`useTimelineWindow.ts`)**: In `Fixed` mode, tracks pre-calculate their maximum simultaneous overlapping cues across the entire script (`globalMaxSubLane + 1`), locking track heights (e.g. Dialogue at 2 rows) and displaying horizontal sub-lane dividers from `00:00` without vertical layout shift during playback.
+    - **Context-Aware Segmented Toggle (`ActiveHighlightsPanel.tsx`)**: Added `[ Flex | Fixed ]` segmented buttons situated immediately to the left of the time window zoom switcher in the header toolbar, conditionally visible only in Timeline view and persisted in `localStorage` (`sceneflow_timeline_height_mode`).
+    - **Track Height Stability (`TimelineLane.tsx`)**: Forwarded `totalSubLanes` from category-level metadata to `TimelineLane`, ensuring empty lanes maintain pre-allocated track heights and dividers even when no cues are currently visible in the active time window.
+  - **High-Craft Sub-Package Modularization**: Fully decomposed the monolithic highlights component into a dedicated, modular folder structure (`src/components/active-highlights/`) with a public API barrel export (`index.ts`), clean contracts (`types.ts`), headless calculation hook (`useTimelineWindow.ts`), and isolated track primitives (`TimelineLane.tsx`, `TimelineCueBlock.tsx`).
+- **Draggable Asymmetric Split Pane (`src/components/common/SplitPaneDivider.tsx`, `src/hooks/useScriptPreferences.ts`, `src/App.tsx`)**:
+  - Replaced the rigid 50/50 desktop split with an interactive, draggable split divider, defaulting to a calibrated **42% Video / 58% Script** ratio (clamped between 30% and 65%) and persisted in `localStorage` (`sceneflow_split_ratio`).
+  - Added desktop-only `SplitPaneDivider` component with direct pointer capture, transparent iframe drag guard, keyboard arrow adjustment, and double-click reset.
+  - Implemented `requestAnimationFrame` hardware VSync throttling and `.is-resizing-split` CSS transition suppression, delivering 60–144fps lag-free resizing.
+  - Decoupled real-time in-memory drag state updates from disk I/O, writing to `localStorage` only upon drag release (`commitSplitRatio`).
+- **Vertical Video ⇕ Timeline Split Divider & Proportional Sizing (`src/components/playback/VideoSplitDivider.tsx`, `src/components/playback/PlaybackLeftPanel.tsx`, `src/hooks/useScriptPreferences.ts`)**:
+  - Replaced the manual percentage `Size` slider with an interactive desktop horizontal split handle (`VideoSplitDivider`) positioned directly between the Video Player and the Active Highlights timeline.
+  - Implemented direct vertical height resizing (default: `240px`, clamped between `160px` and `480px`) with automatic 16:9 proportional aspect scaling (`aspect-video`), completely eliminating dead horizontal gutters and preserving true video geometry.
+  - Replaced the cluttered "NOW PLAYING" slider row with a minimal, uppercase tracked `PLAYBACK` section header (`UI_TOKENS.layout.sectionTitle`), establishing visual consistency with `ACTIVE HIGHLIGHTS` and `SCRIPT PREVIEW`.
+  - Added high-performance pointer capture, `requestAnimationFrame` hardware VSync throttling, iframe pointer event suppression, keyboard accessibility (`ArrowUp`/`ArrowDown`), and double-click reset to 240px.
+  - Integrated `videoHeight` persistence (`sceneflow_video_height`) with debounced write-on-release (`commitVideoHeight`), and unified it with the header's "Reset View" button to reset both panel split and video height in one click.
+- **Header "Reset View" Button (`src/components/AppHeader.tsx`, `src/hooks/useScriptPreferences.ts`)**:
+  - Added a dedicated reset button (`RotateCcw`) to the desktop header toolbar with active indicator dot and dynamic tooltips, restoring default 42:58 split and 100% video size in a single click.
+- **Absolute Pixel Minimum Constraint for Panel Split (`src/components/common/SplitPaneDivider.tsx`, `src/hooks/useScriptPreferences.ts`)**:
+  - Added `MIN_PANEL_PIXEL_WIDTH = 380` to prevent the left playback column from collapsing into an unusable micro-sliver on smaller desktop viewports (1024px–1366px laptops).
+  - Both pointer drag tracking and keyboard adjustment (<kbd>ArrowLeft</kbd>) calculate `effectiveMinRatio = Math.max(minRatio, (380 / windowWidth) * 100)`.
+- **Timing Buffers Activation Synchronization (The Dual-Time Principle) (`useTimelineWindow.ts`, `HighlightTimelineView.tsx`, `ActiveHighlightsPanel.tsx`)**:
+  - Integrated `state.settings` into the timeline so that cue blocks and category indicator dots illuminate (`isPlayheadInside`) across the full `before` lead-in and `after` hold buffers via `isCueActive()`.
+  - Docked paused cue inspector displays active cues in lockstep with the highlighted screenplay text while preserving physical audio media boundaries (`startTime` $\to$ `endTime`) on the timecode ruler.
+### Changed
+- **Default View Layout Calibration (`src/hooks/useScriptPreferences.ts`, `src/components/AppHeader.tsx`)**:
+  - Calibrated default split ratio from `42%` to **`65%`** (65% Left / 35% Right) and raised `MAX_SPLIT_RATIO` from `65%` to `72%`, prioritizing horizontal timeline width for multi-track cues and timecode ruler visibility while framing the screenplay in its natural ~35% single-column format.
+  - Adjusted default video player height from `240px` to **`220px`**, establishing a sleek, compact preview monitor that expands vertical headroom for all 5 timeline lanes.
+  - Dynamically wired the header `AppHeader` "Reset View" button tooltip to `DEFAULT_SPLIT_RATIO` (`Default 65:35`).
+
+### Fixed
+- **Dark Mode Current Time Counter Contrast (`src/styles/tokens/ui.ts`, `src/components/AppHeader.tsx`, `src/components/ScriptHeaderControls.tsx`)**:
+  - Fixed an issue where the current time counter digits in dark mode rendered in near-black charcoal (`#1c1917`) on top of a dark pill (`bg-surface-dark`, `#0f0e0d` / `#000000`), resulting in an unreadable ~1.1:1 contrast ratio.
+  - Decoupled `UI_TOKENS.badge.currentTimePill` and the digit spans from the inverted `btn-primary-text` button token, applying high-contrast `text-white` across all themes.
+  - Added centralized `UI_TOKENS.badge.currentTimePillSm` token to ensure consistent desktop and mobile current time pill styling.
+- **Timeline Sub-Lane Density Synchronization (`src/components/active-highlights/timeline/`)**:
+  - Fixed a sub-lane clipping bug where compact density shortened track container heights while cue blocks remained at 26px vertical offsets.
+  - Forwarded `density` from `TimelineLane` into `TimelineCueBlock`, ensuring top offsets (`subLaneIndex * step + padding`) and block heights (18px vs 22px) stay strictly in lockstep with container bounds.
+- **Playback State-Aware Seeking & Auto-Play Suppression (`src/hooks/useYouTubePlayer.ts`, `src/App.tsx`, `src/hooks/useCueEditor.ts`)**:
+  - Fixed an issue where clicking a cue on the timeline or in the script while paused triggered YouTube's unbuffered seek autoplay quirk (`BUFFERING (3) -> PLAYING (1)`).
+  - Implemented pre-emptive and post-seek `player.pauseVideo()` enforcement alongside `player.seekTo()`.
+  - Added an auto-expiring 600ms seek guard timeout to prevent the "ghost pause" bug, ensuring that subsequent clicks on the YouTube player frame start playback immediately on the first click.
+  - Propagated explicit `autoPlay: true` intent through props so the inspector's "Replay" action immediately seeks and begins playback.
+  - Protected edit-mode cue selection in `useCueEditor.ts` against involuntary playback when paused.
+
+### Refactored
+- **Adaptive Highlights Toolbar & Narrow-Column Responsiveness (`src/components/active-highlights/ActiveHighlightsPanel.tsx`, `src/components/active-highlights/timeline/TimelineLane.tsx`)**:
+  - Implemented an adaptive layout via `ResizeObserver` that dynamically switches between a sleek single unified row and a Two-Tier Header based on panel width (threshold: 560px).
+  - **Wide Viewports ($\ge 560\text{px}$)**: Keeps all controls on a single unified row (`Highlights` + `Active: X` VU meter on left; `[Flex | Fixed]` + `[4s | 8s | 16s]` + `[Filters]` + `[Timeline | Cards]` on right), eliminating vertical clutter and reserving maximum height for the timeline tracks.
+  - **Narrow Viewports ($< 560\text{px}$)**: Automatically transforms into a clean Two-Tier Header (Tier 1: Section title, VU meter, and view switcher; Tier 2: Zoom presets, Track Height mode, and Filters toggle), completely preventing button collisions and text squishing when dragging the vertical split pane to the left.
+  - **Compact Category Track Headers (`TimelineLane.tsx`)**: Scaled track header buttons from `w-22` (88px) down to `w-18` (72px) with `text-[8.5px]` font and compact padding (`px-1.5`, `gap-1`), immediately freeing 16px of horizontal space per lane for timeline cue blocks and ruler ticks.
+  - **Section Title Streamlining**: Renamed the section title from "Active Highlights" to "Highlights" to eliminate redundancy with the adjacent `Active: X` VU badge and save horizontal width.
+- **Zero-Scroll Playback Left Panel Optimization (`src/components/playback/PlaybackLeftPanel.tsx`, `src/components/active-highlights/`)**:
+  - Optimized playback column padding from `lg:p-10` to `lg:px-6 lg:py-3.5` (reclaiming ~52px of blank vertical whitespace) and tightened inter-section gaps.
+  - Scaled the 16:9 player and timeline components so that the video, filter pills, multi-track lanes, and timecode ruler fit on screen simultaneously with 0px vertical scrolling.
+  - Preserved standard `comfortable` track density (32px track height) as the unclipped default.
+- **Playback & Edit Left Panel Decoupling (`src/components/playback/PlaybackLeftPanel.tsx`, `src/App.tsx`)**:
+  - Extracted dedicated `PlaybackLeftPanel` component to isolate video player rendering, sizing controls, and active highlights from Edit mode.
+  - Eliminated mixed-mode conditional ternaries and sticky scroll listeners in `App.tsx`, providing a clean, isolated container architecture for playback viewport optimizations.
+- **Timeline Density & Interactive Category Visibility (`src/components/active-highlights/`)**:
+  - Introduced `TimelineDensity` (`'comfortable' | 'compact'`) support across `types.ts`, `ActiveHighlightsPanel.tsx`, `HighlightTimelineView.tsx`, and `TimelineLane.tsx` for dynamic track heights (32px vs 24px).
+  - Enhanced `TimelineLane` category headers into interactive buttons that toggle cue category visibility directly with active/muted visual states.
+  - Updated `useTimelineWindow.ts` to expose `scriptCategories` alongside `existingCategories` for robust category presence tracking.
+
 ## [2.2.0] - 2026-08-29
 
 ### Added

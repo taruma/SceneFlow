@@ -61,14 +61,15 @@ Cues link specific text segments in the screenplay to video playback timestamps.
 
 ### Cue Categories & Themes
 Supports eight color-coded cue categories, each calibrated with theme-specific RGB values:
-1. 🟡 **Dialogue**: Spoken character dialogue.
-2. 🔵 **Action**: Physical action beats and actor movements.
-3. 🟢 **Camera**: Camera moves, gimbal directions, and framing.
-4. 🟣 **Shot**: Shot scale descriptions (CU, WIDE, OTS, ESTABLISHING).
-5. 🟠 **Audio**: Sound effects, foley, and soundtrack cues.
-6. 🔷 **VFX**: Visual effects and CGI instructions.
-7. 🩷 **Transition**: Scene cuts, dissolves, and pacing transitions.
-8. ⚪ **Environment**: Atmospheric lighting and weather conditions.
+1. 🟡 **Dialogue**: Spoken character dialogue (Amber Gold).
+2. 🔵 **Action**: Physical action beats and actor movements (Royal Cobalt Blue).
+3. 🟢 **Camera**: Camera moves, gimbal directions, and framing (Emerald Green).
+4. 🟣 **Shot**: Shot scale descriptions (CU, WIDE, OTS, ESTABLISHING) (Deep Iris).
+5. 🟠 **Audio**: Sound effects, foley, and soundtrack cues (Bright Amber Orange).
+6. 🔷 **VFX**: Visual effects and CGI instructions (Electric Aqua).
+7. 🌹 **Transition**: Scene cuts, dissolves, and pacing transitions (Crimson Rose).
+8. ⚪ **Environment**: Atmospheric lighting and weather conditions (Steel Slate).
+
 
 ### Cue Creation & In-Place Text Editing
 - **Creation**: In Edit Mode, highlight text in the script preview to populate the "New Sync Cue" panel with calculated start and end character offsets.
@@ -85,7 +86,96 @@ When script text is edited or pasted, the "Align" tool sorts cues chronologicall
 
 ---
 
-## 4. Auto-Scroll & Viewport Alignment Engine
+## 4. Multi-Track Sync Timeline & Active Highlights
+
+During video playback, the sidebar presents a real-time visualization of all active and upcoming cues:
+
+### Multi-Track Sync Timeline (`HighlightTimelineView`)
+Inspired by professional Non-Linear Editors (NLEs), the timeline maps cues onto horizontal category tracks (Dialogue, Action, Camera, Audio, etc.):
+- **Stationary 35% Anticipation Playhead**: The vertical laser line and top pip marker remain anchored at 35% of the container width, providing generous lookahead space for approaching dialogue and sound cues.
+- **Continuous Real-Time Timecode Ruler**: Glides underneath the tracks in real-time, displaying 1-second ticks and major `MM:SS` timecode labels.
+- **Dynamic Density Scaling (`TimelineDensity`)**: Supports `'comfortable'` (32px track height) and `'compact'` (24px track height) modes, optimizing vertical space across varying screen sizes.
+- **Interactive Lane Header Toggles**: Track headers on `TimelineLane` (`[• CATEGORY]`) serve as interactive buttons to mute/unmute that category directly, showing pulsing active glow or dimmed strikethrough styling when hidden.
+- **Global Greedy Interval Scheduling**: Multiple overlapping cues within the same category automatically stack into stable sub-lanes (`subLaneIndex`), calculated globally across the script to prevent any row-jumping or vertical layout shifting during scrubbing.
+- **Zero Layout Shift & Micro-Performance**: Uses hardware-accelerated linear CSS transitions (`100ms linear`) and `will-change: left, width` in tight sync with the YouTube player clock.
+- **Seek Without Unwanted Playback**: Clicking any cue block seeks the player to that timestamp while preserving the paused state without triggering YouTube's unbuffered autoplay quirk.
+
+### Docked Paused Cue Inspector (`PausedInspectorCard`)
+Reveals smoothly below the timeline whenever video playback is paused or a cue block is clicked:
+- **Multi-Cue Tabs**: If multiple cues are active at the same timestamp, horizontal tabs allow instant cycling between them.
+- **Themed Accent Header**: Features category pill badge, theme-colored top bar, and precise timecode range (`MM:SS.s`) with duration badge.
+- **Screenplay Quote**: Displays the full screenplay excerpt in large, readable serif italics.
+- **Instant Replay**: Clicking "Replay" jumps to the cue's start time and immediately initiates playback.
+
+### Studio VU Meter & Layout Stability
+- **Fixed-Slot Category LED Strip**: Anchored directly beside the section title, an 8-slot category VU meter (`Dialogue`, `Action`, `Camera`, `Shot`, `Audio`, `VFX`, `Transition`, `Environment`) illuminates in theme-calibrated colors (`resolveCueColor`) whenever cues in that category are active.
+- **Zero-Layout-Shift Numerical Box**: The active cue count is isolated inside a fixed-width monospace tabular container (`min-w-[14px] font-mono tabular-nums`), mathematically eliminating visual jitter and horizontal shifting when cue counts oscillate between single and double digits during playback.
+
+### View Mode Switcher (Timeline vs. Cards)
+- **Segmented Control**: The panel header features a `[ 📊 Timeline | 🗂 Cards ]` switcher.
+- **Classic Cards View**: Users can switch back to the legacy floating cards presentation at any time.
+- **Persistence**: View mode selection persists across sessions in `localStorage` (`sceneflow_highlight_view_mode`).
+
+### Timeline Window Zoom Presets (`4s` | `8s` | `16s`)
+- **Calibrated Time Horizons**: Users can switch between 3 discrete window span presets depending on editing or review intent:
+  - **`4s` (Close-up / Precision)**: A 4.0-second visible window displaying 1-second ticks and 1-second labels. Optimizes legibility for dense, rapid dialogue exchanges and frame-accurate cue boundaries.
+  - **`8s` (Default / Standard Sync)**: An 8.0-second visible window with 2-second major labels, balancing text snippet readability with forward lookahead anticipation.
+  - **`16s` (Overview / Macro Pacing)**: A 16.0-second visible window with adaptive 2-second tick marks and 4-second major labels, visualizing the broader rhythm of the scene and quiet vs. active periods.
+- **Context-Aware Header Segment**: Embedded directly to the left of the `Filters` button, the `[ 4s | 8s | 16s ]` control is rendered strictly in Timeline view, automatically hiding in Cards view without layout shift.
+- **Adaptive Level-of-Detail (LOD)**: As the zoom horizon widens, timecode ruler ticks automatically space out to prevent label collisions, while narrow cue blocks (`widthPercent < 3.5%`) gracefully omit inner text snippets in favor of centered category pips and hover tooltips.
+- **Session Persistence**: The chosen zoom preset is saved to `localStorage` (`sceneflow_timeline_zoom_preset`).
+
+### Fixed vs. Flexible Track Height Mode (`[ Flex | Fixed ]`)
+- **Dynamic vs. Pre-Allocated Layout**:
+  - **`Flex` (Default)**: Tracks expand dynamically from a single 32px row to multi-row stacked layouts only when overlapping cues in the same category enter the visible window, contracting back when they exit to conserve vertical space.
+  - **`Fixed`**: Each category pre-calculates its maximum potential overlapping sub-lanes across the entire script (`globalMaxSubLane + 1`) and locks its track height permanently from `00:00`. For instance, if dialogue overlaps anywhere in the scene, the dialogue lane renders as 2 rows with a persistent horizontal sub-lane divider from the very start.
+- **Zero Vertical Layout Shift**: In `Fixed` mode, tracks never jump or change height during playback or scrubbing, ensuring rock-solid visual stability.
+- **Adaptive Header Hierarchy**: Automatically adapts to panel width via `ResizeObserver` (560px threshold):
+  - **Wide Viewports ($\ge 560\text{px}$)**: Consolidates all controls into a single unified row (`Highlights` + `Active: X` Studio VU Meter $\to$ `[ Flex | Fixed ]` $\to$ `[ 4s | 8s | 16s ]` $\to$ `[ Filters ]` $\to$ `[ Timeline | Cards ]`), saving vertical space and maximizing timeline track height.
+  - **Narrow Viewports ($< 560\text{px}$)**: Splits into an ergonomic Two-Tier Header:
+    - **Tier 1 (Main Header)**: `Highlights` title $\to$ `Active: X` Studio VU Meter $\to$ `[ Timeline | Cards ]`
+    - **Tier 2 (Timeline Sub-Toolbar)**: `Zoom: [ 4s | 8s | 16s ]` $\to$ `[ Flex | Fixed ]` $\to$ `[ Filters ]`
+- **Session Persistence**: User preference is stored in `localStorage` (`sceneflow_timeline_height_mode`).
+
+### Collapsible Filter Drawer & Toolbar (`HighlightFilterBar`)
+- **Smooth Drawer Collapse**: The 8-category filter pill bar is tucked into a smoothly collapsible container (`max-h-32 opacity-100` ⇋ `max-h-0 opacity-0`), saving ~35–40px of vertical space for the multi-track timeline tracks.
+- **Toolbar Toggle Button**: A dedicated `Filters` button sits in the timeline sub-toolbar (and in Tier 1 during Cards mode), persisting its expanded/collapsed state in `localStorage` (`sceneflow_highlight_filter_expanded`).
+- **Muted Filter Pip**: When any categories are muted, the `Filters` button displays an active pulsing blue pip to ensure users are always aware filters are active even with the drawer collapsed.
+- **Interactive Pills**: Clickable category pills with dynamic count indicators, theme colors, and active pulsing indicators. Toggle category visibility in both the timeline tracks and the script viewer.
+
+### Asymmetric Dual-Axis Split & Zero-Scroll Layout
+- **Horizontal Panel Splitter (`SplitPaneDivider`)**: Desktop users can drag the vertical divider between the left playback panel and the screenplay preview to customize workspace proportions. Defaults to 65% Left / 35% Right (clamped between 30% and 72%), reinforced with a hard minimum width guard (`MIN_PANEL_PIXEL_WIDTH = 380px`) to prevent collapsing into an unusable state on smaller laptops.
+- **Vertical Video ⇕ Timeline Splitter (`VideoSplitDivider`)**: Replaces manual percentage size sliders with an interactive horizontal handle directly between the Video Player and the Active Highlights timeline.
+  - Dragging down expands the video height (up to 480px) for detailed visual review.
+  - Dragging up shrinks the video height (down to 160px), allocating maximum vertical space to multi-track timeline lanes.
+  - Automatic 16:9 aspect scaling (`aspect-video` + `maxWidth: 100%`) ensures zero video distortion and completely eliminates lateral empty gutters.
+- **Clean Headroom**: The redundant "NOW PLAYING" header row and percentage slider have been completely eliminated, reclaiming ~28px of top vertical space.
+- **Hardware VSync Dragging (60–144fps)**: Pointer movements are throttled via `requestAnimationFrame` with pointer capture and `.is-resizing-split` CSS transition suppression on `document.body` for lag-free cursor tracking.
+- **Unified Header "Reset View" (`AppHeader`)**: A single click on the `RotateCcw` button in the header toolbar (or double-clicking either divider) immediately snaps both the 65:35 horizontal panel split and the 220px vertical video height back to defaults.
+- **Decoupled Persistence**: Changes commit to `localStorage` (`sceneflow_split_ratio`, `sceneflow_video_height`) only upon pointer release to eliminate main-thread disk I/O bottlenecks.
+
+### Collapsible Video Player (Screen Recording Mode)
+- **Unobstructed Timeline Viewport**: Playback mode features an interactive collapse toggle button in the `PLAYBACK` section header (`[ Hide Video ]` ⇋ `[ Show Video ]`) and a global keyboard shortcut (<kbd>V</kbd>) to collapse/hide the YouTube video player.
+- **Tailored for Screen Recording**: Collapsing the video player gives the entire left panel height to the Multi-Track Sync Timeline and Active Highlights, removing visual clutter when capturing clean sync recordings of the timeline alongside screenplay text.
+- **Zero-Height Audio & Sync Continuity**: The `<YouTube>` player remains fully mounted in the DOM using zero-height CSS clipping (`h-0 min-h-0 max-h-0 opacity-0 pointer-events-none !m-0 !p-0 overflow-hidden`). This guarantees:
+  - Audio continues playing without disruption.
+  - Video timecode ticks and real-time playback clock advance accurately.
+  - Timeline playhead, cue activation glows, and screenplay auto-scrolling remain in perfect lockstep.
+  - Re-expanding the player is instant with zero buffering or reload latency.
+- **Context-Aware Header & Status Badge**: Displays an animated amber status pill (`Video Hidden`) when collapsed, and automatically hides the vertical `VideoSplitDivider` handle.
+- **Session Persistence**: Stored in `localStorage` (`sceneflow_playback_video_collapsed`), and unified with the header "Reset View" button to restore the video player in a single click.
+
+### Persistent Playback Header Transport Controls
+- **Always-Accessible Media Controls**: The `PLAYBACK` section header in `PlaybackLeftPanel` houses dedicated playback transport controls:
+  - **Play / Pause Toggle**: Dynamically toggles between `Play` and `Pause` states with responsive icons and an active blue accent highlight when media is actively playing. Synchronized with the global <kbd>Space</kbd> and <kbd>K</kbd> keyboard shortcuts.
+  - **Replay from Beginning (`0:00`)**: A single click on the `Replay` button (`RotateCcw`) immediately jumps playback to `0:00` and resumes playback, enabling fast iterative review without needing manual timeline scrubbing.
+- **Continuous Operation While Video Is Collapsed**: Even when the video viewport is hidden via the `Hide Video` toggle or <kbd>V</kbd> key, the transport controls remain pinned in the header, allowing users to control playback and audio during timeline screen recording.
+- **Fluid Viewport Responsiveness**: Button labels automatically collapse to compact icon buttons on mobile/tablet viewports (`hidden sm:inline`), ensuring zero header wrapping.
+
+
+---
+
+## 5. Auto-Scroll & Viewport Alignment Engine
 
 During video playback, the script auto-scrolls to follow active dialogue and narrative cues.
 
@@ -110,7 +200,7 @@ Controls where the active cue line settles vertically within the reading contain
 
 ---
 
-## 5. Script Viewer Customization & Dynamic Multi-Theming
+## 6. Script Viewer Customization & Dynamic Multi-Theming
 
 ### Dynamic App Shell Theming (Light / Warm / Dark)
 The application shell features three bespoke CSS variable palettes that dynamically skin the entire workspace (Header, Left Panels, Modals, Desk Surface):
@@ -137,6 +227,24 @@ Users can toggle between six screenplay visual themes via the desktop `ScriptCol
 - **Mobile Theme Drawer (`MobileColorModal`)**:
   - A touch-friendly bottom-sheet drawer with a 4-segment App Shell switcher (`Auto`, `Light`, `Warm`, `Dark`) and 6 compact screenplay cards styled in their true paper colors and typography contrast.
 
+### Cue Palette Accessibility Profile (Standard vs. Protan & Deutan Safe)
+Accessible directly inside both `ScriptColorModal` and `MobileColorModal`:
+- **Standard Cinema (`standard`)**: Default 360° color-wheel balanced palette across all 8 cue categories (Transition: Crimson Rose, Shot: Deep Iris, VFX: Electric Aqua, Action: Royal Cobalt Blue, Camera: Emerald Green, Audio: Bright Amber Orange, Dialogue: Amber Gold, Environment: Steel Slate).
+- **Protan & Deutan Safe (`protanopia`)**: Designed specifically for Red-Green Color Vision Deficiency (Protanopia and Deuteranopia).
+  - **The CVD Challenge**: Reduced L/M-cone sensitivity causes purple/indigo and blue to collapse into identical blue tones when luminance levels match. Users with protanopia cannot distinguish between Action (Blue) and Shot (Indigo/Purple).
+  - **Deep Wine / Burgundy Remapping**: Remaps **Shot** away from the blue/indigo family to **Deep Wine / Burgundy** (`rgb(136, 19, 55)` in light paper / `rgb(225, 29, 72)` in dark paper). In protanopia, this registers as a warm, rich chocolate-wine tone ($L^* \approx 25$) with massive luminance and chromatic contrast against Cobalt Blue Action ($L^* \approx 50$), eliminating ambiguity.
+  - **Radiant Ice Aqua VFX & Vermilion Coral Transition**: Elevates VFX to ultra-high-luminance Ice Aqua (`rgb(103, 232, 249)` in dark themes, $L^* \approx 85$) and Transition to warm Vermilion Coral (`rgb(234, 88, 12)`).
+- **Live Synchronization**: Toggling the accessibility profile immediately updates screenplay text highlights, multi-track timeline lanes, Active Highlights VU meter and cards, and modal inspector swatches without page reloads.
+- **Session Persistence**: User preference is preserved in `localStorage` (`sceneflow_cue_palette_profile`).
+
+### Pure Black Canvas (Video Overlay Mode)
+- **Engineered for Video Compositing**: An opt-in toggle within both `ScriptColorModal` and `MobileColorModal` designed specifically for creators recording the screenplay, filter badges, or timeline as video overlays.
+- **True `#000000` on Dark Themes**: When toggled ON with any dark theme (`Midnight Slate`, `OLED Blackout`, `Navy Slate`), forces literal RGB `0, 0, 0` backgrounds across the entire app (`--app-bg`, `--surface`, `--surface-dark`), allowing Screen or Lighten blend modes in editing software (Premiere Pro, DaVinci Resolve, Final Cut, OBS) to key out the background with 100% transparency without hazy rectangular artifacts.
+- **Clean Paper Border Framing**: Strips fuzzy drop shadow halos (`!shadow-none`), hides decorative hole-punches, and renders scene heading banner backgrounds as transparent, while preserving the sharp 1px paper border (`activeTheme.paperBorder`) to maintain clear manuscript structure.
+- **Full-App Overlay Alignment**: Extends `#000000` to the left panel, category filter pills (`HighlightFilterBar`), and horizontal multi-track timeline lanes (`.timeline-track-field`), supporting cropped recordings of any UI section with zero background milkiness.
+- **Light & Warm Theme Safety**: Strictly inactive on light and warm themes (`Studio Crisp`, `Warm Parchment`, `Newsprint`), preserving standard reading comfort. Switching back to any dark theme instantly re-engages pure black rendering.
+- **Session Persistence**: User preference is preserved in `localStorage` (`sceneflow_pure_black_bg`).
+
 ### Configurable Screenplay Width Presets (Desktop Playback)
 Selectable via a dropdown in the script preview header:
 - *Narrow*: 384px (`max-w-sm`) — Focused reading column.
@@ -151,21 +259,22 @@ Desktop playback mode includes a range slider (40% to 100%) to scale video previ
 
 ---
 
-## 6. Timing Settings & Buffer Engine
+## 7. Timing Settings & Buffer Engine
 
 Fine-tunes highlight visibility timing before and after actual cue timestamps:
 - **General Master Offset**: Global `before` and `after` buffers applied across all cue categories.
 - **Category-Specific Offsets**: Individual `before` and `after` buffers for each of the 8 cue types.
 - **Negative Offsets**: Supports negative values to display highlights earlier or end them sooner.
 - **Formula**: `Effective Visibility Window = [StartTime - (GlobalBefore + CategoryBefore), EndTime + (GlobalAfter + CategoryAfter)]`.
+- **Timeline & Inspector Synchronization**: The timeline's active playhead detection and docked inspector honor the full visibility window, illuminating cues across their `before`/`after` lead-in while maintaining accurate audio media positions on the ruler.
 - Reset button restores all timing settings to `0.0s` defaults.
 
 ---
 
-## 7. Persistence, Sharing, & Library Catalogue
+## 8. Persistence, Sharing, & Library Catalogue
 
 ### Local Persistence
-All project states (`screenplay_sync_state`), theme preferences (`sceneflow_script_theme`), width presets (`sceneflow_script_width_preset`), and scroll focus settings (`sceneflow_scroll_focus_preset`) persist in `localStorage`.
+All project states (`screenplay_sync_state`), theme preferences (`sceneflow_script_theme`), cue palette accessibility profile (`sceneflow_cue_palette_profile`), width presets (`sceneflow_script_width_preset`), scroll focus settings (`sceneflow_scroll_focus_preset`), timeline view mode (`sceneflow_highlight_view_mode`), and filter drawer state (`sceneflow_highlight_filter_expanded`) persist in `localStorage`.
 
 ### Default Project & Quick Start Guide
 - Fresh visits default to loading the **Scene Frequency** (`scene_frequency.json`) guide script.
@@ -194,11 +303,11 @@ For a complete and up-to-date list of all available sceneflow projects, release 
 
 ---
 
-## 8. Application Information & Keyboard Navigation
+## 9. Application Information & Keyboard Navigation
 
 ### Desktop App Info Modal (`AppInfoModal`)
 Accessible via the `i` (Info) icon button in the desktop header toolbar:
-- **Dynamic Version & Metadata**: Automatically loads current version (`v2.2.0`), app title, and description directly from `metadata.json`.
+- **Dynamic Version & Metadata**: Automatically loads current version (`v2.3.0`), app title, and description directly from `metadata.json`.
 - **Author Attribution**: Features creator credit for **Taruma Sakti** in header and footer linking directly to [Linktree](https://linktr.ee/tarumainfo).
 - **Interactive Resource Grid**: 2x2 resource links for GitHub Repository, Documentation / Guide, Release Notes (Changelog), and Ko-fi Support.
 - **MIT License**: License status indicator.
@@ -208,6 +317,7 @@ Available on desktop across both Playback and Edit modes with automatic input/te
 - `Space` / `K`: Toggle YouTube video playback (Play / Pause).
 - `←` / `→` (ArrowLeft / ArrowRight): Seek -5s / +5s.
 - `J` / `L`: Seek -5s / +5s (YouTube standard navigation hotkeys).
+- `V`: Toggle video player visibility / collapse (Playback mode).
 - `Esc`: Close any active modal or popover (`ScriptColorModal`, `TimingSettingsModal`, `LibraryModal`, `MobileLibraryModal`, `RawScriptModal`, `RawCuesModal`, `DeleteConfirmationModal`, `ResetConfirmationModal`, `StagingModal`, `AppInfoModal`, `OverlapPicker`).
 - **Backdrop Dismissal**: Clicking outside modal content on the backdrop overlay dismisses the active modal.
 - **Shortcuts Safeguard**: All playback hotkeys are automatically gated and disabled whenever any modal or confirmation prompt is open.

@@ -47,20 +47,33 @@ Built for evaluating how AI video models visualize prompt instructions, it suppo
 | **Auto-Alignment** | Re-match cues when script text changes |
 | **Timing Buffers** | Adjustable before/after timing for each cue type |
 
-### Color-Coded Cue Types
+### Color-Coded Cue Types (360° Harmonized & CVD-Safe)
 
-| Type | Color | Purpose |
-|------|-------|---------|
-| 🟡 Dialogue | Yellow | Character speech and conversations |
-| 🔵 Action | Blue | Physical actions and movements |
-| 🟢 Camera | Green | Camera movements and angles |
-| 🟣 Shot | Purple | Shot descriptions and framing |
-| 🟠 Audio | Orange | Sound effects and music cues |
-| 🔷 VFX | Cyan | Visual effects descriptions |
-| 🩷 Transition | Pink | Scene transitions |
-| ⚪ Environment | Slate | Setting and atmosphere descriptions |
+| Type | Color | Standard Hue | Protanopia Profile | Purpose |
+|------|-------|--------------|--------------------|---------|
+| 🟡 Dialogue | Amber | Sunlight Amber | Sunlight Amber | Character speech and conversations |
+| 🔵 Action | Blue | Royal Cobalt Blue | Royal Cobalt Blue | Physical actions and movements |
+| 🟢 Camera | Green | Emerald Green | Mint Emerald | Camera movements and angles |
+| 🟣 Shot | Indigo / Wine | Deep Iris | **Deep Wine / Burgundy** | Shot descriptions, framing, and camera scale |
+| 🟠 Audio | Orange | Vivid Tangerine | Vivid Tangerine | Sound effects and music cues |
+| 🔷 VFX | Cyan / Aqua | Electric Aqua | **Radiant Ice Aqua** | Visual effects descriptions |
+| 🩷 Transition | Rose / Coral | Crimson Rose | **Vermilion Coral** | Scene transitions and editorial cuts |
+| ⚪ Environment | Slate | Balanced Slate | Balanced Slate | Setting and atmosphere descriptions |
+
+> **Accessibility Profile**: SceneFlow includes an opt-in **Protanopia / Deuteranopia Safe Mode** in theme settings that remaps Shot to Deep Wine ($L^* \approx 25$) to eliminate blue-indigo ambiguity, paired with high-luminance Ice Aqua VFX ($L^* \approx 85$) and Vermilion Coral transitions.
 
 https://github.com/user-attachments/assets/cf3a7fec-2a4b-48d8-9028-245eba49934c
+
+### 📊 Multi-Track Sync Timeline & Playback Workspace
+
+- **Horizontal Multi-Track Timeline** — Visual NLE/DAW-inspired horizontal lanes for each cue category with deterministic sub-lane stacking
+- **Stationary Anticipation Playhead** — Laser marker anchored at 35% with a continuous sliding timecode ruler for upcoming cue anticipation
+- **Docked Paused Inspector** — Detailed cue inspection card with quotes, timestamps, category badges, and instant replay when paused
+- **Persistent Transport Controls** — Header-mounted Play, Pause, and Replay (0:00) controls operable even when video is hidden
+- **Collapsible Video Player** — Hide video frame with zero-height clipping for clean timeline screen recording while keeping background audio and clock continuity (`V`)
+- **Dual-Axis Draggable Split Panes** — Custom panel split ratio (default 65:35) and 16:9 proportional video height with 1-click Reset View
+- **Studio VU Meter** — 8-slot category LED strip illuminating dynamically with zero layout shift during playback
+- **Timeline Zoom & Height Modes** — Discrete zoom presets (4s, 8s, 16s) and Fixed vs. Flexible track height allocation
 
 ### Data Management
 
@@ -74,6 +87,7 @@ https://github.com/user-attachments/assets/cf3a7fec-2a4b-48d8-9028-245eba49934c
 
 - **Dynamic App Theming** — Full workspace theming in **Light**, **Warm**, and **Dark** modes with seamless 250ms CSS variable switching
 - **Auto-Sync Mode** — Application shell automatically adapts to match the active screenplay paper category
+- **Pure Black Canvas (Video Overlay Mode)** — Absolute `#000000` luminance and shadow stripping for NLE Screen/Lighten blend compositing and screen capture
 - **Theme Presets** — 6 screenplay paper themes: Studio Crisp, Warm Parchment, Midnight Slate, OLED Blackout, Navy Slate, Newsprint
 - **Mobile Theme Drawer** — Native bottom-sheet drawer with 4-segment mode switcher and compact swatch cards
 - **Adaptive Logo** — Automatic dark/white logo switching across light, warm, and dark surfaces
@@ -84,8 +98,8 @@ https://github.com/user-attachments/assets/cf3a7fec-2a4b-48d8-9028-245eba49934c
 ### Platform
 
 - **Mobile-Responsive** — Native bottom-sheet drawers for library and themes with adaptive staging badges
-- **App Info & Attribution** — Desktop information modal with dynamic versioning (`v2.2.0`), author attribution, and documentation resource links
-- **Keyboard Shortcuts** — Desktop hotkeys for playback (`Space`, `K`), seeking (`← / →`, `J / L`), and universal modal dismissal (`Esc`)
+- **App Info & Attribution** — Desktop information modal with dynamic versioning (`v2.3.0`), author attribution, and documentation resource links
+- **Keyboard Shortcuts** — Desktop hotkeys for playback (`Space`, `K`), seeking (`← / →`, `J / L`), video collapse (`V`), and universal modal dismissal (`Esc`)
 - **Vercel Analytics** — Audience traffic insights and real-time Web Vitals monitoring
 - **PWA-Ready** — Web manifest and icon suite for standalone app installation
 

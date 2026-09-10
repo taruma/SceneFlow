@@ -1,4 +1,9 @@
-import { CUE_THEME_COLORS, type CueThemeResolvedColor } from './tokens/cues';
+import { 
+  getCueDefinitionsForProfile, 
+  LEGACY_CLASS_MAP, 
+  type CueThemeResolvedColor,
+  type CuePaletteProfile 
+} from './tokens/cues';
 import { getScriptTheme, type ScriptThemeId } from './tokens/themes';
 
 /**
@@ -6,16 +11,19 @@ import { getScriptTheme, type ScriptThemeId } from './tokens/themes';
  */
 export function getCueColorForTheme(
   typeOrClass?: string,
-  themeId: ScriptThemeId = 'studio-light'
+  themeId: ScriptThemeId = 'studio-light',
+  paletteProfile: CuePaletteProfile | string = 'standard'
 ): CueThemeResolvedColor {
   const theme = getScriptTheme(themeId);
-  const normalized = (typeOrClass || '').toLowerCase().trim();
+  const raw = (typeOrClass || '').toLowerCase().trim();
+  const normalized = LEGACY_CLASS_MAP[raw] || raw;
   
-  const match = CUE_THEME_COLORS.find(c => 
+  const definitions = getCueDefinitionsForProfile(paletteProfile);
+  const match = definitions.find(c => 
     c.type === normalized || 
     c.class === normalized || 
     (normalized && c.class.startsWith(normalized.split('/')[0]))
-  ) || CUE_THEME_COLORS[0];
+  ) || definitions[0];
 
   let rgb = match.lightRgb;
   let baseOpacity = 0.50;
