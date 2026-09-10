@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.3.0-dev] - Unreleased
 
 ### Added
+- **Persistent Playback Header Transport Controls (`src/components/playback/PlaybackLeftPanel.tsx`, `src/App.tsx`)**:
+  - Added dedicated, ergonomic playback transport controls directly in the `PlaybackLeftPanel` header alongside the video collapse toggle.
+  - **Play / Pause Toggle**: Integrated a dynamic transport button displaying `Play` or `Pause` with distinct icons and active accent styling, synchronized with player state and keyboard shortcuts (<kbd>Space</kbd> / <kbd>K</kbd>).
+  - **Replay From Beginning (`0:00`)**: Added a single-click `Replay` button (`RotateCcw`) that instantly seeks to `0:00` and begins playback without paused-seek suppression guards interfering.
+  - **Unobstructed Media Control**: Transport controls remain persistently mounted and fully operable even when the video player is collapsed (`isVideoCollapsed`), providing seamless audio control during timeline screen recording.
+  - **Responsive Layout**: Button labels collapse gracefully to compact icon-only buttons on small viewports (`hidden sm:inline`), preventing header wrapping or layout shifts.
 - **Collapsible Video Player in Playback Mode (`src/components/playback/PlaybackLeftPanel.tsx`, `src/hooks/useScriptPreferences.ts`, `src/hooks/useKeyboardShortcuts.ts`)**:
   - Added the ability to hide/collapse the YouTube video player in Playback Mode, providing an unobstructed full-height viewport for the Multi-Track Sync Timeline specifically tailored for timeline screen recording and video analysis.
   - **Zero-Height Audio & Sync Continuity**: Implemented zero-height CSS clipping (`h-0 min-h-0 max-h-0 opacity-0 pointer-events-none !m-0 !p-0 overflow-hidden`) keeping the `<YouTube>` iframe mounted in the DOM, guaranteeing uninterrupted audio playback, real-time playhead advancement, cue highlighting, and screenplay auto-scroll.

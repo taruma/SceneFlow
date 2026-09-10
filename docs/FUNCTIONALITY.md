@@ -161,6 +161,13 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 - **Context-Aware Header & Status Badge**: Displays an animated amber status pill (`Video Hidden`) when collapsed, and automatically hides the vertical `VideoSplitDivider` handle.
 - **Session Persistence**: Stored in `localStorage` (`sceneflow_playback_video_collapsed`), and unified with the header "Reset View" button to restore the video player in a single click.
 
+### Persistent Playback Header Transport Controls
+- **Always-Accessible Media Controls**: The `PLAYBACK` section header in `PlaybackLeftPanel` houses dedicated playback transport controls:
+  - **Play / Pause Toggle**: Dynamically toggles between `Play` and `Pause` states with responsive icons and an active blue accent highlight when media is actively playing. Synchronized with the global <kbd>Space</kbd> and <kbd>K</kbd> keyboard shortcuts.
+  - **Replay from Beginning (`0:00`)**: A single click on the `Replay` button (`RotateCcw`) immediately jumps playback to `0:00` and resumes playback, enabling fast iterative review without needing manual timeline scrubbing.
+- **Continuous Operation While Video Is Collapsed**: Even when the video viewport is hidden via the `Hide Video` toggle or <kbd>V</kbd> key, the transport controls remain pinned in the header, allowing users to control playback and audio during timeline screen recording.
+- **Fluid Viewport Responsiveness**: Button labels automatically collapse to compact icon buttons on mobile/tablet viewports (`hidden sm:inline`), ensuring zero header wrapping.
+
 
 ---
 

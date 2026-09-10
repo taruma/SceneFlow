@@ -65,6 +65,8 @@ YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds
 - **Dual Control & Quick Toggle**: Provide an interactive header toggle button (`[ Hide Video ]` ⇋ `[ Show Video ]`) alongside the global keyboard shortcut (`KeyV` / <kbd>V</kbd>) with animated status badge (`Video Hidden`).
 - **Unified View Reset**: `isViewCustomized` and `resetViewLayout` must track `isVideoCollapsed`, ensuring clicking "Reset View" restores the video player to default visibility.
 
-
-
-
+## 12. Persistent Playback Header Transport Controls
+- **Unobstructed Transport Access**: Transport controls (`Play`, `Pause`, `Replay from 0:00`) must live in the persistent `PlaybackLeftPanel` header, ensuring media playback is fully controllable even when the video player is collapsed or obstructed.
+- **Immediate State Synchronization**: The Play/Pause button dynamically renders based on `playerState === 1`, displaying stateful colors (vibrant accent when playing) and updating in lockstep with global keyboard shortcuts (<kbd>Space</kbd> / <kbd>K</kbd>).
+- **Explicit Replay Semantics**: Replay must invoke `seekTo(0, true, true)` to immediately jump to `0:00` and trigger playback without paused-seek suppression guards interfering.
+- **Viewport Fluidity**: Button labels must gracefully collapse to compact icon buttons on narrow viewports (`hidden sm:inline`), ensuring zero header wrapping.

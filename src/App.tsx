@@ -658,6 +658,8 @@ export default function App() {
             commitVideoHeight={commitVideoHeight}
             isVideoCollapsed={isVideoCollapsed}
             onToggleVideoCollapsed={toggleVideoCollapsed}
+            onTogglePlayPause={togglePlayPause}
+            onReplay={() => seekTo(0, true, true)}
             isDesktop={isDesktop}
             playerState={playerState}
             currentTime={currentTime}
