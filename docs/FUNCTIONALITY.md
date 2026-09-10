@@ -185,6 +185,7 @@ Users can choose which cue categories trigger auto-scrolling via the "Focus Mode
 - Can be multi-selected to follow any combination (e.g., `dialogue` + `action` + `camera`).
 - Features quick "Select All" and "Reset" toggles.
 - **Dynamic Category Indicators**: Indicator dots dynamically calibrate to the active script paper theme and cue palette profile (Standard 360° vs. Protan & Deutan Safe) via `getCueColorForTheme`, reinforced with an active ring border (`ring-1 ring-white/40`) when selected so colors never clash or wash out against primary blue selection surfaces.
+- **Viewport-Safe Responsive Dropdown Alignment**: The Focus Mode dropdown anchors with left-alignment (`left-0`), expanding downward and rightward into the viewport so all category items and controls remain fully visible without mobile boundary clipping or offscreen overflow.
 
 ### Priority Resolution Logic
 When multiple cues are active simultaneously:
@@ -226,7 +227,7 @@ Users can toggle between six screenplay visual themes via the desktop `ScriptCol
   - **Element Inspector Tab**: Displays active paper and structural tokens alongside the full 8-category highlight spectrum.
   - Includes a single-click "Reset" button to restore the default *Studio Crisp* theme.
 - **Mobile Theme Drawer (`MobileColorModal`)**:
-  - A touch-friendly bottom-sheet drawer with a 4-segment App Shell switcher (`Auto`, `Light`, `Warm`, `Dark`) and 6 compact screenplay cards styled in their true paper colors and typography contrast.
+  - A touch-friendly bottom-sheet drawer with a 4-segment App Shell switcher (`Auto`, `Light`, `Warm`, `Dark`) and 6 compact screenplay cards styled in their true paper colors and typography contrast, triggered via the icon-only palette button (`<Palette size={12} />`) in the mobile playback header.
 
 ### Cue Palette Accessibility Profile (Standard vs. Protan & Deutan Safe)
 Accessible directly inside both `ScriptColorModal` and `MobileColorModal`:

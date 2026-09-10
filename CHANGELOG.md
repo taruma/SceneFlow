@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.3.1-dev] - Unreleased
 
 ### Fixed
+- **Auto-Scroll Focus Dropdown Alignment & Offscreen Overflow Fix (`src/styles/tokens/ui.ts`)**:
+  - Fixed an alignment bug where `UI_TOKENS.dropdown.menu` used `right-0`, anchoring the dropdown to the right edge of the Auto-Scroll button and expanding 176px (`w-44`) to the left, which caused the dropdown to clip off the left screen edge on mobile devices.
+  - Updated `UI_TOKENS.dropdown.menu` to `left-0` (and added `menuLeft` and `menuRight` tokens), ensuring the menu drops down aligned to the button's left edge and remains completely visible within mobile viewports.
+- **Mobile Playback Header Density & Theme Icon Button (`src/components/ScriptHeaderControls.tsx`)**:
+  - Streamlined the mobile playback header by transitioning the Theme trigger from a text-and-icon button (`<Palette size={10} /> Theme`) into a compact icon-only control (`<Palette size={12} />`), reclaiming ~35px of horizontal space and creating visual consistency with the Ko-fi support pill and desktop theme buttons.
 - **Auto-Scroll Dropdown & Timing Settings Dynamic Cue Color Resolution (`src/components/ScriptHeaderControls.tsx`, `src/components/TimingSettingsModal.tsx`, `src/App.tsx`)**:
   - Resolved an omission from the v2.3.0 cue palette overhaul where category indicator dots inside the Auto-Scroll "Focus Mode" dropdown in `ScriptHeaderControls.tsx` were left using static fallback classes (`color.class`) with translucent 50% opacity (`bg-.../50`), bypassing the active script theme and the Protanopia CVD palette profile.
   - Wired `scriptThemeId` and `cuePaletteProfile` down through `ScriptHeaderControlsProps` and `TimingSettingsModalProps` from `App.tsx`.

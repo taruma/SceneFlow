@@ -39,7 +39,9 @@ export const UI_TOKENS = {
 
   // Dropdown menus
   dropdown: {
-    menu: "absolute top-full right-0 mt-2 w-44 bg-surface rounded-xl shadow-xl border border-border-main overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 text-text-main",
+    menu: "absolute top-full left-0 mt-2 w-44 bg-surface rounded-xl shadow-xl border border-border-main overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 text-text-main",
+    menuLeft: "absolute top-full left-0 mt-2 w-44 bg-surface rounded-xl shadow-xl border border-border-main overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 text-text-main",
+    menuRight: "absolute top-full right-0 mt-2 w-44 bg-surface rounded-xl shadow-xl border border-border-main overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 text-text-main",
     menuWide: "absolute top-full right-0 mt-2 w-52 bg-surface rounded-xl shadow-xl border border-border-main overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 text-text-main",
     header: "p-2 bg-surface-subtle border-b border-border-subtle flex items-center justify-between",
     headerText: "text-[9px] font-black text-text-faint uppercase tracking-widest",

@@ -159,10 +159,11 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
             {setIsColorModalOpen && (
               <button 
                 onClick={() => setIsColorModalOpen(true)}
-                className="lg:hidden flex items-center gap-1 px-2 py-1 bg-surface-muted hover:bg-surface-hover rounded text-[10px] font-bold text-text-body transition-colors active:scale-95"
+                className="lg:hidden flex items-center justify-center p-1.5 bg-surface-muted hover:bg-surface-hover rounded-lg text-text-body hover:text-text-main transition-colors active:scale-95 shadow-xs"
                 title="Screenplay & App Theme Settings"
+                aria-label="Screenplay & App Theme Settings"
               >
-                <Palette size={10} /> Theme
+                <Palette size={12} />
               </button>
             )}
             <button 
