@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.3.1-dev] - Unreleased
+## [2.3.1] - 2026-09-11
 
 ### Added
 - **Substack Introduction Article Integration & Centralized External Links (`src/constants/links.ts`, `src/components/AppHeader.tsx`, `src/components/ScriptHeaderControls.tsx`, `src/components/AppInfoModal.tsx`)**:
@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Mobile Screenplay Header Icon Button (`ScriptHeaderControls.tsx`)**: Placed an icon-only `<Newspaper size={12} />` button to the left of `[Library]`, preserving mobile horizontal headroom with accessible `title` and `aria-label` tags.
   - **Featured Article Card (`AppInfoModal.tsx`)**: Designed a structured hero-level card in the desktop info dialog above the 2x2 resource grid, featuring a top metadata bar (`[SUBSTACK ARTICLE]` badge + `Read Article ↗` link) and a dedicated full-width title and summary section.
   - **Centralized Links Configuration (`src/constants/links.ts`)**: Centralized `EXTERNAL_LINKS` (`article`, `articleTitle`, `kofi`, `github`, `docs`, `changelog`, `author`) to eliminate redundant hardcoded URL strings across the app shell.
+- **Vector Field [AI Scenes] Example Project (`public/examples/scenes/scene_vector_field.json`, `src/examples.ts`, `SCENEFLOW_CATALOGUE.md`)**:
+  - Registered new high-concept cyberpunk sci-fi AI Scene example *Vector Field* (`scene_vector_field`) generated with Seedance 2.0.
+  - Features 32 synchronized cues across dialogue, action, shots, camera angles, and soundscapes with complete scene prompt metadata.
 
 ### Changed
 - **Screenplay Visual Themes Modal Compact 2-Column Redesign & Checkmark Occlusion Fix (`src/components/ScriptColorModal.tsx`)**:

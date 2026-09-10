@@ -98,7 +98,7 @@ https://github.com/user-attachments/assets/cf3a7fec-2a4b-48d8-9028-245eba49934c
 ### Platform
 
 - **Mobile-Responsive** — Native bottom-sheet drawers for library and themes with adaptive staging badges
-- **App Info & Attribution** — Desktop information modal with dynamic versioning (`v2.3.0`), author attribution, and documentation resource links
+- **App Info & Attribution** — Desktop information modal with dynamic versioning (`v2.3.1`), author attribution, and documentation resource links
 - **Keyboard Shortcuts** — Desktop hotkeys for playback (`Space`, `K`), seeking (`← / →`, `J / L`), video collapse (`V`), and universal modal dismissal (`Esc`)
 - **Vercel Analytics** — Audience traffic insights and real-time Web Vitals monitoring
 - **PWA-Ready** — Web manifest and icon suite for standalone app installation
