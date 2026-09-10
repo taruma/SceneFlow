@@ -184,6 +184,7 @@ Users can choose which cue categories trigger auto-scrolling via the "Focus Mode
 - Defaults to tracking `dialogue`.
 - Can be multi-selected to follow any combination (e.g., `dialogue` + `action` + `camera`).
 - Features quick "Select All" and "Reset" toggles.
+- **Unified Split-Button Geometry**: Features a unified split button linking the primary auto-scroll toggle with the focus dropdown chevron, bound by `items-stretch` to guarantee equal height and consistent color styling without stepped lips or color mismatch.
 - **Dynamic Category Indicators**: Indicator dots dynamically calibrate to the active script paper theme and cue palette profile (Standard 360° vs. Protan & Deutan Safe) via `getCueColorForTheme`, reinforced with an active ring border (`ring-1 ring-white/40`) when selected so colors never clash or wash out against primary blue selection surfaces.
 - **Viewport-Safe Responsive Dropdown Alignment**: The Focus Mode dropdown anchors with left-alignment (`left-0`), expanding downward and rightward into the viewport so all category items and controls remain fully visible without mobile boundary clipping or offscreen overflow.
 

@@ -70,12 +70,14 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
       <div className="flex items-center gap-2 lg:gap-4">
         {mode === 'playback' && (
           <div className="flex items-center gap-2">
-            <div className="relative flex items-center">
+            <div className="relative flex items-stretch">
               <button
                 onClick={() => setIsAutoScrollEnabled(!isAutoScrollEnabled)}
                 className={cn(
                   "flex items-center gap-1.5 px-2 py-1 rounded-l-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border-y border-l shadow-sm",
-                  isAutoScrollEnabled ? "bg-blue-500 text-white border-blue-600" : "bg-surface text-text-faint border-border-main hover:text-text-main"
+                  isAutoScrollEnabled 
+                    ? "bg-blue-500 text-white border-blue-600 hover:bg-blue-600" 
+                    : "bg-surface text-text-faint border-border-main hover:text-text-main hover:bg-surface-hover"
                 )}
                 title={isAutoScrollEnabled ? "Auto-scroll enabled" : "Auto-scroll disabled"}
               >
@@ -85,9 +87,13 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
               <button
                 onClick={() => setIsAutoScrollDropdownOpen(!isAutoScrollDropdownOpen)}
                 className={cn(
-                  "px-1 py-1 rounded-r-lg border-y border-r shadow-sm transition-all active:scale-95",
-                  isAutoScrollEnabled ? "bg-blue-600 text-white border-blue-700" : "bg-surface text-text-faint border-border-main hover:text-text-main"
+                  "flex items-center justify-center px-1.5 py-1 rounded-r-lg border-y border-r border-l shadow-sm transition-all active:scale-95",
+                  isAutoScrollEnabled 
+                    ? "bg-blue-500 text-white border-blue-600 border-l-blue-600/50 hover:bg-blue-600" 
+                    : "bg-surface text-text-faint border-border-main border-l-border-subtle hover:text-text-main hover:bg-surface-hover"
                 )}
+                title="Auto-scroll settings"
+                aria-label="Auto-scroll settings"
               >
                 <ChevronDown size={10} className={cn("transition-transform duration-200", isAutoScrollDropdownOpen && "rotate-180")} />
               </button>

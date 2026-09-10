@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.3.1-dev] - Unreleased
 
 ### Fixed
+- **Auto-Scroll Split Button Geometry & Unified Palette (`src/components/ScriptHeaderControls.tsx`)**:
+  - Resolved a height mismatch where the right dropdown chevron button was shorter than the main Auto-Scroll toggle button, creating an unsightly stepped lip at the top and bottom edges.
+  - Replaced parent container `items-center` with `items-stretch` and centered the chevron icon (`flex items-center justify-center`), ensuring both halves stretch to equal height.
+  - Unified the active background (`bg-blue-500`) and border styling across both buttons, removing the jarring two-tone color contrast and adding a crisp 1px inner divider border (`border-l`).
 - **Auto-Scroll Focus Dropdown Alignment & Offscreen Overflow Fix (`src/styles/tokens/ui.ts`)**:
   - Fixed an alignment bug where `UI_TOKENS.dropdown.menu` used `right-0`, anchoring the dropdown to the right edge of the Auto-Scroll button and expanding 176px (`w-44`) to the left, which caused the dropdown to clip off the left screen edge on mobile devices.
   - Updated `UI_TOKENS.dropdown.menu` to `left-0` (and added `menuLeft` and `menuRight` tokens), ensuring the menu drops down aligned to the button's left edge and remains completely visible within mobile viewports.
