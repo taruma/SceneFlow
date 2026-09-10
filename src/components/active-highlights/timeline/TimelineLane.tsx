@@ -15,6 +15,7 @@ export interface TimelineLaneProps {
   density?: TimelineDensity;
   isHidden?: boolean;
   onToggleVisibility?: (categoryType: string) => void;
+  totalSubLanes?: number;
 }
 
 /**
@@ -36,10 +37,11 @@ export const TimelineLane = React.memo<TimelineLaneProps>(({
   density = 'comfortable',
   isHidden = false,
   onToggleVisibility,
+  totalSubLanes: propTotalSubLanes,
 }) => {
   const rgb = themedColor?.rgb || category.rgb || '150, 150, 150';
   const hasActiveCue = items.some(item => item.isPlayheadInside);
-  const totalSubLanes = items.length > 0 ? Math.max(...items.map(i => i.totalSubLanes)) : 1;
+  const totalSubLanes = propTotalSubLanes ?? (items.length > 0 ? Math.max(...items.map(i => i.totalSubLanes)) : 1);
   const isCompact = density === 'compact';
   const subLaneStep = isCompact ? 20 : 26;
   const baseHeight = isCompact ? 24 : 32;

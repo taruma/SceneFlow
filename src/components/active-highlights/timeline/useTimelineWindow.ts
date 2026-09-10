@@ -40,7 +40,7 @@ export function useTimelineWindow({
   resolveCueColor,
   config = {},
 }: UseTimelineWindowOptions) {
-  const { totalSpanSeconds = 8.0, playheadRatio = 0.35 } = config;
+  const { totalSpanSeconds = 8.0, playheadRatio = 0.35, heightMode = 'flexible' } = config;
 
   const pastSpan = totalSpanSeconds * playheadRatio;
   const futureSpan = totalSpanSeconds * (1 - playheadRatio);
@@ -106,7 +106,32 @@ export function useTimelineWindow({
     return scriptCategories.filter(c => !hiddenCueTypes.has(c.type));
   }, [scriptCategories, hiddenCueTypes]);
 
-  // 3. Compute normalized cue blocks mapped to percentage coordinates using stable sub-lane indices
+  // 3. Compute per-category sub-lane counts based on heightMode ('fixed' vs 'flexible')
+  const subLanesByCategory = useMemo(() => {
+    const laneCountMap = new Map<string, number>();
+
+    existingCategories.forEach(cat => {
+      const allCategoryCues = cuesByCategory.get(cat.type) || [];
+      if (heightMode === 'fixed') {
+        const globalMax = allCategoryCues.length > 0
+          ? Math.max(...allCategoryCues.map(item => item.subLaneIndex))
+          : 0;
+        laneCountMap.set(cat.type, globalMax + 1);
+      } else {
+        const visiblePacked = allCategoryCues.filter(
+          item => item.cue.endTime >= windowStart && item.cue.startTime <= windowEnd
+        );
+        const windowMax = visiblePacked.length > 0
+          ? Math.max(...visiblePacked.map(item => item.subLaneIndex))
+          : 0;
+        laneCountMap.set(cat.type, windowMax + 1);
+      }
+    });
+
+    return laneCountMap;
+  }, [cuesByCategory, existingCategories, windowStart, windowEnd, heightMode]);
+
+  // 4. Compute normalized cue blocks mapped to percentage coordinates using stable sub-lane indices
   const calculatedCuesByLane = useMemo(() => {
     const laneMap = new Map<string, TimelineCalculatedCue[]>();
     existingCategories.forEach(cat => laneMap.set(cat.type, []));
@@ -117,11 +142,7 @@ export function useTimelineWindow({
         item => item.cue.endTime >= windowStart && item.cue.startTime <= windowEnd
       );
 
-      // Determine total sub-lanes needed in the current visible window
-      const maxSubLane = visiblePacked.length > 0
-        ? Math.max(...visiblePacked.map(item => item.subLaneIndex))
-        : 0;
-      const totalSubLanes = maxSubLane + 1;
+      const totalSubLanes = subLanesByCategory.get(cat.type) || 1;
 
       const calculatedList: TimelineCalculatedCue[] = visiblePacked.map(({ cue, subLaneIndex }) => {
         const startClamped = Math.max(cue.startTime, windowStart);
@@ -149,7 +170,7 @@ export function useTimelineWindow({
     });
 
     return laneMap;
-  }, [cuesByCategory, existingCategories, windowStart, windowEnd, totalSpanSeconds, currentTime, resolveCueColor, settings]);
+  }, [cuesByCategory, existingCategories, windowStart, windowEnd, totalSpanSeconds, currentTime, resolveCueColor, settings, subLanesByCategory]);
 
   // Generate adaptive ruler tick marks based on window duration
   const rulerTicks = useMemo(() => {
@@ -186,6 +207,7 @@ export function useTimelineWindow({
     scriptCategories,
     existingCategories,
     calculatedCuesByLane,
+    subLanesByCategory,
     rulerTicks,
   };
 }

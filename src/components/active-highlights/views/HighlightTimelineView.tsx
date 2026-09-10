@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Cue, TimingSettings } from '../../../types/script';
 import { CueThemeResolvedColor } from '../../../styles';
 import { isCueActive } from '../../../lib/cueUtils';
-import { TimelineDensity, TimelineZoomPreset, TIMELINE_ZOOM_PRESETS } from '../types';
+import { TimelineDensity, TimelineZoomPreset, TIMELINE_ZOOM_PRESETS, TimelineHeightMode } from '../types';
 import { useTimelineWindow } from '../timeline/useTimelineWindow';
 import { TimelineLane } from '../timeline/TimelineLane';
 import { TimelinePlayheadRuler } from '../timeline/TimelinePlayheadRuler';
@@ -22,6 +22,7 @@ interface HighlightTimelineViewProps {
   density?: TimelineDensity;
   onToggleCueType?: (type: string) => void;
   zoomPreset?: TimelineZoomPreset;
+  heightMode?: TimelineHeightMode;
 }
 
 /**
@@ -40,6 +41,7 @@ export const HighlightTimelineView: React.FC<HighlightTimelineViewProps> = ({
   density = 'comfortable',
   onToggleCueType,
   zoomPreset = '8s',
+  heightMode = 'flexible' as TimelineHeightMode,
 }) => {
   const [selectedCue, setSelectedCue] = useState<Cue | null>(null);
 
@@ -49,6 +51,7 @@ export const HighlightTimelineView: React.FC<HighlightTimelineViewProps> = ({
     playheadPercent,
     existingCategories,
     calculatedCuesByLane,
+    subLanesByCategory,
     rulerTicks,
   } = useTimelineWindow({
     currentTime,
@@ -58,6 +61,7 @@ export const HighlightTimelineView: React.FC<HighlightTimelineViewProps> = ({
     resolveCueColor,
     config: {
       totalSpanSeconds: spanSeconds,
+      heightMode: heightMode as TimelineHeightMode,
     },
   });
 
@@ -111,6 +115,7 @@ export const HighlightTimelineView: React.FC<HighlightTimelineViewProps> = ({
                 density={density}
                 isHidden={hiddenCueTypes.has(category.type)}
                 onToggleVisibility={onToggleCueType}
+                totalSubLanes={subLanesByCategory.get(category.type)}
               />
             );
           })}

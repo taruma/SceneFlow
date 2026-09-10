@@ -124,6 +124,15 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 - **Adaptive Level-of-Detail (LOD)**: As the zoom horizon widens, timecode ruler ticks automatically space out to prevent label collisions, while narrow cue blocks (`widthPercent < 3.5%`) gracefully omit inner text snippets in favor of centered category pips and hover tooltips.
 - **Session Persistence**: The chosen zoom preset is saved to `localStorage` (`sceneflow_timeline_zoom_preset`).
 
+### Fixed vs. Flexible Track Height Mode (`[ Flex | Fixed ]`)
+- **Dynamic vs. Pre-Allocated Layout**:
+  - **`Flex` (Default)**: Tracks expand dynamically from a single 32px row to multi-row stacked layouts only when overlapping cues in the same category enter the visible window, contracting back when they exit to conserve vertical space.
+  - **`Fixed`**: Each category pre-calculates its maximum potential overlapping sub-lanes across the entire script (`globalMaxSubLane + 1`) and locks its track height permanently from `00:00`. For instance, if dialogue overlaps anywhere in the scene, the dialogue lane renders as 2 rows with a persistent horizontal sub-lane divider from the very start.
+- **Zero Vertical Layout Shift**: In `Fixed` mode, tracks never jump or change height during playback or scrubbing, ensuring rock-solid visual stability.
+- **Header Controls & Hierarchy**: Controlled via a compact segmented switcher `[ Flex | Fixed ]` anchored immediately to the left of the `[ 4s | 8s | 16s ]` time window switcher:
+  `[ Flex | Fixed ]` $\to$ `[ 4s | 8s | 16s ]` $\to$ `[ Filters ]` $\to$ `[ Timeline | Cards ]`
+- **Session Persistence**: User preference is stored in `localStorage` (`sceneflow_timeline_height_mode`).
+
 ### Collapsible Filter Drawer & Toolbar (`HighlightFilterBar`)
 - **Smooth Drawer Collapse**: The 8-category filter pill bar is tucked into a smoothly collapsible container (`max-h-32 opacity-100` ⇋ `max-h-0 opacity-0`), saving ~35–40px of vertical space for the multi-track timeline tracks.
 - **Toolbar Toggle Button**: A dedicated `Filters` button sits immediately to the left of the view switcher in the header toolbar, persisting its expanded/collapsed state in `localStorage` (`sceneflow_highlight_filter_expanded`).

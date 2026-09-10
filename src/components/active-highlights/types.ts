@@ -36,6 +36,13 @@ export const TIMELINE_ZOOM_PRESETS: Record<TimelineZoomPreset, TimelineZoomConfi
 };
 
 /**
+ * Height allocation mode for the multi-track timeline tracks.
+ * - `flexible`: Tracks dynamically expand only when overlapping cues are visible in the window (default).
+ * - `fixed`: Tracks pre-allocate height to the maximum possible overlapping cues in the script for that category, eliminating layout shifts.
+ */
+export type TimelineHeightMode = 'flexible' | 'fixed';
+
+/**
  * Props for the main ActiveHighlightsPanel orchestrator.
  */
 export interface ActiveHighlightsPanelProps {
@@ -73,6 +80,10 @@ export interface ActiveHighlightsPanelProps {
   zoomPreset?: TimelineZoomPreset;
   /** Callback fired when user changes the timeline zoom preset */
   onZoomPresetChange?: (preset: TimelineZoomPreset) => void;
+  /** Optional controlled timeline height mode */
+  heightMode?: TimelineHeightMode;
+  /** Callback fired when user changes the timeline height mode */
+  onHeightModeChange?: (mode: TimelineHeightMode) => void;
 }
 
 /**
@@ -83,6 +94,8 @@ export interface TimelineWindowConfig {
   totalSpanSeconds?: number;
   /** Playhead horizontal position ratio from left edge (default: 0.35 for 35% anticipation) */
   playheadRatio?: number;
+  /** Track height mode: 'flexible' (dynamic) or 'fixed' (pre-allocated) */
+  heightMode?: TimelineHeightMode;
 }
 
 /**

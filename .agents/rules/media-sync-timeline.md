@@ -55,4 +55,9 @@ YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds
 - **Adaptive Timecode Intervals (LOD)**: `useTimelineWindow.ts` must generate ticks with adaptive spacing (1s intervals for `4s`/`8s`, 2s step with 4s major labels for `16s`) to prevent DOM element bloat and label crowding.
 - **Narrow Block Label Elision**: When blocks become narrow pills (`widthPercent < 3.5%`) at wide zoom levels, omit the text snippet and center the category pip to eliminate awkward character clipping, preserving full details in the hover tooltip.
 
+## 10. Timeline Track Height Invariants (Fixed vs. Flexible)
+- **Per-Category Max Pre-Allocation**: In `fixed` mode, track heights lock to the maximum simultaneous cues for that category across the entire script (`globalMaxSubLane + 1`), permanently rendering sub-lane dividers without vertical layout shifts.
+- **Empty Lane Geometry Preservation**: `TimelineLane` must accept `totalSubLanes` at the category level so tracks maintain their pre-allocated height and sub-lane guide lines even when no cues are visible in the rolling window.
+
+
 

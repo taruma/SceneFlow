@@ -4,7 +4,7 @@ import { COLORS } from '../../constants/script';
 import { useScriptTheme } from '../../hooks/useScriptTheme';
 import { cn } from '../../lib/utils';
 import { UI_TOKENS } from '../../styles/tokens/ui';
-import { ActiveHighlightsPanelProps, HighlightViewMode, TimelineZoomPreset } from './types';
+import { ActiveHighlightsPanelProps, HighlightViewMode, TimelineZoomPreset, TimelineHeightMode } from './types';
 import { HighlightFilterBar } from './HighlightFilterBar';
 import { HighlightTimelineView } from './views/HighlightTimelineView';
 import { HighlightCardsView } from './views/HighlightCardsView';
@@ -12,12 +12,14 @@ import { HighlightCardsView } from './views/HighlightCardsView';
 const STORAGE_KEY = 'sceneflow_highlight_view_mode';
 const FILTER_STORAGE_KEY = 'sceneflow_highlight_filter_expanded';
 const ZOOM_STORAGE_KEY = 'sceneflow_timeline_zoom_preset';
+const HEIGHT_STORAGE_KEY = 'sceneflow_timeline_height_mode';
 
 /**
  * Top-level Active Highlights Panel orchestrator.
  *
  * Features:
  * - Segmented view mode switcher: [ 📊 Timeline | 🗂 Cards (Legacy) ] with persistent localStorage memory.
+ * - Timeline track height mode switcher [ Flex | Fixed ] with persistent localStorage memory.
  * - Timeline window zoom presets [ 4s | 8s | 16s ] to the left of filters (in Timeline mode).
  * - Live category filter bar with theme-resolved color pips and active pulse effects.
  * - Zero-layout-shift Multi-Track Sync Timeline (default modern view).
@@ -41,8 +43,19 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
   density,
   zoomPreset: controlledZoom,
   onZoomPresetChange,
+  heightMode: controlledHeightMode,
+  onHeightModeChange,
 }) => {
   const { resolveCueColor } = useScriptTheme(scriptThemeId as any);
+
+  // Persistent track height mode state (default to 'flexible')
+  const [internalHeightMode, setInternalHeightMode] = useState<TimelineHeightMode>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(HEIGHT_STORAGE_KEY);
+      if (saved === 'fixed' || saved === 'flexible') return saved as TimelineHeightMode;
+    }
+    return 'flexible';
+  });
 
   // Persistent zoom preset state (default to '8s')
   const [internalZoom, setInternalZoom] = useState<TimelineZoomPreset>(() => {
@@ -83,6 +96,7 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
 
   const activeMode = controlledMode || internalMode;
   const activeZoom = controlledZoom || internalZoom;
+  const activeHeightMode = controlledHeightMode || internalHeightMode;
 
   const handleModeSwitch = (newMode: HighlightViewMode) => {
     setInternalMode(newMode);
@@ -98,6 +112,14 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
       localStorage.setItem(ZOOM_STORAGE_KEY, preset);
     }
     onZoomPresetChange?.(preset);
+  };
+
+  const handleHeightModeChange = (mode: TimelineHeightMode) => {
+    setInternalHeightMode(mode);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(HEIGHT_STORAGE_KEY, mode);
+    }
+    onHeightModeChange?.(mode);
   };
 
   // Memoize visible cues for counter and legacy cards view
@@ -178,8 +200,36 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
           </div>
         </div>
 
-        {/* Right: Zoom Presets (Timeline mode) + Filter Toggle + Segmented View Switcher */}
+        {/* Right: Height Mode (Timeline) + Zoom Presets (Timeline) + Filter Toggle + Segmented View Switcher */}
         <div className="flex items-center gap-1.5 shrink-0">
+          {/* Timeline Track Height Mode Switcher (Visible only in timeline mode, immediately to the left of zoom) */}
+          {activeMode === 'timeline' && (
+            <div 
+              className="flex items-center p-0.5 bg-surface-subtle border border-border-subtle rounded-lg shadow-xs animate-in fade-in duration-200"
+              title="Track height mode: Flex (dynamic height) or Fixed (pre-allocated height)"
+            >
+              {(['flexible', 'fixed'] as const).map(mode => (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => handleHeightModeChange(mode)}
+                  title={mode === 'fixed' 
+                    ? "Fixed height: Lock tracks to maximum possible cue overlaps (zero layout shift)" 
+                    : "Flexible height: Expand tracks dynamically only when overlapping cues are visible"
+                  }
+                  className={cn(
+                    "px-1.5 py-0.5 text-[9px] font-mono font-black uppercase tracking-wider rounded transition-all select-none border",
+                    activeHeightMode === mode
+                      ? "bg-surface text-text-main border-border-main shadow-xs"
+                      : "text-text-muted hover:text-text-main border-transparent"
+                  )}
+                >
+                  {mode === 'flexible' ? 'Flex' : 'Fixed'}
+                </button>
+              ))}
+            </div>
+          )}
+
           {/* Timeline Zoom Presets Switcher (Visible only in timeline mode, immediately to the left of filters) */}
           {activeMode === 'timeline' && (
             <div 
@@ -293,6 +343,7 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
           density={density}
           onToggleCueType={toggleCueTypeVisibility}
           zoomPreset={activeZoom}
+          heightMode={activeHeightMode}
         />
       ) : (
         <HighlightCardsView

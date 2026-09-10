@@ -72,6 +72,7 @@ When modifying application state, storage keys, or external fetching:
   - `'sceneflow_highlight_view_mode'`: Active highlights presentation mode (`HighlightViewMode`: `'timeline' | 'cards'`).
   - `'sceneflow_highlight_filter_expanded'`: Collapsed/expanded state of playback category filters (`boolean`).
   - `'sceneflow_timeline_zoom_preset'`: Active timeline visible window zoom preset (`TimelineZoomPreset`: `'4s' | '8s' | '16s'`).
+  - `'sceneflow_timeline_height_mode'`: Active timeline track height mode (`TimelineHeightMode`: `'flexible' | 'fixed'`).
 - **Query Parameters**: On application mount, inspect `window.location.search`:
   - `?example=ID`: Matches an example `id` from `EXAMPLE_SECTIONS` in `src/examples.ts`.
   - `?project=URL`: Loads a remote CORS-enabled JSON project.
@@ -164,3 +165,8 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
     - **Bounded Presets Over Freeform Zoom**: Use discrete, calibrated zoom window presets (`TIMELINE_ZOOM_PRESETS`: `'4s' | '8s' | '16s'`) rather than unrestricted continuous pinch/scroll zoom to guarantee visual stability and predictable sub-lane packing.
     - **Adaptive Timecode Ruler Ticks (LOD)**: To prevent label collision and DOM churn at wider horizons, scale ruler tick steps adaptively (1s intervals for `4s`/`8s`, 2s step with 4s major labels for `16s`).
     - **Narrow Block Label Elision**: When blocks shrink during wide zooms (`widthPercent < 3.5%`), omit inner text snippets and center the category pip, retaining full cue text via hover tooltip and paused inspector docking.
+
+11. **Timeline Track Height Invariants (Fixed vs. Flexible)**:
+    - **Per-Category Maximum Sub-Lane Pre-Allocation**: When in `fixed` mode, track heights must be pre-calculated based on the category's global maximum sub-lane index across the entire script (`globalMaxSubLane + 1`), not the rolling window.
+    - **Empty Lane Height Preservation**: `TimelineLane` must accept `totalSubLanes` from category-level metadata to maintain its pre-allocated height and horizontal dividers even when `items.length === 0` (no visible cues passing through that track).
+
