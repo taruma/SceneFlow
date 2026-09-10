@@ -1,4 +1,4 @@
-import { Cue } from '../../types/script';
+import { Cue, TimingSettings } from '../../types/script';
 import { CueThemeResolvedColor, ScriptThemeId } from '../../styles';
 
 /**
@@ -14,6 +14,8 @@ export type HighlightViewMode = 'timeline' | 'cards';
 export interface ActiveHighlightsPanelProps {
   /** All cues defined in the screenplay timeline */
   cues: Cue[];
+  /** Global and per-category timing settings for cue activation buffers */
+  settings?: Record<string, TimingSettings>;
   /** Predicate returning true if the cue is active at current playback time and not hidden */
   isCueVisible: (cue: Cue) => boolean;
   /** Set of cue types (dialogue, action, etc.) that are currently active in playback */

@@ -22,6 +22,7 @@ const STORAGE_KEY = 'sceneflow_highlight_view_mode';
  */
 export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
   cues,
+  settings,
   isCueVisible,
   activeCueTypes,
   hiddenCueTypes,
@@ -130,6 +131,7 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
           currentTime={currentTime}
           isPlaying={isPlaying}
           cues={cues}
+          settings={settings}
           hiddenCueTypes={hiddenCueTypes}
           resolveCueColor={resolveCueColor}
           onSeekCue={onSeekCue || onCueClick}

@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
-import { Cue } from '../../../types/script';
+import { Cue, TimingSettings } from '../../../types/script';
 import { COLORS } from '../../../constants/script';
 import { CueThemeResolvedColor } from '../../../styles';
+import { isCueActive } from '../../../lib/cueUtils';
 import { 
   TimelineWindowConfig, 
   TimelineCalculatedCue, 
@@ -11,6 +12,7 @@ import {
 interface UseTimelineWindowOptions {
   currentTime: number;
   cues: Cue[];
+  settings?: Record<string, TimingSettings>;
   hiddenCueTypes: Set<string>;
   resolveCueColor: (typeOrClass?: string) => CueThemeResolvedColor;
   config?: TimelineWindowConfig;
@@ -33,6 +35,7 @@ export function formatTimelineTimecode(seconds: number): string {
 export function useTimelineWindow({
   currentTime,
   cues,
+  settings,
   hiddenCueTypes,
   resolveCueColor,
   config = {},
@@ -124,7 +127,7 @@ export function useTimelineWindow({
         const rawWidthPercent = ((endClamped - startClamped) / totalSpanSeconds) * 100;
         const widthPercent = Math.max(1.8, rawWidthPercent);
 
-        const isPlayheadInside = currentTime >= cue.startTime && currentTime <= cue.endTime;
+        const isPlayheadInside = isCueActive(cue, currentTime, settings);
         const themedColor = resolveCueColor(cue.type || cue.colorClass || '');
 
         return {
@@ -142,7 +145,7 @@ export function useTimelineWindow({
     });
 
     return laneMap;
-  }, [cuesByCategory, existingCategories, windowStart, windowEnd, totalSpanSeconds, currentTime, resolveCueColor]);
+  }, [cuesByCategory, existingCategories, windowStart, windowEnd, totalSpanSeconds, currentTime, resolveCueColor, settings]);
 
   // Generate 1-second ruler tick marks
   const rulerTicks = useMemo(() => {

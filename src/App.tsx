@@ -722,6 +722,7 @@ export default function App() {
             {mode === 'playback' && (
               <ActiveHighlightsPanel
                 cues={state.cues}
+                settings={state.settings}
                 isCueVisible={isCueVisible}
                 activeCueTypes={activeCueTypes}
                 hiddenCueTypes={hiddenCueTypes}

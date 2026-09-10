@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Cue } from '../../../types/script';
+import { Cue, TimingSettings } from '../../../types/script';
 import { CueThemeResolvedColor } from '../../../styles';
+import { isCueActive } from '../../../lib/cueUtils';
 import { useTimelineWindow } from '../timeline/useTimelineWindow';
 import { TimelineLane } from '../timeline/TimelineLane';
 import { TimelinePlayheadRuler } from '../timeline/TimelinePlayheadRuler';
@@ -12,6 +13,7 @@ interface HighlightTimelineViewProps {
   currentTime: number;
   isPlaying: boolean;
   cues: Cue[];
+  settings?: Record<string, TimingSettings>;
   hiddenCueTypes: Set<string>;
   resolveCueColor: (typeOrClass?: string) => CueThemeResolvedColor;
   onSeekCue?: (cue: Cue, autoPlay?: boolean) => void;
@@ -26,6 +28,7 @@ export const HighlightTimelineView: React.FC<HighlightTimelineViewProps> = ({
   currentTime,
   isPlaying,
   cues,
+  settings,
   hiddenCueTypes,
   resolveCueColor,
   onSeekCue,
@@ -41,17 +44,18 @@ export const HighlightTimelineView: React.FC<HighlightTimelineViewProps> = ({
   } = useTimelineWindow({
     currentTime,
     cues,
+    settings,
     hiddenCueTypes,
     resolveCueColor,
   });
 
-  // Identify all cues currently active under the playhead
+  // Identify all cues currently active under the playhead (respecting timing buffers)
   const activeCuesUnderPlayhead = useMemo(() => {
     return (cues || []).filter(cue => {
       if (hiddenCueTypes.has(cue.type || 'dialogue')) return false;
-      return currentTime >= cue.startTime && currentTime <= cue.endTime;
+      return isCueActive(cue, currentTime, settings);
     });
-  }, [cues, hiddenCueTypes, currentTime]);
+  }, [cues, hiddenCueTypes, currentTime, settings]);
 
   // If playback resumes, clear manually selected cue so inspector follows live playhead
   useEffect(() => {
