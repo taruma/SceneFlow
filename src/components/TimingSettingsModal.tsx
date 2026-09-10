@@ -61,13 +61,13 @@ export function TimingSettingsModal({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* General Master Control - Highlighted */}
-            <div className="md:col-span-3 p-6 bg-blue-50 border-2 border-blue-100 rounded-3xl space-y-4">
+            <div className={cn("md:col-span-3", UI_TOKENS.panel.accentCardBlue)}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
-                  <span className="text-xs font-black uppercase tracking-widest text-blue-600">General Master Offset</span>
+                  <span className="text-xs font-black uppercase tracking-widest text-blue-500">General Master Offset</span>
                 </div>
-                <p className="text-[10px] font-bold text-blue-400 italic">Adds extra time to ALL categories globally</p>
+                <p className="text-[10px] font-bold text-text-muted italic">Adds extra time to ALL categories globally</p>
               </div>
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">

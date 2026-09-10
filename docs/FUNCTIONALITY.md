@@ -280,6 +280,7 @@ Fine-tunes highlight visibility timing before and after actual cue timestamps:
 - **Formula**: `Effective Visibility Window = [StartTime - (GlobalBefore + CategoryBefore), EndTime + (GlobalAfter + CategoryAfter)]`.
 - **Timeline & Inspector Synchronization**: The timeline's active playhead detection and docked inspector honor the full visibility window, illuminating cues across their `before`/`after` lead-in while maintaining accurate audio media positions on the ruler.
 - **Dynamic Theme-Aware Swatches**: Each category configuration card displays a color indicator dot dynamically resolved with the active script theme and CVD accessibility profile via `getCueColorForTheme`.
+- **Theme-Calibrated Master Control**: The General Master Offset hero panel and its high-density numerical inputs strictly adhere to App Shell design system tokens (`UI_TOKENS.panel.accentCardBlue` and `UI_TOKENS.input.numberBoxLg`), providing seamless alpha-tinted styling across Light, Warm, Dark, and Pure Black themes.
 - Reset button restores all timing settings to `0.0s` defaults.
 
 ---

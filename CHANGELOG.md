@@ -23,6 +23,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Re-anchored cue character offsets (`startIndex` / `endIndex`) across all 100+ cues in `public/examples/blank.json` to maintain frame-accurate timeline synchronization with the updated guide text, and upgraded legacy cue color classes to canonical v2.3.0 tokens (`bg-blue-500/50`, `bg-indigo-400/50`).
 
 ### Fixed
+- **Timing Settings General Master Offset Dark Mode Contrast & Design System Alignment (`src/components/TimingSettingsModal.tsx`, `src/styles/tokens/ui.ts`)**:
+  - Resolved an inverted contrast bug in the Timing Settings modal where the "General Master Offset" card was hardcoded with static light-mode utilities (`bg-blue-50 border-2 border-blue-100`), creating a blinding white container with pitch-black input boxes (`bg-surface`) in Dark Mode.
+  - Centralized `UI_TOKENS.panel.accentCardBlue` (`p-6 bg-blue-500/10 border border-blue-500/20 rounded-3xl space-y-4`) to provide consistent alpha-translucent accent panel styling across Light, Warm, Dark, and Pure Black App Shell themes.
+  - Aligned `UI_TOKENS.input.numberBoxLg` by replacing hardcoded `border-2 border-blue-100` with theme-calibrated `border border-blue-500/30 focus:border-blue-500`, ensuring clean definition without stark pale outlines on dark surfaces.
+  - Updated master offset header typography to `text-blue-500` and helper description to `text-text-muted italic` for guaranteed legibility across all shell themes.
 - **Auto-Scroll Split Button Geometry & Unified Palette (`src/components/ScriptHeaderControls.tsx`)**:
   - Resolved a height mismatch where the right dropdown chevron button was shorter than the main Auto-Scroll toggle button, creating an unsightly stepped lip at the top and bottom edges.
   - Replaced parent container `items-center` with `items-stretch` and centered the chevron icon (`flex items-center justify-center`), ensuring both halves stretch to equal height.

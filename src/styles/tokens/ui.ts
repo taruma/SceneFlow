@@ -80,7 +80,7 @@ export const UI_TOKENS = {
     textareaCode: "w-full h-[400px] bg-surface-subtle border-2 border-border-subtle rounded-3xl p-6 font-mono text-xs text-text-body focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none",
     search: "w-full pl-9 pr-8 py-2 bg-surface-muted hover:bg-surface-subtle focus:bg-surface text-xs text-text-body placeholder-text-placeholder rounded-xl border border-transparent focus:border-border-main shadow-inner focus:shadow-none transition-all outline-none",
     numberBox: "w-full bg-surface border border-border-main text-text-main rounded-xl px-2 py-1.5 text-[10px] font-mono focus:outline-none focus:ring-2 focus:ring-surface-dark/5",
-    numberBoxLg: "w-full bg-surface border-2 border-blue-100 text-text-main rounded-2xl px-4 py-3 text-sm font-mono focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all",
+    numberBoxLg: "w-full bg-surface border border-blue-500/30 focus:border-blue-500 text-text-main rounded-2xl px-4 py-3 text-sm font-mono focus:outline-none focus:ring-4 focus:ring-blue-500/15 transition-all",
     label: "text-[10px] font-black uppercase tracking-[0.2em] text-text-faint ml-1",
     labelMini: "text-[8px] font-black uppercase tracking-widest text-text-faint",
   },
@@ -112,6 +112,7 @@ export const UI_TOKENS = {
     cardInteractiveActive: "flex items-center justify-between p-4 bg-surface border-text-main ring-1 ring-text-main rounded-2xl shadow-md transition-all relative overflow-hidden cursor-pointer text-text-main",
     emptyPlaceholder: "text-center py-12 border-2 border-dashed border-border-subtle rounded-[2rem] bg-surface-subtle/50 text-text-faint",
     legendContainer: "flex flex-wrap gap-2 p-3 bg-surface-subtle border border-border-main rounded-2xl text-text-main",
+    accentCardBlue: "p-6 bg-blue-500/10 border border-blue-500/20 rounded-3xl space-y-4",
   },
 
   // Theme & Color Swatch Cards

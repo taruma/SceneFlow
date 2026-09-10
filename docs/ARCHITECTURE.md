@@ -115,9 +115,9 @@ The visuals layer encapsulates all styling tokens, color schemes, UI chrome toke
   - `modal`: Backdrop overlays (`overlay`, `overlayHeavy`, `overlayHighZ`), responsive containers (`containerSm`, `containerMd`, `containerLg`, `containerXl`, `containerLibrary`, `containerStaging`), standard headers, footers, and padding tokens.
   - `dropdown`: Focus mode, width preset, and scroll focus preset dropdown menus, headers, and interactive items.
   - `button`: Primary, secondary, danger, header icon action buttons, mode switchers, sort toggles, action pills, support pills, and close buttons.
-  - `input`: Search inputs, multiline textareas, code boxes, number boxes, and label typography.
+  - `input`: Search inputs, multiline textareas, code boxes, standard/accented number boxes (`numberBox`, `numberBoxLg`), and label typography.
   - `badge`: Counter tags, timestamp pills, and desktop/mobile current time pill badges (`currentTimePill`, `currentTimePillSm`).
-  - `panel`: Banners, interactive cards, empty placeholders, and legend containers.
+  - `panel`: Banners, interactive cards, empty placeholders, legend containers, and alpha-accent callout cards (`accentCardBlue`).
   - `swatch` & `alert`: Theme preview swatches and notification banners.
 - **`src/index.css`**: Semantic CSS custom properties defined in `:root` (`--app-bg`, `--surface`, `--surface-subtle`, `--border-main`, `--text-main`, `--overlay-bg`, `--color-support`, etc.) and mapped directly into Tailwind CSS v4's `@theme` directive.
 - **`src/styles/tokens/themes.ts` (`SCRIPT_THEMES`)**: Defines six visual themes categorized into `light`, `warm`, and `dark` alongside `SCRIPT_THEME_MAP`, `DEFAULT_SCRIPT_THEME`, and `THEME_CATEGORIES`.
