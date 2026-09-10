@@ -150,6 +150,17 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 - **Unified Header "Reset View" (`AppHeader`)**: A single click on the `RotateCcw` button in the header toolbar (or double-clicking either divider) immediately snaps both the 42:58 horizontal panel split and the 240px vertical video height back to defaults.
 - **Decoupled Persistence**: Changes commit to `localStorage` (`sceneflow_split_ratio`, `sceneflow_video_height`) only upon pointer release to eliminate main-thread disk I/O bottlenecks.
 
+### Collapsible Video Player (Screen Recording Mode)
+- **Unobstructed Timeline Viewport**: Playback mode features an interactive collapse toggle button in the `PLAYBACK` section header (`[ Hide Video ]` ⇋ `[ Show Video ]`) and a global keyboard shortcut (<kbd>V</kbd>) to collapse/hide the YouTube video player.
+- **Tailored for Screen Recording**: Collapsing the video player gives the entire left panel height to the Multi-Track Sync Timeline and Active Highlights, removing visual clutter when capturing clean sync recordings of the timeline alongside screenplay text.
+- **Zero-Height Audio & Sync Continuity**: The `<YouTube>` player remains fully mounted in the DOM using zero-height CSS clipping (`h-0 min-h-0 max-h-0 opacity-0 pointer-events-none !m-0 !p-0 overflow-hidden`). This guarantees:
+  - Audio continues playing without disruption.
+  - Video timecode ticks and real-time playback clock advance accurately.
+  - Timeline playhead, cue activation glows, and screenplay auto-scrolling remain in perfect lockstep.
+  - Re-expanding the player is instant with zero buffering or reload latency.
+- **Context-Aware Header & Status Badge**: Displays an animated amber status pill (`Video Hidden`) when collapsed, and automatically hides the vertical `VideoSplitDivider` handle.
+- **Session Persistence**: Stored in `localStorage` (`sceneflow_playback_video_collapsed`), and unified with the header "Reset View" button to restore the video player in a single click.
+
 
 ---
 
@@ -277,6 +288,7 @@ Available on desktop across both Playback and Edit modes with automatic input/te
 - `Space` / `K`: Toggle YouTube video playback (Play / Pause).
 - `←` / `→` (ArrowLeft / ArrowRight): Seek -5s / +5s.
 - `J` / `L`: Seek -5s / +5s (YouTube standard navigation hotkeys).
+- `V`: Toggle video player visibility / collapse (Playback mode).
 - `Esc`: Close any active modal or popover (`ScriptColorModal`, `TimingSettingsModal`, `LibraryModal`, `MobileLibraryModal`, `RawScriptModal`, `RawCuesModal`, `DeleteConfirmationModal`, `ResetConfirmationModal`, `StagingModal`, `AppInfoModal`, `OverlapPicker`).
 - **Backdrop Dismissal**: Clicking outside modal content on the backdrop overlay dismisses the active modal.
 - **Shortcuts Safeguard**: All playback hotkeys are automatically gated and disabled whenever any modal or confirmation prompt is open.

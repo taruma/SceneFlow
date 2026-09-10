@@ -59,5 +59,12 @@ YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds
 - **Per-Category Max Pre-Allocation**: In `fixed` mode, track heights lock to the maximum simultaneous cues for that category across the entire script (`globalMaxSubLane + 1`), permanently rendering sub-lane dividers without vertical layout shifts.
 - **Empty Lane Geometry Preservation**: `TimelineLane` must accept `totalSubLanes` at the category level so tracks maintain their pre-allocated height and sub-lane guide lines even when no cues are visible in the rolling window.
 
+## 11. Collapsible Video Player & Background Playback Invariants
+- **Zero-Height Audio & Sync Continuity**: When collapsing the video player in Playback mode (`PlaybackLeftPanel.tsx`), **never** unmount the `<YouTube>` component. Use zero-height clipping styles (`h-0 min-h-0 max-h-0 opacity-0 pointer-events-none !m-0 !p-0 overflow-hidden`) so the iframe context remains attached, audio continues playing, and real-time timeline playhead/cue synchronization persists for screen recording.
+- **Resizer Divider Suppression**: Conditionally omit `VideoSplitDivider` when the video player is collapsed so no orphaned resize handles float above the timeline.
+- **Dual Control & Quick Toggle**: Provide an interactive header toggle button (`[ Hide Video ]` ⇋ `[ Show Video ]`) alongside the global keyboard shortcut (`KeyV` / <kbd>V</kbd>) with animated status badge (`Video Hidden`).
+- **Unified View Reset**: `isViewCustomized` and `resetViewLayout` must track `isVideoCollapsed`, ensuring clicking "Reset View" restores the video player to default visibility.
+
+
 
 

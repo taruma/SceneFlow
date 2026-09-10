@@ -168,8 +168,9 @@ YouTube IFrame Player API wrapper:
 
 ### `useScriptPreferences`
 Persistent visual customization and layout management:
-- Stored in `localStorage`: reading column width preset (`sceneflow_script_width_preset`), auto-scroll focus preset (`sceneflow_scroll_focus_preset`), active theme ID (`sceneflow_script_theme`), asymmetric split ratio (`sceneflow_split_ratio`, default 42%), and video player height (`sceneflow_video_height`, default 240px).
-- Provides `resetViewLayout()` to instantly restore default 42:58 panel split and 240px video height.
+- Stored in `localStorage`: reading column width preset (`sceneflow_script_width_preset`), auto-scroll focus preset (`sceneflow_scroll_focus_preset`), active theme ID (`sceneflow_script_theme`), asymmetric split ratio (`sceneflow_split_ratio`, default 42%), video player height (`sceneflow_video_height`, default 240px), and video collapse state (`sceneflow_playback_video_collapsed`).
+- Provides `resetViewLayout()` to instantly restore default 42:58 panel split, 240px video height, and expand the video player if collapsed.
+- Exposes `isVideoCollapsed`, `setIsVideoCollapsed`, and `toggleVideoCollapsed` helpers.
 - Exposes `isViewCustomized` flag to drive the active status dot on the header "Reset View" button.
 - Manages dropdown visibility toggles, cue type category filter sets, and color picker modal state.
 
@@ -192,7 +193,7 @@ Automated cue realignment orchestration:
 
 ### `useKeyboardShortcuts`
 Global keyboard shortcut handler:
-- `Space` / `KeyK` = play/pause toggle, `ArrowLeft` / `KeyJ` = -5s seek, `ArrowRight` / `KeyL` = +5s seek.
+- `Space` / `KeyK` = play/pause toggle, `ArrowLeft` / `KeyJ` = -5s seek, `ArrowRight` / `KeyL` = +5s seek, `KeyV` = toggle video player collapse in Playback mode.
 - Gates execution when input/textarea elements are focused or any modal is open.
 - Also tracks `isDesktop` via `window.innerWidth >= 1024` resize listener.
 
@@ -247,7 +248,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
     - **`TimelinePlayheadRuler.tsx`**: Gliding timecode ruler and glowing vertical playhead marker.
     - **`PausedInspectorCard.tsx`**: Docked paused cue inspector with multi-cue tabs, screenplay quote, and instant replay action.
     - **`HighlightFilterBar.tsx`**: Centered category filter pills with active pulsing state dots and smooth collapsible drawer integration.
-16. **`PlaybackLeftPanel.tsx` (`src/components/playback/PlaybackLeftPanel.tsx`)**: Dedicated playback left panel container encapsulating the media player viewport, proportional 16:9 vertical scaling, zero-scroll vertical padding, and active highlights synchronization, cleanly decoupled from edit-mode sticky scroll behaviors.
+16. **`PlaybackLeftPanel.tsx` (`src/components/playback/PlaybackLeftPanel.tsx`)**: Dedicated playback left panel container encapsulating the media player viewport, proportional 16:9 vertical scaling, zero-scroll vertical padding, active highlights synchronization, and collapsible video player toggle with background audio continuity for screen recording, cleanly decoupled from edit-mode sticky scroll behaviors.
 17. **`SplitPaneDivider.tsx` (`src/components/common/SplitPaneDivider.tsx`)**: Desktop-only draggable vertical split pane divider with pointer capture, `requestAnimationFrame` VSync throttling, `.is-resizing-split` CSS transition suppression, double-click reset, and transparent iframe drag guard.
 18. **`VideoSplitDivider.tsx` (`src/components/playback/VideoSplitDivider.tsx`)**: Desktop-only draggable horizontal split divider between the Video Player and Active Highlights timeline with pointer capture, `requestAnimationFrame` VSync throttling, double-click reset to 240px, and keyboard accessibility (`ArrowUp`/`ArrowDown`).
 19. **`LibraryModal.tsx`**: Desktop library catalogue modal featuring real-time search, category navigation, sorting (Latest, Oldest, A-Z), section badges, and featured curations.

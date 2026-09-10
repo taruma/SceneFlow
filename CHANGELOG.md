@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.3.0-dev] - Unreleased
 
 ### Added
+- **Collapsible Video Player in Playback Mode (`src/components/playback/PlaybackLeftPanel.tsx`, `src/hooks/useScriptPreferences.ts`, `src/hooks/useKeyboardShortcuts.ts`)**:
+  - Added the ability to hide/collapse the YouTube video player in Playback Mode, providing an unobstructed full-height viewport for the Multi-Track Sync Timeline specifically tailored for timeline screen recording and video analysis.
+  - **Zero-Height Audio & Sync Continuity**: Implemented zero-height CSS clipping (`h-0 min-h-0 max-h-0 opacity-0 pointer-events-none !m-0 !p-0 overflow-hidden`) keeping the `<YouTube>` iframe mounted in the DOM, guaranteeing uninterrupted audio playback, real-time playhead advancement, cue highlighting, and screenplay auto-scroll.
+  - **Interactive Playback Header Controls**: Added a header toggle button (`[ Hide Video ]` ⇋ `[ Show Video ]`) with distinct visual feedback, an animated amber status pill (`Video Hidden`) when collapsed, and automatic suppression of the vertical `VideoSplitDivider` handle.
+  - **Global Keyboard Shortcut (`V`)**: Bound the <kbd>V</kbd> key to toggle video visibility instantly during playback when not typing in text fields, with tooltip hints and documentation in `AppInfoModal`.
+  - **Layout State Persistence & Reset Integration**: Stored collapsed state in `localStorage` (`sceneflow_playback_video_collapsed`), wired into `isViewCustomized` indicator logic, and unified with the header "Reset View" button to restore default video visibility in one click.
 - **Multi-Track Sync Timeline (`src/components/active-highlights/`)**:
   - Re-architected the playback Active Highlights panel from vertical cards into a modern, zero-layout-shift horizontal multi-track sync timeline inspired by NLEs and DAWs.
   - **Stationary Anticipation Playhead (`TimelinePlayheadRuler.tsx`)**: Anchored at 35% from the left edge with a glowing vertical laser marker and pip, giving visual room for upcoming dialogue anticipation.

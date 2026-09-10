@@ -119,6 +119,8 @@ export default function App() {
     commitSplitRatio,
     resetViewLayout,
     isViewCustomized,
+    isVideoCollapsed,
+    toggleVideoCollapsed,
   } = useScriptPreferences();
 
   const { theme: activeTheme } = useScriptTheme(scriptThemeId);
@@ -166,12 +168,13 @@ export default function App() {
     setState,
   });
 
+  // Master disabled check for global playback keyboard shortcuts
   const isAnyModalOpen = Boolean(
+    isColorModalOpen ||
+    isSettingsOpen ||
+    isInfoModalOpen ||
     isScriptModalOpen ||
     isCuesModalOpen ||
-    isSettingsOpen ||
-    isColorModalOpen ||
-    isInfoModalOpen ||
     isLibraryOpen ||
     activeStaging ||
     deleteConfirmation.isOpen ||
@@ -183,6 +186,7 @@ export default function App() {
     player,
     togglePlayPause,
     jumpBy,
+    onToggleVideo: mode === 'playback' ? toggleVideoCollapsed : undefined,
     disabled: isAnyModalOpen,
   });
 
@@ -652,6 +656,8 @@ export default function App() {
             videoHeight={videoHeight}
             setVideoHeight={setVideoHeight}
             commitVideoHeight={commitVideoHeight}
+            isVideoCollapsed={isVideoCollapsed}
+            onToggleVideoCollapsed={toggleVideoCollapsed}
             isDesktop={isDesktop}
             playerState={playerState}
             currentTime={currentTime}

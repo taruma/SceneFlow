@@ -70,14 +70,45 @@ export function useScriptPreferences() {
     });
   }, []);
 
+  const [isVideoCollapsed, setIsVideoCollapsedState] = useState<boolean>(() => {
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem('sceneflow_playback_video_collapsed');
+      if (saved !== null) {
+        return saved === 'true';
+      }
+    }
+    return false;
+  });
+
+  const setIsVideoCollapsed = useCallback((collapsed: boolean) => {
+    setIsVideoCollapsedState(collapsed);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('sceneflow_playback_video_collapsed', String(collapsed));
+    }
+  }, []);
+
+  const toggleVideoCollapsed = useCallback(() => {
+    setIsVideoCollapsedState(prev => {
+      const next = !prev;
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('sceneflow_playback_video_collapsed', String(next));
+      }
+      return next;
+    });
+  }, []);
+
   const resetViewLayout = useCallback(() => {
     setSplitRatio(DEFAULT_SPLIT_RATIO);
     commitSplitRatio(DEFAULT_SPLIT_RATIO);
     setVideoHeight(DEFAULT_VIDEO_HEIGHT);
     commitVideoHeight(DEFAULT_VIDEO_HEIGHT);
-  }, [setSplitRatio, commitSplitRatio, setVideoHeight, commitVideoHeight]);
+    setIsVideoCollapsed(false);
+  }, [setSplitRatio, commitSplitRatio, setVideoHeight, commitVideoHeight, setIsVideoCollapsed]);
 
-  const isViewCustomized = Math.round(splitRatio) !== DEFAULT_SPLIT_RATIO || videoHeight !== DEFAULT_VIDEO_HEIGHT;
+  const isViewCustomized = 
+    Math.round(splitRatio) !== DEFAULT_SPLIT_RATIO || 
+    videoHeight !== DEFAULT_VIDEO_HEIGHT ||
+    isVideoCollapsed;
 
   const [scriptWidthPreset, setScriptWidthPresetState] = useState<ScriptWidthPresetId>(() => {
     if (typeof localStorage !== 'undefined') {
@@ -171,5 +202,8 @@ export function useScriptPreferences() {
     commitSplitRatio,
     resetViewLayout,
     isViewCustomized,
+    isVideoCollapsed,
+    setIsVideoCollapsed,
+    toggleVideoCollapsed,
   };
 }

@@ -73,6 +73,9 @@ When modifying application state, storage keys, or external fetching:
   - `'sceneflow_highlight_filter_expanded'`: Collapsed/expanded state of playback category filters (`boolean`).
   - `'sceneflow_timeline_zoom_preset'`: Active timeline visible window zoom preset (`TimelineZoomPreset`: `'4s' | '8s' | '16s'`).
   - `'sceneflow_timeline_height_mode'`: Active timeline track height mode (`TimelineHeightMode`: `'flexible' | 'fixed'`).
+  - `'sceneflow_split_ratio'`: Active desktop split pane ratio (`number`).
+  - `'sceneflow_video_height'`: Active playback video player height in pixels (`number`).
+  - `'sceneflow_playback_video_collapsed'`: Video player collapsed/hidden state in Playback mode (`boolean`).
 - **Query Parameters**: On application mount, inspect `window.location.search`:
   - `?example=ID`: Matches an example `id` from `EXAMPLE_SECTIONS` in `src/examples.ts`.
   - `?project=URL`: Loads a remote CORS-enabled JSON project.
@@ -169,4 +172,11 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
 11. **Timeline Track Height Invariants (Fixed vs. Flexible)**:
     - **Per-Category Maximum Sub-Lane Pre-Allocation**: When in `fixed` mode, track heights must be pre-calculated based on the category's global maximum sub-lane index across the entire script (`globalMaxSubLane + 1`), not the rolling window.
     - **Empty Lane Height Preservation**: `TimelineLane` must accept `totalSubLanes` from category-level metadata to maintain its pre-allocated height and horizontal dividers even when `items.length === 0` (no visible cues passing through that track).
+
+12. **Collapsible Video Player & Background Playback Invariants**:
+    - **Zero-Height Audio & Sync Continuity**: When collapsing the video player in Playback mode (`PlaybackLeftPanel.tsx`), **never** unmount the `<YouTube>` component. Use zero-height clipping styles (`h-0 min-h-0 max-h-0 opacity-0 pointer-events-none !m-0 !p-0 overflow-hidden`) so the iframe context remains attached, audio continues playing, and real-time timeline playhead/cue synchronization persists for screen recording.
+    - **Resizer Divider Suppression**: Conditionally omit `VideoSplitDivider` when the video player is collapsed so no orphaned resize handles float above the timeline.
+    - **Dual Control & Quick Toggle**: Provide an interactive header toggle button (`[ Hide Video ]` ⇋ `[ Show Video ]`) alongside the global keyboard shortcut (`KeyV` / <kbd>V</kbd>) with animated status badge (`Video Hidden`).
+    - **Unified View Reset**: `isViewCustomized` and `resetViewLayout` must track `isVideoCollapsed`, ensuring clicking "Reset View" restores the video player to default visibility.
+
 

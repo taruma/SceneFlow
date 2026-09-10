@@ -69,6 +69,7 @@ export function AppInfoModal({ isOpen, onClose }: AppInfoModalProps) {
     { key: 'Space / K', desc: 'Play / Pause playback' },
     { key: '← / →', desc: 'Seek -5s / +5s' },
     { key: 'J / L', desc: 'Seek -5s / +5s' },
+    { key: 'V', desc: 'Toggle video visibility (Playback mode)' },
     { key: 'Esc', desc: 'Close active modal' },
   ];
 

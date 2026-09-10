@@ -1,6 +1,6 @@
 import React from 'react';
 import YouTube from 'react-youtube';
-import { Video } from 'lucide-react';
+import { Video, VideoOff } from 'lucide-react';
 import { Cue, TimingSettings } from '../../types/script';
 import { extractYoutubeId, cn } from '../../lib/utils';
 import { UI_TOKENS } from '../../styles/tokens/ui';
@@ -16,6 +16,8 @@ export interface PlaybackLeftPanelProps {
   setVideoHeight: (height: number) => void;
   commitVideoHeight?: (height: number) => void;
   onResetVideoHeight?: () => void;
+  isVideoCollapsed?: boolean;
+  onToggleVideoCollapsed?: () => void;
   isDesktop: boolean;
   playerState: number;
   currentTime: number;
@@ -44,6 +46,8 @@ export const PlaybackLeftPanel: React.FC<PlaybackLeftPanelProps> = ({
   setVideoHeight,
   commitVideoHeight,
   onResetVideoHeight,
+  isVideoCollapsed = false,
+  onToggleVideoCollapsed,
   isDesktop,
   playerState,
   currentTime,
@@ -80,17 +84,62 @@ export const PlaybackLeftPanel: React.FC<PlaybackLeftPanelProps> = ({
       )}
     >
       <section className="space-y-2 lg:space-y-2.5 z-30 sticky top-0">
-        {/* Playback Section Header */}
-        <div className="hidden lg:flex items-center justify-between pb-0.5">
-          <h2 className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-2")}>
-            <Video size={14} /> Playback
-          </h2>
+        {/* Playback Section Header with Collapsible Toggle */}
+        <div className="flex items-center justify-between px-3 pt-2.5 pb-1 lg:px-0 lg:pt-0 lg:pb-0.5">
+          <div className="flex items-center gap-2">
+            <h2 className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-2")}>
+              <Video size={14} className="text-text-muted" /> Playback
+            </h2>
+            {isVideoCollapsed && (
+              <span 
+                className="text-[9px] font-black uppercase tracking-wider text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md flex items-center gap-1 animate-in fade-in zoom-in-95 duration-200"
+                title="Video player is hidden. Timeline is unobstructed for screen recording."
+              >
+                <VideoOff size={10} /> Video Hidden
+              </span>
+            )}
+          </div>
+
+          {onToggleVideoCollapsed && (
+            <button
+              type="button"
+              onClick={onToggleVideoCollapsed}
+              aria-expanded={!isVideoCollapsed}
+              aria-label={isVideoCollapsed ? "Show Video Player" : "Hide Video Player"}
+              title={
+                isVideoCollapsed 
+                  ? "Show Video Player [V]" 
+                  : "Hide Video Player (Collapse for timeline screen recording) [V]"
+              }
+              className={cn(
+                "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-150 border shadow-xs active:scale-95 select-none",
+                isVideoCollapsed
+                  ? "bg-blue-500/10 hover:bg-blue-500/20 border-blue-500/30 text-blue-600 dark:text-blue-400"
+                  : "bg-surface hover:bg-surface-subtle border-border-subtle text-text-muted hover:text-text-main"
+              )}
+            >
+              {isVideoCollapsed ? (
+                <>
+                  <Video size={12} className="text-blue-500 shrink-0" />
+                  <span>Show Video</span>
+                </>
+              ) : (
+                <>
+                  <VideoOff size={12} className="text-text-faint shrink-0" />
+                  <span>Hide Video</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
 
-        {/* Video Player */}
+        {/* Video Player (Kept mounted with zero height when collapsed so audio and sync events persist) */}
         <div 
-          className="bg-black overflow-hidden shadow-2xl ring-1 ring-border-main relative group pointer-events-auto rounded-none lg:rounded-2xl transition-all duration-300 flex items-center justify-center shrink-0"
-          style={isDesktop ? { 
+          className={cn(
+            "bg-black overflow-hidden shadow-2xl ring-1 ring-border-main relative group pointer-events-auto rounded-none lg:rounded-2xl transition-all duration-300 flex items-center justify-center shrink-0",
+            isVideoCollapsed && "h-0 min-h-0 max-h-0 opacity-0 pointer-events-none ring-0 shadow-none border-none !m-0 !p-0 overflow-hidden"
+          )}
+          style={!isVideoCollapsed ? (isDesktop ? { 
             height: `${videoHeight}px`, 
             maxWidth: '100%', 
             aspectRatio: '16 / 9', 
@@ -98,7 +147,17 @@ export const PlaybackLeftPanel: React.FC<PlaybackLeftPanelProps> = ({
           } : { 
             aspectRatio: '16 / 9',
             width: '100%' 
+          }) : { 
+            height: 0, 
+            minHeight: 0,
+            maxHeight: 0,
+            margin: 0, 
+            padding: 0, 
+            opacity: 0,
+            overflow: 'hidden',
+            pointerEvents: 'none'
           }}
+          aria-hidden={isVideoCollapsed}
         >
           <YouTube
             key={extractYoutubeId(youtubeId)}
@@ -122,7 +181,7 @@ export const PlaybackLeftPanel: React.FC<PlaybackLeftPanelProps> = ({
         </div>
 
         {/* Horizontal Video ⇕ Timeline Split Divider */}
-        {isDesktop && (
+        {isDesktop && !isVideoCollapsed && (
           <VideoSplitDivider
             videoHeight={videoHeight}
             onHeightChange={setVideoHeight}
