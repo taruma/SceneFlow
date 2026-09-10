@@ -94,6 +94,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Dynamically wired the header `AppHeader` "Reset View" button tooltip to `DEFAULT_SPLIT_RATIO` (`Default 65:35`).
 
 ### Fixed
+- **Dark Mode Current Time Counter Contrast (`src/styles/tokens/ui.ts`, `src/components/AppHeader.tsx`, `src/components/ScriptHeaderControls.tsx`)**:
+  - Fixed an issue where the current time counter digits in dark mode rendered in near-black charcoal (`#1c1917`) on top of a dark pill (`bg-surface-dark`, `#0f0e0d` / `#000000`), resulting in an unreadable ~1.1:1 contrast ratio.
+  - Decoupled `UI_TOKENS.badge.currentTimePill` and the digit spans from the inverted `btn-primary-text` button token, applying high-contrast `text-white` across all themes.
+  - Added centralized `UI_TOKENS.badge.currentTimePillSm` token to ensure consistent desktop and mobile current time pill styling.
 - **Timeline Sub-Lane Density Synchronization (`src/components/active-highlights/timeline/`)**:
   - Fixed a sub-lane clipping bug where compact density shortened track container heights while cue blocks remained at 26px vertical offsets.
   - Forwarded `density` from `TimelineLane` into `TimelineCueBlock`, ensuring top offsets (`subLaneIndex * step + padding`) and block heights (18px vs 22px) stay strictly in lockstep with container bounds.

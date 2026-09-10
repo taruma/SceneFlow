@@ -49,3 +49,7 @@ SceneFlow supports selectable cue palette profiles (`CuePaletteProfile`: `'stand
 3. **Backward Compatibility Invariant**:
    - Historical script JSON files and local states containing legacy Tailwind classes (`bg-purple-400/50`, `bg-pink-400/50`, `bg-blue-400/50`, `bg-green-400/50`) must always be normalized via `LEGACY_CLASS_MAP` in `cueUtils.ts` and `cues.ts` without data loss.
 
+## 5. Token Pairing & Surface Contrast Invariants
+- **Primary Button Inversion**: `--btn-primary-text` is specifically paired with `--btn-primary-bg`. In dark mode, primary action buttons invert to light backgrounds (`#f5f5f4`), causing `--btn-primary-text` to become dark (`#1c1917`).
+- **Surface Isolation Guard**: Never use `text-btn-primary-text` inside permanently dark surfaces such as `bg-surface-dark` (e.g., `currentTimePill`, `currentTimePillSm`), as this creates near-black on black contrast failure (~1.1:1). Always use explicit `text-white` or tokens coupled with the appropriate surface background.
+

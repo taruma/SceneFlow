@@ -376,9 +376,9 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
             </div>
           )}
         </div>
-        <div className="lg:hidden flex items-center gap-1 px-2 py-1 bg-surface-dark rounded-lg shadow-inner">
+        <div className={UI_TOKENS.badge.currentTimePillSm}>
           <span className="text-[8px] font-black text-text-faint uppercase">Time</span>
-          <span className="text-xs font-mono font-bold text-btn-primary-text w-10 text-right">{currentTime.toFixed(1)}s</span>
+          <span className="text-xs font-mono font-bold text-white w-10 text-right">{currentTime.toFixed(1)}s</span>
         </div>
       </div>
     </div>

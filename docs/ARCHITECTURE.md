@@ -112,7 +112,7 @@ The visuals layer encapsulates all styling tokens, color schemes, UI chrome toke
   - `dropdown`: Focus mode, width preset, and scroll focus preset dropdown menus, headers, and interactive items.
   - `button`: Primary, secondary, danger, header icon action buttons, mode switchers, sort toggles, action pills, support pills, and close buttons.
   - `input`: Search inputs, multiline textareas, code boxes, number boxes, and label typography.
-  - `badge`: Counter tags, timestamp pills, and header current time pill badge.
+  - `badge`: Counter tags, timestamp pills, and desktop/mobile current time pill badges (`currentTimePill`, `currentTimePillSm`).
   - `panel`: Banners, interactive cards, empty placeholders, and legend containers.
   - `swatch` & `alert`: Theme preview swatches and notification banners.
 - **`src/index.css`**: Semantic CSS custom properties defined in `:root` (`--app-bg`, `--surface`, `--surface-subtle`, `--border-main`, `--text-main`, `--overlay-bg`, `--color-support`, etc.) and mapped directly into Tailwind CSS v4's `@theme` directive.
