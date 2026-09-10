@@ -45,7 +45,8 @@ SceneFlow supports selectable cue palette profiles (`CuePaletteProfile`: `'stand
    - **Remapping Guard**: In the `protanopia` profile, **Shot** is strictly remapped away from the blue/indigo spectrum to **Deep Wine / Burgundy** (`rgb(136, 19, 55)` in light paper / `rgb(225, 29, 72)` in dark paper). This produces a distinct dark chocolate-wine tone ($L^* \approx 25$) that provides stark luminance and chromatic separation against Cobalt Blue Action ($L^* \approx 50$).
    - **Complementary Vibrancy**: VFX is elevated to high-luminance Ice Aqua (`rgb(103, 232, 249)` in dark themes, $L^* \approx 85$) and Transition to warm Vermilion Coral (`rgb(234, 88, 12)`), preventing overlap across all 8 categories.
 2. **Dynamic Resolution Invariant**:
-   - Any component or hook resolving cue colors (`useScriptTheme`, `getCueColorForTheme`, `resolveCueColor`) must accept and forward the active `paletteProfile`.
+   - Any component or hook resolving cue colors (`useScriptTheme`, `getCueColorForTheme`, `resolveCueColor`) must accept and forward the active `paletteProfile` and `scriptThemeId`.
+   - Never render category color dots or selection pills with static Tailwind classes (`color.class`); always resolve dynamically via `themed.dotColor` or `rgb(${themed.rgb})` with `scriptThemeId` and `cuePaletteProfile` calibration to ensure consistency across light, warm, dark, and CVD-safe modes.
 3. **Backward Compatibility Invariant**:
    - Historical script JSON files and local states containing legacy Tailwind classes (`bg-purple-400/50`, `bg-pink-400/50`, `bg-blue-400/50`, `bg-green-400/50`) must always be normalized via `LEGACY_CLASS_MAP` in `cueUtils.ts` and `cues.ts` without data loss.
 

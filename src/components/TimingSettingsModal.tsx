@@ -2,6 +2,7 @@ import React from 'react';
 import { Settings, X, RefreshCw } from 'lucide-react';
 import { cn } from '../lib/utils';
 import type { TimingSettings, ColorCategory } from '../types/script';
+import { getCueColorForTheme, type CuePaletteProfile } from '../lib/scriptStyles';
 import { UI_TOKENS } from '../styles/tokens/ui';
 import { useEscapeKey } from '../hooks/useEscapeKey';
 
@@ -9,6 +10,8 @@ interface TimingSettingsModalProps {
   isOpen: boolean;
   settings?: Record<string, TimingSettings>;
   colors: ColorCategory[];
+  scriptThemeId?: string;
+  cuePaletteProfile?: CuePaletteProfile;
   onClose: () => void;
   onUpdateSetting: (category: string, field: 'before' | 'after', value: number) => void;
   onResetClick: () => void;
@@ -18,6 +21,8 @@ export function TimingSettingsModal({
   isOpen,
   settings,
   colors,
+  scriptThemeId,
+  cuePaletteProfile = 'standard',
   onClose,
   onUpdateSetting,
   onResetClick,
@@ -94,40 +99,46 @@ export function TimingSettingsModal({
 
             {/* Specific Category Grid */}
             <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {colors.map(color => (
-                <div key={color.type} className="p-4 bg-surface-subtle border border-border-subtle rounded-2xl space-y-3 hover:bg-surface hover:shadow-md transition-all">
-                  <div className="flex items-center gap-2">
-                    <div className={cn("w-2.5 h-2.5 rounded-full", color.class)} />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-text-body">{color.type}</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="space-y-1">
-                      <label className={UI_TOKENS.input.labelMini}>Before (s)</label>
-                      <input 
-                        type="number" step="0.1"
-                        value={settings?.[color.type]?.before ?? 0}
-                        onChange={(e) => {
-                          const val = parseFloat(e.target.value) || 0;
-                          onUpdateSetting(color.type, 'before', val);
-                        }}
-                        className={UI_TOKENS.input.numberBox}
+              {colors.map(color => {
+                const themed = getCueColorForTheme(color.type, scriptThemeId as any, cuePaletteProfile);
+                return (
+                  <div key={color.type} className="p-4 bg-surface-subtle border border-border-subtle rounded-2xl space-y-3 hover:bg-surface hover:shadow-md transition-all">
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" 
+                        style={{ backgroundColor: themed.dotColor }}
                       />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-text-body">{color.type}</span>
                     </div>
-                    <div className="space-y-1">
-                      <label className={UI_TOKENS.input.labelMini}>After (s)</label>
-                      <input 
-                        type="number" step="0.1"
-                        value={settings?.[color.type]?.after ?? 0}
-                        onChange={(e) => {
-                          const val = parseFloat(e.target.value) || 0;
-                          onUpdateSetting(color.type, 'after', val);
-                        }}
-                        className={UI_TOKENS.input.numberBox}
-                      />
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="space-y-1">
+                        <label className={UI_TOKENS.input.labelMini}>Before (s)</label>
+                        <input 
+                          type="number" step="0.1"
+                          value={settings?.[color.type]?.before ?? 0}
+                          onChange={(e) => {
+                            const val = parseFloat(e.target.value) || 0;
+                            onUpdateSetting(color.type, 'before', val);
+                          }}
+                          className={UI_TOKENS.input.numberBox}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className={UI_TOKENS.input.labelMini}>After (s)</label>
+                        <input 
+                          type="number" step="0.1"
+                          value={settings?.[color.type]?.after ?? 0}
+                          onChange={(e) => {
+                            const val = parseFloat(e.target.value) || 0;
+                            onUpdateSetting(color.type, 'after', val);
+                          }}
+                          className={UI_TOKENS.input.numberBox}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

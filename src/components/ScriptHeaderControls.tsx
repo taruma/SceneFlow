@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { COLORS, SCRIPT_WIDTH_PRESETS, SCROLL_FOCUS_PRESETS } from '../constants/script';
 import { ScriptWidthPresetId, ScrollFocusPresetId } from '../types/script';
+import { getCueColorForTheme, type CuePaletteProfile } from '../lib/scriptStyles';
 import { cn } from '../lib/utils';
 import { UI_TOKENS } from '../styles/tokens/ui';
 
@@ -34,6 +35,8 @@ interface ScriptHeaderControlsProps {
   isScrollFocusDropdownOpen: boolean;
   setIsScrollFocusDropdownOpen: (open: boolean) => void;
   currentTime: number;
+  scriptThemeId?: string;
+  cuePaletteProfile?: CuePaletteProfile;
 }
 
 export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
@@ -55,6 +58,8 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
   isScrollFocusDropdownOpen,
   setIsScrollFocusDropdownOpen,
   currentTime,
+  scriptThemeId,
+  cuePaletteProfile = 'standard',
 }) => {
   return (
     <div className={mode === 'playback' ? UI_TOKENS.layout.scriptHeaderPlayback : UI_TOKENS.layout.scriptHeader}>
@@ -113,6 +118,7 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                     <div className="p-1 max-h-64 overflow-y-auto">
                       {COLORS.map(color => {
                         const isSelected = autoScrollTargets.includes(color.type);
+                        const themed = getCueColorForTheme(color.type, scriptThemeId as any, cuePaletteProfile);
                         return (
                           <button
                             key={color.type}
@@ -132,7 +138,13 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                             )}
                           >
                             <div className="flex items-center gap-2">
-                              <div className={cn("w-1.5 h-1.5 rounded-full", color.class)} />
+                              <div 
+                                className={cn(
+                                  "w-2 h-2 rounded-full shrink-0 shadow-2xs",
+                                  isSelected && "ring-1 ring-white/40"
+                                )}
+                                style={{ backgroundColor: themed.dotColor }}
+                              />
                               {color.type}
                             </div>
                             {isSelected && <Check size={10} />}

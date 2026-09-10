@@ -184,6 +184,7 @@ Users can choose which cue categories trigger auto-scrolling via the "Focus Mode
 - Defaults to tracking `dialogue`.
 - Can be multi-selected to follow any combination (e.g., `dialogue` + `action` + `camera`).
 - Features quick "Select All" and "Reset" toggles.
+- **Dynamic Category Indicators**: Indicator dots dynamically calibrate to the active script paper theme and cue palette profile (Standard 360° vs. Protan & Deutan Safe) via `getCueColorForTheme`, reinforced with an active ring border (`ring-1 ring-white/40`) when selected so colors never clash or wash out against primary blue selection surfaces.
 
 ### Priority Resolution Logic
 When multiple cues are active simultaneously:
@@ -267,6 +268,7 @@ Fine-tunes highlight visibility timing before and after actual cue timestamps:
 - **Negative Offsets**: Supports negative values to display highlights earlier or end them sooner.
 - **Formula**: `Effective Visibility Window = [StartTime - (GlobalBefore + CategoryBefore), EndTime + (GlobalAfter + CategoryAfter)]`.
 - **Timeline & Inspector Synchronization**: The timeline's active playhead detection and docked inspector honor the full visibility window, illuminating cues across their `before`/`after` lead-in while maintaining accurate audio media positions on the ruler.
+- **Dynamic Theme-Aware Swatches**: Each category configuration card displays a color indicator dot dynamically resolved with the active script theme and CVD accessibility profile via `getCueColorForTheme`.
 - Reset button restores all timing settings to `0.0s` defaults.
 
 ---

@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.1-dev] - Unreleased
+
+### Fixed
+- **Auto-Scroll Dropdown & Timing Settings Dynamic Cue Color Resolution (`src/components/ScriptHeaderControls.tsx`, `src/components/TimingSettingsModal.tsx`, `src/App.tsx`)**:
+  - Resolved an omission from the v2.3.0 cue palette overhaul where category indicator dots inside the Auto-Scroll "Focus Mode" dropdown in `ScriptHeaderControls.tsx` were left using static fallback classes (`color.class`) with translucent 50% opacity (`bg-.../50`), bypassing the active script theme and the Protanopia CVD palette profile.
+  - Wired `scriptThemeId` and `cuePaletteProfile` down through `ScriptHeaderControlsProps` and `TimingSettingsModalProps` from `App.tsx`.
+  - Replaced static dot classes with theme-calibrated `themed.dotColor` (`getCueColorForTheme`), enhanced dot geometry to `w-2 h-2 rounded-full shrink-0 shadow-2xs`, and added an active white ring (`ring-1 ring-white/40`) when selected so category dots never wash out against the primary blue selection background.
+  - Aligned `TimingSettingsModal.tsx` category grid indicator dots to similarly resolve `themed.dotColor` dynamically with the active script theme and accessibility profile.
+
 ## [2.3.0] - 2026-09-10
 
 ### Added

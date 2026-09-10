@@ -825,6 +825,8 @@ export default function App() {
             isScrollFocusDropdownOpen={isScrollFocusDropdownOpen}
             setIsScrollFocusDropdownOpen={setIsScrollFocusDropdownOpen}
             currentTime={currentTime}
+            scriptThemeId={scriptThemeId}
+            cuePaletteProfile={cuePaletteProfile}
           />
 
           {/* Create / Edit Cue Form in Edit Mode */}
@@ -985,6 +987,8 @@ export default function App() {
         isOpen={isSettingsOpen}
         settings={state.settings}
         colors={COLORS}
+        scriptThemeId={scriptThemeId}
+        cuePaletteProfile={cuePaletteProfile}
         onClose={() => setIsSettingsOpen(false)}
         onResetClick={() => setResetConfirmation({ isOpen: true, type: 'settings', error: null })}
         onUpdateSetting={(category, field, value) => {
