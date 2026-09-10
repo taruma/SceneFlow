@@ -71,9 +71,9 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
   }, [cues, isCueVisible]);
 
   return (
-    <div className="hidden lg:flex flex-col flex-1 mt-6 animate-in fade-in slide-in-from-left-4 duration-700 min-h-0">
+    <div className="hidden lg:flex flex-col flex-1 mt-3 animate-in fade-in slide-in-from-left-4 duration-500 min-h-0">
       {/* Panel Header, View Switcher & Counter */}
-      <div className="flex items-center justify-between mb-3 gap-2">
+      <div className="flex items-center justify-between mb-2.5 gap-2">
         <h3 className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-2")}>
           <Video size={14} /> Active Highlights
         </h3>

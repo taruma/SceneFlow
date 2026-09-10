@@ -172,3 +172,14 @@ body {
   scrollbar-width: thin;
   scrollbar-color: #44403c #1c1917;
 }
+
+/* Disable all transitions and pointer events while resizing split panels for 60fps drag performance */
+body.is-resizing-split,
+body.is-resizing-split * {
+  transition: none !important;
+  user-select: none !important;
+}
+
+body.is-resizing-split iframe {
+  pointer-events: none !important;
+}

@@ -25,6 +25,8 @@ export interface PlaybackLeftPanelProps {
   toggleCueTypeVisibility: (type: string) => void;
   scriptThemeId: string;
   density?: TimelineDensity;
+  style?: React.CSSProperties;
+  className?: string;
 }
 
 /**
@@ -49,15 +51,19 @@ export const PlaybackLeftPanel: React.FC<PlaybackLeftPanelProps> = ({
   toggleCueTypeVisibility,
   scriptThemeId,
   density = 'comfortable',
+  style,
+  className,
 }) => {
   return (
     <div 
+      style={style}
       className={cn(
         UI_TOKENS.layout.leftPanelBase,
-        "w-full lg:w-1/2 border-r p-0 lg:p-10 gap-0 lg:gap-6 lg:overflow-y-auto scrollbar-hide sticky top-0 z-30 shadow-md lg:shadow-none transition-all duration-500"
+        "w-full border-r p-0 lg:px-6 lg:py-3.5 gap-0 lg:overflow-y-auto scrollbar-hide sticky top-0 z-30 shadow-md lg:shadow-none transition-all duration-300",
+        className
       )}
     >
-      <section className="space-y-4 lg:space-y-6 z-30 sticky top-0">
+      <section className="space-y-3 lg:space-y-3.5 z-30 sticky top-0">
         {/* Now Playing Header + Size Slider */}
         <div className="hidden lg:flex items-center justify-between transition-all duration-300">
           <h2 className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-text-faint flex items-center gap-2">

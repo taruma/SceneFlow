@@ -3,8 +3,67 @@ import type { ScriptWidthPresetId, ScrollFocusPresetId } from '../types/script';
 import { SCRIPT_WIDTH_PRESETS, SCROLL_FOCUS_PRESETS } from '../constants/script';
 import { DEFAULT_SCRIPT_THEME_ID, type ScriptThemeId } from '../lib/scriptStyles';
 
+export const DEFAULT_SPLIT_RATIO = 42;
+export const MIN_SPLIT_RATIO = 30;
+export const MAX_SPLIT_RATIO = 65;
+
 export function useScriptPreferences() {
-  const [videoWidth, setVideoWidth] = useState(100); // Percentage of container width
+  const [videoWidth, setVideoWidthState] = useState<number>(() => {
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem('sceneflow_video_width');
+      if (saved) {
+        const parsed = parseInt(saved, 10);
+        if (!isNaN(parsed) && parsed >= 40 && parsed <= 100) {
+          return parsed;
+        }
+      }
+    }
+    return 100;
+  });
+
+  const setVideoWidth = useCallback((width: number) => {
+    setVideoWidthState(width);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('sceneflow_video_width', width.toString());
+    }
+  }, []);
+
+  const [splitRatio, setSplitRatioState] = useState<number>(() => {
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem('sceneflow_split_ratio');
+      if (saved) {
+        const parsed = parseFloat(saved);
+        if (!isNaN(parsed) && parsed >= MIN_SPLIT_RATIO && parsed <= MAX_SPLIT_RATIO) {
+          return parsed;
+        }
+      }
+    }
+    return DEFAULT_SPLIT_RATIO;
+  });
+
+  const setSplitRatio = useCallback((ratio: number) => {
+    const clamped = Math.min(MAX_SPLIT_RATIO, Math.max(MIN_SPLIT_RATIO, Math.round(ratio * 10) / 10));
+    setSplitRatioState(clamped);
+  }, []);
+
+  const commitSplitRatio = useCallback((ratio?: number) => {
+    setSplitRatioState(prev => {
+      const target = typeof ratio === 'number' ? ratio : prev;
+      const clamped = Math.min(MAX_SPLIT_RATIO, Math.max(MIN_SPLIT_RATIO, Math.round(target * 10) / 10));
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('sceneflow_split_ratio', clamped.toString());
+      }
+      return clamped;
+    });
+  }, []);
+
+  const resetViewLayout = useCallback(() => {
+    setSplitRatio(DEFAULT_SPLIT_RATIO);
+    commitSplitRatio(DEFAULT_SPLIT_RATIO);
+    setVideoWidth(100);
+  }, [setSplitRatio, commitSplitRatio, setVideoWidth]);
+
+  const isViewCustomized = Math.round(splitRatio) !== DEFAULT_SPLIT_RATIO || videoWidth !== 100;
 
   const [scriptWidthPreset, setScriptWidthPresetState] = useState<ScriptWidthPresetId>(() => {
     if (typeof localStorage !== 'undefined') {
@@ -92,5 +151,10 @@ export function useScriptPreferences() {
     hiddenCueTypes,
     setHiddenCueTypes,
     toggleCueTypeVisibility,
+    splitRatio,
+    setSplitRatio,
+    commitSplitRatio,
+    resetViewLayout,
+    isViewCustomized,
   };
 }

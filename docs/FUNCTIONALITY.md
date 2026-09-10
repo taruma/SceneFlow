@@ -116,6 +116,13 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 - Pulsing animated glow indicates which categories have cues currently active under the playhead.
 - Clicking a category pill toggles its visibility in both the timeline tracks and the script viewer.
 
+### Asymmetric Split Pane & Zero-Scroll Layout
+- **Interactive Split Pane (`SplitPaneDivider`)**: Desktop users can drag the vertical divider between the left playback panel and the screenplay preview to customize workspace proportions.
+- **Calibrated 42:58 Default Ratio**: Defaults to 42% Video / 58% Script (clamped between 30% and 65%), naturally scaling the 16:9 player and reducing outer padding (`lg:px-6 lg:py-3.5`) so the video, category pills, timeline lanes, and ruler fit vertically on screen with zero scrolling.
+- **Hardware VSync Dragging (60–144fps)**: Pointer movements are throttled via `requestAnimationFrame` and CSS transitions are temporarily suppressed via `.is-resizing-split` on `document.body` for lag-free cursor tracking.
+- **One-Click Header "Reset View" (`AppHeader`)**: A dedicated `RotateCcw` button in the header toolbar (or double-clicking the divider) immediately restores default 42:58 split and 100% video size.
+- **Decoupled Persistence**: Changes commit to `localStorage` (`sceneflow_split_ratio`, `sceneflow_video_width`) only upon pointer release to eliminate main-thread disk I/O bottlenecks.
+
 ---
 
 ## 5. Auto-Scroll & Viewport Alignment Engine

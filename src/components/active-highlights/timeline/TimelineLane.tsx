@@ -98,6 +98,7 @@ export const TimelineLane = React.memo<TimelineLaneProps>(({
               onClick={onCueClick}
               isSelected={selectedCueId === item.cue.id}
               isPlaying={isPlaying}
+              density={density}
             />
           ))}
         </div>

@@ -26,6 +26,7 @@ import { MobileColorModal } from './components/MobileColorModal';
 import { AppInfoModal } from './components/AppInfoModal';
 import { AppHeader } from './components/AppHeader';
 import { PlaybackLeftPanel } from './components/playback/PlaybackLeftPanel';
+import { SplitPaneDivider } from './components/common/SplitPaneDivider';
 import { ActiveHighlightsPanel } from './components/ActiveHighlightsPanel';
 import { TimelineCuesPanel } from './components/TimelineCuesPanel';
 import { ScriptHeaderControls } from './components/ScriptHeaderControls';
@@ -112,6 +113,11 @@ export default function App() {
     setIsColorModalOpen,
     hiddenCueTypes,
     toggleCueTypeVisibility,
+    splitRatio,
+    setSplitRatio,
+    commitSplitRatio,
+    resetViewLayout,
+    isViewCustomized,
   } = useScriptPreferences();
 
   const { theme: activeTheme } = useScriptTheme(scriptThemeId);
@@ -630,6 +636,8 @@ export default function App() {
         themeMode={themeMode}
         effectiveThemeCategory={effectiveCategory}
         onCycleThemeMode={cycleThemeMode}
+        isViewCustomized={isViewCustomized}
+        onResetView={resetViewLayout}
       />
 
       <main className={cn(
@@ -655,14 +663,16 @@ export default function App() {
             hiddenCueTypes={hiddenCueTypes}
             toggleCueTypeVisibility={toggleCueTypeVisibility}
             scriptThemeId={scriptThemeId}
+            style={isDesktop ? { width: `${splitRatio}%` } : undefined}
           />
         ) : (
           <div 
             ref={leftPanelRef}
             onScroll={(e) => setLeftPanelScroll(e.currentTarget.scrollTop)}
+            style={isDesktop ? { width: `${splitRatio}%` } : undefined}
             className={cn(
               UI_TOKENS.layout.leftPanelBase,
-              "w-full lg:w-1/2 border-r p-4 lg:p-10 overflow-y-auto scrollbar-hide transition-all duration-500"
+              "w-full border-r p-4 lg:p-10 overflow-y-auto scrollbar-hide transition-all duration-300"
             )}
           >
             {/* YouTube Source Input - Not Sticky in Edit Mode */}
@@ -738,11 +748,24 @@ export default function App() {
           </div>
         )}
 
+        {/* Desktop Resizable Split Pane Divider */}
+        {isDesktop && (
+          <SplitPaneDivider
+            splitRatio={splitRatio}
+            onSplitChange={setSplitRatio}
+            onSplitCommit={commitSplitRatio}
+            onReset={resetViewLayout}
+          />
+        )}
+
         {/* Right Panel: The Screenplay */}
-        <div className={cn(
-          UI_TOKENS.layout.rightPanelBase,
-          mode === 'edit' ? "hidden lg:flex w-full lg:w-1/2 h-full" : "w-full lg:w-1/2 flex-1"
-        )}>
+        <div 
+          style={isDesktop ? { width: `${100 - splitRatio}%` } : undefined}
+          className={cn(
+            UI_TOKENS.layout.rightPanelBase,
+            mode === 'edit' ? "hidden lg:flex w-full h-full" : "w-full flex-1"
+          )}
+        >
           <ScriptHeaderControls
             mode={mode}
             isAutoScrollEnabled={isAutoScrollEnabled}
