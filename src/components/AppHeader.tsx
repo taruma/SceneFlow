@@ -3,6 +3,7 @@ import { Plus, Book, Coffee, Play, Edit2, Palette, Clock, FolderOpen, Download, 
 import { cn } from '../lib/utils';
 import { UI_TOKENS } from '../styles/tokens/ui';
 import type { AppThemeMode, AppThemeCategory } from '../hooks/useAppShellTheme';
+import { DEFAULT_SPLIT_RATIO } from '../hooks/useScriptPreferences';
 
 interface AppHeaderProps {
   mode: 'playback' | 'edit';
@@ -195,7 +196,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
               title={
                 isViewCustomized
                   ? "Reset View Layout & Video Size (Customized)"
-                  : "Reset View Layout & Video Size (Default 42:58)"
+                  : `Reset View Layout & Video Size (Default ${DEFAULT_SPLIT_RATIO}:${100 - DEFAULT_SPLIT_RATIO})`
               }
             >
               <RotateCcw size={16} className={cn(isViewCustomized && "transition-transform active:-rotate-45")} />

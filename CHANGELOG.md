@@ -60,6 +60,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Timing Buffers Activation Synchronization (The Dual-Time Principle) (`useTimelineWindow.ts`, `HighlightTimelineView.tsx`, `ActiveHighlightsPanel.tsx`)**:
   - Integrated `state.settings` into the timeline so that cue blocks and category indicator dots illuminate (`isPlayheadInside`) across the full `before` lead-in and `after` hold buffers via `isCueActive()`.
   - Docked paused cue inspector displays active cues in lockstep with the highlighted screenplay text while preserving physical audio media boundaries (`startTime` $\to$ `endTime`) on the timecode ruler.
+### Changed
+- **Default View Layout Calibration (`src/hooks/useScriptPreferences.ts`, `src/components/AppHeader.tsx`)**:
+  - Calibrated default split ratio from `42%` to **`65%`** (65% Left / 35% Right) and raised `MAX_SPLIT_RATIO` from `65%` to `72%`, prioritizing horizontal timeline width for multi-track cues and timecode ruler visibility while framing the screenplay in its natural ~35% single-column format.
+  - Adjusted default video player height from `240px` to **`220px`**, establishing a sleek, compact preview monitor that expands vertical headroom for all 5 timeline lanes.
+  - Dynamically wired the header `AppHeader` "Reset View" button tooltip to `DEFAULT_SPLIT_RATIO` (`Default 65:35`).
 
 ### Fixed
 - **Timeline Sub-Lane Density Synchronization (`src/components/active-highlights/timeline/`)**:

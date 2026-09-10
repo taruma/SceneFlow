@@ -3,11 +3,11 @@ import type { ScriptWidthPresetId, ScrollFocusPresetId } from '../types/script';
 import { SCRIPT_WIDTH_PRESETS, SCROLL_FOCUS_PRESETS } from '../constants/script';
 import { DEFAULT_SCRIPT_THEME_ID, type ScriptThemeId } from '../lib/scriptStyles';
 
-export const DEFAULT_SPLIT_RATIO = 42;
+export const DEFAULT_SPLIT_RATIO = 65;
 export const MIN_SPLIT_RATIO = 30;
-export const MAX_SPLIT_RATIO = 65;
+export const MAX_SPLIT_RATIO = 72;
 
-export const DEFAULT_VIDEO_HEIGHT = 240;
+export const DEFAULT_VIDEO_HEIGHT = 220;
 export const MIN_VIDEO_HEIGHT = 160;
 export const MAX_VIDEO_HEIGHT = 480;
 
