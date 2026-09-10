@@ -45,3 +45,8 @@ YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds
 - **Drag Performance & IFrame Guard**: Leverage pointer capture and `.is-resizing-split` to prevent YouTube iframe event absorption during vertical drags.
 - **Unified Reset State**: The header "Reset View" action must reset both the horizontal panel split (42%) and vertical video height (240px) in lockstep.
 
+## 8. Header Layout Stability & Studio VU Meter Invariants
+- **Zero-Layout-Shift Indicator Strips**: In high-frequency playback headers, never render variable-length arrays of cue instance dots that cause horizontal layout jitter. Implement fixed-slot category strips (`COLORS` order) that illuminate dynamically via `resolveCueColor()`.
+- **Numeric Tabular Width Isolation**: Any numeric counter that transitions between single and double digits during playback must be wrapped in a dedicated fixed-width slot (`min-w-[14px] font-mono tabular-nums text-center`) to ensure zero pixel shift.
+- **Collapsible Secondary Filters**: The category filter bar must support smooth collapsing (`sceneflow_highlight_filter_expanded`) to maximize vertical space for timeline tracks, with an active indicator pip displayed on the toggle button when categories are muted.
+

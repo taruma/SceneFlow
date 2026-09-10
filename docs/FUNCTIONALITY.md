@@ -106,15 +106,20 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 - **Screenplay Quote**: Displays the full screenplay excerpt in large, readable serif italics.
 - **Instant Replay**: Clicking "Replay" jumps to the cue's start time and immediately initiates playback.
 
+### Studio VU Meter & Layout Stability
+- **Fixed-Slot Category LED Strip**: Anchored directly beside the section title, an 8-slot category VU meter (`Dialogue`, `Action`, `Camera`, `Shot`, `Audio`, `VFX`, `Transition`, `Environment`) illuminates in theme-calibrated colors (`resolveCueColor`) whenever cues in that category are active.
+- **Zero-Layout-Shift Numerical Box**: The active cue count is isolated inside a fixed-width monospace tabular container (`min-w-[14px] font-mono tabular-nums`), mathematically eliminating visual jitter and horizontal shifting when cue counts oscillate between single and double digits during playback.
+
 ### View Mode Switcher (Timeline vs. Cards)
 - **Segmented Control**: The panel header features a `[ 📊 Timeline | 🗂 Cards ]` switcher.
 - **Classic Cards View**: Users can switch back to the legacy floating cards presentation at any time.
 - **Persistence**: View mode selection persists across sessions in `localStorage` (`sceneflow_highlight_view_mode`).
 
-### Category Legend & Filter Controls (`HighlightFilterBar`)
-- Clickable pills for each cue category with dynamic count indicators.
-- Pulsing animated glow indicates which categories have cues currently active under the playhead.
-- Clicking a category pill toggles its visibility in both the timeline tracks and the script viewer.
+### Collapsible Filter Drawer & Toolbar (`HighlightFilterBar`)
+- **Smooth Drawer Collapse**: The 8-category filter pill bar is tucked into a smoothly collapsible container (`max-h-32 opacity-100` ⇋ `max-h-0 opacity-0`), saving ~35–40px of vertical space for the multi-track timeline tracks.
+- **Toolbar Toggle Button**: A dedicated `Filters` button sits immediately to the left of the view switcher in the header toolbar, persisting its expanded/collapsed state in `localStorage` (`sceneflow_highlight_filter_expanded`).
+- **Muted Filter Pip**: When any categories are muted, the `Filters` button displays an active pulsing blue pip to ensure users are always aware filters are active even with the drawer collapsed.
+- **Interactive Pills**: Clickable category pills with dynamic count indicators, theme colors, and active pulsing indicators. Toggle category visibility in both the timeline tracks and the script viewer.
 
 ### Asymmetric Dual-Axis Split & Zero-Scroll Layout
 - **Horizontal Panel Splitter (`SplitPaneDivider`)**: Desktop users can drag the vertical divider between the left playback panel and the screenplay preview to customize workspace proportions. Defaults to 42% Video / 58% Script (clamped between 30% and 65%).
@@ -211,7 +216,7 @@ Fine-tunes highlight visibility timing before and after actual cue timestamps:
 ## 8. Persistence, Sharing, & Library Catalogue
 
 ### Local Persistence
-All project states (`screenplay_sync_state`), theme preferences (`sceneflow_script_theme`), width presets (`sceneflow_script_width_preset`), scroll focus settings (`sceneflow_scroll_focus_preset`), and timeline view mode (`sceneflow_highlight_view_mode`) persist in `localStorage`.
+All project states (`screenplay_sync_state`), theme preferences (`sceneflow_script_theme`), width presets (`sceneflow_script_width_preset`), scroll focus settings (`sceneflow_scroll_focus_preset`), timeline view mode (`sceneflow_highlight_view_mode`), and filter drawer state (`sceneflow_highlight_filter_expanded`) persist in `localStorage`.
 
 ### Default Project & Quick Start Guide
 - Fresh visits default to loading the **Scene Frequency** (`scene_frequency.json`) guide script.

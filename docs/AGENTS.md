@@ -153,6 +153,9 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
    - Directly resize video height using the horizontal divider (`VideoSplitDivider.tsx`) rather than arbitrary width percentages.
    - **Proportional 16:9 Scaling**: Container must couple `height: ${videoHeight}px` with `aspectRatio: '16 / 9'` and `maxWidth: '100%'`, preventing video distortion and eliminating empty lateral gutters.
    - **Performance & IFrame Guard**: Leverage pointer capture and the body `.is-resizing-split` overlay to prevent YouTube iframe event absorption during vertical drags. Commit disk I/O only on pointer up (`commitVideoHeight`).
-   - **Unified Reset State**: The header "Reset View" action must reset both the 42:58 horizontal panel split and the 240px vertical video height in lockstep.
+9. **Header Layout Stability & Studio VU Meter Invariants**:
+   - **Zero-Layout-Shift Indicator Strips**: Avoid rendering variable-length dynamic arrays of cue instance dots in high-frequency playback headers, as rapid cue count fluctuations (`4 → 11 → 5`) cause severe visual jitter and layout shifts. Use a fixed-slot category indicator strip (`COLORS` order) where slot positions are permanently anchored and illuminate dynamically via `resolveCueColor()`.
+   - **Numeric Tabular Width Isolation**: When displaying numeric counters that oscillate between single and double digits during playback, always isolate the digit inside a dedicated fixed-width slot (`min-w-[14px] font-mono tabular-nums text-center`) to mathematically prevent horizontal jitter.
+   - **Collapsible Secondary Filters**: Muting/category filter pill rows in playback headers must remain collapsible by default (`localStorage` key `sceneflow_highlight_filter_expanded`) to prioritize vertical viewport space for timeline lanes, accompanied by an active indicator pip on the toggle button whenever filters are muted.
 
 
