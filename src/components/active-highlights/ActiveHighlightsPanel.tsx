@@ -35,6 +35,7 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
   viewMode: controlledMode,
   onViewModeChange,
   onCueClick,
+  density,
 }) => {
   const { resolveCueColor } = useScriptTheme(scriptThemeId as any);
 
@@ -136,6 +137,8 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
           resolveCueColor={resolveCueColor}
           onSeekCue={onSeekCue || onCueClick}
           onSeekTo={onSeekTo}
+          density={density}
+          onToggleCueType={toggleCueTypeVisibility}
         />
       ) : (
         <HighlightCardsView

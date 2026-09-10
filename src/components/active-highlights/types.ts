@@ -9,6 +9,13 @@ import { CueThemeResolvedColor, ScriptThemeId } from '../../styles';
 export type HighlightViewMode = 'timeline' | 'cards';
 
 /**
+ * Layout density for the multi-track timeline tracks.
+ * - `comfortable`: Standard 32px track height with generous padding.
+ * - `compact`: Tighter 26px track height for zero-scroll viewport fit.
+ */
+export type TimelineDensity = 'comfortable' | 'compact';
+
+/**
  * Props for the main ActiveHighlightsPanel orchestrator.
  */
 export interface ActiveHighlightsPanelProps {
@@ -40,6 +47,8 @@ export interface ActiveHighlightsPanelProps {
   onViewModeChange?: (mode: HighlightViewMode) => void;
   /** Optional click handler for a cue item (legacy compatibility) */
   onCueClick?: (cue: Cue) => void;
+  /** Optional timeline layout density */
+  density?: TimelineDensity;
 }
 
 /**

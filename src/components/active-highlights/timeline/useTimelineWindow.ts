@@ -98,9 +98,13 @@ export function useTimelineWindow({
   }, [cues]);
 
   // 2. Determine which cue categories exist in this script
+  const scriptCategories = useMemo(() => {
+    return COLORS.filter(c => cuesByCategory.has(c.type));
+  }, [cuesByCategory]);
+
   const existingCategories = useMemo(() => {
-    return COLORS.filter(c => cuesByCategory.has(c.type) && !hiddenCueTypes.has(c.type));
-  }, [cuesByCategory, hiddenCueTypes]);
+    return scriptCategories.filter(c => !hiddenCueTypes.has(c.type));
+  }, [scriptCategories, hiddenCueTypes]);
 
   // 3. Compute normalized cue blocks mapped to percentage coordinates using stable sub-lane indices
   const calculatedCuesByLane = useMemo(() => {
@@ -174,6 +178,7 @@ export function useTimelineWindow({
     windowEnd,
     totalSpanSeconds,
     playheadPercent,
+    scriptCategories,
     existingCategories,
     calculatedCuesByLane,
     rulerTicks,
