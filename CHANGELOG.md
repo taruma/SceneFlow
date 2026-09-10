@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Centralized Links Configuration (`src/constants/links.ts`)**: Centralized `EXTERNAL_LINKS` (`article`, `articleTitle`, `kofi`, `github`, `docs`, `changelog`, `author`) to eliminate redundant hardcoded URL strings across the app shell.
 
 ### Changed
+- **Screenplay Visual Themes Modal Compact 2-Column Redesign & Checkmark Occlusion Fix (`src/components/ScriptColorModal.tsx`)**:
+  - Redesigned the desktop theme presets layout from a 3-column grid (`lg:grid-cols-3`) to a compact, responsive 2-column grid (`grid-cols-1 sm:grid-cols-2`), eliminating vertical viewport scrolling on standard desktop displays.
+  - Consolidated top controls: Repositioned the **Pure Black Canvas (Video Overlay Mode)** toggle from the bottom of the modal up to the header tier alongside the **Cue Palette Accessibility Profile** selector into a unified 2-column options bar.
+  - Resolved checkmark occlusion bug where the selected state badge (`absolute top-2 right-2`) collided with and obscured the right edge of the theme category badge (`LIGHT`, `DARK`, `WARM`). Moved the checkmark indicator into natural flex flow beside the theme badge (`[LIGHT] [✓]`).
+  - Optimized vertical density across modal header (`px-4 py-3 sm:px-6 sm:py-3.5`), tabs, body spacing (`p-3.5 sm:p-4 space-y-3`), swatch cards (`p-2.5 sm:p-3`), single-line descriptions (`line-clamp-1`), live script preview paper (`p-2 text-[9px]`), and active theme summary strip.
 - **Starter Guide Script & Onboarding Tutorial Synchronization (`docs/_dropbox/guide.txt`, `public/examples/blank.json`)**:
   - Synchronized the instructional guide reference (`docs/_dropbox/guide.txt`) and starter tutorial project (`public/examples/blank.json`) with SceneFlow v2.3.0 capabilities.
   - Documented modern workspace features: Multi-Track Sync Timeline (35% anticipation playhead, continuous timecode ruler, zoom presets `4s | 8s | 16s`, `Flex` / `Fixed` track height modes, lane mute toggles), Paused Inspector card with instant Replay, Screen Recording Mode (<kbd>V</kbd>), Dual-Axis Splitters, Studio VU Meter, Pure Black Canvas (Video Overlay Mode), CVD Accessibility palettes, and global keyboard shortcuts.

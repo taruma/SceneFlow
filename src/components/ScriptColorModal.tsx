@@ -63,19 +63,19 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
         className={UI_TOKENS.modal.containerXl}
       >
         {/* Modal Header */}
-        <div className="p-4 sm:p-6 border-b border-border-subtle flex items-center justify-between bg-surface-subtle shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-btn-primary-bg text-btn-primary-text flex items-center justify-center shadow-xs">
-              <Palette size={18} />
+        <div className="px-4 py-3 sm:px-6 sm:py-3.5 border-b border-border-subtle flex items-center justify-between bg-surface-subtle shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-btn-primary-bg text-btn-primary-text flex items-center justify-center shadow-xs shrink-0">
+              <Palette size={16} />
             </div>
             <div>
-              <h3 className="font-bold text-text-main text-base flex items-center gap-2">
+              <h3 className="font-bold text-text-main text-sm flex items-center gap-2">
                 Screenplay Visual Themes
-                <span className="text-[10px] font-mono font-normal uppercase tracking-wider bg-surface-muted text-text-muted px-2 py-0.5 rounded-full">
+                <span className="text-[9px] font-mono font-normal uppercase tracking-wider bg-surface-muted text-text-muted px-1.5 py-0.2 rounded-full">
                   6 Presets
                 </span>
               </h3>
-              <p className="text-xs text-text-muted mt-0.5">
+              <p className="text-[11px] text-text-muted">
                 Switch screenplay canvas textures, typography contrast, and adaptive cue highlight palettes.
               </p>
             </div>
@@ -85,7 +85,7 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
             {currentThemeId !== 'studio-light' && (
               <button
                 onClick={() => onSelectTheme('studio-light')}
-                className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-text-muted hover:text-text-main bg-surface hover:bg-surface-hover border border-border-main px-2.5 py-1.5 rounded-lg transition-colors shadow-xs"
+                className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-text-muted hover:text-text-main bg-surface hover:bg-surface-hover border border-border-main px-2 py-1 rounded-lg transition-colors shadow-xs"
                 title="Reset to default Studio Crisp theme"
               >
                 <RotateCcw size={11} /> Reset
@@ -96,7 +96,7 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
               className="p-1.5 text-text-faint hover:text-text-main hover:bg-surface-hover rounded-lg transition-colors"
               title="Close modal"
             >
-              <X size={18} />
+              <X size={16} />
             </button>
           </div>
         </div>
@@ -106,91 +106,130 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
           <button
             onClick={() => setActiveTab('presets')}
             className={cn(
-              "flex items-center gap-2 py-3 px-1 text-xs font-bold border-b-2 transition-all mr-6",
+              "flex items-center gap-2 py-2 px-1 text-xs font-bold border-b-2 transition-all mr-6",
               activeTab === 'presets'
                 ? "border-text-main text-text-main"
                 : "border-transparent text-text-faint hover:text-text-main"
             )}
           >
-            <Sparkles size={14} /> Theme Presets
+            <Sparkles size={13} /> Theme Presets
           </button>
           <button
             onClick={() => setActiveTab('inspector')}
             className={cn(
-              "flex items-center gap-2 py-3 px-1 text-xs font-bold border-b-2 transition-all",
+              "flex items-center gap-2 py-2 px-1 text-xs font-bold border-b-2 transition-all",
               activeTab === 'inspector'
                 ? "border-text-main text-text-main"
                 : "border-transparent text-text-faint hover:text-text-main"
             )}
           >
-            <Layers size={14} /> Element Inspector
+            <Layers size={13} /> Element Inspector
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
-          {/* Vision & Palette Profile Selector - accessible across tabs */}
-          <div className="bg-surface-subtle border border-border-main rounded-2xl p-3.5 sm:p-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-lg bg-btn-primary-bg/10 text-btn-primary-bg flex items-center justify-center shrink-0">
-                    <Eye size={13} />
+        <div className="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3">
+          {activeTab === 'presets' ? (
+            <div className="space-y-2.5">
+              {/* Top Controls: Accessibility Profile & Pure Black Canvas Toggle */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {/* Column 1: Cue Palette Accessibility Profile */}
+                <div className="bg-surface-subtle border border-border-main rounded-xl p-2.5 sm:p-3 flex items-center justify-between gap-2.5">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <Eye size={13} className="text-btn-primary-bg shrink-0" />
+                      <span className="text-xs font-bold text-text-main truncate">Cue Palette</span>
+                      <span className={cn(
+                        "text-[8px] font-mono uppercase tracking-wider px-1.5 py-0.2 rounded-full font-semibold border shrink-0",
+                        cuePaletteProfile === 'protanopia' 
+                          ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" 
+                          : "bg-surface-muted text-text-muted border-border-main"
+                      )}>
+                        {cuePaletteProfile === 'protanopia' ? 'Protan Safe' : 'Standard'}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-text-muted mt-0.5 truncate">
+                      {cuePaletteProfile === 'protanopia' 
+                        ? 'Wine/Burgundy high contrast for red-green CVD' 
+                        : 'Standard cinema spectrum across themes'}
+                    </p>
                   </div>
-                  <h4 className="text-xs font-bold text-text-main">
-                    Cue Palette Accessibility Profile
-                  </h4>
-                  <span className={cn(
-                    "text-[8px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full font-semibold border",
-                    cuePaletteProfile === 'protanopia' 
-                      ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" 
-                      : "bg-surface-muted text-text-muted border-border-main"
-                  )}>
-                    {cuePaletteProfile === 'protanopia' ? 'Protan & Deutan Safe' : 'Standard'}
-                  </span>
+
+                  {onSelectPaletteProfile && (
+                    <div className="inline-flex p-0.5 bg-surface border border-border-main rounded-lg shrink-0 shadow-2xs">
+                      <button
+                        type="button"
+                        onClick={() => onSelectPaletteProfile('standard')}
+                        className={cn(
+                          "px-2 py-1 rounded-md text-[10.5px] font-bold transition-all",
+                          cuePaletteProfile === 'standard'
+                            ? "bg-btn-primary-bg text-btn-primary-text shadow-xs"
+                            : "text-text-muted hover:text-text-main"
+                        )}
+                      >
+                        Standard
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onSelectPaletteProfile('protanopia')}
+                        className={cn(
+                          "px-2 py-1 rounded-md text-[10.5px] font-bold transition-all flex items-center gap-1",
+                          cuePaletteProfile === 'protanopia'
+                            ? "bg-btn-primary-bg text-btn-primary-text shadow-xs"
+                            : "text-text-muted hover:text-text-main"
+                        )}
+                        title="Protan & Deutan Safe"
+                      >
+                        <Eye size={11} />
+                        <span>Protan</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <p className="text-[11px] text-text-muted mt-1 leading-relaxed">
-                  {cuePaletteProfile === 'protanopia' 
-                    ? 'Calibrated for Red-Green Color Vision Deficiency: Shot is rendered in high-contrast Deep Wine / Burgundy to eliminate collision with Cobalt Blue Action.' 
-                    : 'Standard cinema spectrum calibrated across Studio, Warm Parchment, and Midnight themes.'}
-                </p>
+
+                {/* Column 2: Pure Black Canvas (Video Overlay Mode) Toggle */}
+                <div className="bg-surface-subtle border border-border-main rounded-xl p-2.5 sm:p-3 flex items-center justify-between gap-2.5">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <Video size={13} className={cn("shrink-0", pureBlackMode ? "text-text-main" : "text-text-muted")} />
+                      <span className="text-xs font-bold text-text-main">Pure Black Canvas</span>
+                      <span className="text-[8px] font-mono font-semibold uppercase tracking-wider px-1.5 py-0.2 rounded-md bg-neutral-900 text-neutral-200 border border-neutral-700 shrink-0">
+                        Video Overlay
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-text-muted mt-0.5 truncate">
+                      {pureBlackMode && currentTheme.category !== 'dark' 
+                        ? 'Applies on dark themes (switch to Midnight or OLED)'
+                        : 'Absolute #000000 canvas for Screen/Lighten recording'}
+                    </p>
+                  </div>
+
+                  <div className="shrink-0 flex items-center">
+                    <button
+                      type="button"
+                      role="switch"
+                      id="pure-black-mode-toggle"
+                      aria-checked={pureBlackMode}
+                      onClick={() => setPureBlackMode?.(!pureBlackMode)}
+                      className={cn(
+                        "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
+                        pureBlackMode ? "bg-black ring-1 ring-neutral-600" : "bg-surface-muted"
+                      )}
+                    >
+                      <span className="sr-only">Toggle Pure Black Video Overlay Mode</span>
+                      <span
+                        className={cn(
+                          "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out",
+                          pureBlackMode ? "translate-x-4" : "translate-x-0"
+                        )}
+                      />
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              {onSelectPaletteProfile && (
-                <div className="inline-flex p-1 bg-surface border border-border-main rounded-xl shrink-0 self-start sm:self-center shadow-2xs">
-                  <button
-                    type="button"
-                    onClick={() => onSelectPaletteProfile('standard')}
-                    className={cn(
-                      "px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5",
-                      cuePaletteProfile === 'standard'
-                        ? "bg-btn-primary-bg text-btn-primary-text shadow-xs"
-                        : "text-text-muted hover:text-text-main"
-                    )}
-                  >
-                    Standard Cinema
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onSelectPaletteProfile('protanopia')}
-                    className={cn(
-                      "px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5",
-                      cuePaletteProfile === 'protanopia'
-                        ? "bg-btn-primary-bg text-btn-primary-text shadow-xs"
-                        : "text-text-muted hover:text-text-main"
-                    )}
-                  >
-                    <Eye size={12} />
-                    Protan / Deutan Safe
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {activeTab === 'presets' ? (
-            <div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+              {/* Theme Presets Grid - 2 Columns */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {themeList.map((theme) => {
                   const isSelected = theme.id === currentThemeId;
                   return (
@@ -199,60 +238,68 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                       id={`theme-preset-card-${theme.id}`}
                       onClick={() => onSelectTheme(theme.id)}
                       className={cn(
-                        "relative flex flex-col text-left rounded-xl p-3.5 transition-all duration-200 border-2 group",
+                        "relative flex flex-col text-left rounded-xl p-2.5 sm:p-3 transition-all duration-200 border-2 group",
                         isSelected
                           ? UI_TOKENS.swatch.cardSelected + " bg-surface"
                           : "border-border-main hover:border-border-main hover:shadow-xs bg-surface"
                       )}
                     >
-                      {/* Top row: Name & Category badge */}
-                      <div className="flex items-center justify-between mb-1.5">
-                        <span className="font-bold text-xs text-text-main flex items-center gap-1.5">
+                      {/* Top row: Name & Category badge & Checkmark (in flex flow, NO overlap) */}
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <span className="font-bold text-xs text-text-main truncate">
                           {theme.name}
                         </span>
-                        <span className={cn(
-                          "text-[8px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded font-semibold flex items-center gap-1",
-                          theme.category === 'dark' ? "bg-stone-800 text-stone-200" :
-                          theme.category === 'warm' ? "bg-amber-100 text-amber-800" : "bg-surface-muted text-text-muted"
-                        )}>
-                          {theme.category === 'dark' && <Moon size={8} />}
-                          {theme.category === 'warm' && <Coffee size={8} />}
-                          {theme.category === 'light' && <Sun size={8} />}
-                          {theme.category}
-                        </span>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <span className={cn(
+                            "text-[8px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded font-semibold flex items-center gap-1",
+                            theme.category === 'dark' ? "bg-stone-800 text-stone-200" :
+                            theme.category === 'warm' ? "bg-amber-100 text-amber-800" : "bg-surface-muted text-text-muted"
+                          )}>
+                            {theme.category === 'dark' && <Moon size={8} />}
+                            {theme.category === 'warm' && <Coffee size={8} />}
+                            {theme.category === 'light' && <Sun size={8} />}
+                            {theme.category}
+                          </span>
+                          {isSelected && (
+                            <span className="w-4 h-4 rounded-full bg-btn-primary-bg text-btn-primary-text flex items-center justify-center shadow-xs">
+                              <Check size={10} strokeWidth={3} />
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       {/* Description */}
-                      <p className="text-[11px] text-text-muted line-clamp-2 leading-relaxed mb-3 min-h-[30px]">
+                      <p className="text-[10.5px] text-text-muted line-clamp-1 leading-snug mb-1.5">
                         {theme.description}
                       </p>
 
                       {/* Mini Live Preview Paper */}
                       <div className={cn(
-                        "rounded-lg p-2.5 text-[10px] font-serif border overflow-hidden mt-auto transition-all",
+                        "rounded-lg p-2 text-[9px] font-serif border overflow-hidden mt-auto transition-all",
                         theme.paperBg,
                         theme.paperBorder,
                         theme.textColor
                       )}>
                         {/* Heading banner preview */}
                         <div className={cn(
-                          "text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 mb-1.5 rounded-xs",
+                          "text-[7.5px] font-bold uppercase tracking-wider px-1.5 py-0.5 mb-1 rounded-xs flex items-center justify-between",
                           theme.headingBg,
                           theme.headingBorder
                         )}>
-                          EXT. SCENE 01 - DAY
+                          <span>EXT. SCENE 01 - DAY</span>
+                          <span className="font-mono text-[7px] opacity-60">HEADING</span>
                         </div>
 
                         {/* Script Text Line Preview */}
-                        <div className="space-y-0.5 font-mono text-[9px] mb-2 leading-tight">
-                          <p className="font-bold uppercase tracking-tight text-[8px]">CHARACTER</p>
-                          <p className="italic text-[8px] opacity-80">"Synchronized screenplay..."</p>
+                        <div className="font-mono text-[8px] mb-1.5 leading-tight flex items-baseline gap-1.5">
+                          <span className="font-bold uppercase tracking-tight text-[7.5px] shrink-0">CHARACTER</span>
+                          <span className="italic text-[7.5px] opacity-80 truncate">"Synchronized screenplay..."</span>
                         </div>
 
                         {/* Staging Pill & Cue Highlights Preview */}
                         <div className="flex items-center justify-between gap-1 pt-1 border-t border-black/5 dark:border-white/5">
                           <div className={cn(
-                            "px-1 py-0.2 rounded-full border text-[7px] font-bold uppercase tracking-tighter",
+                            "px-1.5 py-0.2 rounded-full border text-[7px] font-bold uppercase tracking-tighter",
                             theme.stagingBadgeBg,
                             theme.stagingBadgeBorder,
                             theme.stagingBadgeText
@@ -260,13 +307,13 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                             STAGING
                           </div>
                           
-                          <div className="flex items-center gap-0.5">
+                          <div className="flex items-center gap-1">
                             {PREVIEW_CUE_CHIPS.map(chip => {
                               const themed = getCueColorForTheme(chip.type, theme.id, cuePaletteProfile);
                               return (
                                 <span 
                                   key={chip.name}
-                                  className="w-2 h-2 rounded-full shadow-2xs shrink-0" 
+                                  className="w-1.5 h-1.5 rounded-full shadow-2xs shrink-0" 
                                   style={{ backgroundColor: `rgba(${themed.rgb}, 0.85)` }}
                                   title={`${chip.name} (${theme.category})`}
                                 />
@@ -275,136 +322,129 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                           </div>
                         </div>
                       </div>
-
-                      {/* Selected check icon badge */}
-                      {isSelected && (
-                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-btn-primary-bg text-btn-primary-text flex items-center justify-center shadow-xs">
-                          <Check size={11} strokeWidth={3} />
-                        </div>
-                      )}
                     </button>
                   );
                 })}
               </div>
 
-              {/* Pure Black Canvas (Video Overlay Mode) Toggle Card */}
-              <div className="mt-4 p-4 rounded-xl border border-border-main bg-surface-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
-                <div className="flex items-start sm:items-center gap-3.5">
-                  <div className={cn(
-                    "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors shadow-xs border",
-                    pureBlackMode && currentTheme.category === 'dark'
-                      ? "bg-black border-neutral-700 text-white ring-2 ring-neutral-700/50"
-                      : "bg-surface border-border-main text-text-muted"
-                  )}>
-                    <Video size={18} />
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-xs font-bold text-text-main">
-                        Pure Black Canvas
-                      </span>
-                      <span className="text-[9px] font-mono font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-neutral-900 text-neutral-200 border border-neutral-700">
-                        Video Overlay Mode
-                      </span>
-                      {currentTheme.category !== 'dark' && pureBlackMode && (
-                        <span className="text-[9px] font-medium text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded">
-                          Applies on dark script themes
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-[11px] text-text-muted leading-relaxed max-w-xl">
-                      Forces absolute <code className="font-mono text-[10px] bg-surface-muted px-1 py-0.5 rounded text-text-main">#000000</code> backgrounds across the app while keeping clean paper borders, removing drop shadows, punch holes, and heading strips. Optimized for <strong className="text-text-main">Screen / Lighten</strong> video overlay recording.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
-                  <button
-                    type="button"
-                    role="switch"
-                    id="pure-black-mode-toggle"
-                    aria-checked={pureBlackMode}
-                    onClick={() => setPureBlackMode?.(!pureBlackMode)}
-                    className={cn(
-                      "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-text-main focus:ring-offset-2",
-                      pureBlackMode ? "bg-black ring-1 ring-neutral-600" : "bg-surface-muted"
-                    )}
-                  >
-                    <span className="sr-only">Toggle Pure Black Video Overlay Mode</span>
-                    <span
-                      className={cn(
-                        "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out",
-                        pureBlackMode ? "translate-x-5" : "translate-x-0"
-                      )}
-                    />
-                  </button>
-                </div>
-              </div>
-
               {/* Active Theme Summary footer note */}
-              <div className="mt-3 p-3 bg-surface-subtle rounded-xl border border-border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-text-muted">
-                <div className="flex items-center gap-2">
-                  <Eye size={14} className="text-text-faint shrink-0" />
-                  <span>Script Paper: <strong className="text-text-main">{currentTheme.name}</strong> ({currentTheme.category})</span>
+              <div className="p-2 bg-surface-subtle rounded-lg border border-border-subtle flex items-center justify-between text-[11px] text-text-muted">
+                <div className="flex items-center gap-1.5">
+                  <Eye size={12} className="text-text-faint shrink-0" />
+                  <span>Paper: <strong className="text-text-main">{currentTheme.name}</strong> ({currentTheme.category})</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-[10px] font-mono text-text-faint">
-                  <Sparkles size={11} className="text-amber-500 shrink-0" />
-                  <span>App Shell: <strong className="text-text-body font-semibold uppercase">{themeMode === 'auto' ? `Auto (${effectiveThemeCategory})` : themeMode}</strong></span>
+                  <Sparkles size={10} className="text-amber-500 shrink-0" />
+                  <span>Shell: <strong className="text-text-body font-semibold uppercase">{themeMode === 'auto' ? `Auto (${effectiveThemeCategory})` : themeMode}</strong></span>
                 </div>
               </div>
             </div>
           ) : (
             /* Element Inspector Tab */
-            <div className="space-y-5">
-              <div className="p-3 bg-blue-50/70 border border-blue-100 rounded-xl flex items-start gap-2.5 text-xs text-blue-900">
-                <InfoIcon className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
-                <p className="leading-relaxed">
+            <div className="space-y-3.5">
+              {/* Cue Palette Accessibility Profile for Inspector */}
+              <div className="bg-surface-subtle border border-border-main rounded-xl p-2.5 sm:p-3 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <Eye size={13} className="text-btn-primary-bg shrink-0" />
+                    <span className="text-xs font-bold text-text-main">Cue Palette Accessibility Profile</span>
+                    <span className={cn(
+                      "text-[8px] font-mono uppercase tracking-wider px-1.5 py-0.2 rounded-full font-semibold border shrink-0",
+                      cuePaletteProfile === 'protanopia' 
+                        ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" 
+                        : "bg-surface-muted text-text-muted border-border-main"
+                    )}>
+                      {cuePaletteProfile === 'protanopia' ? 'Protan Safe' : 'Standard'}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-text-muted mt-0.5">
+                    {cuePaletteProfile === 'protanopia' 
+                      ? 'Wine/Burgundy high contrast for red-green CVD (eliminates collision with Action)' 
+                      : 'Standard cinema spectrum calibrated across Studio, Warm Parchment, and Midnight themes'}
+                  </p>
+                </div>
+
+                {onSelectPaletteProfile && (
+                  <div className="inline-flex p-0.5 bg-surface border border-border-main rounded-lg shrink-0 shadow-2xs">
+                    <button
+                      type="button"
+                      onClick={() => onSelectPaletteProfile('standard')}
+                      className={cn(
+                        "px-2 py-1 rounded-md text-[10.5px] font-bold transition-all",
+                        cuePaletteProfile === 'standard'
+                          ? "bg-btn-primary-bg text-btn-primary-text shadow-xs"
+                          : "text-text-muted hover:text-text-main"
+                      )}
+                    >
+                      Standard
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onSelectPaletteProfile('protanopia')}
+                      className={cn(
+                        "px-2 py-1 rounded-md text-[10.5px] font-bold transition-all flex items-center gap-1",
+                        cuePaletteProfile === 'protanopia'
+                          ? "bg-btn-primary-bg text-btn-primary-text shadow-xs"
+                          : "text-text-muted hover:text-text-main"
+                      )}
+                      title="Protan & Deutan Safe"
+                    >
+                      <Eye size={11} />
+                      <span>Protan</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-2.5 bg-blue-50/70 border border-blue-100 rounded-xl flex items-start gap-2 text-xs text-blue-900">
+                <InfoIcon className="w-3.5 h-3.5 text-blue-600 mt-0.5 shrink-0" />
+                <p className="leading-snug text-[11px]">
                   These visual tokens compose the active <strong>{currentTheme.name}</strong> theme across the screenplay surface, preserving typographical rhythm and cue clarity.
                 </p>
               </div>
 
               {/* Surface & Structural Tokens */}
-              <div className="space-y-2.5">
+              <div className="space-y-2">
                 <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-faint flex items-center gap-1.5">
-                  <Layers size={12} /> Paper & Structure Elements
+                  <Layers size={11} /> Paper & Structure Elements
                 </h4>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="p-3 bg-surface-subtle border border-border-main rounded-xl flex items-center justify-between">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div className="p-2.5 bg-surface-subtle border border-border-main rounded-xl flex items-center justify-between">
                     <div>
                       <p className="text-xs font-bold text-text-main">Paper Canvas Surface</p>
                       <p className="text-[10px] text-text-faint font-mono">{currentTheme.paperBg}</p>
                     </div>
-                    <div className={cn("w-8 h-8 rounded-lg border shadow-xs", currentTheme.paperBg, currentTheme.paperBorder)} />
+                    <div className={cn("w-7 h-7 rounded-lg border shadow-xs", currentTheme.paperBg, currentTheme.paperBorder)} />
                   </div>
 
-                  <div className="p-3 bg-surface-subtle border border-border-main rounded-xl flex items-center justify-between">
+                  <div className="p-2.5 bg-surface-subtle border border-border-main rounded-xl flex items-center justify-between">
                     <div>
                       <p className="text-xs font-bold text-text-main">Scene Heading Stripe</p>
                       <p className="text-[10px] text-text-faint font-mono">{currentTheme.headingBg}</p>
                     </div>
-                    <div className={cn("w-14 h-8 rounded-lg border flex items-center justify-center text-[8px] font-bold", currentTheme.headingBg, currentTheme.headingBorder, currentTheme.textColor)}>
+                    <div className={cn("w-12 h-7 rounded-lg border flex items-center justify-center text-[7.5px] font-bold", currentTheme.headingBg, currentTheme.headingBorder, currentTheme.textColor)}>
                       EXT.
                     </div>
                   </div>
 
-                  <div className="p-3 bg-surface-subtle border border-border-main rounded-xl flex items-center justify-between">
+                  <div className="p-2.5 bg-surface-subtle border border-border-main rounded-xl flex items-center justify-between">
                     <div>
                       <p className="text-xs font-bold text-text-main">Script Line Typography</p>
                       <p className="text-[10px] text-text-faint font-mono">{currentTheme.textColor}</p>
                     </div>
-                    <div className={cn("px-2.5 py-1 rounded-lg border font-serif text-xs font-bold", currentTheme.paperBg, currentTheme.textColor)}>
+                    <div className={cn("px-2 py-0.5 rounded-lg border font-serif text-[11px] font-bold", currentTheme.paperBg, currentTheme.textColor)}>
                       Dialogue Text
                     </div>
                   </div>
 
-                  <div className="p-3 bg-surface-subtle border border-border-main rounded-xl flex items-center justify-between">
+                  <div className="p-2.5 bg-surface-subtle border border-border-main rounded-xl flex items-center justify-between">
                     <div>
                       <p className="text-xs font-bold text-text-main">Staging Block Badges</p>
                       <p className="text-[10px] text-text-faint font-mono">Pill badge overlay</p>
                     </div>
                     <div className={cn(
-                      "px-2.5 py-1 rounded-full border text-[9px] font-black uppercase tracking-wider",
+                      "px-2 py-0.5 rounded-full border text-[8px] font-black uppercase tracking-wider",
                       currentTheme.stagingBadgeBg,
                       currentTheme.stagingBadgeBorder,
                       currentTheme.stagingBadgeText
@@ -413,13 +453,13 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                     </div>
                   </div>
 
-                  <div className="p-3 bg-surface-subtle border border-border-main rounded-xl flex items-center justify-between">
+                  <div className="p-2.5 bg-surface-subtle border border-border-main rounded-xl flex items-center justify-between">
                     <div>
                       <p className="text-xs font-bold text-text-main">BRIEF Macro-States</p>
                       <p className="text-[10px] text-text-faint font-mono">Dashed card border</p>
                     </div>
                     <div className={cn(
-                      "px-2.5 py-1 rounded-md border border-dashed text-[9px] font-mono flex items-center gap-1",
+                      "px-2 py-0.5 rounded-md border border-dashed text-[8.5px] font-mono flex items-center gap-1",
                       currentTheme.briefBg,
                       currentTheme.briefBorder,
                       currentTheme.textColor
@@ -432,10 +472,10 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
               </div>
 
               {/* Cue Highlights Spectrum */}
-              <div className="space-y-2.5 pt-2">
+              <div className="space-y-2 pt-1">
                 <div className="flex items-center justify-between">
                   <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-faint flex items-center gap-1.5">
-                    <Sparkles size={12} /> Sync Cue Highlight Spectrum (8 Categories)
+                    <Sparkles size={11} /> Sync Cue Highlight Spectrum (8 Categories)
                   </h4>
                   <span className={cn(
                     "text-[8px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border",
@@ -453,16 +493,16 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                   {CUE_THEME_COLORS.map(c => {
                     const themed = getCueColorForTheme(c.type, currentThemeId, cuePaletteProfile);
                     return (
-                      <div key={c.type} className="p-2.5 bg-surface-subtle border border-border-main rounded-xl flex items-center gap-2.5">
+                      <div key={c.type} className="p-2 bg-surface-subtle border border-border-main rounded-xl flex items-center gap-2">
                         <div 
-                          className="w-3.5 h-3.5 rounded-full shrink-0 shadow-2xs" 
+                          className="w-3 h-3 rounded-full shrink-0 shadow-2xs" 
                           style={{ backgroundColor: themed.dotColor }}
                         />
                         <div className="min-w-0 flex-1">
-                          <span className="text-[10px] font-bold text-text-body uppercase tracking-tight block truncate">
+                          <span className="text-[9.5px] font-bold text-text-body uppercase tracking-tight block truncate">
                             {c.name}
                           </span>
-                          <span className="text-[8px] font-mono text-text-faint block truncate">
+                          <span className="text-[7.5px] font-mono text-text-faint block truncate">
                             rgb({themed.rgb})
                           </span>
                         </div>
@@ -476,7 +516,7 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="p-3.5 sm:p-4 border-t border-border-subtle bg-surface-subtle flex items-center justify-between shrink-0">
+        <div className="px-4 py-2.5 sm:px-6 sm:py-2.5 border-t border-border-subtle bg-surface-subtle flex items-center justify-between shrink-0">
           <span className="text-[10px] font-mono text-text-faint">
             Selected: <strong className="text-text-body">{currentTheme.name}</strong> ({currentTheme.category})
           </span>

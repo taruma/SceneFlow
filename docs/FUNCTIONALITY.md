@@ -233,8 +233,8 @@ Users can toggle between six screenplay visual themes via the desktop `ScriptCol
   - *OLED Blackout*: Pure black (`#000000`) for power efficiency and high-contrast glow.
   - *Navy Slate (Cyber Matrix)*: Deep navy-tinted dark paper with atmospheric glow.
 - **Desktop Theme Modal (`ScriptColorModal`)**:
-  - **Theme Presets Tab**: Shows side-by-side cards with live mini paper previews (heading banner, script text line, staging pill, and cue highlight chips).
-  - **Element Inspector Tab**: Displays active paper and structural tokens alongside the full 8-category highlight spectrum.
+  - **Theme Presets Tab**: Compact zero-scroll layout featuring a top controls row (Cue Palette Accessibility Profile segmented buttons + Pure Black Canvas toggle switch) above a 2-column grid of theme cards with live mini paper previews (heading banner, dialogue line, staging pill, and cue highlight dots) and non-overlapping selection checkmarks.
+  - **Element Inspector Tab**: Displays active paper and structural tokens alongside the full 8-category highlight spectrum with live accessibility profile calibration.
   - Includes a single-click "Reset" button to restore the default *Studio Crisp* theme.
 - **Mobile Theme Drawer (`MobileColorModal`)**:
   - A touch-friendly bottom-sheet drawer with a 4-segment App Shell switcher (`Auto`, `Light`, `Warm`, `Dark`) and 6 compact screenplay cards styled in their true paper colors and typography contrast, triggered via the icon-only palette button (`<Palette size={12} />`) in the mobile playback header.
