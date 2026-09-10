@@ -226,6 +226,14 @@ Users can toggle between six screenplay visual themes via the desktop `ScriptCol
 - **Mobile Theme Drawer (`MobileColorModal`)**:
   - A touch-friendly bottom-sheet drawer with a 4-segment App Shell switcher (`Auto`, `Light`, `Warm`, `Dark`) and 6 compact screenplay cards styled in their true paper colors and typography contrast.
 
+### Pure Black Canvas (Video Overlay Mode)
+- **Engineered for Video Compositing**: An opt-in toggle within both `ScriptColorModal` and `MobileColorModal` designed specifically for creators recording the screenplay, filter badges, or timeline as video overlays.
+- **True `#000000` on Dark Themes**: When toggled ON with any dark theme (`Midnight Slate`, `OLED Blackout`, `Navy Slate`), forces literal RGB `0, 0, 0` backgrounds across the entire app (`--app-bg`, `--surface`, `--surface-dark`), allowing Screen or Lighten blend modes in editing software (Premiere Pro, DaVinci Resolve, Final Cut, OBS) to key out the background with 100% transparency without hazy rectangular artifacts.
+- **Clean Paper Border Framing**: Strips fuzzy drop shadow halos (`!shadow-none`), hides decorative hole-punches, and renders scene heading banner backgrounds as transparent, while preserving the sharp 1px paper border (`activeTheme.paperBorder`) to maintain clear manuscript structure.
+- **Full-App Overlay Alignment**: Extends `#000000` to the left panel, category filter pills (`HighlightFilterBar`), and horizontal multi-track timeline lanes (`.timeline-track-field`), supporting cropped recordings of any UI section with zero background milkiness.
+- **Light & Warm Theme Safety**: Strictly inactive on light and warm themes (`Studio Crisp`, `Warm Parchment`, `Newsprint`), preserving standard reading comfort. Switching back to any dark theme instantly re-engages pure black rendering.
+- **Session Persistence**: User preference is preserved in `localStorage` (`sceneflow_pure_black_bg`).
+
 ### Configurable Screenplay Width Presets (Desktop Playback)
 Selectable via a dropdown in the script preview header:
 - *Narrow*: 384px (`max-w-sm`) — Focused reading column.

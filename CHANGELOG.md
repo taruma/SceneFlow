@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.3.0-dev] - Unreleased
 
 ### Added
+- **Pure Black Canvas / Video Overlay Mode (`src/components/ScriptColorModal.tsx`, `src/components/MobileColorModal.tsx`, `src/hooks/useScriptPreferences.ts`, `src/index.css`)**:
+  - Added an opt-in **Pure Black Canvas (Video Overlay Mode)** toggle inside both desktop `ScriptColorModal` and `MobileColorModal`, explicitly designed for screen recording and NLE compositing using **Screen** or **Lighten** blend modes.
+  - **Dark-Theme-Scoped True Black (`#000000`)**: When enabled alongside dark themes (`Midnight Slate`, `OLED Blackout`, `Navy Slate`), forces absolute `#000000` (RGB: `0, 0, 0`) backgrounds across the entire workspace (`--app-bg`, `--surface`, `--surface-dark`), eliminating the milky grey box or foggy wash caused by off-black values (`#0c0a09` / `#18181b`) in video overlay blending.
+  - **Paper Border Preservation & Shadow Stripping**: Automatically removes fuzzy drop shadow halos (`!shadow-none`) to prevent blurred boundary artifacts during screen capture, while cleanly preserving the 1px paper border (`activeTheme.paperBorder`) to maintain manuscript framing.
+  - **Distraction-Free Manuscript Elements**: Hides decorative hole-punches (`display: none`), neutralizes scene heading banner strips to transparent (`script-heading-banner`), and renders brief summary cards on pure black (`script-brief-card`), preventing unintended background blocks from appearing over video footage.
+  - **Full-App Overlay Alignment**: Extends `#000000` background styling to the left panel, category filter pills (`HighlightFilterBar`), and horizontal multi-track timeline lanes (`.timeline-track-field`), allowing creators to screen record cropped sections of the timeline or category badges with 100% background transparency.
+  - **Light/Warm Theme Safety**: Non-destructive behavior that strictly leaves light and warm themes (`Studio Crisp`, `Warm Parchment`, `Newsprint`) completely untouched; switching back to dark themes automatically re-engages pure black rendering.
+  - **Session Persistence**: Stored in `localStorage` (`sceneflow_pure_black_bg`) to preserve creator preferences across browser sessions.
 - **Persistent Playback Header Transport Controls (`src/components/playback/PlaybackLeftPanel.tsx`, `src/App.tsx`)**:
   - Added dedicated, ergonomic playback transport controls directly in the `PlaybackLeftPanel` header alongside the video collapse toggle.
   - **Play / Pause Toggle**: Integrated a dynamic transport button displaying `Play` or `Pause` with distinct icons and active accent styling, synchronized with player state and keyboard shortcuts (<kbd>Space</kbd> / <kbd>K</kbd>).

@@ -134,6 +134,8 @@ Supports six distinct visual themes categorized into `light`, `warm`, and `dark`
 
 Each theme provides tokens for `paperBg`, `paperBorder`, `paperShadow`, `textColor`, `textMutedColor`, `headingBg`, `headingBorder`, `separatorBorder`, `titleTextColor`, `titleLineBg`, `stagingBadgeBg`, `stagingBadgeBorder`, `stagingBadgeText`, `stagingBadgeIcon`, `punchHoleBg`, `isDark`, `briefBg`, `briefBorder`, `briefBadgeBg`, `briefBadgeBorder`, and `briefBadgeText`.
 
+- **Pure Black Canvas Mode (`data-pure-black="true"`)**: An opt-in modifier strictly applied when using dark themes. Overrides `--app-bg` and `--surface` to `#000000`, strips fuzzy drop shadow halos (`!shadow-none`), hides decorative punch holes, neutralizes heading banner fills to transparent, and aligns timeline tracks to pitch black. The 1px paper border (`activeTheme.paperBorder`) remains visible to frame the manuscript, producing 100% background transparency for Screen/Lighten blend mode video recording without compromising structure. Light and warm themes remain completely untouched.
+
 ### Cue Theme Color Calibration (`CUE_THEME_COLORS` & `getCueColorForTheme`)
 Defines the eight cue categories with theme-calibrated RGB palettes:
 - **Dialogue**: Yellow (`lightRgb: 250, 204, 21`, `warmRgb: 222, 160, 24`, `darkRgb: 253, 224, 71`)

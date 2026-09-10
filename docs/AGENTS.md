@@ -37,6 +37,7 @@ If you need to add a new script line type (e.g., `lyrics`, `transition`, or a sp
   - `typography.ts`: Theme-specific structural classes and typography generated dynamically via `getScriptThemeStyles(themeId)`.
   - `helpers.ts`: Color manipulation and dynamic badge style generators (`hexToRgba`, `createCueBadgeStyle`, `createInlineCueStyle`).
 - **Hook Integration (`useScriptTheme`)**: Use the `useScriptTheme(scriptThemeId)` hook in components to access active `themeStyles`, `themeMetadata`, `isDark`, and `resolveCueColor` helpers.
+- **Pure Black Overlay Invariant**: When `pureBlackMode` is active on dark themes (`data-pure-black="true"`), `--app-bg` and `--surface` collapse to `#000000`, paper drop shadows are stripped, and punch holes are hidden. However, `activeTheme.paperBorder` must remain visible to frame the manuscript, and light/warm themes must never be modified by pure black rules.
 - **Base Typography**: Maintain the `baseStyle` constant (`"whitespace-pre-wrap min-h-[1em] leading-snug"`) to preserve consistent line height and wrapping behavior.
 
 ## 3. Regex & Parsing Standards
@@ -76,6 +77,7 @@ When modifying application state, storage keys, or external fetching:
   - `'sceneflow_split_ratio'`: Active desktop split pane ratio (`number`).
   - `'sceneflow_video_height'`: Active playback video player height in pixels (`number`).
   - `'sceneflow_playback_video_collapsed'`: Video player collapsed/hidden state in Playback mode (`boolean`).
+  - `'sceneflow_pure_black_bg'`: Pure Black Canvas / Video Overlay mode toggle state (`boolean`).
 - **Query Parameters**: On application mount, inspect `window.location.search`:
   - `?example=ID`: Matches an example `id` from `EXAMPLE_SECTIONS` in `src/examples.ts`.
   - `?project=URL`: Loads a remote CORS-enabled JSON project.

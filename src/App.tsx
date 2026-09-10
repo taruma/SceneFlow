@@ -121,6 +121,8 @@ export default function App() {
     isViewCustomized,
     isVideoCollapsed,
     toggleVideoCollapsed,
+    pureBlackMode,
+    setPureBlackMode,
   } = useScriptPreferences();
 
   const { theme: activeTheme } = useScriptTheme(scriptThemeId);
@@ -130,6 +132,20 @@ export default function App() {
     cycleThemeMode,
     effectiveCategory,
   } = useAppShellTheme(scriptThemeId);
+
+  const isPureBlackActive = pureBlackMode && (effectiveCategory === 'dark' || activeTheme.category === 'dark');
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      if (isPureBlackActive) {
+        document.documentElement.setAttribute('data-pure-black', 'true');
+        document.body.setAttribute('data-pure-black', 'true');
+      } else {
+        document.documentElement.removeAttribute('data-pure-black');
+        document.body.removeAttribute('data-pure-black');
+      }
+    }
+  }, [isPureBlackActive]);
 
   const {
 
@@ -825,10 +841,9 @@ export default function App() {
             )}
           >
             <div className={cn(
-              "mx-auto min-h-full rounded-sm relative transition-all duration-300",
-              activeTheme.paperBg,
+              "script-paper-container mx-auto min-h-full rounded-sm relative transition-all duration-300",
+              isPureBlackActive ? "!bg-black !shadow-none" : cn(activeTheme.paperBg, activeTheme.paperShadow),
               activeTheme.paperBorder,
-              activeTheme.paperShadow,
               activeTheme.textColor,
               mode === 'edit' 
                 ? "max-w-xl p-6 md:p-8" 
@@ -838,11 +853,13 @@ export default function App() {
                   )
             )}>
               {/* Page punch holes effect */}
-              <div className="absolute left-2 top-12 flex flex-col gap-8 opacity-20">
-                <div className={cn("w-2 h-2 rounded-full shadow-inner", activeTheme.punchHoleBg)} />
-                <div className={cn("w-2 h-2 rounded-full shadow-inner", activeTheme.punchHoleBg)} />
-                <div className={cn("w-2 h-2 rounded-full shadow-inner", activeTheme.punchHoleBg)} />
-              </div>
+              {!isPureBlackActive && (
+                <div className="script-punch-hole absolute left-2 top-12 flex flex-col gap-8 opacity-20">
+                  <div className={cn("w-2 h-2 rounded-full shadow-inner", activeTheme.punchHoleBg)} />
+                  <div className={cn("w-2 h-2 rounded-full shadow-inner", activeTheme.punchHoleBg)} />
+                  <div className={cn("w-2 h-2 rounded-full shadow-inner", activeTheme.punchHoleBg)} />
+                </div>
+              )}
               
               <div className="relative z-10" style={{ paddingBottom: mode === 'playback' ? '70vh' : '0' }}>
                 {renderedScript}
@@ -980,6 +997,8 @@ export default function App() {
         themeMode={themeMode}
         setThemeMode={setThemeMode}
         effectiveThemeCategory={effectiveCategory}
+        pureBlackMode={pureBlackMode}
+        setPureBlackMode={setPureBlackMode}
       />
 
       {/* Mobile Script Color & Theme Drawer */}
@@ -996,6 +1015,8 @@ export default function App() {
         themeMode={themeMode}
         setThemeMode={setThemeMode}
         effectiveThemeCategory={effectiveCategory}
+        pureBlackMode={pureBlackMode}
+        setPureBlackMode={setPureBlackMode}
       />
 
       {/* App Info / About Modal */}

@@ -167,6 +167,23 @@ export function useScriptPreferences() {
     }
   }, []);
 
+  const [pureBlackMode, setPureBlackModeState] = useState<boolean>(() => {
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem('sceneflow_pure_black_bg');
+      if (saved !== null) {
+        return saved === 'true';
+      }
+    }
+    return false;
+  });
+
+  const setPureBlackMode = useCallback((enabled: boolean) => {
+    setPureBlackModeState(enabled);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('sceneflow_pure_black_bg', String(enabled));
+    }
+  }, []);
+
   const toggleCueTypeVisibility = useCallback((type: string) => {
     setHiddenCueTypes(prev => {
       const next = new Set(prev);
@@ -193,6 +210,8 @@ export function useScriptPreferences() {
     setIsScrollFocusDropdownOpen,
     scriptThemeId,
     setScriptThemeId,
+    pureBlackMode,
+    setPureBlackMode,
     isColorModalOpen,
     setIsColorModalOpen,
     hiddenCueTypes,

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Check, RotateCcw, X, Moon, Sun, Coffee, Eye, Layers, Palette } from 'lucide-react';
+import { Sparkles, Check, RotateCcw, X, Moon, Sun, Coffee, Eye, Layers, Palette, Video } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { SCRIPT_THEMES, getCueColorForTheme, CUE_THEME_COLORS, type ScriptThemeId, type ScriptTheme } from '../lib/scriptStyles';
 import { UI_TOKENS } from '../styles/tokens/ui';
@@ -14,6 +14,8 @@ interface ScriptColorModalProps {
   themeMode?: AppThemeMode;
   setThemeMode?: (mode: AppThemeMode) => void;
   effectiveThemeCategory?: AppThemeCategory;
+  pureBlackMode?: boolean;
+  setPureBlackMode?: (enabled: boolean) => void;
 }
 
 const PREVIEW_CUE_CHIPS = [
@@ -32,6 +34,8 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
   themeMode = 'auto',
   setThemeMode,
   effectiveThemeCategory = 'light',
+  pureBlackMode = false,
+  setPureBlackMode,
 }) => {
   useEscapeKey(onClose, isOpen);
 
@@ -220,8 +224,62 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                 })}
               </div>
 
+              {/* Pure Black Canvas (Video Overlay Mode) Toggle Card */}
+              <div className="mt-4 p-4 rounded-xl border border-border-main bg-surface-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
+                <div className="flex items-start sm:items-center gap-3.5">
+                  <div className={cn(
+                    "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors shadow-xs border",
+                    pureBlackMode && effectiveThemeCategory === 'dark'
+                      ? "bg-black border-neutral-700 text-white ring-2 ring-neutral-700/50"
+                      : "bg-surface border-border-main text-text-muted"
+                  )}>
+                    <Video size={18} />
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs font-bold text-text-main">
+                        Pure Black Canvas
+                      </span>
+                      <span className="text-[9px] font-mono font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-neutral-900 text-neutral-200 border border-neutral-700">
+                        Video Overlay Mode
+                      </span>
+                      {effectiveThemeCategory !== 'dark' && pureBlackMode && (
+                        <span className="text-[9px] font-medium text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded">
+                          Applies on dark themes
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-text-muted leading-relaxed max-w-xl">
+                      Forces absolute <code className="font-mono text-[10px] bg-surface-muted px-1 py-0.5 rounded text-text-main">#000000</code> backgrounds across the app while keeping clean paper borders, removing drop shadows, punch holes, and heading strips. Optimized for <strong className="text-text-main">Screen / Lighten</strong> video overlay recording.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
+                  <button
+                    type="button"
+                    role="switch"
+                    id="pure-black-mode-toggle"
+                    aria-checked={pureBlackMode}
+                    onClick={() => setPureBlackMode?.(!pureBlackMode)}
+                    className={cn(
+                      "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-text-main focus:ring-offset-2",
+                      pureBlackMode ? "bg-black ring-1 ring-neutral-600" : "bg-surface-muted"
+                    )}
+                  >
+                    <span className="sr-only">Toggle Pure Black Video Overlay Mode</span>
+                    <span
+                      className={cn(
+                        "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out",
+                        pureBlackMode ? "translate-x-5" : "translate-x-0"
+                      )}
+                    />
+                  </button>
+                </div>
+              </div>
+
               {/* Active Theme Summary footer note */}
-              <div className="mt-4 p-3 bg-surface-subtle rounded-xl border border-border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-text-muted">
+              <div className="mt-3 p-3 bg-surface-subtle rounded-xl border border-border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-text-muted">
                 <div className="flex items-center gap-2">
                   <Eye size={14} className="text-text-faint shrink-0" />
                   <span>Script Paper: <strong className="text-text-main">{currentTheme.name}</strong> ({currentTheme.category})</span>
