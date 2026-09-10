@@ -194,3 +194,8 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
     - **Immediate State Synchronization**: The Play/Pause button dynamically renders based on `playerState === 1`, showing stateful colors (vibrant accent when playing) and updating in lockstep with global keyboard shortcuts (<kbd>Space</kbd> / <kbd>K</kbd>).
     - **Explicit Replay Semantics**: Replay must invoke `seekTo(0, true, true)` to immediately jump to `0:00` and trigger playback without paused-seek suppression guards interfering.
     - **Viewport Fluidity**: Button labels must gracefully collapse to compact icon buttons on narrow viewports (`hidden sm:inline`), ensuring zero header wrapping.
+
+14. **Centralized External Links & Navigation Architecture**:
+    - Centralize all external publication, documentation, repository, and support URLs in `src/constants/links.ts` (`EXTERNAL_LINKS`) rather than hardcoding raw string literals across UI components.
+    - Desktop header action pills (`AppHeader.tsx`) must strictly consume `UI_TOKENS.button.actionPill` with responsive text collapsing (`hidden xl:inline`) and zero ad-hoc color overrides to ensure seamless visual harmony across Light, Warm, and Dark app shell themes.
+    - Mobile counterparts in `ScriptHeaderControls.tsx` must remain icon-only (`size={12}`) with accessible `title` and `aria-label` attributes, preserving horizontal toolbar space.

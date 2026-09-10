@@ -9,11 +9,13 @@ import {
   Keyboard, 
   FileCode2, 
   ShieldCheck, 
-  Layers
+  Layers,
+  Newspaper
 } from 'lucide-react';
 import metadata from '../../metadata.json';
 import { cn } from '../lib/utils';
 import { UI_TOKENS } from '../styles/tokens/ui';
+import { EXTERNAL_LINKS } from '../constants/links';
 import { useEscapeKey } from '../hooks/useEscapeKey';
 
 interface AppInfoModalProps {
@@ -30,35 +32,35 @@ export function AppInfoModal({ isOpen, onClose }: AppInfoModalProps) {
   const version = metadata?.version || '2.1.1';
   const appName = metadata?.name || 'SceneFlow';
   const author = (metadata as Record<string, unknown>)?.author as string || 'Taruma Sakti';
-  const authorUrl = (metadata as Record<string, unknown>)?.authorUrl as string || 'https://linktr.ee/tarumainfo';
+  const authorUrl = (metadata as Record<string, unknown>)?.authorUrl as string || EXTERNAL_LINKS.author;
   const description = metadata?.description || 
     'SceneFlow bridges the gap between scripts and AI video generation with real-time synchronization, staging blocks, and precision timing controls.';
 
   const docLinks = [
     {
       label: 'GitHub Repository',
-      url: 'https://github.com/taruma/SceneFlow',
+      url: EXTERNAL_LINKS.github,
       icon: Github,
       tag: 'Source',
       color: 'hover:border-border-main hover:bg-surface-subtle text-text-main',
     },
     {
       label: 'Documentation & Guide',
-      url: 'https://github.com/taruma/SceneFlow#readme',
+      url: EXTERNAL_LINKS.docs,
       icon: BookOpen,
       tag: 'Docs',
       color: 'hover:border-blue-300 hover:bg-blue-50/50 text-blue-700',
     },
     {
       label: 'Release Notes (Changelog)',
-      url: 'https://github.com/taruma/SceneFlow/blob/main/CHANGELOG.md',
+      url: EXTERNAL_LINKS.changelog,
       icon: FileCode2,
       tag: `v${version}`,
       color: 'hover:border-purple-300 hover:bg-purple-50/50 text-purple-700',
     },
     {
       label: 'Support on Ko-fi',
-      url: 'https://ko-fi.com/tarumainfo',
+      url: EXTERNAL_LINKS.kofi,
       icon: Coffee,
       tag: 'Support',
       color: 'hover:border-[#FF5E5B]/40 hover:bg-[#FF5E5B]/10 text-[#FF5E5B]',
@@ -145,6 +147,38 @@ export function AppInfoModal({ isOpen, onClose }: AppInfoModalProps) {
               {description}
             </p>
           </div>
+
+          {/* Featured Introduction Article */}
+          <a
+            href={EXTERNAL_LINKS.article}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-5 rounded-2xl border border-border-main bg-surface-subtle hover:bg-surface transition-all group cursor-pointer shadow-2xs block space-y-3"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-surface-muted text-text-muted group-hover:text-text-main transition-colors">
+                  <Newspaper size={14} />
+                </div>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-surface-muted text-text-muted">
+                  Substack Article
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] font-bold text-text-muted group-hover:text-text-main transition-colors">
+                <span>Read Article</span>
+                <ExternalLink size={12} className="text-text-faint group-hover:text-text-main group-hover:translate-x-0.5 transition-transform" />
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-bold text-text-main group-hover:underline transition-colors leading-snug">
+                {EXTERNAL_LINKS.articleTitle}
+              </h3>
+              <p className="text-xs text-text-body mt-1 leading-relaxed">
+                Read the story, prompt tracking framework, and 8-category cue spectrum behind SceneFlow.
+              </p>
+            </div>
+          </a>
 
           {/* Resource & Documentation Badges */}
           <div className="space-y-2.5">

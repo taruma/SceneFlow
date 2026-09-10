@@ -172,6 +172,14 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 - **Continuous Operation While Video Is Collapsed**: Even when the video viewport is hidden via the `Hide Video` toggle or <kbd>V</kbd> key, the transport controls remain pinned in the header, allowing users to control playback and audio during timeline screen recording.
 - **Fluid Viewport Responsiveness**: Button labels automatically collapse to compact icon buttons on mobile/tablet viewports (`hidden sm:inline`), ensuring zero header wrapping.
 
+### Global Header Navigation & External Resources (`AppHeader`, `ScriptHeaderControls`)
+- **Desktop Navigation Action Pills**: The top global header toolbar provides quick-access action pills (`[Article]`, `[Guide]`, `[Library]`, `[Support]`):
+  - **`Article`**: Direct link to the official introductory deep dive (*Introducing SceneFlow: Script-to-Screen Synchronization* on Substack), styled via `UI_TOKENS.button.actionPill` with responsive text collapsing (`hidden xl:inline`) on compact viewports.
+  - **`Guide`**: Loads the official starter guide screenplay project into the active workspace.
+  - **`Library`**: Opens the curated modal catalogue of screenplay examples and templates.
+  - **`Support`**: Direct external link to Ko-fi creator support.
+- **Mobile Header Density**: In mobile viewports (`ScriptHeaderControls`), the Article button is rendered as a compact icon-only control (`<Newspaper size={12} />`) with accessible `title` and `aria-label` tags to preserve toolbar space alongside the Theme palette, Library, and Support controls.
+
 
 ---
 
@@ -314,6 +322,7 @@ For a complete and up-to-date list of all available sceneflow projects, release 
 Accessible via the `i` (Info) icon button in the desktop header toolbar:
 - **Dynamic Version & Metadata**: Automatically loads current version (`v2.3.0`), app title, and description directly from `metadata.json`.
 - **Author Attribution**: Features creator credit for **Taruma Sakti** in header and footer linking directly to [Linktree](https://linktr.ee/tarumainfo).
+- **Featured Substack Deep Dive**: Prominent hero card showcasing the official introductory article (*Introducing SceneFlow: Script-to-Screen Synchronization* on Substack) with a dedicated header badge, full-width summary, and direct article link.
 - **Interactive Resource Grid**: 2x2 resource links for GitHub Repository, Documentation / Guide, Release Notes (Changelog), and Ko-fi Support.
 - **MIT License**: License status indicator.
 

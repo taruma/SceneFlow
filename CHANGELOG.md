@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.3.1-dev] - Unreleased
 
+### Added
+- **Substack Introduction Article Integration & Centralized External Links (`src/constants/links.ts`, `src/components/AppHeader.tsx`, `src/components/ScriptHeaderControls.tsx`, `src/components/AppInfoModal.tsx`)**:
+  - Added direct links to the official deep-dive article (*[Introducing SceneFlow: Script-to-Screen Synchronization](https://taruma.substack.com/p/sceneflow-script-to-screen)*) on Substack (*Grounded Hallucinations* by Taruma Sakti).
+  - **Desktop Header Action Pill (`AppHeader.tsx`)**: Positioned an `[Article]` pill to the left side of `[Guide]`, strictly consuming `UI_TOKENS.button.actionPill` and responsive typography (`<span className="hidden xl:inline">Article</span>`) to harmonize with all application shell theme presets.
+  - **Mobile Screenplay Header Icon Button (`ScriptHeaderControls.tsx`)**: Placed an icon-only `<Newspaper size={12} />` button to the left of `[Library]`, preserving mobile horizontal headroom with accessible `title` and `aria-label` tags.
+  - **Featured Article Card (`AppInfoModal.tsx`)**: Designed a structured hero-level card in the desktop info dialog above the 2x2 resource grid, featuring a top metadata bar (`[SUBSTACK ARTICLE]` badge + `Read Article ↗` link) and a dedicated full-width title and summary section.
+  - **Centralized Links Configuration (`src/constants/links.ts`)**: Centralized `EXTERNAL_LINKS` (`article`, `articleTitle`, `kofi`, `github`, `docs`, `changelog`, `author`) to eliminate redundant hardcoded URL strings across the app shell.
+
 ### Changed
 - **Starter Guide Script & Onboarding Tutorial Synchronization (`docs/_dropbox/guide.txt`, `public/examples/blank.json`)**:
   - Synchronized the instructional guide reference (`docs/_dropbox/guide.txt`) and starter tutorial project (`public/examples/blank.json`) with SceneFlow v2.3.0 capabilities.

@@ -8,9 +8,11 @@ import {
   Coffee, 
   Palette,
   MoveHorizontal, 
-  AlignVerticalJustifyCenter 
+  AlignVerticalJustifyCenter,
+  Newspaper
 } from 'lucide-react';
 import { COLORS, SCRIPT_WIDTH_PRESETS, SCROLL_FOCUS_PRESETS } from '../constants/script';
+import { EXTERNAL_LINKS } from '../constants/links';
 import { ScriptWidthPresetId, ScrollFocusPresetId } from '../types/script';
 import { getCueColorForTheme, type CuePaletteProfile } from '../lib/scriptStyles';
 import { cn } from '../lib/utils';
@@ -172,6 +174,16 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                 <Palette size={12} />
               </button>
             )}
+            <a 
+              href={EXTERNAL_LINKS.article}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Read Introduction Article on Substack"
+              aria-label="Read Introduction Article on Substack"
+              className="lg:hidden flex items-center justify-center p-1.5 bg-surface-muted hover:bg-surface-hover rounded-lg text-text-body hover:text-text-main transition-colors active:scale-95 shadow-xs"
+            >
+              <Newspaper size={12} />
+            </a>
             <button 
               onClick={() => setIsLibraryOpen(true)}
               className="lg:hidden flex items-center gap-1 px-2 py-1 bg-surface-muted hover:bg-surface-hover rounded text-[10px] font-bold text-text-body transition-colors active:scale-95"
@@ -179,7 +191,7 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
               <Book size={10} /> Library
             </button>
             <a 
-              href="https://ko-fi.com/tarumainfo"
+              href={EXTERNAL_LINKS.kofi}
               target="_blank"
               rel="noopener noreferrer"
               title="Support on Ko-fi"

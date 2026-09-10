@@ -1,7 +1,8 @@
 import React from 'react';
-import { Plus, Book, Coffee, Play, Edit2, Palette, Clock, FolderOpen, Download, Info, Sun, Moon, Sparkles, RotateCcw } from 'lucide-react';
+import { Plus, Book, Coffee, Play, Edit2, Palette, Clock, FolderOpen, Download, Info, Sun, Moon, Sparkles, RotateCcw, Newspaper } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { UI_TOKENS } from '../styles/tokens/ui';
+import { EXTERNAL_LINKS } from '../constants/links';
 import type { AppThemeMode, AppThemeCategory } from '../hooks/useAppShellTheme';
 import { DEFAULT_SPLIT_RATIO } from '../hooks/useScriptPreferences';
 
@@ -72,6 +73,16 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
 
       <div className="flex items-center gap-2 lg:gap-4">
         <div className="flex items-center gap-1 lg:gap-1.5 mr-1 xl:mr-2">
+          <a
+            href={EXTERNAL_LINKS.article}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Read Introduction Article on Substack"
+            className={cn("hidden lg:flex", UI_TOKENS.button.actionPill, "px-2 py-1.5 xl:px-2.5")}
+          >
+            <Newspaper size={12} /> <span className="hidden xl:inline">Article</span>
+          </a>
+
           <button
             onClick={onOpenGuide}
             title="New Official Guide"
@@ -92,7 +103,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           </button>
 
           <a
-            href="https://ko-fi.com/tarumainfo"
+            href={EXTERNAL_LINKS.kofi}
             target="_blank"
             rel="noopener noreferrer"
             title="Support on Ko-fi"
