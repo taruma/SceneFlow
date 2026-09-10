@@ -55,6 +55,7 @@ SceneFlow is built with a modern, lightweight, and performant web stack designed
   - `'sceneflow_script_theme'`: Active script viewer theme ID (`ScriptThemeId`).
   - `'sceneflow_script_width_preset'`: Desktop reading width preset (`ScriptWidthPresetId`).
   - `'sceneflow_scroll_focus_preset'`: Desktop auto-scroll viewport anchor (`ScrollFocusPresetId`).
+  - `'sceneflow_highlight_view_mode'`: Active highlights presentation mode (`HighlightViewMode`: `'timeline' | 'cards'`).
 - **Fetch API**: Asynchronously retrieves built-in JSON examples and remote projects.
 - **URLSearchParams**: Parses query parameters (`?example=ID`, `?project=URL`) on initial boot, with automatic URL cleanup using `window.history.replaceState`.
 

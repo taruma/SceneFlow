@@ -159,7 +159,13 @@ export function useCueEditor({
     const colorClass = cue.colorClass || COLORS.find(c => c.type === cueType)?.class || COLORS[0].class;
     setNewCue({ ...cue, type: cueType, colorClass });
     setSelection({ text: cue.selectedText, start: cue.startIndex, end: cue.endIndex });
-    if (player) player.seekTo(cue.startTime, true);
+    if (player) {
+      const isPlaying = player.getPlayerState?.() === 1;
+      player.seekTo(cue.startTime, true);
+      if (!isPlaying) {
+        player.pauseVideo();
+      }
+    }
   }, [player]);
 
   return {
