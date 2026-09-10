@@ -210,7 +210,7 @@ export function MobileColorModal({
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className={cn(
                       "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border",
-                      pureBlackMode && effectiveThemeCategory === 'dark'
+                      pureBlackMode && currentTheme.category === 'dark'
                         ? "bg-black border-neutral-700 text-white"
                         : "bg-surface border-border-main text-text-muted"
                     )}>

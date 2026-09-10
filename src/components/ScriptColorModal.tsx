@@ -229,7 +229,7 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                 <div className="flex items-start sm:items-center gap-3.5">
                   <div className={cn(
                     "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors shadow-xs border",
-                    pureBlackMode && effectiveThemeCategory === 'dark'
+                    pureBlackMode && currentTheme.category === 'dark'
                       ? "bg-black border-neutral-700 text-white ring-2 ring-neutral-700/50"
                       : "bg-surface border-border-main text-text-muted"
                   )}>
@@ -243,9 +243,9 @@ export const ScriptColorModal: React.FC<ScriptColorModalProps> = ({
                       <span className="text-[9px] font-mono font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-neutral-900 text-neutral-200 border border-neutral-700">
                         Video Overlay Mode
                       </span>
-                      {effectiveThemeCategory !== 'dark' && pureBlackMode && (
+                      {currentTheme.category !== 'dark' && pureBlackMode && (
                         <span className="text-[9px] font-medium text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded">
-                          Applies on dark themes
+                          Applies on dark script themes
                         </span>
                       )}
                     </div>

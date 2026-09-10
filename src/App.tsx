@@ -133,19 +133,28 @@ export default function App() {
     effectiveCategory,
   } = useAppShellTheme(scriptThemeId);
 
-  const isPureBlackActive = pureBlackMode && (effectiveCategory === 'dark' || activeTheme.category === 'dark');
+  const isScriptPureBlack = pureBlackMode && activeTheme.category === 'dark';
+  const isShellPureBlack = pureBlackMode && effectiveCategory === 'dark';
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
-      if (isPureBlackActive) {
-        document.documentElement.setAttribute('data-pure-black', 'true');
-        document.body.setAttribute('data-pure-black', 'true');
+      if (isScriptPureBlack) {
+        document.documentElement.setAttribute('data-pure-black-script', 'true');
+        document.body.setAttribute('data-pure-black-script', 'true');
       } else {
-        document.documentElement.removeAttribute('data-pure-black');
-        document.body.removeAttribute('data-pure-black');
+        document.documentElement.removeAttribute('data-pure-black-script');
+        document.body.removeAttribute('data-pure-black-script');
+      }
+
+      if (isShellPureBlack) {
+        document.documentElement.setAttribute('data-pure-black-shell', 'true');
+        document.body.setAttribute('data-pure-black-shell', 'true');
+      } else {
+        document.documentElement.removeAttribute('data-pure-black-shell');
+        document.body.removeAttribute('data-pure-black-shell');
       }
     }
-  }, [isPureBlackActive]);
+  }, [isScriptPureBlack, isShellPureBlack]);
 
   const {
 
@@ -789,6 +798,7 @@ export default function App() {
           style={isDesktop ? { width: `${100 - splitRatio}%` } : undefined}
           className={cn(
             UI_TOKENS.layout.rightPanelBase,
+            isScriptPureBlack && "!bg-black",
             mode === 'edit' ? "hidden lg:flex w-full h-full" : "w-full flex-1"
           )}
         >
@@ -837,12 +847,13 @@ export default function App() {
             onMouseUp={handleSelection}
             className={cn(
               "flex-1 overflow-y-auto font-serif text-[14px] leading-snug scrollbar-hide",
+              isScriptPureBlack && "bg-black",
               mode === 'edit' ? "p-2 md:p-4" : "p-4 lg:p-10"
             )}
           >
             <div className={cn(
               "script-paper-container mx-auto min-h-full rounded-sm relative transition-all duration-300",
-              isPureBlackActive ? "!bg-black !shadow-none" : cn(activeTheme.paperBg, activeTheme.paperShadow),
+              isScriptPureBlack ? "!bg-black !shadow-none" : cn(activeTheme.paperBg, activeTheme.paperShadow),
               activeTheme.paperBorder,
               activeTheme.textColor,
               mode === 'edit' 
@@ -853,7 +864,7 @@ export default function App() {
                   )
             )}>
               {/* Page punch holes effect */}
-              {!isPureBlackActive && (
+              {!isScriptPureBlack && (
                 <div className="script-punch-hole absolute left-2 top-12 flex flex-col gap-8 opacity-20">
                   <div className={cn("w-2 h-2 rounded-full shadow-inner", activeTheme.punchHoleBg)} />
                   <div className={cn("w-2 h-2 rounded-full shadow-inner", activeTheme.punchHoleBg)} />
