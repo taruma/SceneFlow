@@ -1,6 +1,6 @@
 {
   "youtubeId": "https://www.youtube.com/watch?v=9yeuOPMfxPY",
-  "scriptText": "Welcome to SceneFlow!\n\nWHAT IS SCENEFLOW?\nSceneFlow is a script-to-screen synchronization tool. It is designed to help you visualize, structure, and sync your AI video prompts with actual video timelines. Whether you write in traditional screenplay format or technical state-driven scripts, SceneFlow acts as the bridge between written instructions and the generated frame.\n\nTWO WAYS TO WRITE\nSceneFlow supports two distinct formatting workflows:\n1. Screenplay Format: A traditional, human-readable script layout (sluglines, action lines, character dialogue, and parentheticals).\n2. Auteur Script Format: A compact, technical state-machine layout wrapped in brief blocks, using chained arrows and bold tags for precision generation.\n\n[A Quick Note on Style Evolution]\n(Screenplay vs. Prompting Input)\nSince March 2026, my primary workflow has shifted away from traditional screenplays in favor of the precision Auteur Script style, as my core goal is providing direct, state-driven prompt inputs for video generation models. However, you can always write in traditional screenplay format as raw text depending on your creative goal. SceneFlow is built to support both workflows seamlessly.\n\nBoth styles share the same powerful Staging, Viewport, and Timeline Cue systems.\n\n---\n\nI. THE STAGING BLOCK:\n(Setting global foundation & guardrails)\n\nStaging is the foundation of your scene. Use the Staging Block to define rules that don't change from beat to beat—such as lighting setup, master wardrobe, spatial logic, or core intent.\n\nTo create a staging section, wrap your metadata in double brackets. SceneFlow automatically conceals the raw text and replaces it with an interactive \"STAGING\" badge. Click the badge anytime to inspect your scene parameters.\n\n[[STAGING]]\n[[INTENT]]\nDefine the high-level identity, subject, and core emotional beat of the scene.\n[[/INTENT]]\n[[LOGIC]]\nList hard guardrails for the model: spatial continuity, 180-degree axis rules, and hand/prop permanence.\n[[/LOGIC]]\n[[AESTHETIC]]\nMedium: 35mm film texture.\nPalette: Deep navy, warm amber tungsten.\nLighting: Directional key light from stage left.\n[[/AESTHETIC]]\n[[OPENING]]\nDescribe the locked first frame (S0): subject position, camera framing, and active props before action begins.\n[[/OPENING]]\n[[/STAGING]]\n\n---\n\nII. SCREENPLAY FORMATTING:\n(Traditional human-readable layout)\n\n[Sluglines / Scene Headings]\n(Defining time and place)\nSluglines establish the physical environment. Start a line with INT. (Interior) or EXT. (Exterior). SceneFlow renders these as highlighted scene banners.\n\nINT. SCENEFLOW DESIGN SUITE - DAY\n\n[Action Lines]\n(Describing physical movement & framing)\nAny regular text describes what appears on screen. Use uppercase lines for bold visual emphasis.\n\nThe cursor blinks on a clean slate. A CREATOR (30s) leans in, their eyes reflecting the glow of infinite creative control.\n\n[Dialogue Formatting]\n(Assigning spoken lines to characters)\nTo format dialogue, type the character name in ALL CAPS followed by a colon. SceneFlow automatically centers the character name and their speech.\n\nCREATOR:\nEverything starts with intent.\n\n[Parentheticals]\n(Directing tone and performance)\nWrap text in parentheses immediately under a character name to give performance directions. These appear italicized and centered.\n\nCREATOR:\n(whispering with excitement)\nIt's not just a script; it's a flow.\n\n[Technical Notes & Effects]\n(SFX, VFX, and camera notes)\nUse technical cues for sound, visual effects, and shot notes:\n- Start a line with SFX: or VFX: for dedicated italic effect callouts.\n- Wrap bracketed text like [CLOSE-UP] for technical camera notes.\n\nSFX: The soft, rhythmic hum of a workstation.\n[CLOSE-UP – MONITOR DISPLAY]\n\n[Structure Helpers]\n(Dividers and part titles)\nTo organize larger scripts, use horizontal separators, part tags, or Roman numeral headers:\n- Use three dashes (---) for a full-width line break.\n- Use PART 1 or PART 2 for scene division headers.\n- Use Roman numerals (e.g., I. THE BEGINNING) for formal chapter titles.\n\n---\n\nIII. AUTEUR SCRIPT FORMATTING:\n(Technical state-machine chaining)\n\n[Auteur Script Style]\n(Precision prompt engineering)\nFor high-precision models, wrap your timeline execution in [<BRIEF>] tags. SceneFlow renders this in a dedicated monospace card and applies two automatic layout engines:\n\n- Waterfall Indentation: Every \"->\" delimiter automatically creates a new line with nested indentation, turning a long prompt into a clean visual beat chain.\n- Highlighted Anchors: Any word inside brackets like [CAM], [ACT], [AUDIO], or [STATE OUT] is automatically bolded for quick scanning.\n\n[<BRIEF>]\n[CAM 01] MS, eye-level lockoff -> [ACT] Creator types the first command -> Creator: \"Let's build.\" -> <Mechanical keyboard click> -> [STATE OUT] Frame locked in clean focus\n[</BRIEF>]\n\n---\n\nIV. WORKING WITH CUES:\n(Syncing script text to the video timeline)\n\n[Syncing Text to Time]\n(The core superpower of SceneFlow)\nThe real power of SceneFlow is linking your script segments directly to specific moments in the video timeline via 'Cues'.\n\n[8 Dedicated Color Categories]\n(Theme-calibrated visual tagging)\nSceneFlow provides 8 calibrated color categories:\n- Dialogue (Yellow/Amber)\n- Action (Blue/Sky)\n- Camera (Green/Emerald)\n- Shot (Purple)\n- Audio / SFX (Orange)\n- VFX (Cyan/Teal)\n- Transition (Pink)\n- Environment (Slate/Grey)\n\n[How to Add a Cue]\n(Creating timeline highlights)\nSwitch to 'Edit' mode and highlight any text segment in your script. The 'Cue Settings' modal pops up instantly, allowing you to pick a category and set Start and End timestamps.\n\n[Editing, Overlaps & Deleting]\n(Managing existing cues)\nClick any highlighted cue in the script to adjust its duration or category. If multiple cues overlap, click to pick the exact cue you want to inspect. To remove a cue, click the Trash icon in the left 'Timeline Cues' panel.\n\n[Alignment & Alternatives]\n(Smart text tracking)\nIf you edit script text after creating cues, click 'Align' in the sidebar to automatically re-anchor highlights. If a repeated phrase matches the wrong instance, click 'Find Alternative' to cycle occurrences.\n\n---\n\nV. PLAYBACK & VIEWPORT CONTROLS:\n(Optimizing your review workspace)\n\n[Auto-Scroll & Focus Mode]\n(Following the action in real-time)\nIn 'Playback' mode, the script highlights and scrolls in real-time with the video. Click the 'Focus Mode' dropdown next to Auto-Scroll to filter which cue categories trigger scrolling (e.g., follow Dialogue only).\n\n[Focus Line Position]\n(Customizing the viewport anchor)\nChoose where the active cue centers in your viewport during playback: Top (35%), Center (50%), or Bottom (65%).\n\n[Script Width Presets]\n(Tailoring the reading canvas)\nSelect from 5 width presets (from Compact to Full) to adjust your reading canvas for side-by-side video inspection.\n\n---\n\nVI. EXAMPLE: AUTEUR SCRIPT:\n(Frequency Over Force)\n\nPART 1\n\n[[STAGING]]\n[[INTENT]]\nCreate a cinematic, dialogue-driven academic drama scene featuring @actor1 as MARK (voice: @audio1), a frustrated mathematician, and @actor2 as ROBERT (voice: @audio2), his composed senior mentor, inside a vast university auditorium as an ideological clash over system control is challenged by a simple mechanical metronome.\n[[/INTENT]]\n[[LOGIC]]\nEnsure rigid spatial continuity across four distinct camera setups on the auditorium stage, maintaining Mark strictly on stage left and Robert on stage right relative to the center desk axis. Preserve object permanence and hand placement for the folded paper manuscript and mechanical wooden metronome across all cuts. Prioritize grounded eye lines, authentic physical performance, and match-on-action transitions, preventing sudden jumps in character location or body orientation.\n[[/LOGIC]]\n[[AESTHETIC]]\nMedium: 35mm film texture, cinematic academic drama aesthetic.\nPalette: Deep navy blue, rich mahogany dark oak, charcoal grey, warm amber tungsten tones.\nLighting: Overhead tungsten auditorium grid lighting, soft directional key light from stage left.\nLocation: Mid-century university auditorium stage with dark mahogany wood wall paneling and a large slate chalkboard displaying faint white chalk equations.\nWardrobe: Mark wears a rumpled navy blue oxford button-down shirt with rolled-up sleeves and charcoal dress trousers. Robert wears a rich burgundy wool crewneck sweater over a white collared dress shirt, dark navy trousers, and prominent thick-rimmed tortoiseshell aviator glasses.\nKey Props: Heavy dark-oak lecturer desk, vintage green-glass brass desk lamp, dark mahogany mechanical wooden metronome, folded paper manuscript.\nAmbience: Soft hollow hall acoustics, faint low ventilation hum, gentle atmospheric dust motes.\n[[/AESTHETIC]]\n[[OPENING]]\nEstablishing shot from auditorium floor looking up at the wide, fully lit stage. At center stage sits a heavy dark-oak lecturer desk topped with stacked paper manuscripts and a glowing green brass desk lamp. Mark stands stage left in his rumpled navy shirt, pacing along a narrow corridor while gripping a folded sheet of paper near his torso. Robert stands stationary stage right in a burgundy sweater, holding a dark wooden metronome with both hands near his stomach. Deep mahogany wall paneling and chalk-covered slates frame the background behind them.\n[[/OPENING]]\n[[/STAGING]]\n\n[<BRIEF>]\n[CAM 01] EWS, wide stage center, static axis -> Mark pacing stage left, Robert motionless stage right holding metronome -> [BLOCK] Mark pivots sharply near the stage edge while gesturing with his paper -> Mark says (sharp exhalation) {If you force the parameters, the variance just spikes.} -> [ACT] Mark snaps the folded paper against his thigh -> <Paper slap against trousers>\n[CAM 02] MS, tracking Mark along stage left -> Mark mid-stride holding paper in right hand -> [ACT] Mark halts his pacing, spinning his body toward stage right to face Robert -> Mark says {It resist every... single... time!} -> [ACT] Mark points the crumpled sheet across the empty stage void -> [STATE OUT] Mark standing taut, shoulders tense\n[CAM 03] MCU, lockoff on Robert stage right -> Robert holding closed wooden metronome at chest height -> [ACT] Robert tilts his head slightly, eyes steady behind his aviator glasses -> Mark says O.S. {And why did you bring that metronome out here anyway?} -> [ACT] Robert shifts his thumbs across the smooth wooden casing -> <Soft thumb scrape on wood>\n[CAM 03] -> Robert holding metronome, looking toward stage left -> Robert says (soft exhaled chuckle) {Because I heard you shouting three doors down...} -> [ACT] Robert takes a measured step toward center desk -> [STATE OUT] Robert moving into mid-stage space\n[CAM 01] -> Robert walking from stage right toward desk, Mark watching defensively from stage left -> [BLOCK] Robert arrives at the center desk, positioning himself behind it -> Robert says {And because you are still trying to orchestrate it, Mark. You are treating your variables like isolated nodes.} -> [ACT] Robert holds the metronome balanced above the dark oak desk surface\n[CAM 02] -> Mark leaning forward, body posture rigid -> [ACT] Mark steps closer to the desk's left flank, grip tightening on paper sheet -> Mark says (frustrated sigh) {They are isolated nodes! Without direct feedback loops, there’s no reason to align.} -> [ACT] Mark shakes his head, jaw clenching tightly\n[CAM 04] MS, desk surface center focus -> Dark oak desk surface foreground with brass lamp illuminate dark wood -> [ACT] Robert lowers the wooden metronome onto the bare dark oak wood -> <Solid wooden thump on desk> -> [ACT] Robert unlatches the front cover, revealing the inner brass pendulum rod -> <Metallic latch click>\n[CAM 03] -> Robert adjusting pendulum weight on rod -> Robert says {They do not need direct feedback, Mark. They just need a shared floor.} -> [ACT] Robert slides the brass weight down to mid-tempo notch -> [STATE OUT] Robert's thumb poised over pendulum tip\n[CAM 02] -> Mark watching center desk, brow deeply furrowed -> [ACT] Mark rests his left palm onto desk edge -> Mark says (weary tone) {A shared floor does not transmit information, Robert.} -> [ACT] Mark's eyes narrow as he tracks Robert's hands on desk -> [STATE OUT] Mark leaning heavily over desk edge\n[CAM 04] -> Metronome stationary on oak wood, Robert's fingers releasing pendulum tip -> Robert says O.S. {It transmits vibration. That is enough.} -> [ACT] Pendulum swings left to right across wooden casing -> <Sharp wood-on-metal click> -> <Sharp wood-on-metal click>\n[CAM 01] -> Pendulum swinging at center desk, emitting steady acoustic rhythm -> [ACT] Mark freezes in place stage left, paper lowered to his hip -> [ACT] Robert steps back slightly stage right, arms relaxed by his sides -> <Wooden metronome clicking amplifies across hall>\n[</BRIEF>]\n\nPART 2\n\n[[STAGING]]\n[[INTENT]]\nCreate a seamless cinematic continuation of @Video 1 featuring @actor1as MARK (voice: @audio1), a frustrated junior mathematics professor, and @actor2as ROBERT (voice: @Audio 2), his composed senior mentor, inside a grand university lecture hall as their heated ideological clash over system control dissolves into a quiet, contemplative breakthrough.\n[[/INTENT]]\n[[CONTINUITY PROTOCOL]]\nEnsure strict, unbroken continuity extending directly from the final frame of @Video 1. Maintain Mark positioned stage left holding the folded paper manuscript lowered near his hip and Robert grounded stage right. Preserve exact matching across all four established camera setups, lighting conditions, acoustic hall acoustics, wardrobe textures, character postures, and the physical placement of the mechanical wooden metronome atop the mahogany desk. Enforce strict 180-degree axis discipline, spatial object permanence, and grounded eye-lines across all camera transitions.\n[[/CONTINUITY PROTOCOL]]\n[[/STAGING]]\n\n[<BRIEF>]\n[CAM 01] EWS, wide stage center, static axis -> Mark stands motionless stage left with paper down, Robert stands stage right behind center desk as pendulum swings -> [ACT] Mark exhales slowly into a relaxed posture while staring at the swinging wooden pendulum -> <Metronome pendulum mechanical click> -> [ACT] Robert shifts his feet slightly, resting one hand against his belt while watching Mark -> Mark standing upright, shoulders dropping\n[CAM 02] MS, tracking Mark along stage left -> Mark remains standing stage left, gazing intently toward the wooden desk -> Mark says (subdued exhale) {A weak interaction...} -> [ACT] Mark slowly lowers his arm, letting the paper rest loosely beside his thigh -> [STATE OUT] Mark's shoulders dropping from rigid tension into quiet stillness\n[CAM 04] MS, desk surface center focus -> The brass pendulum arm swings across the dark wood surface -> <Metronome pendulum mechanical click> -> [ACT] Robert's hand reaches into frame from stage right, hovering near the desk lamp -> Mark says O.S. {The environment becomes the medium.} -> [ACT] Robert rests his fingers lightly on the polished mahogany corner of the desk\n[CAM 03] MCU, lockoff on Robert stage right -> Robert standing beside the desk, watching the pendulum motion before looking up across the stage void -> Robert says (calm, measured tone) {Like this metronome...} -> [ACT] Robert tilts his head subtly, eyes calm behind his tortoiseshell frames -> <Soft wooden desk vibration>\n[CAM 01] EWS, wide stage center, static axis -> Mark standing stage left, Robert stage right near the desk under overhead tungsten grid light -> Robert says {On stone, it stands alone. Put it on a wooden board...} -> [ACT] Robert gestures gently with an open palm toward the dark oak desktop -> [STATE OUT] Robert maintaining calm posture stage right\n[CAM 02] -> Mark watching Robert intently from stage left -> Robert says O.S. {...and the board carries the pulse until they align.} -> [ACT] Mark shifts his weight slightly, his facial muscle tension relaxing -> <Faint paper crease sound in hand>\n[CAM 02]  -> Mark takes a small, cautious half-step forward toward the desk -> Mark says (soft realization) {It's not control...} -> [ACT] Mark uncurls his left hand, opening his palm downward toward the floor -> [STATE OUT] Mark standing steady near desk left edge\n[CAM 03] -> Robert's expression softens into a faint, reassuring smile -> Mark says O.S. {It's resonance.} -> [ACT] Robert nods slowly, relaxing his shoulders as he folds his hands loosely near his belt -> <Gentle exhaled breath>\n[CAM 03] -> Robert turns his head slightly toward the dark auditorium seating before looking back at Mark -> Robert says {Call it phase-locking if it helps the paper...} -> [ACT] Robert lowers his gaze briefly to the pendulum arm before meeting Mark's eyes -> [STATE OUT] Robert holding calm eye contact\n[CAM 01] -> Both figures visible on stage with the desk centered between them -> Robert says (gentle, steady delivery) {But people work the exact same way. You don't force agreement, Mark.} -> [ACT] Mark stands motionless stage left, absorbing the statement in complete silence -> <Mechanical pendulum knock>\n[CAM 02] -> Mark standing motionless, looking across the desk with a clear, reflective expression -> Robert says O.S. {You just hold the frequency.} -> [ACT] Mark gives a single, quiet nod of understanding as he loosely holds the manuscript by his side -> [STATE OUT] Mark standing relaxed in deep contemplation\n[CAM 01] -> Pendulum continuing its steady swing atop the desk between both professors -> [ACT] Robert steps back slightly stage right while Mark stays anchored stage left, both men sharing a quiet moment of mutual understanding -> <Steady mechanical metronome click echoes in hall> -> [STATE OUT] Wide stage composition locked in peaceful stillness\n[</BRIEF>]\n\n---\n\nVII. PERSISTENCE & SHARING:\n(Managing your projects)\n\n[Saving & Exporting]\n(Keeping your work safe)\nYour work saves automatically to your local browser storage.\n- Video Source: Paste any YouTube URL or supported video link at the top.\n- Save Sync: Download a portable JSON file containing your script, staging metadata, and cues.\n- Open Sync: Load any saved JSON project.\n- Library: Explore pre-built masterclass examples in both Screenplay and Auteur Script styles.\n\n---\n\nSceneFlow—Precision is your superpower.",
+  "scriptText": "Welcome to SceneFlow!\n\nWHAT IS SCENEFLOW?\nSceneFlow is a script-to-screen synchronization tool. It is designed to help you visualize, structure, and sync your AI video prompts with actual video timelines. Whether you write in traditional screenplay format or technical state-driven scripts, SceneFlow acts as the bridge between written instructions and the generated frame.\n\nTWO WAYS TO WRITE\nSceneFlow supports two distinct formatting workflows:\n1. Screenplay Format: A traditional, human-readable script layout (sluglines, action lines, character dialogue, and parentheticals).\n2. Auteur Script Format: A compact, technical state-machine layout wrapped in brief blocks, using chained arrows and bold tags for precision generation.\n\n[A Quick Note on Style Evolution]\n(Screenplay vs. Prompting Input)\nSince March 2026, my primary workflow has shifted away from traditional screenplays in favor of the precision Auteur Script style, as my core goal is providing direct, state-driven prompt inputs for video generation models. However, you can always write in traditional screenplay format as raw text depending on your creative goal. SceneFlow is built to support both workflows seamlessly.\n\nBoth styles share the same powerful Staging, Viewport, and Timeline Cue systems.\n\n---\n\nI. THE STAGING BLOCK:\n(Setting global foundation & guardrails)\n\nStaging is the foundation of your scene. Use the Staging Block to define rules that don't change from beat to beat—such as lighting setup, master wardrobe, spatial logic, or core intent.\n\nTo create a staging section, wrap your metadata in double brackets. SceneFlow automatically conceals the raw text and replaces it with an interactive \"STAGING\" badge. Click the badge anytime to inspect your scene parameters.\n\n[[STAGING]]\n[[INTENT]]\nDefine the high-level identity, subject, and core emotional beat of the scene.\n[[/INTENT]]\n[[LOGIC]]\nList hard guardrails for the model: spatial continuity, 180-degree axis rules, and hand/prop permanence.\n[[/LOGIC]]\n[[AESTHETIC]]\nMedium: 35mm film texture.\nPalette: Deep navy, warm amber tungsten.\nLighting: Directional key light from stage left.\n[[/AESTHETIC]]\n[[OPENING]]\nDescribe the locked first frame (S0): subject position, camera framing, and active props before action begins.\n[[/OPENING]]\n[[/STAGING]]\n\n---\n\nII. SCREENPLAY FORMATTING:\n(Traditional human-readable layout)\n\n[Sluglines / Scene Headings]\n(Defining time and place)\nSluglines establish the physical environment. Start a line with INT. (Interior) or EXT. (Exterior). SceneFlow renders these as highlighted scene banners.\n\nINT. SCENEFLOW DESIGN SUITE - DAY\n\n[Action Lines]\n(Describing physical movement & framing)\nAny regular text describes what appears on screen. Use uppercase lines for bold visual emphasis.\n\nThe cursor blinks on a clean slate. A CREATOR (30s) leans in, their eyes reflecting the glow of infinite creative control.\n\n[Dialogue Formatting]\n(Assigning spoken lines to characters)\nTo format dialogue, type the character name in ALL CAPS followed by a colon. SceneFlow automatically centers the character name and their speech.\n\nCREATOR:\nEverything starts with intent.\n\n[Parentheticals]\n(Directing tone and performance)\nWrap text in parentheses immediately under a character name to give performance directions. These appear italicized and centered.\n\nCREATOR:\n(whispering with excitement)\nIt's not just a script; it's a flow.\n\n[Technical Notes & Effects]\n(SFX, VFX, and camera notes)\nUse technical cues for sound, visual effects, and shot notes:\n- Start a line with SFX: or VFX: for dedicated italic effect callouts.\n- Wrap bracketed text like [CLOSE-UP] for technical camera notes.\n\nSFX: The soft, rhythmic hum of a workstation.\n[CLOSE-UP – MONITOR DISPLAY]\n\n[Structure Helpers]\n(Dividers and part titles)\nTo organize larger scripts, use horizontal separators, part tags, or Roman numeral headers:\n- Use three dashes (---) for a full-width line break.\n- Use PART 1 or PART 2 for scene division headers.\n- Use Roman numerals (e.g., I. THE BEGINNING) for formal chapter titles.\n\n---\n\nIII. AUTEUR SCRIPT FORMATTING:\n(Technical state-machine chaining)\n\n[Auteur Script Style]\n(Precision prompt engineering)\nFor high-precision models, wrap your timeline execution in [<BRIEF>] tags. SceneFlow renders this in a dedicated monospace card and applies two automatic layout engines:\n\n- Waterfall Indentation: Every \"->\" delimiter automatically creates a new line with nested indentation, turning a long prompt into a clean visual beat chain.\n- Highlighted Anchors: Any word inside brackets like [CAM], [ACT], [AUDIO], or [STATE OUT] is automatically bolded for quick scanning.\n\n[<BRIEF>]\n[CAM 01] MS, eye-level lockoff -> [ACT] Creator types the first command -> Creator: \"Let's build.\" -> <Mechanical keyboard click> -> [STATE OUT] Frame locked in clean focus\n[</BRIEF>]\n\n---\n\nIV. WORKING WITH CUES:\n(Syncing script text to the video timeline)\n\n[Syncing Text to Time]\n(The core superpower of SceneFlow)\nThe real power of SceneFlow is linking your script segments directly to specific moments in the video timeline via 'Cues'.\n\n[8 Dedicated Color Categories]\n(Theme-calibrated visual tagging)\nSceneFlow provides 8 calibrated color categories:\n- Dialogue (Yellow/Amber)\n- Action (Blue/Sky)\n- Camera (Green/Emerald)\n- Shot (Purple)\n- Audio / SFX (Orange)\n- VFX (Cyan/Teal)\n- Transition (Pink)\n- Environment (Slate/Grey)\n\n[How to Add a Cue]\n(Creating timeline highlights)\nSwitch to 'Edit' mode and highlight any text segment in your script. The 'New Sync Cue' panel appears in the left sidebar, allowing you to pick a category and set Start and End timestamps (click the Clock icon to snap to the player's current video time).\n\n[Editing, Overlaps & Deleting]\n(Managing existing cues)\nClick any highlighted cue in the script to adjust its duration or category. You can also edit cue text in-place from the sidebar panel. If multiple cues overlap, click to pick the exact cue you want to inspect. To remove a cue, click the Trash icon in the left sidebar.\n\n[Alignment & Alternatives]\n(Smart text tracking)\nIf you edit script text after creating cues, click 'Align' in the sidebar to automatically re-anchor highlights. If a repeated phrase matches the wrong instance, click 'Find Alternative' to cycle occurrences.\n\n[Timing Settings]\n(Lead-in and decay buffers)\nOpen 'Timing Settings' to set global or category-specific 'before' and 'after' offset buffers, adjusting when highlights illuminate and decay relative to media timestamps.\n\n---\n\nV. PLAYBACK & VIEWPORT CONTROLS:\n(Optimizing your review workspace)\n\n[Multi-Track Sync Timeline]\n(Visualizing cues like an NLE)\nIn 'Playback' mode, the left panel features an NLE-inspired multi-track timeline mapping cues across horizontal category tracks:\n- 35% Anticipation Playhead: The vertical playhead stays anchored at 35% of the timeline width, giving lookahead space for approaching beats.\n- Real-Time Timecode Ruler: Displays synchronous 1-second ticks and MM:SS timestamps gliding with media playback.\n- Timeline Zoom Presets: Switch between 4s (close-up), 8s (standard), and 16s (overview) time windows.\n- Track Height Modes: Choose Flex (dynamic expansion) or Fixed (locked sub-lanes for zero layout shift).\n- Track Mute Toggles: Click any category lane header to mute or solo that track.\n- View Switcher: Toggle between the multi-track [Timeline] and classic floating [Cards] view.\n\n[Studio VU Meter & Paused Inspector]\n(Real-time cue feedback)\n- VU Meter: An 8-slot category LED strip and active cue counter illuminate in real time.\n- Paused Inspector: Pausing playback reveals an inspector card under the timeline with multi-cue tabs and an instant 'Replay' button.\n\n[Collapsible Video Player]\n(Screen recording mode)\nPress the 'V' key or click '[ Hide Video ]' in the playback header to collapse the video player. Audio and timeline sync continue playing seamlessly, giving full height to the timeline and script for clean screen recordings.\n\n[Dual-Axis Splitters]\n(Customizing workspace proportions)\n- Horizontal Splitter: Drag between the left playback panel and right script preview to adjust workspace width (defaults to 65:35).\n- Vertical Video Splitter: Drag between the video player and timeline (160px to 480px) to balance video size against timeline tracks.\n- Reset View: Click the Reset View icon (RotateCcw) in the top header to restore default split proportions.\n\n[Auto-Scroll & Focus Mode]\n(Following the action in real-time)\nIn 'Playback' mode, the script highlights and scrolls in real-time with the video. Click the 'Focus Mode' dropdown next to Auto-Scroll to multi-select which cue categories trigger scrolling (e.g., follow Dialogue only).\n\n[Focus Line Position]\n(Customizing the viewport anchor)\nChoose where the active cue centers in your viewport during playback: Top (35%), Center (50%), or Bottom (65%).\n\n[Script Width Presets]\n(Tailoring the reading canvas)\nSelect from 5 width presets (from Compact to Full) to adjust your reading canvas for side-by-side video inspection.\n\n[Theming & Pure Black Canvas]\n(Visual styles & video overlay mode)\n- Themes: Choose between 3 App Shell modes (Light, Warm, Dark) and 6 script paper themes.\n- Pure Black Mode: Forces pure #000000 on dark themes, allowing clean keying via Screen or Lighten blend modes in Premiere Pro, DaVinci Resolve, or OBS.\n- Accessibility: Toggle between Standard Cinema and Protan & Deutan Safe color palettes.\n\n[Keyboard Shortcuts]\n(Fast playback navigation)\n- Space / K: Play or Pause video\n- Left / Right or J / L: Seek -5s / +5s\n- V: Toggle video player collapse\n- Esc: Close active modals\n\n---\n\nVI. EXAMPLE: AUTEUR SCRIPT:\n(Frequency Over Force)\n\nPART 1\n\n[[STAGING]]\n[[INTENT]]\nCreate a cinematic, dialogue-driven academic drama scene featuring @actor1 as MARK (voice: @audio1), a frustrated mathematician, and @actor2 as ROBERT (voice: @audio2), his composed senior mentor, inside a vast university auditorium as an ideological clash over system control is challenged by a simple mechanical metronome.\n[[/INTENT]]\n[[LOGIC]]\nEnsure rigid spatial continuity across four distinct camera setups on the auditorium stage, maintaining Mark strictly on stage left and Robert on stage right relative to the center desk axis. Preserve object permanence and hand placement for the folded paper manuscript and mechanical wooden metronome across all cuts. Prioritize grounded eye lines, authentic physical performance, and match-on-action transitions, preventing sudden jumps in character location or body orientation.\n[[/LOGIC]]\n[[AESTHETIC]]\nMedium: 35mm film texture, cinematic academic drama aesthetic.\nPalette: Deep navy blue, rich mahogany dark oak, charcoal grey, warm amber tungsten tones.\nLighting: Overhead tungsten auditorium grid lighting, soft directional key light from stage left.\nLocation: Mid-century university auditorium stage with dark mahogany wood wall paneling and a large slate chalkboard displaying faint white chalk equations.\nWardrobe: Mark wears a rumpled navy blue oxford button-down shirt with rolled-up sleeves and charcoal dress trousers. Robert wears a rich burgundy wool crewneck sweater over a white collared dress shirt, dark navy trousers, and prominent thick-rimmed tortoiseshell aviator glasses.\nKey Props: Heavy dark-oak lecturer desk, vintage green-glass brass desk lamp, dark mahogany mechanical wooden metronome, folded paper manuscript.\nAmbience: Soft hollow hall acoustics, faint low ventilation hum, gentle atmospheric dust motes.\n[[/AESTHETIC]]\n[[OPENING]]\nEstablishing shot from auditorium floor looking up at the wide, fully lit stage. At center stage sits a heavy dark-oak lecturer desk topped with stacked paper manuscripts and a glowing green brass desk lamp. Mark stands stage left in his rumpled navy shirt, pacing along a narrow corridor while gripping a folded sheet of paper near his torso. Robert stands stationary stage right in a burgundy sweater, holding a dark wooden metronome with both hands near his stomach. Deep mahogany wall paneling and chalk-covered slates frame the background behind them.\n[[/OPENING]]\n[[/STAGING]]\n\n[<BRIEF>]\n[CAM 01] EWS, wide stage center, static axis -> Mark pacing stage left, Robert motionless stage right holding metronome -> [BLOCK] Mark pivots sharply near the stage edge while gesturing with his paper -> Mark says (sharp exhalation) {If you force the parameters, the variance just spikes.} -> [ACT] Mark snaps the folded paper against his thigh -> <Paper slap against trousers>\n[CAM 02] MS, tracking Mark along stage left -> Mark mid-stride holding paper in right hand -> [ACT] Mark halts his pacing, spinning his body toward stage right to face Robert -> Mark says {It resist every... single... time!} -> [ACT] Mark points the crumpled sheet across the empty stage void -> [STATE OUT] Mark standing taut, shoulders tense\n[CAM 03] MCU, lockoff on Robert stage right -> Robert holding closed wooden metronome at chest height -> [ACT] Robert tilts his head slightly, eyes steady behind his aviator glasses -> Mark says O.S. {And why did you bring that metronome out here anyway?} -> [ACT] Robert shifts his thumbs across the smooth wooden casing -> <Soft thumb scrape on wood>\n[CAM 03] -> Robert holding metronome, looking toward stage left -> Robert says (soft exhaled chuckle) {Because I heard you shouting three doors down...} -> [ACT] Robert takes a measured step toward center desk -> [STATE OUT] Robert moving into mid-stage space\n[CAM 01] -> Robert walking from stage right toward desk, Mark watching defensively from stage left -> [BLOCK] Robert arrives at the center desk, positioning himself behind it -> Robert says {And because you are still trying to orchestrate it, Mark. You are treating your variables like isolated nodes.} -> [ACT] Robert holds the metronome balanced above the dark oak desk surface\n[CAM 02] -> Mark leaning forward, body posture rigid -> [ACT] Mark steps closer to the desk's left flank, grip tightening on paper sheet -> Mark says (frustrated sigh) {They are isolated nodes! Without direct feedback loops, there’s no reason to align.} -> [ACT] Mark shakes his head, jaw clenching tightly\n[CAM 04] MS, desk surface center focus -> Dark oak desk surface foreground with brass lamp illuminate dark wood -> [ACT] Robert lowers the wooden metronome onto the bare dark oak wood -> <Solid wooden thump on desk> -> [ACT] Robert unlatches the front cover, revealing the inner brass pendulum rod -> <Metallic latch click>\n[CAM 03] -> Robert adjusting pendulum weight on rod -> Robert says {They do not need direct feedback, Mark. They just need a shared floor.} -> [ACT] Robert slides the brass weight down to mid-tempo notch -> [STATE OUT] Robert's thumb poised over pendulum tip\n[CAM 02] -> Mark watching center desk, brow deeply furrowed -> [ACT] Mark rests his left palm onto desk edge -> Mark says (weary tone) {A shared floor does not transmit information, Robert.} -> [ACT] Mark's eyes narrow as he tracks Robert's hands on desk -> [STATE OUT] Mark leaning heavily over desk edge\n[CAM 04] -> Metronome stationary on oak wood, Robert's fingers releasing pendulum tip -> Robert says O.S. {It transmits vibration. That is enough.} -> [ACT] Pendulum swings left to right across wooden casing -> <Sharp wood-on-metal click> -> <Sharp wood-on-metal click>\n[CAM 01] -> Pendulum swinging at center desk, emitting steady acoustic rhythm -> [ACT] Mark freezes in place stage left, paper lowered to his hip -> [ACT] Robert steps back slightly stage right, arms relaxed by his sides -> <Wooden metronome clicking amplifies across hall>\n[</BRIEF>]\n\nPART 2\n\n[[STAGING]]\n[[INTENT]]\nCreate a seamless cinematic continuation of @Video 1 featuring @actor1as MARK (voice: @audio1), a frustrated junior mathematics professor, and @actor2as ROBERT (voice: @Audio 2), his composed senior mentor, inside a grand university lecture hall as their heated ideological clash over system control dissolves into a quiet, contemplative breakthrough.\n[[/INTENT]]\n[[CONTINUITY PROTOCOL]]\nEnsure strict, unbroken continuity extending directly from the final frame of @Video 1. Maintain Mark positioned stage left holding the folded paper manuscript lowered near his hip and Robert grounded stage right. Preserve exact matching across all four established camera setups, lighting conditions, acoustic hall acoustics, wardrobe textures, character postures, and the physical placement of the mechanical wooden metronome atop the mahogany desk. Enforce strict 180-degree axis discipline, spatial object permanence, and grounded eye-lines across all camera transitions.\n[[/CONTINUITY PROTOCOL]]\n[[/STAGING]]\n\n[<BRIEF>]\n[CAM 01] EWS, wide stage center, static axis -> Mark stands motionless stage left with paper down, Robert stands stage right behind center desk as pendulum swings -> [ACT] Mark exhales slowly into a relaxed posture while staring at the swinging wooden pendulum -> <Metronome pendulum mechanical click> -> [ACT] Robert shifts his feet slightly, resting one hand against his belt while watching Mark -> Mark standing upright, shoulders dropping\n[CAM 02] MS, tracking Mark along stage left -> Mark remains standing stage left, gazing intently toward the wooden desk -> Mark says (subdued exhale) {A weak interaction...} -> [ACT] Mark slowly lowers his arm, letting the paper rest loosely beside his thigh -> [STATE OUT] Mark's shoulders dropping from rigid tension into quiet stillness\n[CAM 04] MS, desk surface center focus -> The brass pendulum arm swings across the dark wood surface -> <Metronome pendulum mechanical click> -> [ACT] Robert's hand reaches into frame from stage right, hovering near the desk lamp -> Mark says O.S. {The environment becomes the medium.} -> [ACT] Robert rests his fingers lightly on the polished mahogany corner of the desk\n[CAM 03] MCU, lockoff on Robert stage right -> Robert standing beside the desk, watching the pendulum motion before looking up across the stage void -> Robert says (calm, measured tone) {Like this metronome...} -> [ACT] Robert tilts his head subtly, eyes calm behind his tortoiseshell frames -> <Soft wooden desk vibration>\n[CAM 01] EWS, wide stage center, static axis -> Mark standing stage left, Robert stage right near the desk under overhead tungsten grid light -> Robert says {On stone, it stands alone. Put it on a wooden board...} -> [ACT] Robert gestures gently with an open palm toward the dark oak desktop -> [STATE OUT] Robert maintaining calm posture stage right\n[CAM 02] -> Mark watching Robert intently from stage left -> Robert says O.S. {...and the board carries the pulse until they align.} -> [ACT] Mark shifts his weight slightly, his facial muscle tension relaxing -> <Faint paper crease sound in hand>\n[CAM 02]  -> Mark takes a small, cautious half-step forward toward the desk -> Mark says (soft realization) {It's not control...} -> [ACT] Mark uncurls his left hand, opening his palm downward toward the floor -> [STATE OUT] Mark standing steady near desk left edge\n[CAM 03] -> Robert's expression softens into a faint, reassuring smile -> Mark says O.S. {It's resonance.} -> [ACT] Robert nods slowly, relaxing his shoulders as he folds his hands loosely near his belt -> <Gentle exhaled breath>\n[CAM 03] -> Robert turns his head slightly toward the dark auditorium seating before looking back at Mark -> Robert says {Call it phase-locking if it helps the paper...} -> [ACT] Robert lowers his gaze briefly to the pendulum arm before meeting Mark's eyes -> [STATE OUT] Robert holding calm eye contact\n[CAM 01] -> Both figures visible on stage with the desk centered between them -> Robert says (gentle, steady delivery) {But people work the exact same way. You don't force agreement, Mark.} -> [ACT] Mark stands motionless stage left, absorbing the statement in complete silence -> <Mechanical pendulum knock>\n[CAM 02] -> Mark standing motionless, looking across the desk with a clear, reflective expression -> Robert says O.S. {You just hold the frequency.} -> [ACT] Mark gives a single, quiet nod of understanding as he loosely holds the manuscript by his side -> [STATE OUT] Mark standing relaxed in deep contemplation\n[CAM 01] -> Pendulum continuing its steady swing atop the desk between both professors -> [ACT] Robert steps back slightly stage right while Mark stays anchored stage left, both men sharing a quiet moment of mutual understanding -> <Steady mechanical metronome click echoes in hall> -> [STATE OUT] Wide stage composition locked in peaceful stillness\n[</BRIEF>]\n\n---\n\nVII. PERSISTENCE & SHARING:\n(Managing projects and exploring catalogue)\n\n[Saving, Exporting & Importing]\n(Keeping your work safe)\nYour work saves automatically to your browser localStorage across sessions.\n- Video Source: Enter any YouTube URL or supported video link in Edit mode.\n- Save Sync: Download a portable JSON project bundle containing script text, staging directives, cues, and settings.\n- Open Sync: Upload and restore any saved JSON project.\n- URL Parameters: Share links with ?example=ID or ?project=URL to instantly load remote or catalogue projects with confirmation guards.\n\n[Curated Library Catalogue]\n(Masterclass reference works)\nExplore the interactive Library modal featuring curated productions across 4 distinct sections:\n- AI Scenes: Flagship dialogue and character performances.\n- The Written Motion: Multi-part cinematic anthologies.\n- FRAME Series: High-concept visual experiments.\n- AI Clips: Rapid single-prompt vignettes.\nIncludes sorting by Latest, Oldest, or A-Z, category filter badges, and mobile-friendly drawer navigation.\n\n---\n\nSceneFlow—Precision is your superpower.",
   "cues": [
     {
       "id": "cue-001",
@@ -8,10 +8,10 @@
       "selectedText": "EWS, wide stage center, static axis",
       "startTime": 0,
       "endTime": 1.83,
-      "colorClass": "bg-purple-400/50",
+      "colorClass": "bg-indigo-400/50",
       "speaker": null,
-      "startIndex": 9339,
-      "endIndex": 9374
+      "startIndex": 12093,
+      "endIndex": 12128
     },
     {
       "id": "cue-002",
@@ -19,10 +19,10 @@
       "selectedText": "Mark pacing stage left, Robert motionless stage right holding metronome",
       "startTime": 0,
       "endTime": 1.83,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 9378,
-      "endIndex": 9449
+      "startIndex": 12132,
+      "endIndex": 12203
     },
     {
       "id": "cue-003",
@@ -32,8 +32,8 @@
       "endTime": 0.4,
       "colorClass": "bg-orange-400/50",
       "speaker": null,
-      "startIndex": 9546,
-      "endIndex": 9562
+      "startIndex": 12300,
+      "endIndex": 12316
     },
     {
       "id": "cue-004",
@@ -41,10 +41,10 @@
       "selectedText": "Mark pivots sharply near the stage edge while gesturing with his paper",
       "startTime": 0,
       "endTime": 1.5,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 9461,
-      "endIndex": 9531
+      "startIndex": 12215,
+      "endIndex": 12285
     },
     {
       "id": "cue-005",
@@ -54,8 +54,18 @@
       "endTime": 0.5,
       "colorClass": "bg-orange-400/50",
       "speaker": null,
-      "startIndex": 9680,
-      "endIndex": 9707
+      "startIndex": 12434,
+      "endIndex": 12461
+    },
+    {
+      "id": "d01a4103-4de6-4dba-a00c-5667605bbc43",
+      "selectedText": "Welcome to SceneFlow!",
+      "startIndex": 0,
+      "endIndex": 21,
+      "startTime": 0,
+      "endTime": 1,
+      "colorClass": "bg-yellow-400/50",
+      "type": "dialogue"
     },
     {
       "id": "cue-006",
@@ -65,8 +75,8 @@
       "endTime": 1.83,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Mark",
-      "startIndex": 9565,
-      "endIndex": 9619
+      "startIndex": 12319,
+      "endIndex": 12373
     },
     {
       "id": "cue-007",
@@ -74,10 +84,10 @@
       "selectedText": "MS, tracking Mark along stage left",
       "startTime": 1.83,
       "endTime": 4.88,
-      "colorClass": "bg-purple-400/50",
+      "colorClass": "bg-indigo-400/50",
       "speaker": null,
-      "startIndex": 9718,
-      "endIndex": 9752
+      "startIndex": 12472,
+      "endIndex": 12506
     },
     {
       "id": "cue-008",
@@ -85,10 +95,10 @@
       "selectedText": "Mark mid-stride holding paper in right hand",
       "startTime": 1.83,
       "endTime": 2.5,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 9756,
-      "endIndex": 9799
+      "startIndex": 12510,
+      "endIndex": 12553
     },
     {
       "id": "cue-009",
@@ -96,10 +106,10 @@
       "selectedText": "Mark halts his pacing, spinning his body toward stage right to face Robert",
       "startTime": 1.83,
       "endTime": 3,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 9809,
-      "endIndex": 9883
+      "startIndex": 12563,
+      "endIndex": 12637
     },
     {
       "id": "cue-010",
@@ -109,8 +119,8 @@
       "endTime": 4.55,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Mark",
-      "startIndex": 9898,
-      "endIndex": 9932
+      "startIndex": 12652,
+      "endIndex": 12686
     },
     {
       "id": "cue-011",
@@ -118,10 +128,10 @@
       "selectedText": "Mark points the crumpled sheet across the empty stage void",
       "startTime": 2.8,
       "endTime": 4.6,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 9943,
-      "endIndex": 10001
+      "startIndex": 12697,
+      "endIndex": 12755
     },
     {
       "id": "cue-012",
@@ -129,10 +139,10 @@
       "selectedText": "Mark standing taut, shoulders tense",
       "startTime": 3.5,
       "endTime": 4.88,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 10017,
-      "endIndex": 10052
+      "startIndex": 12771,
+      "endIndex": 12806
     },
     {
       "id": "cue-013",
@@ -140,10 +150,10 @@
       "selectedText": "MCU, lockoff on Robert stage right",
       "startTime": 4.88,
       "endTime": 10.84,
-      "colorClass": "bg-purple-400/50",
+      "colorClass": "bg-indigo-400/50",
       "speaker": null,
-      "startIndex": 10062,
-      "endIndex": 10096
+      "startIndex": 12816,
+      "endIndex": 12850
     },
     {
       "id": "cue-014",
@@ -151,10 +161,10 @@
       "selectedText": "Robert holding closed wooden metronome at chest height",
       "startTime": 4.88,
       "endTime": 10.84,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 10100,
-      "endIndex": 10154
+      "startIndex": 12854,
+      "endIndex": 12908
     },
     {
       "id": "cue-015",
@@ -162,10 +172,10 @@
       "selectedText": "Robert tilts his head slightly, eyes steady behind his aviator glasses",
       "startTime": 4.88,
       "endTime": 6.2,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 10164,
-      "endIndex": 10234
+      "startIndex": 12918,
+      "endIndex": 12988
     },
     {
       "id": "cue-016",
@@ -175,8 +185,8 @@
       "endTime": 7.6,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Mark",
-      "startIndex": 10254,
-      "endIndex": 10307
+      "startIndex": 13008,
+      "endIndex": 13061
     },
     {
       "id": "cue-017",
@@ -184,10 +194,10 @@
       "selectedText": "Robert shifts his thumbs across the smooth wooden casing",
       "startTime": 6.8,
       "endTime": 8,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 10318,
-      "endIndex": 10374
+      "startIndex": 13072,
+      "endIndex": 13128
     },
     {
       "id": "cue-018",
@@ -197,8 +207,8 @@
       "endTime": 7.8,
       "colorClass": "bg-orange-400/50",
       "speaker": null,
-      "startIndex": 10379,
-      "endIndex": 10404
+      "startIndex": 13133,
+      "endIndex": 13158
     },
     {
       "id": "cue-019",
@@ -206,10 +216,10 @@
       "selectedText": "Robert holding metronome, looking toward stage left",
       "startTime": 7.8,
       "endTime": 10.84,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 10418,
-      "endIndex": 10469
+      "startIndex": 13172,
+      "endIndex": 13223
     },
     {
       "id": "cue-020",
@@ -219,8 +229,8 @@
       "endTime": 8.3,
       "colorClass": "bg-orange-400/50",
       "speaker": null,
-      "startIndex": 10486,
-      "endIndex": 10506
+      "startIndex": 13240,
+      "endIndex": 13260
     },
     {
       "id": "cue-021",
@@ -230,8 +240,8 @@
       "endTime": 10.84,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Robert",
-      "startIndex": 10509,
-      "endIndex": 10557
+      "startIndex": 13263,
+      "endIndex": 13311
     },
     {
       "id": "cue-022",
@@ -239,10 +249,10 @@
       "selectedText": "Robert walking from stage right toward desk, Mark watching defensively from stage left",
       "startTime": 10.84,
       "endTime": 13.5,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 10678,
-      "endIndex": 10764
+      "startIndex": 13432,
+      "endIndex": 13518
     },
     {
       "id": "cue-023",
@@ -252,8 +262,8 @@
       "endTime": 15.5,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Robert",
-      "startIndex": 10857,
-      "endIndex": 10967
+      "startIndex": 13611,
+      "endIndex": 13721
     },
     {
       "id": "cue-024",
@@ -261,10 +271,10 @@
       "selectedText": "Robert arrives at the center desk, positioning himself behind it",
       "startTime": 12.5,
       "endTime": 15.2,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 10776,
-      "endIndex": 10840
+      "startIndex": 13530,
+      "endIndex": 13594
     },
     {
       "id": "cue-025",
@@ -272,10 +282,10 @@
       "selectedText": "Mark steps closer to the desk's left flank, grip tightening on paper sheet",
       "startTime": 14.2,
       "endTime": 17.5,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 11108,
-      "endIndex": 11182
+      "startIndex": 13862,
+      "endIndex": 13936
     },
     {
       "id": "cue-026",
@@ -283,10 +293,10 @@
       "selectedText": "Robert holds the metronome balanced above the dark oak desk surface",
       "startTime": 14.5,
       "endTime": 18.89,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 10978,
-      "endIndex": 11045
+      "startIndex": 13732,
+      "endIndex": 13799
     },
     {
       "id": "cue-027",
@@ -294,10 +304,10 @@
       "selectedText": "Mark leaning forward, body posture rigid",
       "startTime": 15,
       "endTime": 18.89,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 11058,
-      "endIndex": 11098
+      "startIndex": 13812,
+      "endIndex": 13852
     },
     {
       "id": "cue-028",
@@ -307,8 +317,8 @@
       "endTime": 15.8,
       "colorClass": "bg-orange-400/50",
       "speaker": null,
-      "startIndex": 11197,
-      "endIndex": 11212
+      "startIndex": 13951,
+      "endIndex": 13966
     },
     {
       "id": "cue-029",
@@ -318,8 +328,8 @@
       "endTime": 18.8,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Mark",
-      "startIndex": 11215,
-      "endIndex": 11298
+      "startIndex": 13969,
+      "endIndex": 14052
     },
     {
       "id": "cue-030",
@@ -327,10 +337,10 @@
       "selectedText": "Mark shakes his head, jaw clenching tightly",
       "startTime": 16.5,
       "endTime": 18.5,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 11309,
-      "endIndex": 11352
+      "startIndex": 14063,
+      "endIndex": 14106
     },
     {
       "id": "cue-031",
@@ -338,10 +348,10 @@
       "selectedText": "MS, desk surface center focus",
       "startTime": 18.89,
       "endTime": 22.27,
-      "colorClass": "bg-purple-400/50",
+      "colorClass": "bg-indigo-400/50",
       "speaker": null,
-      "startIndex": 11362,
-      "endIndex": 11391
+      "startIndex": 14116,
+      "endIndex": 14145
     },
     {
       "id": "cue-032",
@@ -351,8 +361,8 @@
       "endTime": 22.27,
       "colorClass": "bg-slate-400/50",
       "speaker": null,
-      "startIndex": 11395,
-      "endIndex": 11464
+      "startIndex": 14149,
+      "endIndex": 14218
     },
     {
       "id": "cue-033",
@@ -360,10 +370,10 @@
       "selectedText": "Robert lowers the wooden metronome onto the bare dark oak wood",
       "startTime": 18.89,
       "endTime": 19.8,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 11474,
-      "endIndex": 11536
+      "startIndex": 14228,
+      "endIndex": 14290
     },
     {
       "id": "cue-034",
@@ -373,8 +383,8 @@
       "endTime": 22.2,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Robert",
-      "startIndex": 11745,
-      "endIndex": 11815
+      "startIndex": 14499,
+      "endIndex": 14569
     },
     {
       "id": "cue-035",
@@ -384,8 +394,8 @@
       "endTime": 19.6,
       "colorClass": "bg-orange-400/50",
       "speaker": null,
-      "startIndex": 11541,
-      "endIndex": 11567
+      "startIndex": 14295,
+      "endIndex": 14321
     },
     {
       "id": "cue-036",
@@ -393,10 +403,10 @@
       "selectedText": "Robert unlatches the front cover, revealing the inner brass pendulum rod",
       "startTime": 19.8,
       "endTime": 21,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 11578,
-      "endIndex": 11650
+      "startIndex": 14332,
+      "endIndex": 14404
     },
     {
       "id": "cue-037",
@@ -406,8 +416,8 @@
       "endTime": 20.6,
       "colorClass": "bg-orange-400/50",
       "speaker": null,
-      "startIndex": 11655,
-      "endIndex": 11675
+      "startIndex": 14409,
+      "endIndex": 14429
     },
     {
       "id": "cue-038",
@@ -415,10 +425,10 @@
       "selectedText": "Robert adjusting pendulum weight on rod",
       "startTime": 20.5,
       "endTime": 22.27,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 11689,
-      "endIndex": 11728
+      "startIndex": 14443,
+      "endIndex": 14482
     },
     {
       "id": "cue-039",
@@ -426,10 +436,10 @@
       "selectedText": "Robert's thumb poised over pendulum tip",
       "startTime": 21.5,
       "endTime": 22.27,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 11896,
-      "endIndex": 11935
+      "startIndex": 14650,
+      "endIndex": 14689
     },
     {
       "id": "cue-040",
@@ -437,10 +447,10 @@
       "selectedText": "Mark watching center desk, brow deeply furrowed",
       "startTime": 22.27,
       "endTime": 27.28,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 11948,
-      "endIndex": 11995
+      "startIndex": 14702,
+      "endIndex": 14749
     },
     {
       "id": "cue-041",
@@ -448,10 +458,10 @@
       "selectedText": "Mark rests his left palm onto desk edge",
       "startTime": 22.27,
       "endTime": 24.5,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 12005,
-      "endIndex": 12044
+      "startIndex": 14759,
+      "endIndex": 14798
     },
     {
       "id": "cue-042",
@@ -459,10 +469,10 @@
       "selectedText": "Mark leaning heavily over desk edge",
       "startTime": 22.27,
       "endTime": 27.28,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 12206,
-      "endIndex": 12241
+      "startIndex": 14960,
+      "endIndex": 14995
     },
     {
       "id": "cue-043",
@@ -472,8 +482,8 @@
       "endTime": 25,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Mark",
-      "startIndex": 12072,
-      "endIndex": 12125
+      "startIndex": 14826,
+      "endIndex": 14879
     },
     {
       "id": "cue-044",
@@ -481,10 +491,10 @@
       "selectedText": "Mark's eyes narrow as he tracks Robert's hands on desk",
       "startTime": 23.5,
       "endTime": 26,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 12136,
-      "endIndex": 12190
+      "startIndex": 14890,
+      "endIndex": 14944
     },
     {
       "id": "cue-045",
@@ -492,10 +502,10 @@
       "selectedText": "Metronome stationary on oak wood, Robert's fingers releasing pendulum tip",
       "startTime": 25,
       "endTime": 27,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 12254,
-      "endIndex": 12327
+      "startIndex": 15008,
+      "endIndex": 15081
     },
     {
       "id": "cue-046",
@@ -505,8 +515,8 @@
       "endTime": 27.1,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Robert",
-      "startIndex": 12349,
-      "endIndex": 12388
+      "startIndex": 15103,
+      "endIndex": 15142
     },
     {
       "id": "cue-047",
@@ -514,10 +524,10 @@
       "selectedText": "Pendulum swings left to right across wooden casing",
       "startTime": 27,
       "endTime": 27.28,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 12399,
-      "endIndex": 12449
+      "startIndex": 15153,
+      "endIndex": 15203
     },
     {
       "id": "cue-048",
@@ -527,17 +537,17 @@
       "endTime": 27.3,
       "colorClass": "bg-orange-400/50",
       "speaker": null,
-      "startIndex": 12454,
-      "endIndex": 12479
+      "startIndex": 15208,
+      "endIndex": 15233
     },
     {
       "id": "cue-049",
       "selectedText": "EWS, wide stage center, static axis",
-      "startIndex": 13851,
-      "endIndex": 13886,
+      "startIndex": 12093,
+      "endIndex": 12128,
       "startTime": 27.28,
       "endTime": 31.45,
-      "colorClass": "bg-purple-400/50",
+      "colorClass": "bg-indigo-400/50",
       "type": "shot"
     },
     {
@@ -546,10 +556,10 @@
       "selectedText": "Pendulum swinging at center desk, emitting steady acoustic rhythm",
       "startTime": 27.28,
       "endTime": 31.45,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 12524,
-      "endIndex": 12589
+      "startIndex": 15278,
+      "endIndex": 15343
     },
     {
       "id": "cue-051",
@@ -557,10 +567,10 @@
       "selectedText": "Mark freezes in place stage left, paper lowered to his hip",
       "startTime": 27.28,
       "endTime": 31.45,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 12599,
-      "endIndex": 12657
+      "startIndex": 15353,
+      "endIndex": 15411
     },
     {
       "id": "cue-052",
@@ -568,10 +578,10 @@
       "selectedText": "Robert steps back slightly stage right, arms relaxed by his sides",
       "startTime": 27.28,
       "endTime": 31.45,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 12667,
-      "endIndex": 12732
+      "startIndex": 15421,
+      "endIndex": 15486
     },
     {
       "id": "cue-053",
@@ -581,8 +591,8 @@
       "endTime": 31.45,
       "colorClass": "bg-orange-400/50",
       "speaker": null,
-      "startIndex": 12737,
-      "endIndex": 12784
+      "startIndex": 15491,
+      "endIndex": 15538
     },
     {
       "id": "cue-054",
@@ -590,10 +600,10 @@
       "selectedText": "Mark stands motionless stage left with paper down, Robert stands stage right behind center desk as pendulum swings",
       "startTime": 27.28,
       "endTime": 31.45,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 13890,
-      "endIndex": 14004
+      "startIndex": 16644,
+      "endIndex": 16758
     },
     {
       "id": "cue-055",
@@ -603,8 +613,8 @@
       "endTime": 29,
       "colorClass": "bg-orange-400/50",
       "speaker": null,
-      "startIndex": 14107,
-      "endIndex": 14142
+      "startIndex": 16861,
+      "endIndex": 16896
     },
     {
       "id": "cue-056",
@@ -612,10 +622,10 @@
       "selectedText": "Robert shifts his feet slightly, resting one hand against his belt while watching Mark",
       "startTime": 29.5,
       "endTime": 31.45,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 14153,
-      "endIndex": 14239
+      "startIndex": 16907,
+      "endIndex": 16993
     },
     {
       "id": "cue-057",
@@ -623,10 +633,10 @@
       "selectedText": "Mark exhales slowly into a relaxed posture while staring at the swinging wooden pendulum",
       "startTime": 30.5,
       "endTime": 31.45,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 14014,
-      "endIndex": 14102
+      "startIndex": 16768,
+      "endIndex": 16856
     },
     {
       "id": "cue-058",
@@ -634,10 +644,10 @@
       "selectedText": "Mark standing upright, shoulders dropping",
       "startTime": 30.5,
       "endTime": 31.45,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 14243,
-      "endIndex": 14284
+      "startIndex": 16997,
+      "endIndex": 17038
     },
     {
       "id": "cue-059",
@@ -647,17 +657,17 @@
       "endTime": 31.6,
       "colorClass": "bg-orange-400/50",
       "speaker": null,
-      "startIndex": 14419,
-      "endIndex": 14433
+      "startIndex": 17173,
+      "endIndex": 17187
     },
     {
       "id": "cue-060",
       "selectedText": "MS, tracking Mark along stage left",
-      "startIndex": 14294,
-      "endIndex": 14328,
+      "startIndex": 12472,
+      "endIndex": 12506,
       "startTime": 31.45,
       "endTime": 34.62,
-      "colorClass": "bg-purple-400/50",
+      "colorClass": "bg-indigo-400/50",
       "type": "shot"
     },
     {
@@ -666,10 +676,10 @@
       "selectedText": "Mark remains standing stage left, gazing intently toward the wooden desk",
       "startTime": 31.45,
       "endTime": 34.62,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 14332,
-      "endIndex": 14404
+      "startIndex": 17086,
+      "endIndex": 17158
     },
     {
       "id": "cue-062",
@@ -677,10 +687,10 @@
       "selectedText": "Mark slowly lowers his arm, letting the paper rest loosely beside his thigh",
       "startTime": 32,
       "endTime": 34.62,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 14468,
-      "endIndex": 14543
+      "startIndex": 17222,
+      "endIndex": 17297
     },
     {
       "id": "cue-063",
@@ -690,8 +700,8 @@
       "endTime": 34.5,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Mark",
-      "startIndex": 14436,
-      "endIndex": 14457
+      "startIndex": 17190,
+      "endIndex": 17211
     },
     {
       "id": "cue-064",
@@ -699,19 +709,19 @@
       "selectedText": "Mark's shoulders dropping from rigid tension into quiet stillness",
       "startTime": 33,
       "endTime": 34.62,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 14559,
-      "endIndex": 14624
+      "startIndex": 17313,
+      "endIndex": 17378
     },
     {
       "id": "cue-065",
       "selectedText": "MS, desk surface center focus",
-      "startIndex": 14634,
-      "endIndex": 14663,
+      "startIndex": 14116,
+      "endIndex": 14145,
       "startTime": 34.62,
       "endTime": 36.79,
-      "colorClass": "bg-purple-400/50",
+      "colorClass": "bg-indigo-400/50",
       "type": "shot"
     },
     {
@@ -720,16 +730,16 @@
       "selectedText": "The brass pendulum arm swings across the dark wood surface",
       "startTime": 34.62,
       "endTime": 36.79,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 14667,
-      "endIndex": 14725
+      "startIndex": 17421,
+      "endIndex": 17479
     },
     {
       "id": "cue-067",
       "selectedText": "Metronome pendulum mechanical click",
-      "startIndex": 14730,
-      "endIndex": 14765,
+      "startIndex": 16861,
+      "endIndex": 16896,
       "startTime": 35,
       "endTime": 35.5,
       "colorClass": "bg-orange-400/50",
@@ -741,10 +751,10 @@
       "selectedText": "Robert's hand reaches into frame from stage right, hovering near the desk lamp",
       "startTime": 35.25,
       "endTime": 36.79,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 14776,
-      "endIndex": 14854
+      "startIndex": 17530,
+      "endIndex": 17608
     },
     {
       "id": "cue-069",
@@ -754,8 +764,8 @@
       "endTime": 38.5,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Mark",
-      "startIndex": 14874,
-      "endIndex": 14909
+      "startIndex": 17628,
+      "endIndex": 17663
     },
     {
       "id": "cue-070",
@@ -763,19 +773,19 @@
       "selectedText": "Robert rests his fingers lightly on the polished mahogany corner of the desk",
       "startTime": 35.8,
       "endTime": 36.79,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 14920,
-      "endIndex": 14996
+      "startIndex": 17674,
+      "endIndex": 17750
     },
     {
       "id": "cue-071",
       "selectedText": "MCU, lockoff on Robert stage right",
-      "startIndex": 15006,
-      "endIndex": 15040,
+      "startIndex": 12816,
+      "endIndex": 12850,
       "startTime": 36.79,
       "endTime": 39,
-      "colorClass": "bg-purple-400/50",
+      "colorClass": "bg-indigo-400/50",
       "type": "shot"
     },
     {
@@ -784,10 +794,10 @@
       "selectedText": "Robert standing beside the desk, watching the pendulum motion before looking up across the stage void",
       "startTime": 36.79,
       "endTime": 39,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 15044,
-      "endIndex": 15145
+      "startIndex": 17798,
+      "endIndex": 17899
     },
     {
       "id": "cue-073",
@@ -797,8 +807,8 @@
       "endTime": 39,
       "colorClass": "bg-orange-400/50",
       "speaker": null,
-      "startIndex": 15293,
-      "endIndex": 15319
+      "startIndex": 18047,
+      "endIndex": 18073
     },
     {
       "id": "cue-074",
@@ -806,10 +816,10 @@
       "selectedText": "Robert tilts his head subtly, eyes calm behind his tortoiseshell frames",
       "startTime": 37,
       "endTime": 38.8,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 15217,
-      "endIndex": 15288
+      "startIndex": 17971,
+      "endIndex": 18042
     },
     {
       "id": "cue-075",
@@ -819,17 +829,17 @@
       "endTime": 39,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Robert",
-      "startIndex": 15184,
-      "endIndex": 15206
+      "startIndex": 17938,
+      "endIndex": 17960
     },
     {
       "id": "cue-076",
       "selectedText": "EWS, wide stage center, static axis",
-      "startIndex": 15330,
-      "endIndex": 15365,
+      "startIndex": 16605,
+      "endIndex": 16640,
       "startTime": 39,
       "endTime": 41.83,
-      "colorClass": "bg-purple-400/50",
+      "colorClass": "bg-indigo-400/50",
       "type": "shot"
     },
     {
@@ -840,8 +850,8 @@
       "endTime": 41.83,
       "colorClass": "bg-slate-400/50",
       "speaker": null,
-      "startIndex": 15369,
-      "endIndex": 15462
+      "startIndex": 18123,
+      "endIndex": 18216
     },
     {
       "id": "cue-078",
@@ -849,10 +859,10 @@
       "selectedText": "Robert maintaining calm posture stage right",
       "startTime": 39,
       "endTime": 41.83,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 15628,
-      "endIndex": 15671
+      "startIndex": 18382,
+      "endIndex": 18425
     },
     {
       "id": "cue-079",
@@ -862,8 +872,8 @@
       "endTime": 43,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Robert",
-      "startIndex": 15479,
-      "endIndex": 15533
+      "startIndex": 18233,
+      "endIndex": 18287
     },
     {
       "id": "cue-080",
@@ -871,10 +881,10 @@
       "selectedText": "Robert gestures gently with an open palm toward the dark oak desktop",
       "startTime": 40.5,
       "endTime": 41.83,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 15544,
-      "endIndex": 15612
+      "startIndex": 18298,
+      "endIndex": 18366
     },
     {
       "id": "cue-081",
@@ -882,10 +892,10 @@
       "selectedText": "Mark watching Robert intently from stage left",
       "startTime": 41.83,
       "endTime": 46.51,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 15684,
-      "endIndex": 15729
+      "startIndex": 18438,
+      "endIndex": 18483
     },
     {
       "id": "cue-082",
@@ -895,8 +905,8 @@
       "endTime": 45,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Robert",
-      "startIndex": 15751,
-      "endIndex": 15803
+      "startIndex": 18505,
+      "endIndex": 18557
     },
     {
       "id": "cue-083",
@@ -904,10 +914,10 @@
       "selectedText": "Mark shifts his weight slightly, his facial muscle tension relaxing",
       "startTime": 43,
       "endTime": 45.5,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 15814,
-      "endIndex": 15881
+      "startIndex": 18568,
+      "endIndex": 18635
     },
     {
       "id": "cue-084",
@@ -917,8 +927,8 @@
       "endTime": 45.5,
       "colorClass": "bg-orange-400/50",
       "speaker": null,
-      "startIndex": 15886,
-      "endIndex": 15918
+      "startIndex": 18640,
+      "endIndex": 18672
     },
     {
       "id": "cue-085",
@@ -926,10 +936,10 @@
       "selectedText": "Mark takes a small, cautious half-step forward toward the desk",
       "startTime": 44.8,
       "endTime": 46.51,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 15933,
-      "endIndex": 15995
+      "startIndex": 18687,
+      "endIndex": 18749
     },
     {
       "id": "cue-086",
@@ -937,10 +947,10 @@
       "selectedText": "Mark standing steady near desk left edge",
       "startTime": 45,
       "endTime": 46.51,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 16145,
-      "endIndex": 16185
+      "startIndex": 18899,
+      "endIndex": 18939
     },
     {
       "id": "cue-087",
@@ -950,8 +960,8 @@
       "endTime": 47,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Mark",
-      "startIndex": 16029,
-      "endIndex": 16048
+      "startIndex": 18783,
+      "endIndex": 18802
     },
     {
       "id": "cue-088",
@@ -959,10 +969,10 @@
       "selectedText": "Mark uncurls his left hand, opening his palm downward toward the floor",
       "startTime": 45.8,
       "endTime": 47,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 16059,
-      "endIndex": 16129
+      "startIndex": 18813,
+      "endIndex": 18883
     },
     {
       "id": "cue-089",
@@ -970,10 +980,10 @@
       "selectedText": "Robert's expression softens into a faint, reassuring smile",
       "startTime": 46.51,
       "endTime": 49,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 16198,
-      "endIndex": 16256
+      "startIndex": 18952,
+      "endIndex": 19010
     },
     {
       "id": "cue-090",
@@ -983,8 +993,8 @@
       "endTime": 48.8,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Mark",
-      "startIndex": 16276,
-      "endIndex": 16291
+      "startIndex": 19030,
+      "endIndex": 19045
     },
     {
       "id": "cue-091",
@@ -992,10 +1002,10 @@
       "selectedText": "Robert nods slowly, relaxing his shoulders as he folds his hands loosely near his belt",
       "startTime": 48,
       "endTime": 50.84,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 16302,
-      "endIndex": 16388
+      "startIndex": 19056,
+      "endIndex": 19142
     },
     {
       "id": "cue-092",
@@ -1005,8 +1015,8 @@
       "endTime": 49.5,
       "colorClass": "bg-orange-400/50",
       "speaker": null,
-      "startIndex": 16393,
-      "endIndex": 16414
+      "startIndex": 19147,
+      "endIndex": 19168
     },
     {
       "id": "cue-093",
@@ -1014,10 +1024,10 @@
       "selectedText": "Robert turns his head slightly toward the dark auditorium seating before looking back at Mark",
       "startTime": 49,
       "endTime": 50.84,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 16428,
-      "endIndex": 16521
+      "startIndex": 19182,
+      "endIndex": 19275
     },
     {
       "id": "cue-094",
@@ -1027,8 +1037,8 @@
       "endTime": 52,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Robert",
-      "startIndex": 16538,
-      "endIndex": 16584
+      "startIndex": 19292,
+      "endIndex": 19338
     },
     {
       "id": "cue-095",
@@ -1036,10 +1046,10 @@
       "selectedText": "Robert holding calm eye contact",
       "startTime": 49.5,
       "endTime": 50.84,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 16688,
-      "endIndex": 16719
+      "startIndex": 19442,
+      "endIndex": 19473
     },
     {
       "id": "cue-096",
@@ -1047,10 +1057,10 @@
       "selectedText": "Robert lowers his gaze briefly to the pendulum arm before meeting Mark's eyes",
       "startTime": 49.8,
       "endTime": 50.84,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 16595,
-      "endIndex": 16672
+      "startIndex": 19349,
+      "endIndex": 19426
     },
     {
       "id": "cue-097",
@@ -1058,10 +1068,10 @@
       "selectedText": "Both figures visible on stage with the desk centered between them",
       "startTime": 50.84,
       "endTime": 54.81,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 16732,
-      "endIndex": 16797
+      "startIndex": 19486,
+      "endIndex": 19551
     },
     {
       "id": "cue-098",
@@ -1069,10 +1079,10 @@
       "selectedText": "Mark stands motionless stage left, absorbing the statement in complete silence",
       "startTime": 50.84,
       "endTime": 54.81,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 16919,
-      "endIndex": 16997
+      "startIndex": 19673,
+      "endIndex": 19751
     },
     {
       "id": "cue-099",
@@ -1082,8 +1092,8 @@
       "endTime": 55,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Robert",
-      "startIndex": 16840,
-      "endIndex": 16908
+      "startIndex": 19594,
+      "endIndex": 19662
     },
     {
       "id": "cue-100",
@@ -1093,8 +1103,8 @@
       "endTime": 53,
       "colorClass": "bg-orange-400/50",
       "speaker": null,
-      "startIndex": 17002,
-      "endIndex": 17027
+      "startIndex": 19756,
+      "endIndex": 19781
     },
     {
       "id": "cue-101",
@@ -1102,10 +1112,10 @@
       "selectedText": "Mark standing motionless, looking across the desk with a clear, reflective expression",
       "startTime": 54.81,
       "endTime": 56.81,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 17041,
-      "endIndex": 17126
+      "startIndex": 19795,
+      "endIndex": 19880
     },
     {
       "id": "cue-102",
@@ -1113,10 +1123,10 @@
       "selectedText": "Mark standing relaxed in deep contemplation",
       "startTime": 54.81,
       "endTime": 56.81,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 17297,
-      "endIndex": 17340
+      "startIndex": 20051,
+      "endIndex": 20094
     },
     {
       "id": "cue-103",
@@ -1126,8 +1136,8 @@
       "endTime": 57,
       "colorClass": "bg-yellow-400/50",
       "speaker": "Robert",
-      "startIndex": 17148,
-      "endIndex": 17176
+      "startIndex": 19902,
+      "endIndex": 19930
     },
     {
       "id": "cue-104",
@@ -1135,10 +1145,10 @@
       "selectedText": "Mark gives a single, quiet nod of understanding as he loosely holds the manuscript by his side",
       "startTime": 55.5,
       "endTime": 56.81,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 17187,
-      "endIndex": 17281
+      "startIndex": 19941,
+      "endIndex": 20035
     },
     {
       "id": "cue-105",
@@ -1146,10 +1156,10 @@
       "selectedText": "Pendulum continuing its steady swing atop the desk between both professors",
       "startTime": 56.81,
       "endTime": 57.98,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 17353,
-      "endIndex": 17427
+      "startIndex": 20107,
+      "endIndex": 20181
     },
     {
       "id": "cue-106",
@@ -1157,10 +1167,10 @@
       "selectedText": "Robert steps back slightly stage right while Mark stays anchored stage left, both men sharing a quiet moment of mutual understanding",
       "startTime": 56.81,
       "endTime": 57.98,
-      "colorClass": "bg-blue-400/50",
+      "colorClass": "bg-blue-500/50",
       "speaker": null,
-      "startIndex": 17437,
-      "endIndex": 17569
+      "startIndex": 20191,
+      "endIndex": 20323
     },
     {
       "id": "cue-107",
@@ -1170,8 +1180,8 @@
       "endTime": 57.98,
       "colorClass": "bg-orange-400/50",
       "speaker": null,
-      "startIndex": 17574,
-      "endIndex": 17622
+      "startIndex": 20328,
+      "endIndex": 20376
     },
     {
       "id": "cue-108",
@@ -1179,20 +1189,10 @@
       "selectedText": "Wide stage composition locked in peaceful stillness",
       "startTime": 56.81,
       "endTime": 57.98,
-      "colorClass": "bg-purple-400/50",
+      "colorClass": "bg-indigo-400/50",
       "speaker": null,
-      "startIndex": 17639,
-      "endIndex": 17690
-    },
-    {
-      "id": "d01a4103-4de6-4dba-a00c-5667605bbc43",
-      "selectedText": "Welcome to SceneFlow!",
-      "startIndex": 0,
-      "endIndex": 21,
-      "startTime": 0,
-      "endTime": 1,
-      "colorClass": "bg-yellow-400/50",
-      "type": "dialogue"
+      "startIndex": 20393,
+      "endIndex": 20444
     }
   ],
   "settings": {

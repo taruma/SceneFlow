@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.3.1-dev] - Unreleased
 
+### Changed
+- **Starter Guide Script & Onboarding Tutorial Synchronization (`docs/_dropbox/guide.txt`, `public/examples/blank.json`)**:
+  - Synchronized the instructional guide reference (`docs/_dropbox/guide.txt`) and starter tutorial project (`public/examples/blank.json`) with SceneFlow v2.3.0 capabilities.
+  - Documented modern workspace features: Multi-Track Sync Timeline (35% anticipation playhead, continuous timecode ruler, zoom presets `4s | 8s | 16s`, `Flex` / `Fixed` track height modes, lane mute toggles), Paused Inspector card with instant Replay, Screen Recording Mode (<kbd>V</kbd>), Dual-Axis Splitters, Studio VU Meter, Pure Black Canvas (Video Overlay Mode), CVD Accessibility palettes, and global keyboard shortcuts.
+  - Corrected legacy UI references: updated cue creation to the left sidebar "New Sync Cue" panel with clock timestamp snapping and in-place monospace text editing, multi-select Focus Mode, and curated 4-tier Library catalogue sections.
+  - Re-anchored cue character offsets (`startIndex` / `endIndex`) across all 100+ cues in `public/examples/blank.json` to maintain frame-accurate timeline synchronization with the updated guide text, and upgraded legacy cue color classes to canonical v2.3.0 tokens (`bg-blue-500/50`, `bg-indigo-400/50`).
+
 ### Fixed
 - **Auto-Scroll Split Button Geometry & Unified Palette (`src/components/ScriptHeaderControls.tsx`)**:
   - Resolved a height mismatch where the right dropdown chevron button was shorter than the main Auto-Scroll toggle button, creating an unsightly stepped lip at the top and bottom edges.
