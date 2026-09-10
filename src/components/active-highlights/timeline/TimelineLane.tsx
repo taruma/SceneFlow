@@ -58,7 +58,7 @@ export const TimelineLane = React.memo<TimelineLaneProps>(({
         onClick={() => onToggleVisibility?.(category.type)}
         title={onToggleVisibility ? (isHidden ? `Show ${category.type} cues` : `Hide ${category.type} cues`) : undefined}
         className={cn(
-          "w-22 shrink-0 flex items-center gap-1.5 px-2 py-1 mt-0.5 rounded-md text-[9px] font-black uppercase tracking-wider transition-all select-none text-left",
+          "w-18 shrink-0 flex items-center gap-1 px-1.5 py-1 mt-0.5 rounded-md text-[8.5px] font-black uppercase tracking-wider transition-all select-none text-left",
           onToggleVisibility && "cursor-pointer hover:border-border-main active:scale-95",
           isHidden
             ? "opacity-50 line-through bg-surface-subtle/40 border border-border-subtle/30 text-text-faint"

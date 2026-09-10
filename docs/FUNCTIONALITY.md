@@ -129,18 +129,21 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
   - **`Flex` (Default)**: Tracks expand dynamically from a single 32px row to multi-row stacked layouts only when overlapping cues in the same category enter the visible window, contracting back when they exit to conserve vertical space.
   - **`Fixed`**: Each category pre-calculates its maximum potential overlapping sub-lanes across the entire script (`globalMaxSubLane + 1`) and locks its track height permanently from `00:00`. For instance, if dialogue overlaps anywhere in the scene, the dialogue lane renders as 2 rows with a persistent horizontal sub-lane divider from the very start.
 - **Zero Vertical Layout Shift**: In `Fixed` mode, tracks never jump or change height during playback or scrubbing, ensuring rock-solid visual stability.
-- **Header Controls & Hierarchy**: Controlled via a compact segmented switcher `[ Flex | Fixed ]` anchored immediately to the left of the `[ 4s | 8s | 16s ]` time window switcher:
-  `[ Flex | Fixed ]` $\to$ `[ 4s | 8s | 16s ]` $\to$ `[ Filters ]` $\to$ `[ Timeline | Cards ]`
+- **Adaptive Header Hierarchy**: Automatically adapts to panel width via `ResizeObserver` (560px threshold):
+  - **Wide Viewports ($\ge 560\text{px}$)**: Consolidates all controls into a single unified row (`Highlights` + `Active: X` Studio VU Meter $\to$ `[ Flex | Fixed ]` $\to$ `[ 4s | 8s | 16s ]` $\to$ `[ Filters ]` $\to$ `[ Timeline | Cards ]`), saving vertical space and maximizing timeline track height.
+  - **Narrow Viewports ($< 560\text{px}$)**: Splits into an ergonomic Two-Tier Header:
+    - **Tier 1 (Main Header)**: `Highlights` title $\to$ `Active: X` Studio VU Meter $\to$ `[ Timeline | Cards ]`
+    - **Tier 2 (Timeline Sub-Toolbar)**: `Zoom: [ 4s | 8s | 16s ]` $\to$ `[ Flex | Fixed ]` $\to$ `[ Filters ]`
 - **Session Persistence**: User preference is stored in `localStorage` (`sceneflow_timeline_height_mode`).
 
 ### Collapsible Filter Drawer & Toolbar (`HighlightFilterBar`)
 - **Smooth Drawer Collapse**: The 8-category filter pill bar is tucked into a smoothly collapsible container (`max-h-32 opacity-100` ⇋ `max-h-0 opacity-0`), saving ~35–40px of vertical space for the multi-track timeline tracks.
-- **Toolbar Toggle Button**: A dedicated `Filters` button sits immediately to the left of the view switcher in the header toolbar, persisting its expanded/collapsed state in `localStorage` (`sceneflow_highlight_filter_expanded`).
+- **Toolbar Toggle Button**: A dedicated `Filters` button sits in the timeline sub-toolbar (and in Tier 1 during Cards mode), persisting its expanded/collapsed state in `localStorage` (`sceneflow_highlight_filter_expanded`).
 - **Muted Filter Pip**: When any categories are muted, the `Filters` button displays an active pulsing blue pip to ensure users are always aware filters are active even with the drawer collapsed.
 - **Interactive Pills**: Clickable category pills with dynamic count indicators, theme colors, and active pulsing indicators. Toggle category visibility in both the timeline tracks and the script viewer.
 
 ### Asymmetric Dual-Axis Split & Zero-Scroll Layout
-- **Horizontal Panel Splitter (`SplitPaneDivider`)**: Desktop users can drag the vertical divider between the left playback panel and the screenplay preview to customize workspace proportions. Defaults to 42% Video / 58% Script (clamped between 30% and 65%).
+- **Horizontal Panel Splitter (`SplitPaneDivider`)**: Desktop users can drag the vertical divider between the left playback panel and the screenplay preview to customize workspace proportions. Defaults to 65% Left / 35% Right (clamped between 30% and 72%), reinforced with a hard minimum width guard (`MIN_PANEL_PIXEL_WIDTH = 380px`) to prevent collapsing into an unusable state on smaller laptops.
 - **Vertical Video ⇕ Timeline Splitter (`VideoSplitDivider`)**: Replaces manual percentage size sliders with an interactive horizontal handle directly between the Video Player and the Active Highlights timeline.
   - Dragging down expands the video height (up to 480px) for detailed visual review.
   - Dragging up shrinks the video height (down to 160px), allocating maximum vertical space to multi-track timeline lanes.

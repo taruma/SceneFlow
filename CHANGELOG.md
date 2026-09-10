@@ -57,6 +57,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Integrated `videoHeight` persistence (`sceneflow_video_height`) with debounced write-on-release (`commitVideoHeight`), and unified it with the header's "Reset View" button to reset both panel split and video height in one click.
 - **Header "Reset View" Button (`src/components/AppHeader.tsx`, `src/hooks/useScriptPreferences.ts`)**:
   - Added a dedicated reset button (`RotateCcw`) to the desktop header toolbar with active indicator dot and dynamic tooltips, restoring default 42:58 split and 100% video size in a single click.
+- **Absolute Pixel Minimum Constraint for Panel Split (`src/components/common/SplitPaneDivider.tsx`, `src/hooks/useScriptPreferences.ts`)**:
+  - Added `MIN_PANEL_PIXEL_WIDTH = 380` to prevent the left playback column from collapsing into an unusable micro-sliver on smaller desktop viewports (1024px–1366px laptops).
+  - Both pointer drag tracking and keyboard adjustment (<kbd>ArrowLeft</kbd>) calculate `effectiveMinRatio = Math.max(minRatio, (380 / windowWidth) * 100)`.
 - **Timing Buffers Activation Synchronization (The Dual-Time Principle) (`useTimelineWindow.ts`, `HighlightTimelineView.tsx`, `ActiveHighlightsPanel.tsx`)**:
   - Integrated `state.settings` into the timeline so that cue blocks and category indicator dots illuminate (`isPlayheadInside`) across the full `before` lead-in and `after` hold buffers via `isCueActive()`.
   - Docked paused cue inspector displays active cues in lockstep with the highlighted screenplay text while preserving physical audio media boundaries (`startTime` $\to$ `endTime`) on the timecode ruler.
@@ -78,6 +81,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Protected edit-mode cue selection in `useCueEditor.ts` against involuntary playback when paused.
 
 ### Refactored
+- **Adaptive Highlights Toolbar & Narrow-Column Responsiveness (`src/components/active-highlights/ActiveHighlightsPanel.tsx`, `src/components/active-highlights/timeline/TimelineLane.tsx`)**:
+  - Implemented an adaptive layout via `ResizeObserver` that dynamically switches between a sleek single unified row and a Two-Tier Header based on panel width (threshold: 560px).
+  - **Wide Viewports ($\ge 560\text{px}$)**: Keeps all controls on a single unified row (`Highlights` + `Active: X` VU meter on left; `[Flex | Fixed]` + `[4s | 8s | 16s]` + `[Filters]` + `[Timeline | Cards]` on right), eliminating vertical clutter and reserving maximum height for the timeline tracks.
+  - **Narrow Viewports ($< 560\text{px}$)**: Automatically transforms into a clean Two-Tier Header (Tier 1: Section title, VU meter, and view switcher; Tier 2: Zoom presets, Track Height mode, and Filters toggle), completely preventing button collisions and text squishing when dragging the vertical split pane to the left.
+  - **Compact Category Track Headers (`TimelineLane.tsx`)**: Scaled track header buttons from `w-22` (88px) down to `w-18` (72px) with `text-[8.5px]` font and compact padding (`px-1.5`, `gap-1`), immediately freeing 16px of horizontal space per lane for timeline cue blocks and ruler ticks.
+  - **Section Title Streamlining**: Renamed the section title from "Active Highlights" to "Highlights" to eliminate redundancy with the adjacent `Active: X` VU badge and save horizontal width.
 - **Zero-Scroll Playback Left Panel Optimization (`src/components/playback/PlaybackLeftPanel.tsx`, `src/components/active-highlights/`)**:
   - Optimized playback column padding from `lg:p-10` to `lg:px-6 lg:py-3.5` (reclaiming ~52px of blank vertical whitespace) and tightened inter-section gaps.
   - Scaled the 16:9 player and timeline components so that the video, filter pills, multi-track lanes, and timecode ruler fit on screen simultaneously with 0px vertical scrolling.

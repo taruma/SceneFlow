@@ -35,6 +35,7 @@ YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds
 
 ## 6. Responsive Split Pane & Drag Performance
 - Keep panel split logic desktop-only (`hidden lg:flex`); mobile/tablet devices must always stack vertically (`flex-col`) with full width (`w-full`).
+- **Absolute Pixel Minimum Constraint (`MIN_PANEL_PIXEL_WIDTH = 380`)**: Pointer dragging and keyboard adjustments calculate `effectiveMinRatio = Math.max(minRatio, (380 / windowWidth) * 100)` to guarantee the left playback column cannot be collapsed into an unusable micro-sliver on smaller desktop screens (1024px–1366px).
 - **Zero-Latency Dragging**: Temporarily suppress all CSS transitions across panels during active drag operations via the global `.is-resizing-split` class on `document.body`.
 - **Hardware VSync Throttling**: Always clamp pointermove updates to display refresh intervals using `requestAnimationFrame`.
 - **Decoupled Persistence**: Never invoke synchronous disk I/O (`localStorage.setItem`) inside continuous mousemove/pointermove loops. Update in-memory state during drag, and commit to storage only upon pointer release (`commitSplitRatio`).
@@ -45,7 +46,9 @@ YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds
 - **Drag Performance & IFrame Guard**: Leverage pointer capture and `.is-resizing-split` to prevent YouTube iframe event absorption during vertical drags.
 - **Unified Reset State**: The header "Reset View" action must reset both the horizontal panel split (42%) and vertical video height (240px) in lockstep.
 
-## 8. Header Layout Stability & Studio VU Meter Invariants
+## 8. Header Layout Stability & Adaptive Two-Tier Toolbar Invariants
+- **Adaptive Toolbar Architecture**: High-frequency headers must dynamically adapt to container width via `ResizeObserver` (560px threshold). When wide ($\ge 560\text{px}$), all controls are consolidated into a single unified row (`Highlights` + VU meter on left; Track Height + Zoom + Filters + View Switcher on right), reserving maximum vertical headroom for timeline tracks. When dragged narrow ($< 560\text{px}$), the header automatically transforms into a Two-Tier layout (Tier 1: Title + VU meter + View Switcher; Tier 2: Zoom + Track Height + Filters) to eliminate button collisions and text squishing.
+- **Compact Track Header Geometry (`w-18` / 72px)**: Category headers on `TimelineLane` must use compact fixed widths (`w-18` with `text-[8.5px]`) to maximize the available horizontal timeline track canvas for cue blocks.
 - **Zero-Layout-Shift Indicator Strips**: In high-frequency playback headers, never render variable-length arrays of cue instance dots that cause horizontal layout jitter. Implement fixed-slot category strips (`COLORS` order) that illuminate dynamically via `resolveCueColor()`.
 - **Numeric Tabular Width Isolation**: Any numeric counter that transitions between single and double digits during playback must be wrapped in a dedicated fixed-width slot (`min-w-[14px] font-mono tabular-nums text-center`) to ensure zero pixel shift.
 - **Collapsible Secondary Filters**: The category filter bar must support smooth collapsing (`sceneflow_highlight_filter_expanded`) to maximize vertical space for timeline tracks, with an active indicator pip displayed on the toggle button when categories are muted.

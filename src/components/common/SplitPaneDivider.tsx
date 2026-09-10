@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { GripVertical } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { MIN_SPLIT_RATIO, MAX_SPLIT_RATIO } from '../../hooks/useScriptPreferences';
+import { MIN_SPLIT_RATIO, MAX_SPLIT_RATIO, MIN_PANEL_PIXEL_WIDTH } from '../../hooks/useScriptPreferences';
 
 export interface SplitPaneDividerProps {
   splitRatio: number;
@@ -70,7 +70,10 @@ export const SplitPaneDivider: React.FC<SplitPaneDividerProps> = ({
     if (windowWidth <= 0) return;
 
     const rawRatio = (e.clientX / windowWidth) * 100;
-    const clampedRatio = Math.min(maxRatio, Math.max(minRatio, rawRatio));
+    // Guard minimum ratio with an absolute pixel floor so the left panel stays usable
+    const pixelMinRatio = (MIN_PANEL_PIXEL_WIDTH / windowWidth) * 100;
+    const effectiveMinRatio = Math.min(maxRatio, Math.max(minRatio, pixelMinRatio));
+    const clampedRatio = Math.min(maxRatio, Math.max(effectiveMinRatio, rawRatio));
     latestRatio.current = clampedRatio;
 
     // Throttle to VSync frame rate to eliminate lag
@@ -108,9 +111,13 @@ export const SplitPaneDivider: React.FC<SplitPaneDividerProps> = ({
   }, [isDragging, onSplitChange, onSplitCommit]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
+    const pixelMinRatio = (MIN_PANEL_PIXEL_WIDTH / windowWidth) * 100;
+    const effectiveMinRatio = Math.min(maxRatio, Math.max(minRatio, pixelMinRatio));
+
     if (e.key === 'ArrowLeft') {
       e.preventDefault();
-      const next = Math.max(minRatio, splitRatio - 1);
+      const next = Math.max(effectiveMinRatio, splitRatio - 1);
       onSplitChange(next);
       onSplitCommit?.(next);
     } else if (e.key === 'ArrowRight') {
