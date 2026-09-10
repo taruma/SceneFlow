@@ -187,6 +187,7 @@ Users can choose which cue categories trigger auto-scrolling via the "Focus Mode
 - **Unified Split-Button Geometry**: Features a unified split button linking the primary auto-scroll toggle with the focus dropdown chevron, bound by `items-stretch` to guarantee equal height and consistent color styling without stepped lips or color mismatch.
 - **Dynamic Category Indicators**: Indicator dots dynamically calibrate to the active script paper theme and cue palette profile (Standard 360° vs. Protan & Deutan Safe) via `getCueColorForTheme`, reinforced with an active ring border (`ring-1 ring-white/40`) when selected so colors never clash or wash out against primary blue selection surfaces.
 - **Viewport-Safe Responsive Dropdown Alignment**: The Focus Mode dropdown anchors with left-alignment (`left-0`), expanding downward and rightward into the viewport so all category items and controls remain fully visible without mobile boundary clipping or offscreen overflow.
+- **Uppercase Category Nomenclature**: Category labels are rendered in uppercase with letter tracking (`uppercase tracking-wider`), matching standard screenplay industry formatting conventions (ALL CAPS sluglines and cues) and ensuring acronyms like **VFX** are cleanly rendered without awkward title-casing.
 
 ### Priority Resolution Logic
 When multiple cues are active simultaneously:

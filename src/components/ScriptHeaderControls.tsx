@@ -139,7 +139,7 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                               });
                             }}
                             className={cn(
-                              "w-full flex items-center justify-between px-3 py-2 rounded-lg text-[10px] font-bold transition-colors capitalize",
+                              "w-full flex items-center justify-between px-3 py-2 rounded-lg text-[10px] font-bold tracking-wider uppercase transition-colors",
                               isSelected ? "bg-btn-primary-bg text-btn-primary-text" : "text-text-body hover:bg-surface-subtle"
                             )}
                           >
