@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added desktop-only `SplitPaneDivider` component with direct pointer capture, transparent iframe drag guard, keyboard arrow adjustment, and double-click reset.
   - Implemented `requestAnimationFrame` hardware VSync throttling and `.is-resizing-split` CSS transition suppression, delivering 60–144fps lag-free resizing.
   - Decoupled real-time in-memory drag state updates from disk I/O, writing to `localStorage` only upon drag release (`commitSplitRatio`).
+- **Vertical Video ⇕ Timeline Split Divider & Proportional Sizing (`src/components/playback/VideoSplitDivider.tsx`, `src/components/playback/PlaybackLeftPanel.tsx`, `src/hooks/useScriptPreferences.ts`)**:
+  - Replaced the manual percentage `Size` slider with an interactive desktop horizontal split handle (`VideoSplitDivider`) positioned directly between the Video Player and the Active Highlights timeline.
+  - Implemented direct vertical height resizing (default: `240px`, clamped between `160px` and `480px`) with automatic 16:9 proportional aspect scaling (`aspect-video`), completely eliminating dead horizontal gutters and preserving true video geometry.
+  - Replaced the cluttered "NOW PLAYING" slider row with a minimal, uppercase tracked `PLAYBACK` section header (`UI_TOKENS.layout.sectionTitle`), establishing visual consistency with `ACTIVE HIGHLIGHTS` and `SCRIPT PREVIEW`.
+  - Added high-performance pointer capture, `requestAnimationFrame` hardware VSync throttling, iframe pointer event suppression, keyboard accessibility (`ArrowUp`/`ArrowDown`), and double-click reset to 240px.
+  - Integrated `videoHeight` persistence (`sceneflow_video_height`) with debounced write-on-release (`commitVideoHeight`), and unified it with the header's "Reset View" button to reset both panel split and video height in one click.
 - **Header "Reset View" Button (`src/components/AppHeader.tsx`, `src/hooks/useScriptPreferences.ts`)**:
   - Added a dedicated reset button (`RotateCcw`) to the desktop header toolbar with active indicator dot and dynamic tooltips, restoring default 42:58 split and 100% video size in a single click.
 - **Timing Buffers Activation Synchronization (The Dual-Time Principle) (`useTimelineWindow.ts`, `HighlightTimelineView.tsx`, `ActiveHighlightsPanel.tsx`)**:

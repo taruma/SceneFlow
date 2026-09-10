@@ -7,25 +7,38 @@ export const DEFAULT_SPLIT_RATIO = 42;
 export const MIN_SPLIT_RATIO = 30;
 export const MAX_SPLIT_RATIO = 65;
 
+export const DEFAULT_VIDEO_HEIGHT = 240;
+export const MIN_VIDEO_HEIGHT = 160;
+export const MAX_VIDEO_HEIGHT = 480;
+
 export function useScriptPreferences() {
-  const [videoWidth, setVideoWidthState] = useState<number>(() => {
+  const [videoHeight, setVideoHeightState] = useState<number>(() => {
     if (typeof localStorage !== 'undefined') {
-      const saved = localStorage.getItem('sceneflow_video_width');
+      const saved = localStorage.getItem('sceneflow_video_height');
       if (saved) {
         const parsed = parseInt(saved, 10);
-        if (!isNaN(parsed) && parsed >= 40 && parsed <= 100) {
+        if (!isNaN(parsed) && parsed >= MIN_VIDEO_HEIGHT && parsed <= MAX_VIDEO_HEIGHT) {
           return parsed;
         }
       }
     }
-    return 100;
+    return DEFAULT_VIDEO_HEIGHT;
   });
 
-  const setVideoWidth = useCallback((width: number) => {
-    setVideoWidthState(width);
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('sceneflow_video_width', width.toString());
-    }
+  const setVideoHeight = useCallback((height: number) => {
+    const clamped = Math.min(MAX_VIDEO_HEIGHT, Math.max(MIN_VIDEO_HEIGHT, Math.round(height)));
+    setVideoHeightState(clamped);
+  }, []);
+
+  const commitVideoHeight = useCallback((height?: number) => {
+    setVideoHeightState(prev => {
+      const target = typeof height === 'number' ? height : prev;
+      const clamped = Math.min(MAX_VIDEO_HEIGHT, Math.max(MIN_VIDEO_HEIGHT, Math.round(target)));
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('sceneflow_video_height', clamped.toString());
+      }
+      return clamped;
+    });
   }, []);
 
   const [splitRatio, setSplitRatioState] = useState<number>(() => {
@@ -60,10 +73,11 @@ export function useScriptPreferences() {
   const resetViewLayout = useCallback(() => {
     setSplitRatio(DEFAULT_SPLIT_RATIO);
     commitSplitRatio(DEFAULT_SPLIT_RATIO);
-    setVideoWidth(100);
-  }, [setSplitRatio, commitSplitRatio, setVideoWidth]);
+    setVideoHeight(DEFAULT_VIDEO_HEIGHT);
+    commitVideoHeight(DEFAULT_VIDEO_HEIGHT);
+  }, [setSplitRatio, commitSplitRatio, setVideoHeight, commitVideoHeight]);
 
-  const isViewCustomized = Math.round(splitRatio) !== DEFAULT_SPLIT_RATIO || videoWidth !== 100;
+  const isViewCustomized = Math.round(splitRatio) !== DEFAULT_SPLIT_RATIO || videoHeight !== DEFAULT_VIDEO_HEIGHT;
 
   const [scriptWidthPreset, setScriptWidthPresetState] = useState<ScriptWidthPresetId>(() => {
     if (typeof localStorage !== 'undefined') {
@@ -134,8 +148,9 @@ export function useScriptPreferences() {
   }, []);
 
   return {
-    videoWidth,
-    setVideoWidth,
+    videoHeight,
+    setVideoHeight,
+    commitVideoHeight,
     scriptWidthPreset,
     setScriptWidthPreset,
     isWidthDropdownOpen,

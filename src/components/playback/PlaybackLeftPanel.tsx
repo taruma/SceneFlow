@@ -7,10 +7,15 @@ import { UI_TOKENS } from '../../styles/tokens/ui';
 import { ActiveHighlightsPanel } from '../ActiveHighlightsPanel';
 import { TimelineDensity } from '../active-highlights/types';
 
+import { DEFAULT_VIDEO_HEIGHT } from '../../hooks/useScriptPreferences';
+import { VideoSplitDivider } from './VideoSplitDivider';
+
 export interface PlaybackLeftPanelProps {
   youtubeId: string;
-  videoWidth: number;
-  setVideoWidth: (width: number) => void;
+  videoHeight: number;
+  setVideoHeight: (height: number) => void;
+  commitVideoHeight?: (height: number) => void;
+  onResetVideoHeight?: () => void;
   isDesktop: boolean;
   playerState: number;
   currentTime: number;
@@ -31,12 +36,14 @@ export interface PlaybackLeftPanelProps {
 
 /**
  * Dedicated Left Panel container for Playback mode.
- * Encapsulates the media player viewport, size scaling, and ActiveHighlights synchronization.
+ * Encapsulates the media player viewport, vertical resizer, and ActiveHighlights synchronization.
  */
 export const PlaybackLeftPanel: React.FC<PlaybackLeftPanelProps> = ({
   youtubeId,
-  videoWidth,
-  setVideoWidth,
+  videoHeight,
+  setVideoHeight,
+  commitVideoHeight,
+  onResetVideoHeight,
   isDesktop,
   playerState,
   currentTime,
@@ -54,6 +61,15 @@ export const PlaybackLeftPanel: React.FC<PlaybackLeftPanelProps> = ({
   style,
   className,
 }) => {
+  const handleResetVideoHeight = () => {
+    if (onResetVideoHeight) {
+      onResetVideoHeight();
+    } else {
+      setVideoHeight(DEFAULT_VIDEO_HEIGHT);
+      commitVideoHeight?.(DEFAULT_VIDEO_HEIGHT);
+    }
+  };
+
   return (
     <div 
       style={style}
@@ -63,33 +79,26 @@ export const PlaybackLeftPanel: React.FC<PlaybackLeftPanelProps> = ({
         className
       )}
     >
-      <section className="space-y-3 lg:space-y-3.5 z-30 sticky top-0">
-        {/* Now Playing Header + Size Slider */}
-        <div className="hidden lg:flex items-center justify-between transition-all duration-300">
-          <h2 className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-text-faint flex items-center gap-2">
-            <Video size={14} /> Now Playing
+      <section className="space-y-2 lg:space-y-2.5 z-30 sticky top-0">
+        {/* Playback Section Header */}
+        <div className="hidden lg:flex items-center justify-between pb-0.5">
+          <h2 className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-2")}>
+            <Video size={14} /> Playback
           </h2>
-          {isDesktop && (
-            <div className="flex items-center gap-3 animate-in fade-in slide-in-from-right-2 duration-500">
-              <span className="text-[9px] font-black uppercase tracking-widest text-text-faint">Size</span>
-              <input 
-                type="range" 
-                min="40" 
-                max="100" 
-                step="5"
-                value={videoWidth}
-                onChange={(e) => setVideoWidth(parseInt(e.target.value, 10))}
-                className="w-24 h-1 bg-surface-muted rounded-lg appearance-none cursor-pointer accent-text-muted hover:accent-text-main transition-all"
-              />
-              <span className="text-[9px] font-mono font-bold text-text-faint w-8">{videoWidth}%</span>
-            </div>
-          )}
         </div>
 
         {/* Video Player */}
         <div 
-          className="aspect-video bg-black overflow-hidden shadow-2xl ring-1 ring-border-main relative group transition-all duration-500 origin-top-left pointer-events-auto rounded-none lg:rounded-3xl"
-          style={isDesktop ? { width: `${videoWidth}%`, margin: '0 auto' } : {}}
+          className="bg-black overflow-hidden shadow-2xl ring-1 ring-border-main relative group pointer-events-auto rounded-none lg:rounded-2xl transition-all duration-300 flex items-center justify-center shrink-0"
+          style={isDesktop ? { 
+            height: `${videoHeight}px`, 
+            maxWidth: '100%', 
+            aspectRatio: '16 / 9', 
+            margin: '0 auto' 
+          } : { 
+            aspectRatio: '16 / 9',
+            width: '100%' 
+          }}
         >
           <YouTube
             key={extractYoutubeId(youtubeId)}
@@ -111,6 +120,16 @@ export const PlaybackLeftPanel: React.FC<PlaybackLeftPanelProps> = ({
             iframeClassName="w-full h-full block border-0 bg-black"
           />
         </div>
+
+        {/* Horizontal Video ⇕ Timeline Split Divider */}
+        {isDesktop && (
+          <VideoSplitDivider
+            videoHeight={videoHeight}
+            onHeightChange={setVideoHeight}
+            onHeightCommit={commitVideoHeight}
+            onReset={handleResetVideoHeight}
+          />
+        )}
 
         {/* Active Highlights */}
         <ActiveHighlightsPanel

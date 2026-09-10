@@ -116,12 +116,17 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 - Pulsing animated glow indicates which categories have cues currently active under the playhead.
 - Clicking a category pill toggles its visibility in both the timeline tracks and the script viewer.
 
-### Asymmetric Split Pane & Zero-Scroll Layout
-- **Interactive Split Pane (`SplitPaneDivider`)**: Desktop users can drag the vertical divider between the left playback panel and the screenplay preview to customize workspace proportions.
-- **Calibrated 42:58 Default Ratio**: Defaults to 42% Video / 58% Script (clamped between 30% and 65%), naturally scaling the 16:9 player and reducing outer padding (`lg:px-6 lg:py-3.5`) so the video, category pills, timeline lanes, and ruler fit vertically on screen with zero scrolling.
-- **Hardware VSync Dragging (60–144fps)**: Pointer movements are throttled via `requestAnimationFrame` and CSS transitions are temporarily suppressed via `.is-resizing-split` on `document.body` for lag-free cursor tracking.
-- **One-Click Header "Reset View" (`AppHeader`)**: A dedicated `RotateCcw` button in the header toolbar (or double-clicking the divider) immediately restores default 42:58 split and 100% video size.
-- **Decoupled Persistence**: Changes commit to `localStorage` (`sceneflow_split_ratio`, `sceneflow_video_width`) only upon pointer release to eliminate main-thread disk I/O bottlenecks.
+### Asymmetric Dual-Axis Split & Zero-Scroll Layout
+- **Horizontal Panel Splitter (`SplitPaneDivider`)**: Desktop users can drag the vertical divider between the left playback panel and the screenplay preview to customize workspace proportions. Defaults to 42% Video / 58% Script (clamped between 30% and 65%).
+- **Vertical Video ⇕ Timeline Splitter (`VideoSplitDivider`)**: Replaces manual percentage size sliders with an interactive horizontal handle directly between the Video Player and the Active Highlights timeline.
+  - Dragging down expands the video height (up to 480px) for detailed visual review.
+  - Dragging up shrinks the video height (down to 160px), allocating maximum vertical space to multi-track timeline lanes.
+  - Automatic 16:9 aspect scaling (`aspect-video` + `maxWidth: 100%`) ensures zero video distortion and completely eliminates lateral empty gutters.
+- **Clean Headroom**: The redundant "NOW PLAYING" header row and percentage slider have been completely eliminated, reclaiming ~28px of top vertical space.
+- **Hardware VSync Dragging (60–144fps)**: Pointer movements are throttled via `requestAnimationFrame` with pointer capture and `.is-resizing-split` CSS transition suppression on `document.body` for lag-free cursor tracking.
+- **Unified Header "Reset View" (`AppHeader`)**: A single click on the `RotateCcw` button in the header toolbar (or double-clicking either divider) immediately snaps both the 42:58 horizontal panel split and the 240px vertical video height back to defaults.
+- **Decoupled Persistence**: Changes commit to `localStorage` (`sceneflow_split_ratio`, `sceneflow_video_height`) only upon pointer release to eliminate main-thread disk I/O bottlenecks.
+
 
 ---
 

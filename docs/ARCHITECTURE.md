@@ -167,15 +167,11 @@ YouTube IFrame Player API wrapper:
 - Exposes `seekTo`, `playVideo`, `pauseVideo`, `togglePlayPause`, and `jumpBy(seconds)` transport controls.
 
 ### `useScriptPreferences`
-User preference management with `localStorage` synchronization:
-- `splitRatio` → key `sceneflow_split_ratio` (default `42%`, clamped `30%`–`65%`).
-- `videoWidth` → key `sceneflow_video_width` (default `100%`).
-- `commitSplitRatio` → batches persistence on drag release (`pointerup`).
-- `resetViewLayout` → one-click restoration of default 42:58 split and 100% video size.
-- `scriptWidthPreset` → key `sceneflow_script_width_preset` (5 presets).
-- `scrollFocusPreset` → key `sceneflow_scroll_focus_preset` (3 presets).
-- `scriptThemeId` → key `sceneflow_script_theme` (6 themes).
-- `hiddenCueTypes` → per-type visibility toggle with `toggleCueTypeVisibility()`.
+Persistent visual customization and layout management:
+- Stored in `localStorage`: reading column width preset (`sceneflow_script_width_preset`), auto-scroll focus preset (`sceneflow_scroll_focus_preset`), active theme ID (`sceneflow_script_theme`), asymmetric split ratio (`sceneflow_split_ratio`, default 42%), and video player height (`sceneflow_video_height`, default 240px).
+- Provides `resetViewLayout()` to instantly restore default 42:58 panel split and 240px video height.
+- Exposes `isViewCustomized` flag to drive the active status dot on the header "Reset View" button.
+- Manages dropdown visibility toggles, cue type category filter sets, and color picker modal state.
 
 ### `useAutoScroll`
 Real-time playback auto-scroll engine:
@@ -220,7 +216,7 @@ Modal and dialog `Escape` key dismissal hook:
 The UI layer coordinates video playback, real-time highlighting, user interaction, and modal dialogs.
 
 ### Core Orchestrator (`src/App.tsx`)
-- **Lightweight Composition**: `App.tsx` imports the custom hook suite and twenty-two sub-components, composing them into the full application shell while keeping its own logic to a minimum (mode toggling, library state, modal visibility).
+- **Lightweight Composition**: `App.tsx` imports the custom hook suite and twenty-three sub-components, composing them into the full application shell while keeping its own logic to a minimum (mode toggling, library state, modal visibility).
 - **Hook Integration**: State, playback, preferences, auto-scroll, cue editing, alignment, keyboard shortcuts, and active script theme are fully delegated to the hooks layer. `App.tsx` only wires hook return values to component props.
 - **Sync Engine (`renderedScript` `useMemo`)**: Computes line segments and active cue overlaps in real-time, calculating dynamic opacity based on per-category timing buffers.
 - **Auto-Scroll Engine**: Delegates to `useAutoScroll`, which automatically scrolls the screenplay during playback, prioritizing the most recent active cue, supporting multi-selected focus categories, and aligning to the user's selected vertical focus ratio (35% Top, 50% Center, 65% Bottom).
@@ -251,13 +247,14 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
     - **`TimelinePlayheadRuler.tsx`**: Gliding timecode ruler and glowing vertical playhead marker.
     - **`PausedInspectorCard.tsx`**: Docked paused cue inspector with multi-cue tabs, screenplay quote, and instant replay action.
     - **`HighlightFilterBar.tsx`**: Centered category filter pills with active pulsing state dots.
-16. **`PlaybackLeftPanel.tsx` (`src/components/playback/PlaybackLeftPanel.tsx`)**: Dedicated playback left panel container encapsulating media controls, YouTube player scaling, zero-scroll vertical padding, and active highlights synchronization, cleanly decoupled from edit-mode sticky scroll behaviors.
+16. **`PlaybackLeftPanel.tsx` (`src/components/playback/PlaybackLeftPanel.tsx`)**: Dedicated playback left panel container encapsulating the media player viewport, proportional 16:9 vertical scaling, zero-scroll vertical padding, and active highlights synchronization, cleanly decoupled from edit-mode sticky scroll behaviors.
 17. **`SplitPaneDivider.tsx` (`src/components/common/SplitPaneDivider.tsx`)**: Desktop-only draggable vertical split pane divider with pointer capture, `requestAnimationFrame` VSync throttling, `.is-resizing-split` CSS transition suppression, double-click reset, and transparent iframe drag guard.
-18. **`LibraryModal.tsx`**: Desktop library catalogue modal featuring real-time search, category navigation, sorting (Latest, Oldest, A-Z), section badges, and featured curations.
-19. **`MobileLibraryModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a touch-friendly category filter and search interface.
-20. **`StagingModal.tsx`**: Monospace overlay displaying hidden camera, lighting, or lookbook directives from `[[STAGING]]` blocks.
-21. **`AppInfoModal.tsx`**: Desktop application info and about dialog displaying dynamic versioning from `metadata.json`, author attribution for Taruma Sakti ([Linktree](https://linktr.ee/tarumainfo)), 2x2 resource badge grid, and keyboard shortcuts cheat sheet.
-22. **`MobileColorModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a thumb-friendly 4-segment App Shell switcher and 6 compact screenplay preset cards.
+18. **`VideoSplitDivider.tsx` (`src/components/playback/VideoSplitDivider.tsx`)**: Desktop-only draggable horizontal split divider between the Video Player and Active Highlights timeline with pointer capture, `requestAnimationFrame` VSync throttling, double-click reset to 240px, and keyboard accessibility (`ArrowUp`/`ArrowDown`).
+19. **`LibraryModal.tsx`**: Desktop library catalogue modal featuring real-time search, category navigation, sorting (Latest, Oldest, A-Z), section badges, and featured curations.
+20. **`MobileLibraryModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a touch-friendly category filter and search interface.
+21. **`StagingModal.tsx`**: Monospace overlay displaying hidden camera, lighting, or lookbook directives from `[[STAGING]]` blocks.
+22. **`AppInfoModal.tsx`**: Desktop application info and about dialog displaying dynamic versioning from `metadata.json`, author attribution for Taruma Sakti ([Linktree](https://linktr.ee/tarumainfo)), 2x2 resource badge grid, and keyboard shortcuts cheat sheet.
+23. **`MobileColorModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a thumb-friendly 4-segment App Shell switcher and 6 compact screenplay preset cards.
 
 ### Type Definitions & Data Schemas
 - **`src/types/script.ts`**: Defines 14 domain interfaces and types: `Cue`, `TimingSettings`, `ColorCategory`, `AppState`, `ScriptWidthPresetId`, `ScriptWidthPreset`, `ScrollFocusPresetId`, `ScrollFocusPreset`, `TextSelection`, `DeleteConfirmationState`, `ResetConfirmationState`, `OverlapPickerState`, `AlternativeLocation`, and `AppMode`.

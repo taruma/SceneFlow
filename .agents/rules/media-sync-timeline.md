@@ -38,3 +38,10 @@ YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds
 - **Zero-Latency Dragging**: Temporarily suppress all CSS transitions across panels during active drag operations via the global `.is-resizing-split` class on `document.body`.
 - **Hardware VSync Throttling**: Always clamp pointermove updates to display refresh intervals using `requestAnimationFrame`.
 - **Decoupled Persistence**: Never invoke synchronous disk I/O (`localStorage.setItem`) inside continuous mousemove/pointermove loops. Update in-memory state during drag, and commit to storage only upon pointer release (`commitSplitRatio`).
+
+## 7. Vertical Video Resizing & Aspect Ratio Invariants
+- Direct vertical manipulation via `VideoSplitDivider.tsx` takes precedence over percentage-based width sliders.
+- **Aspect Ratio Integrity**: Combine `height: ${videoHeight}px` with `aspectRatio: '16 / 9'` and `maxWidth: '100%'` on the video container to ensure no lateral empty gutters and zero distortion.
+- **Drag Performance & IFrame Guard**: Leverage pointer capture and `.is-resizing-split` to prevent YouTube iframe event absorption during vertical drags.
+- **Unified Reset State**: The header "Reset View" action must reset both the horizontal panel split (42%) and vertical video height (240px) in lockstep.
+

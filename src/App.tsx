@@ -97,8 +97,9 @@ export default function App() {
   });
 
   const {
-    videoWidth,
-    setVideoWidth,
+    videoHeight,
+    setVideoHeight,
+    commitVideoHeight,
     scriptWidthPreset,
     setScriptWidthPreset,
     isWidthDropdownOpen,
@@ -648,8 +649,9 @@ export default function App() {
         {mode === 'playback' ? (
           <PlaybackLeftPanel
             youtubeId={state.youtubeId}
-            videoWidth={videoWidth}
-            setVideoWidth={setVideoWidth}
+            videoHeight={videoHeight}
+            setVideoHeight={setVideoHeight}
+            commitVideoHeight={commitVideoHeight}
             isDesktop={isDesktop}
             playerState={playerState}
             currentTime={currentTime}

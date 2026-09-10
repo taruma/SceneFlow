@@ -149,3 +149,10 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
    - **Hardware VSync Throttling**: Always clamp pointermove updates to display refresh intervals using `requestAnimationFrame`.
    - **Decoupled Persistence**: Never invoke synchronous disk I/O (`localStorage.setItem`) inside continuous mousemove/pointermove loops. Update in-memory state during drag, and commit to storage only upon pointer release (`commitSplitRatio`).
 
+8. **Vertical Video Resizing & Aspect Ratio Invariants**:
+   - Directly resize video height using the horizontal divider (`VideoSplitDivider.tsx`) rather than arbitrary width percentages.
+   - **Proportional 16:9 Scaling**: Container must couple `height: ${videoHeight}px` with `aspectRatio: '16 / 9'` and `maxWidth: '100%'`, preventing video distortion and eliminating empty lateral gutters.
+   - **Performance & IFrame Guard**: Leverage pointer capture and the body `.is-resizing-split` overlay to prevent YouTube iframe event absorption during vertical drags. Commit disk I/O only on pointer up (`commitVideoHeight`).
+   - **Unified Reset State**: The header "Reset View" action must reset both the 42:58 horizontal panel split and the 240px vertical video height in lockstep.
+
+
