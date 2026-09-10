@@ -134,3 +134,11 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
    - Keep playback visualization components modularized inside `src/components/active-highlights/` rather than expanding `App.tsx`.
    - Consume the public API barrel export (`src/components/active-highlights/index.ts`).
 
+5. **Playback Left Panel Isolation**:
+   - Maintain strict container separation between Playback mode (`src/components/playback/PlaybackLeftPanel.tsx`) and Edit mode in `App.tsx`.
+   - Never cross-contaminate playback containers with edit-mode sticky scroll animations, form paddings, or modal listeners.
+
+6. **Timeline Density & Category Visibility**:
+   - Support `TimelineDensity` (`'comfortable' | 'compact'`) across timeline components for dynamic vertical scaling (32px vs 24px track heights).
+   - Ensure category headers on `TimelineLane` handle both active/idle and muted/hidden visual states when wired to visibility toggles.
+

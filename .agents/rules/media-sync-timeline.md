@@ -23,3 +23,11 @@ YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds
 ## 3. Deterministic Sub-Lane Allocation
 - When multiple cues overlap within the same category track, compute sub-lane indices **globally** across the entire script using greedy interval scheduling.
 - Never calculate sub-lane packing dynamically inside a rolling/sliding time window, as this causes cue blocks to juggle or swap rows when neighboring cues enter or exit the viewport.
+
+## 4. Playback Left Panel Isolation
+- Strictly decouple Playback mode (`src/components/playback/PlaybackLeftPanel.tsx`) from Edit mode in `App.tsx`.
+- Never couple playback containers to edit-mode sticky scroll animations or form styles.
+
+## 5. Timeline Density & Category Visibility
+- Support `TimelineDensity` (`'comfortable' | 'compact'`) across timeline components for dynamic vertical scaling (32px vs 24px track heights).
+- Ensure category headers on `TimelineLane` handle both active/idle and muted/hidden visual states when wired to visibility toggles.

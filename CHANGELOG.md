@@ -27,9 +27,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added an auto-expiring 600ms seek guard timeout to prevent the "ghost pause" bug, ensuring that subsequent clicks on the YouTube player frame start playback immediately on the first click.
   - Propagated explicit `autoPlay: true` intent through props so the inspector's "Replay" action immediately seeks and begins playback.
   - Protected edit-mode cue selection in `useCueEditor.ts` against involuntary playback when paused.
-- **Filter Bar & Header Optical Alignment (`HighlightFilterBar.tsx`, `ActiveHighlightsPanel.tsx`)**:
-  - Centered and optically aligned filter badge pills and active indicator dots.
-  - Harmonized header mode toggle buttons and active count badges for consistent vertical baselines.
+### Refactored
+- **Playback & Edit Left Panel Decoupling (`src/components/playback/PlaybackLeftPanel.tsx`, `src/App.tsx`)**:
+  - Extracted dedicated `PlaybackLeftPanel` component to isolate video player rendering, sizing controls, and active highlights from Edit mode.
+  - Eliminated mixed-mode conditional ternaries and sticky scroll listeners in `App.tsx`, providing a clean, isolated container architecture for playback viewport optimizations.
+- **Timeline Density & Interactive Category Visibility (`src/components/active-highlights/`)**:
+  - Introduced `TimelineDensity` (`'comfortable' | 'compact'`) support across `types.ts`, `ActiveHighlightsPanel.tsx`, `HighlightTimelineView.tsx`, and `TimelineLane.tsx` for dynamic track heights (32px vs 24px).
+  - Enhanced `TimelineLane` category headers into interactive buttons that toggle cue category visibility directly with active/muted visual states.
+  - Updated `useTimelineWindow.ts` to expose `scriptCategories` alongside `existingCategories` for robust category presence tracking.
 
 ## [2.2.0] - 2026-08-29
 

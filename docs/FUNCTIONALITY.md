@@ -93,6 +93,8 @@ During video playback, the sidebar presents a real-time visualization of all act
 Inspired by professional Non-Linear Editors (NLEs), the timeline maps cues onto horizontal category tracks (Dialogue, Action, Camera, Audio, etc.):
 - **Stationary 35% Anticipation Playhead**: The vertical laser line and top pip marker remain anchored at 35% of the container width, providing generous lookahead space for approaching dialogue and sound cues.
 - **Continuous Real-Time Timecode Ruler**: Glides underneath the tracks in real-time, displaying 1-second ticks and major `MM:SS` timecode labels.
+- **Dynamic Density Scaling (`TimelineDensity`)**: Supports `'comfortable'` (32px track height) and `'compact'` (24px track height) modes, optimizing vertical space across varying screen sizes.
+- **Interactive Lane Header Toggles**: Track headers on `TimelineLane` (`[• CATEGORY]`) serve as interactive buttons to mute/unmute that category directly, showing pulsing active glow or dimmed strikethrough styling when hidden.
 - **Global Greedy Interval Scheduling**: Multiple overlapping cues within the same category automatically stack into stable sub-lanes (`subLaneIndex`), calculated globally across the script to prevent any row-jumping or vertical layout shifting during scrubbing.
 - **Zero Layout Shift & Micro-Performance**: Uses hardware-accelerated linear CSS transitions (`100ms linear`) and `will-change: left, width` in tight sync with the YouTube player clock.
 - **Seek Without Unwanted Playback**: Clicking any cue block seeks the player to that timestamp while preserving the paused state without triggering YouTube's unbuffered autoplay quirk.

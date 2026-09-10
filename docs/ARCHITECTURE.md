@@ -37,7 +37,7 @@ SceneFlow follows a modular, 5-layer architecture that separates script parsing,
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
 │                              UI LAYER                                  │
-│  src/App.tsx (orchestrator)  •  src/components/* (20 sub-components)    │
+│  src/App.tsx (orchestrator)  •  src/components/* (21 sub-components)    │
 │  src/types/script.ts (14 domain interfaces)                            │
 └────────────────────────────────────────────────────────────────────────┘
 ```
@@ -240,18 +240,19 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 14. **`ScriptHeaderControls.tsx`**: Playback-mode control bar with auto-scroll toggle, target-type multi-select dropdown, reading width preset selector, and scroll focus preset selector.
 15. **`ActiveHighlightsPanel` (`src/components/active-highlights/`)**: Modular playback visualization sub-package featuring:
     - **`ActiveHighlightsPanel.tsx`**: Main orchestrator with persistent segmented view switcher (`[ 📊 Timeline | 🗂 Cards ]`).
-    - **`HighlightTimelineView.tsx`**: Multi-Track Sync Timeline view with dynamic lane height, stationary 35% anticipation playhead, and docked inspector card.
+    - **`HighlightTimelineView.tsx`**: Multi-Track Sync Timeline view with dynamic density scaling (`TimelineDensity`: `'comfortable'` 32px vs. `'compact'` 24px), stationary 35% anticipation playhead, and docked inspector card.
     - **`HighlightCardsView.tsx`**: Classic floating cards presentation for legacy playback visualization.
-    - **`useTimelineWindow.ts`**: Headless rolling window hook with global greedy interval scheduling for sub-lanes and timecode tick marks.
-    - **`TimelineLane.tsx` & `TimelineCueBlock.tsx`**: Isolated track components with hardware-accelerated CSS transitions and theme coloring.
+    - **`useTimelineWindow.ts`**: Headless rolling window hook with global greedy interval scheduling for sub-lanes, timecode tick marks, and exposure of `scriptCategories`.
+    - **`TimelineLane.tsx` & `TimelineCueBlock.tsx`**: Isolated track components with hardware-accelerated CSS transitions, theme coloring, and interactive lane headers that toggle category visibility.
     - **`TimelinePlayheadRuler.tsx`**: Gliding timecode ruler and glowing vertical playhead marker.
     - **`PausedInspectorCard.tsx`**: Docked paused cue inspector with multi-cue tabs, screenplay quote, and instant replay action.
     - **`HighlightFilterBar.tsx`**: Centered category filter pills with active pulsing state dots.
-16. **`LibraryModal.tsx`**: Desktop library catalogue modal featuring real-time search, category navigation, sorting (Latest, Oldest, A-Z), section badges, and featured curations.
-17. **`MobileLibraryModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a touch-friendly category filter and search interface.
-18. **`StagingModal.tsx`**: Monospace overlay displaying hidden camera, lighting, or lookbook directives from `[[STAGING]]` blocks.
-19. **`AppInfoModal.tsx`**: Desktop application info and about dialog displaying dynamic versioning from `metadata.json`, author attribution for Taruma Sakti ([Linktree](https://linktr.ee/tarumainfo)), 2x2 resource badge grid, and keyboard shortcuts cheat sheet.
-20. **`MobileColorModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a thumb-friendly 4-segment App Shell switcher and 6 compact screenplay preset cards.
+16. **`PlaybackLeftPanel.tsx` (`src/components/playback/PlaybackLeftPanel.tsx`)**: Dedicated playback left panel container encapsulating media controls, YouTube player scaling, and active highlights synchronization, cleanly decoupled from edit-mode sticky scroll behaviors.
+17. **`LibraryModal.tsx`**: Desktop library catalogue modal featuring real-time search, category navigation, sorting (Latest, Oldest, A-Z), section badges, and featured curations.
+18. **`MobileLibraryModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a touch-friendly category filter and search interface.
+19. **`StagingModal.tsx`**: Monospace overlay displaying hidden camera, lighting, or lookbook directives from `[[STAGING]]` blocks.
+20. **`AppInfoModal.tsx`**: Desktop application info and about dialog displaying dynamic versioning from `metadata.json`, author attribution for Taruma Sakti ([Linktree](https://linktr.ee/tarumainfo)), 2x2 resource badge grid, and keyboard shortcuts cheat sheet.
+21. **`MobileColorModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a thumb-friendly 4-segment App Shell switcher and 6 compact screenplay preset cards.
 
 ### Type Definitions & Data Schemas
 - **`src/types/script.ts`**: Defines 14 domain interfaces and types: `Cue`, `TimingSettings`, `ColorCategory`, `AppState`, `ScriptWidthPresetId`, `ScriptWidthPreset`, `ScrollFocusPresetId`, `ScrollFocusPreset`, `TextSelection`, `DeleteConfirmationState`, `ResetConfirmationState`, `OverlapPickerState`, `AlternativeLocation`, and `AppMode`.
