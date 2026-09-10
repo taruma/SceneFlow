@@ -16,6 +16,26 @@ export type HighlightViewMode = 'timeline' | 'cards';
 export type TimelineDensity = 'comfortable' | 'compact';
 
 /**
+ * Zoom presets for the multi-track timeline window duration.
+ * - `4s`: High-precision detail view (4s visible window, 1s tick labels)
+ * - `8s`: Standard playback sync view (8s visible window, 2s tick labels)
+ * - `16s`: Macro scene overview (16s visible window, 4s tick labels)
+ */
+export type TimelineZoomPreset = '4s' | '8s' | '16s';
+
+export interface TimelineZoomConfig {
+  spanSeconds: number;
+  tickStep: number;
+  majorInterval: number;
+}
+
+export const TIMELINE_ZOOM_PRESETS: Record<TimelineZoomPreset, TimelineZoomConfig> = {
+  '4s': { spanSeconds: 4.0, tickStep: 1, majorInterval: 1 },
+  '8s': { spanSeconds: 8.0, tickStep: 1, majorInterval: 2 },
+  '16s': { spanSeconds: 16.0, tickStep: 2, majorInterval: 4 },
+};
+
+/**
  * Props for the main ActiveHighlightsPanel orchestrator.
  */
 export interface ActiveHighlightsPanelProps {
@@ -49,6 +69,10 @@ export interface ActiveHighlightsPanelProps {
   onCueClick?: (cue: Cue) => void;
   /** Optional timeline layout density */
   density?: TimelineDensity;
+  /** Optional controlled timeline zoom preset */
+  zoomPreset?: TimelineZoomPreset;
+  /** Callback fired when user changes the timeline zoom preset */
+  onZoomPresetChange?: (preset: TimelineZoomPreset) => void;
 }
 
 /**

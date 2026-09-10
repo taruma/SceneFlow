@@ -59,7 +59,8 @@ export const TimelineCueBlock = React.memo<TimelineCueBlockProps>(({
         transition: isPlaying ? 'left 100ms linear, width 100ms linear' : 'none',
       }}
       className={cn(
-        "absolute flex items-center px-2 rounded-md border font-sans transition-colors duration-150 cursor-pointer select-none overflow-hidden",
+        "absolute flex items-center rounded-md border font-sans transition-colors duration-150 cursor-pointer select-none overflow-hidden",
+        widthPercent < 3.5 ? "px-1 justify-center" : "px-2",
         isCompact ? "text-[10px]" : "text-[11px]",
         "hover:brightness-125 hover:z-20",
         isPlayheadInside && "ring-1 shadow-sm z-10 font-semibold",
@@ -69,16 +70,19 @@ export const TimelineCueBlock = React.memo<TimelineCueBlockProps>(({
       {/* Category indicator pip */}
       <span
         className={cn(
-          "w-1.5 h-1.5 rounded-full shrink-0 mr-1.5",
+          "w-1.5 h-1.5 rounded-full shrink-0",
+          widthPercent >= 3.5 && "mr-1.5",
           isPlayheadInside && "animate-pulse"
         )}
         style={{ backgroundColor: `rgb(${rgb})` }}
       />
 
-      {/* Snippet text */}
-      <span className="truncate text-text-body font-serif italic tracking-tight">
-        "{cue.selectedText}"
-      </span>
+      {/* Snippet text (hidden on narrow blocks to avoid clipping; full text accessible via hover tooltip) */}
+      {widthPercent >= 3.5 && (
+        <span className="truncate text-text-body font-serif italic tracking-tight">
+          "{cue.selectedText}"
+        </span>
+      )}
     </div>
   );
 });

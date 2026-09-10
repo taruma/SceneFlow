@@ -151,13 +151,18 @@ export function useTimelineWindow({
     return laneMap;
   }, [cuesByCategory, existingCategories, windowStart, windowEnd, totalSpanSeconds, currentTime, resolveCueColor, settings]);
 
-  // Generate 1-second ruler tick marks
+  // Generate adaptive ruler tick marks based on window duration
   const rulerTicks = useMemo(() => {
     const ticks: TimelineTimecodeTick[] = [];
     const firstSec = Math.floor(windowStart);
     const lastSec = Math.ceil(windowEnd);
 
-    for (let s = firstSec; s <= lastSec; s++) {
+    // Adaptive tick density to prevent horizontal crowding at wide zooms
+    const tickStep = totalSpanSeconds > 10 ? 2 : 1;
+    const majorInterval = totalSpanSeconds <= 4 ? 1 : totalSpanSeconds <= 10 ? 2 : 4;
+    const alignedStart = Math.floor(firstSec / tickStep) * tickStep;
+
+    for (let s = alignedStart; s <= lastSec; s += tickStep) {
       if (s < 0) continue;
       const left = ((s - windowStart) / totalSpanSeconds) * 100;
       if (left >= -2 && left <= 102) {
@@ -165,7 +170,7 @@ export function useTimelineWindow({
           timeSeconds: s,
           label: formatTimelineTimecode(s),
           leftPercent: left,
-          isMajor: s % 2 === 0, // Major tick every 2s, minor every 1s
+          isMajor: s % majorInterval === 0,
         });
       }
     }

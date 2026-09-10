@@ -50,3 +50,9 @@ YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds
 - **Numeric Tabular Width Isolation**: Any numeric counter that transitions between single and double digits during playback must be wrapped in a dedicated fixed-width slot (`min-w-[14px] font-mono tabular-nums text-center`) to ensure zero pixel shift.
 - **Collapsible Secondary Filters**: The category filter bar must support smooth collapsing (`sceneflow_highlight_filter_expanded`) to maximize vertical space for timeline tracks, with an active indicator pip displayed on the toggle button when categories are muted.
 
+## 9. Timeline Zoom Presets & Adaptive Timecode Intervals
+- **Bounded Presets Over Freeform Zoom**: Bounded presets (`'4s' | '8s' | '16s'`) must be used for visible window durations rather than unconstrained continuous scroll/pinch zoom, ensuring visual stability and predictable sub-lane allocation.
+- **Adaptive Timecode Intervals (LOD)**: `useTimelineWindow.ts` must generate ticks with adaptive spacing (1s intervals for `4s`/`8s`, 2s step with 4s major labels for `16s`) to prevent DOM element bloat and label crowding.
+- **Narrow Block Label Elision**: When blocks become narrow pills (`widthPercent < 3.5%`) at wide zoom levels, omit the text snippet and center the category pip to eliminate awkward character clipping, preserving full details in the hover tooltip.
+
+

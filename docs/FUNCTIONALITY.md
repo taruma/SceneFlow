@@ -115,6 +115,15 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 - **Classic Cards View**: Users can switch back to the legacy floating cards presentation at any time.
 - **Persistence**: View mode selection persists across sessions in `localStorage` (`sceneflow_highlight_view_mode`).
 
+### Timeline Window Zoom Presets (`4s` | `8s` | `16s`)
+- **Calibrated Time Horizons**: Users can switch between 3 discrete window span presets depending on editing or review intent:
+  - **`4s` (Close-up / Precision)**: A 4.0-second visible window displaying 1-second ticks and 1-second labels. Optimizes legibility for dense, rapid dialogue exchanges and frame-accurate cue boundaries.
+  - **`8s` (Default / Standard Sync)**: An 8.0-second visible window with 2-second major labels, balancing text snippet readability with forward lookahead anticipation.
+  - **`16s` (Overview / Macro Pacing)**: A 16.0-second visible window with adaptive 2-second tick marks and 4-second major labels, visualizing the broader rhythm of the scene and quiet vs. active periods.
+- **Context-Aware Header Segment**: Embedded directly to the left of the `Filters` button, the `[ 4s | 8s | 16s ]` control is rendered strictly in Timeline view, automatically hiding in Cards view without layout shift.
+- **Adaptive Level-of-Detail (LOD)**: As the zoom horizon widens, timecode ruler ticks automatically space out to prevent label collisions, while narrow cue blocks (`widthPercent < 3.5%`) gracefully omit inner text snippets in favor of centered category pips and hover tooltips.
+- **Session Persistence**: The chosen zoom preset is saved to `localStorage` (`sceneflow_timeline_zoom_preset`).
+
 ### Collapsible Filter Drawer & Toolbar (`HighlightFilterBar`)
 - **Smooth Drawer Collapse**: The 8-category filter pill bar is tucked into a smoothly collapsible container (`max-h-32 opacity-100` ⇋ `max-h-0 opacity-0`), saving ~35–40px of vertical space for the multi-track timeline tracks.
 - **Toolbar Toggle Button**: A dedicated `Filters` button sits immediately to the left of the view switcher in the header toolbar, persisting its expanded/collapsed state in `localStorage` (`sceneflow_highlight_filter_expanded`).

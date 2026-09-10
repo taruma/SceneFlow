@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Cue, TimingSettings } from '../../../types/script';
 import { CueThemeResolvedColor } from '../../../styles';
 import { isCueActive } from '../../../lib/cueUtils';
-import { TimelineDensity } from '../types';
+import { TimelineDensity, TimelineZoomPreset, TIMELINE_ZOOM_PRESETS } from '../types';
 import { useTimelineWindow } from '../timeline/useTimelineWindow';
 import { TimelineLane } from '../timeline/TimelineLane';
 import { TimelinePlayheadRuler } from '../timeline/TimelinePlayheadRuler';
@@ -21,6 +21,7 @@ interface HighlightTimelineViewProps {
   onSeekTo?: (seconds: number, autoPlay?: boolean) => void;
   density?: TimelineDensity;
   onToggleCueType?: (type: string) => void;
+  zoomPreset?: TimelineZoomPreset;
 }
 
 /**
@@ -38,8 +39,11 @@ export const HighlightTimelineView: React.FC<HighlightTimelineViewProps> = ({
   onSeekTo,
   density = 'comfortable',
   onToggleCueType,
+  zoomPreset = '8s',
 }) => {
   const [selectedCue, setSelectedCue] = useState<Cue | null>(null);
+
+  const spanSeconds = TIMELINE_ZOOM_PRESETS[zoomPreset]?.spanSeconds ?? 8.0;
 
   const {
     playheadPercent,
@@ -52,6 +56,9 @@ export const HighlightTimelineView: React.FC<HighlightTimelineViewProps> = ({
     settings,
     hiddenCueTypes,
     resolveCueColor,
+    config: {
+      totalSpanSeconds: spanSeconds,
+    },
   });
 
   // Identify all cues currently active under the playhead (respecting timing buffers)

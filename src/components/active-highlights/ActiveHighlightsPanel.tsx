@@ -4,19 +4,21 @@ import { COLORS } from '../../constants/script';
 import { useScriptTheme } from '../../hooks/useScriptTheme';
 import { cn } from '../../lib/utils';
 import { UI_TOKENS } from '../../styles/tokens/ui';
-import { ActiveHighlightsPanelProps, HighlightViewMode } from './types';
+import { ActiveHighlightsPanelProps, HighlightViewMode, TimelineZoomPreset } from './types';
 import { HighlightFilterBar } from './HighlightFilterBar';
 import { HighlightTimelineView } from './views/HighlightTimelineView';
 import { HighlightCardsView } from './views/HighlightCardsView';
 
 const STORAGE_KEY = 'sceneflow_highlight_view_mode';
 const FILTER_STORAGE_KEY = 'sceneflow_highlight_filter_expanded';
+const ZOOM_STORAGE_KEY = 'sceneflow_timeline_zoom_preset';
 
 /**
  * Top-level Active Highlights Panel orchestrator.
  *
  * Features:
  * - Segmented view mode switcher: [ 📊 Timeline | 🗂 Cards (Legacy) ] with persistent localStorage memory.
+ * - Timeline window zoom presets [ 4s | 8s | 16s ] to the left of filters (in Timeline mode).
  * - Live category filter bar with theme-resolved color pips and active pulse effects.
  * - Zero-layout-shift Multi-Track Sync Timeline (default modern view).
  * - Preserved Classic Cards list (legacy view).
@@ -37,8 +39,19 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
   onViewModeChange,
   onCueClick,
   density,
+  zoomPreset: controlledZoom,
+  onZoomPresetChange,
 }) => {
   const { resolveCueColor } = useScriptTheme(scriptThemeId as any);
+
+  // Persistent zoom preset state (default to '8s')
+  const [internalZoom, setInternalZoom] = useState<TimelineZoomPreset>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(ZOOM_STORAGE_KEY);
+      if (saved === '4s' || saved === '8s' || saved === '16s') return saved as TimelineZoomPreset;
+    }
+    return '8s';
+  });
 
   // Persistent view mode state (default to 'timeline')
   const [internalMode, setInternalMode] = useState<HighlightViewMode>(() => {
@@ -69,6 +82,7 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
   };
 
   const activeMode = controlledMode || internalMode;
+  const activeZoom = controlledZoom || internalZoom;
 
   const handleModeSwitch = (newMode: HighlightViewMode) => {
     setInternalMode(newMode);
@@ -76,6 +90,14 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
       localStorage.setItem(STORAGE_KEY, newMode);
     }
     onViewModeChange?.(newMode);
+  };
+
+  const handleZoomPresetChange = (preset: TimelineZoomPreset) => {
+    setInternalZoom(preset);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(ZOOM_STORAGE_KEY, preset);
+    }
+    onZoomPresetChange?.(preset);
   };
 
   // Memoize visible cues for counter and legacy cards view
@@ -156,8 +178,33 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
           </div>
         </div>
 
-        {/* Right: Filter Toggle + Segmented View Switcher */}
+        {/* Right: Zoom Presets (Timeline mode) + Filter Toggle + Segmented View Switcher */}
         <div className="flex items-center gap-1.5 shrink-0">
+          {/* Timeline Zoom Presets Switcher (Visible only in timeline mode, immediately to the left of filters) */}
+          {activeMode === 'timeline' && (
+            <div 
+              className="flex items-center p-0.5 bg-surface-subtle border border-border-subtle rounded-lg shadow-xs animate-in fade-in duration-200"
+              title="Timeline visible window duration"
+            >
+              {(['4s', '8s', '16s'] as const).map(preset => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => handleZoomPresetChange(preset)}
+                  title={`Zoom: ${preset} window`}
+                  className={cn(
+                    "px-1.5 py-0.5 text-[9px] font-mono font-black uppercase tracking-wider rounded transition-all select-none border",
+                    activeZoom === preset
+                      ? "bg-surface text-text-main border-border-main shadow-xs"
+                      : "text-text-muted hover:text-text-main border-transparent"
+                  )}
+                >
+                  {preset}
+                </button>
+              ))}
+            </div>
+          )}
+
           {/* Category Filter Pill Bar Toggle Button */}
           <button
             type="button"
@@ -245,6 +292,7 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
           onSeekTo={onSeekTo}
           density={density}
           onToggleCueType={toggleCueTypeVisibility}
+          zoomPreset={activeZoom}
         />
       ) : (
         <HighlightCardsView

@@ -70,6 +70,8 @@ When modifying application state, storage keys, or external fetching:
   - `'sceneflow_script_width_preset'`: Active desktop script width preset (`ScriptWidthPresetId`).
   - `'sceneflow_scroll_focus_preset'`: Active desktop auto-scroll focus anchor (`ScrollFocusPresetId`).
   - `'sceneflow_highlight_view_mode'`: Active highlights presentation mode (`HighlightViewMode`: `'timeline' | 'cards'`).
+  - `'sceneflow_highlight_filter_expanded'`: Collapsed/expanded state of playback category filters (`boolean`).
+  - `'sceneflow_timeline_zoom_preset'`: Active timeline visible window zoom preset (`TimelineZoomPreset`: `'4s' | '8s' | '16s'`).
 - **Query Parameters**: On application mount, inspect `window.location.search`:
   - `?example=ID`: Matches an example `id` from `EXAMPLE_SECTIONS` in `src/examples.ts`.
   - `?project=URL`: Loads a remote CORS-enabled JSON project.
@@ -158,4 +160,7 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
    - **Numeric Tabular Width Isolation**: When displaying numeric counters that oscillate between single and double digits during playback, always isolate the digit inside a dedicated fixed-width slot (`min-w-[14px] font-mono tabular-nums text-center`) to mathematically prevent horizontal jitter.
    - **Collapsible Secondary Filters**: Muting/category filter pill rows in playback headers must remain collapsible by default (`localStorage` key `sceneflow_highlight_filter_expanded`) to prioritize vertical viewport space for timeline lanes, accompanied by an active indicator pip on the toggle button whenever filters are muted.
 
-
+10. **Timeline Zoom Presets & Adaptive Timecode Invariants**:
+    - **Bounded Presets Over Freeform Zoom**: Use discrete, calibrated zoom window presets (`TIMELINE_ZOOM_PRESETS`: `'4s' | '8s' | '16s'`) rather than unrestricted continuous pinch/scroll zoom to guarantee visual stability and predictable sub-lane packing.
+    - **Adaptive Timecode Ruler Ticks (LOD)**: To prevent label collision and DOM churn at wider horizons, scale ruler tick steps adaptively (1s intervals for `4s`/`8s`, 2s step with 4s major labels for `16s`).
+    - **Narrow Block Label Elision**: When blocks shrink during wide zooms (`widthPercent < 3.5%`), omit inner text snippets and center the category pip, retaining full cue text via hover tooltip and paused inspector docking.
