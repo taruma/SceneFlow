@@ -14,7 +14,7 @@ To load a remote project, use `?project=URL`.
 
 ---
 
-## AI Scenes (15)
+## AI Scenes (16)
 
 | Date | ID | Title | Video Model |
 |---|---|---|---|
@@ -22,6 +22,7 @@ To load a remote project, use `?project=URL`.
 | 2026-08-09 | `scene_entropy` | Entropy | Seedance 2.5 |
 | 2026-08-08 | `scene_frequency` | Frequency Over Force *(default)* | Seedance 2.5 |
 | 2026-07-17 | `scene_still_here` | Still Here | Seedance 2.0 |
+| 2026-06-16 | `scene_vector_field` | Vector Field | Seedance 2.0 |
 | 2026-06-13 | `museum` | Museum | Seedance 2.0 |
 | 2026-05-24 | `afraid` | Afraid | Seedance 2.0 |
 | 2026-05-22 | `not_about_fish` | Not About Fish | Seedance 2.0 |

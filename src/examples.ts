@@ -150,6 +150,15 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         releaseDate: '2026-08-11',
         tags: ['auteur script', 'seedance 2.5'],
         featured: false
+      },
+      {
+        id: 'scene_vector_field',
+        title: 'Vector Field',
+        path: '/examples/scenes/scene_vector_field.json',
+        description: 'An unexplained disk awakens beneath them, carving massive geometric patterns into the earth.',
+        releaseDate: '2026-06-16',
+        tags: ['auteur script', 'seedance 2.0'],
+        featured: true
       }
     ]
   },
