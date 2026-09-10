@@ -5,6 +5,55 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.1] - 2026-09-11
+
+### Added
+- **Substack Introduction Article Integration & Centralized External Links (`src/constants/links.ts`, `src/components/AppHeader.tsx`, `src/components/ScriptHeaderControls.tsx`, `src/components/AppInfoModal.tsx`)**:
+  - Added direct links to the official deep-dive article (*[Introducing SceneFlow: Script-to-Screen Synchronization](https://taruma.substack.com/p/sceneflow-script-to-screen)*) on Substack (*Grounded Hallucinations* by Taruma Sakti).
+  - **Desktop Header Action Pill (`AppHeader.tsx`)**: Positioned an `[Article]` pill to the left side of `[Guide]`, strictly consuming `UI_TOKENS.button.actionPill` and responsive typography (`<span className="hidden xl:inline">Article</span>`) to harmonize with all application shell theme presets.
+  - **Mobile Screenplay Header Icon Button (`ScriptHeaderControls.tsx`)**: Placed an icon-only `<Newspaper size={12} />` button to the left of `[Library]`, preserving mobile horizontal headroom with accessible `title` and `aria-label` tags.
+  - **Featured Article Card (`AppInfoModal.tsx`)**: Designed a structured hero-level card in the desktop info dialog above the 2x2 resource grid, featuring a top metadata bar (`[SUBSTACK ARTICLE]` badge + `Read Article ↗` link) and a dedicated full-width title and summary section.
+  - **Centralized Links Configuration (`src/constants/links.ts`)**: Centralized `EXTERNAL_LINKS` (`article`, `articleTitle`, `kofi`, `github`, `docs`, `changelog`, `author`) to eliminate redundant hardcoded URL strings across the app shell.
+- **Vector Field [AI Scenes] Example Project (`public/examples/scenes/scene_vector_field.json`, `src/examples.ts`, `SCENEFLOW_CATALOGUE.md`)**:
+  - Registered new high-concept cyberpunk sci-fi AI Scene example *Vector Field* (`scene_vector_field`) generated with Seedance 2.0.
+  - Features 32 synchronized cues across dialogue, action, shots, camera angles, and soundscapes with complete scene prompt metadata.
+
+### Changed
+- **Screenplay Visual Themes Modal Compact 2-Column Redesign & Checkmark Occlusion Fix (`src/components/ScriptColorModal.tsx`)**:
+  - Redesigned the desktop theme presets layout from a 3-column grid (`lg:grid-cols-3`) to a compact, responsive 2-column grid (`grid-cols-1 sm:grid-cols-2`), eliminating vertical viewport scrolling on standard desktop displays.
+  - Consolidated top controls: Repositioned the **Pure Black Canvas (Video Overlay Mode)** toggle from the bottom of the modal up to the header tier alongside the **Cue Palette Accessibility Profile** selector into a unified 2-column options bar.
+  - Resolved checkmark occlusion bug where the selected state badge (`absolute top-2 right-2`) collided with and obscured the right edge of the theme category badge (`LIGHT`, `DARK`, `WARM`). Moved the checkmark indicator into natural flex flow beside the theme badge (`[LIGHT] [✓]`).
+  - Optimized vertical density across modal header (`px-4 py-3 sm:px-6 sm:py-3.5`), tabs, body spacing (`p-3.5 sm:p-4 space-y-3`), swatch cards (`p-2.5 sm:p-3`), single-line descriptions (`line-clamp-1`), live script preview paper (`p-2 text-[9px]`), and active theme summary strip.
+- **Starter Guide Script & Onboarding Tutorial Synchronization (`docs/_dropbox/guide.txt`, `public/examples/blank.json`)**:
+  - Synchronized the instructional guide reference (`docs/_dropbox/guide.txt`) and starter tutorial project (`public/examples/blank.json`) with SceneFlow v2.3.0 capabilities.
+  - Documented modern workspace features: Multi-Track Sync Timeline (35% anticipation playhead, continuous timecode ruler, zoom presets `4s | 8s | 16s`, `Flex` / `Fixed` track height modes, lane mute toggles), Paused Inspector card with instant Replay, Screen Recording Mode (<kbd>V</kbd>), Dual-Axis Splitters, Studio VU Meter, Pure Black Canvas (Video Overlay Mode), CVD Accessibility palettes, and global keyboard shortcuts.
+  - Corrected legacy UI references: updated cue creation to the left sidebar "New Sync Cue" panel with clock timestamp snapping and in-place monospace text editing, multi-select Focus Mode, and curated 4-tier Library catalogue sections.
+  - Re-anchored cue character offsets (`startIndex` / `endIndex`) across all 100+ cues in `public/examples/blank.json` to maintain frame-accurate timeline synchronization with the updated guide text, and upgraded legacy cue color classes to canonical v2.3.0 tokens (`bg-blue-500/50`, `bg-indigo-400/50`).
+
+### Fixed
+- **Timing Settings General Master Offset Dark Mode Contrast & Design System Alignment (`src/components/TimingSettingsModal.tsx`, `src/styles/tokens/ui.ts`)**:
+  - Resolved an inverted contrast bug in the Timing Settings modal where the "General Master Offset" card was hardcoded with static light-mode utilities (`bg-blue-50 border-2 border-blue-100`), creating a blinding white container with pitch-black input boxes (`bg-surface`) in Dark Mode.
+  - Centralized `UI_TOKENS.panel.accentCardBlue` (`p-6 bg-blue-500/10 border border-blue-500/20 rounded-3xl space-y-4`) to provide consistent alpha-translucent accent panel styling across Light, Warm, Dark, and Pure Black App Shell themes.
+  - Aligned `UI_TOKENS.input.numberBoxLg` by replacing hardcoded `border-2 border-blue-100` with theme-calibrated `border border-blue-500/30 focus:border-blue-500`, ensuring clean definition without stark pale outlines on dark surfaces.
+  - Updated master offset header typography to `text-blue-500` and helper description to `text-text-muted italic` for guaranteed legibility across all shell themes.
+- **Auto-Scroll Split Button Geometry & Unified Palette (`src/components/ScriptHeaderControls.tsx`)**:
+  - Resolved a height mismatch where the right dropdown chevron button was shorter than the main Auto-Scroll toggle button, creating an unsightly stepped lip at the top and bottom edges.
+  - Replaced parent container `items-center` with `items-stretch` and centered the chevron icon (`flex items-center justify-center`), ensuring both halves stretch to equal height.
+  - Unified the active background (`bg-blue-500`) and border styling across both buttons, removing the jarring two-tone color contrast and adding a crisp 1px inner divider border (`border-l`).
+- **Auto-Scroll Focus Dropdown Alignment & Offscreen Overflow Fix (`src/styles/tokens/ui.ts`)**:
+  - Fixed an alignment bug where `UI_TOKENS.dropdown.menu` used `right-0`, anchoring the dropdown to the right edge of the Auto-Scroll button and expanding 176px (`w-44`) to the left, which caused the dropdown to clip off the left screen edge on mobile devices.
+  - Updated `UI_TOKENS.dropdown.menu` to `left-0` (and added `menuLeft` and `menuRight` tokens), ensuring the menu drops down aligned to the button's left edge and remains completely visible within mobile viewports.
+- **Mobile Playback Header Density & Theme Icon Button (`src/components/ScriptHeaderControls.tsx`)**:
+  - Streamlined the mobile playback header by transitioning the Theme trigger from a text-and-icon button (`<Palette size={10} /> Theme`) into a compact icon-only control (`<Palette size={12} />`), reclaiming ~35px of horizontal space and creating visual consistency with the Ko-fi support pill and desktop theme buttons.
+- **Auto-Scroll Focus Category Uppercase Typography (`src/components/ScriptHeaderControls.tsx`)**:
+  - Replaced CSS `capitalize` with `uppercase tracking-wider` for category labels in the Auto-Scroll "Focus Mode" dropdown.
+  - Aligned category labels with industry-standard screenplay cue formatting (ALL CAPS) and resolved the title-case acronym artifact where VFX was displayed as "Vfx".
+- **Auto-Scroll Dropdown & Timing Settings Dynamic Cue Color Resolution (`src/components/ScriptHeaderControls.tsx`, `src/components/TimingSettingsModal.tsx`, `src/App.tsx`)**:
+  - Resolved an omission from the v2.3.0 cue palette overhaul where category indicator dots inside the Auto-Scroll "Focus Mode" dropdown in `ScriptHeaderControls.tsx` were left using static fallback classes (`color.class`) with translucent 50% opacity (`bg-.../50`), bypassing the active script theme and the Protanopia CVD palette profile.
+  - Wired `scriptThemeId` and `cuePaletteProfile` down through `ScriptHeaderControlsProps` and `TimingSettingsModalProps` from `App.tsx`.
+  - Replaced static dot classes with theme-calibrated `themed.dotColor` (`getCueColorForTheme`), enhanced dot geometry to `w-2 h-2 rounded-full shrink-0 shadow-2xs`, and added an active white ring (`ring-1 ring-white/40`) when selected so category dots never wash out against the primary blue selection background.
+  - Aligned `TimingSettingsModal.tsx` category grid indicator dots to similarly resolve `themed.dotColor` dynamically with the active script theme and accessibility profile.
+
 ## [2.3.0] - 2026-09-10
 
 ### Added

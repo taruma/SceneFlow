@@ -45,11 +45,13 @@ SceneFlow supports selectable cue palette profiles (`CuePaletteProfile`: `'stand
    - **Remapping Guard**: In the `protanopia` profile, **Shot** is strictly remapped away from the blue/indigo spectrum to **Deep Wine / Burgundy** (`rgb(136, 19, 55)` in light paper / `rgb(225, 29, 72)` in dark paper). This produces a distinct dark chocolate-wine tone ($L^* \approx 25$) that provides stark luminance and chromatic separation against Cobalt Blue Action ($L^* \approx 50$).
    - **Complementary Vibrancy**: VFX is elevated to high-luminance Ice Aqua (`rgb(103, 232, 249)` in dark themes, $L^* \approx 85$) and Transition to warm Vermilion Coral (`rgb(234, 88, 12)`), preventing overlap across all 8 categories.
 2. **Dynamic Resolution Invariant**:
-   - Any component or hook resolving cue colors (`useScriptTheme`, `getCueColorForTheme`, `resolveCueColor`) must accept and forward the active `paletteProfile`.
+   - Any component or hook resolving cue colors (`useScriptTheme`, `getCueColorForTheme`, `resolveCueColor`) must accept and forward the active `paletteProfile` and `scriptThemeId`.
+   - Never render category color dots or selection pills with static Tailwind classes (`color.class`); always resolve dynamically via `themed.dotColor` or `rgb(${themed.rgb})` with `scriptThemeId` and `cuePaletteProfile` calibration to ensure consistency across light, warm, dark, and CVD-safe modes.
 3. **Backward Compatibility Invariant**:
    - Historical script JSON files and local states containing legacy Tailwind classes (`bg-purple-400/50`, `bg-pink-400/50`, `bg-blue-400/50`, `bg-green-400/50`) must always be normalized via `LEGACY_CLASS_MAP` in `cueUtils.ts` and `cues.ts` without data loss.
 
 ## 5. Token Pairing & Surface Contrast Invariants
 - **Primary Button Inversion**: `--btn-primary-text` is specifically paired with `--btn-primary-bg`. In dark mode, primary action buttons invert to light backgrounds (`#f5f5f4`), causing `--btn-primary-text` to become dark (`#1c1917`).
 - **Surface Isolation Guard**: Never use `text-btn-primary-text` inside permanently dark surfaces such as `bg-surface-dark` (e.g., `currentTimePill`, `currentTimePillSm`), as this creates near-black on black contrast failure (~1.1:1). Always use explicit `text-white` or tokens coupled with the appropriate surface background.
+- **Translucent Accent Surfaces Invariant**: Container panels designed with chromatic emphasis or callouts (such as the General Master Offset card in `TimingSettingsModal`) must strictly utilize alpha-translucent tokens (`bg-blue-500/10`, `border-blue-500/20`) rather than opaque static light-mode fills (`bg-blue-50`, `border-blue-100`). This ensures callout cards produce an ambient accent wash on light surfaces while naturally illuminating as a sleek, low-glare dark navy container in dark and pure black modes without inverting nested input contrast.
 

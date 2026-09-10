@@ -99,6 +99,10 @@ Centralized application constants and configuration:
 - **`SCRIPT_WIDTH_PRESETS`**: Five reading-column width presets (`narrow` 384px, `compact` 448px, `standard` 576px, `wide` 768px, `full` 1024px).
 - **`SCROLL_FOCUS_PRESETS`**: Three auto-scroll anchor presets (`top` 35%, `center` 50%, `bottom` 65%).
 
+### `src/constants/links.ts`
+Centralized repository, guide, publication, and author links:
+- **`EXTERNAL_LINKS`**: Unified URLs for the official Substack introduction article (`article`, `articleTitle`), creator support (`kofi`), source repository (`github`), documentation guide (`docs`), release changelog (`changelog`), and author profile (`author`).
+
 ---
 
 ## 3. Visuals & Design Tokens Layer (`src/styles/`)
@@ -111,9 +115,9 @@ The visuals layer encapsulates all styling tokens, color schemes, UI chrome toke
   - `modal`: Backdrop overlays (`overlay`, `overlayHeavy`, `overlayHighZ`), responsive containers (`containerSm`, `containerMd`, `containerLg`, `containerXl`, `containerLibrary`, `containerStaging`), standard headers, footers, and padding tokens.
   - `dropdown`: Focus mode, width preset, and scroll focus preset dropdown menus, headers, and interactive items.
   - `button`: Primary, secondary, danger, header icon action buttons, mode switchers, sort toggles, action pills, support pills, and close buttons.
-  - `input`: Search inputs, multiline textareas, code boxes, number boxes, and label typography.
+  - `input`: Search inputs, multiline textareas, code boxes, standard/accented number boxes (`numberBox`, `numberBoxLg`), and label typography.
   - `badge`: Counter tags, timestamp pills, and desktop/mobile current time pill badges (`currentTimePill`, `currentTimePillSm`).
-  - `panel`: Banners, interactive cards, empty placeholders, and legend containers.
+  - `panel`: Banners, interactive cards, empty placeholders, legend containers, and alpha-accent callout cards (`accentCardBlue`).
   - `swatch` & `alert`: Theme preview swatches and notification banners.
 - **`src/index.css`**: Semantic CSS custom properties defined in `:root` (`--app-bg`, `--surface`, `--surface-subtle`, `--border-main`, `--text-main`, `--overlay-bg`, `--color-support`, etc.) and mapped directly into Tailwind CSS v4's `@theme` directive.
 - **`src/styles/tokens/themes.ts` (`SCRIPT_THEMES`)**: Defines six visual themes categorized into `light`, `warm`, and `dark` alongside `SCRIPT_THEME_MAP`, `DEFAULT_SCRIPT_THEME`, and `THEME_CATEGORIES`.
@@ -230,7 +234,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 - **Cue Sanitization Pipeline**: All data ingress paths (localStorage restore, default load, blank, example, remote fetch) route through `sanitizeCues()` in `useScriptStorage`, guaranteeing deterministic IDs and `type`/`colorClass` normalization.
 
 ### Modular Sub-components (`src/components/`)
-1. **`AppHeader.tsx`**: Global navigation header with SceneFlow logo, Guide/Library/Ko-fi action buttons, real-time playback clock, Playback/Edit mode toggle, and the "Reset View" layout button (`RotateCcw`).
+1. **`AppHeader.tsx`**: Global navigation header with SceneFlow logo, Article/Guide/Library/Ko-fi action buttons, real-time playback clock, Playback/Edit mode toggle, and the "Reset View" layout button (`RotateCcw`).
 2. **`InitializingScreen.tsx`**: Branded initial load screen displaying the SceneFlow logo with subtle animation.
 3. **`YoutubeSourceInput.tsx`**: YouTube URL/ID input with live player connection indicator and automatic ID extraction using `UI_TOKENS.input`.
 4. **`ScriptManagementBar.tsx`**: Screenplay status banner showing loaded line count with an "Edit Raw" action button styled with `UI_TOKENS`.
@@ -241,9 +245,9 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 9. **`OverlapPicker.tsx`**: Floating context popup for selecting which overlapping cue to edit at a shared position.
 10. **`DeleteConfirmationModal.tsx`**: Confirmation dialog with cue text preview prior to permanent deletion styled via `UI_TOKENS`.
 11. **`ResetConfirmationModal.tsx`**: Multi-purpose confirmation dialog for resetting settings, loading guide scripts, loading examples, or fetching remote projects, featuring integrated CORS error reporting and styled via `UI_TOKENS`.
-12. **`TimingSettingsModal.tsx`**: Full-screen configuration modal for per-category timing buffers (before/after offsets) and General Master Offset using `UI_TOKENS`.
-13. **`ScriptColorModal.tsx`**: Theme and color management dialog featuring a "Theme Presets" tab with mini live paper preview cards, a segmented Cue Palette Accessibility Profile toggle (`Standard Cinema` vs. `Protan & Deutan Safe`), and an "Element Inspector" tab displaying token details and the 8-category highlight spectrum using `UI_TOKENS.swatch`.
-14. **`ScriptHeaderControls.tsx`**: Playback-mode control bar with auto-scroll toggle, target-type multi-select dropdown, reading width preset selector, and scroll focus preset selector.
+12. **`TimingSettingsModal.tsx`**: Full-screen configuration modal for per-category timing buffers (before/after offsets) and General Master Offset, displaying dynamic theme- and accessibility-profile-calibrated category dots via `getCueColorForTheme` and styled using `UI_TOKENS`.
+13. **`ScriptColorModal.tsx`**: Theme and color management dialog featuring a compact zero-scroll "Theme Presets" tab with 2-column widescreen paper preview cards, top-tier dual controls (Cue Palette Accessibility Profile and Pure Black Video Overlay toggle), collision-free selection indicators, and an "Element Inspector" tab displaying token details and the 8-category highlight spectrum using `UI_TOKENS.swatch`.
+14. **`ScriptHeaderControls.tsx`**: Playback-mode control bar with auto-scroll toggle, viewport-safe left-aligned target-type multi-select Focus Mode dropdown (`UI_TOKENS.dropdown.menu` with dynamic `getCueColorForTheme` category dots synchronized to active script theme and CVD profile), reading width preset selector, scroll focus preset selector, and compact mobile icon-only Theme and Article buttons.
 15. **`ActiveHighlightsPanel` (`src/components/active-highlights/`)**: Modular playback visualization sub-package featuring:
     - **`ActiveHighlightsPanel.tsx`**: Main orchestrator featuring an **Adaptive Header** layout via `ResizeObserver` (560px threshold): consolidates into a single unified row when wide ($\ge 560\text{px}$) to save vertical headroom, and automatically splits into a Two-Tier Header when narrow ($< 560\text{px}$) where Tier 1 houses `Highlights` + Studio VU Meter + View Switcher, and Tier 2 houses Track Height + Zoom presets + Filters toggle button.
     - **`HighlightTimelineView.tsx`**: Multi-Track Sync Timeline view with dynamic density scaling (`TimelineDensity`: `'comfortable'` 32px vs. `'compact'` 24px), timeline zoom preset integration (`zoomPreset`), height mode integration (`heightMode`: `'flexible' | 'fixed'`), stationary 35% anticipation playhead, and docked inspector card.
@@ -259,7 +263,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 19. **`LibraryModal.tsx`**: Desktop library catalogue modal featuring real-time search, category navigation, sorting (Latest, Oldest, A-Z), section badges, and featured curations.
 20. **`MobileLibraryModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a touch-friendly category filter and search interface.
 21. **`StagingModal.tsx`**: Monospace overlay displaying hidden camera, lighting, or lookbook directives from `[[STAGING]]` blocks.
-22. **`AppInfoModal.tsx`**: Desktop application info and about dialog displaying dynamic versioning from `metadata.json`, author attribution for Taruma Sakti ([Linktree](https://linktr.ee/tarumainfo)), 2x2 resource badge grid, and keyboard shortcuts cheat sheet.
+22. **`AppInfoModal.tsx`**: Desktop application info and about dialog displaying dynamic versioning from `metadata.json`, author attribution for Taruma Sakti ([Linktree](https://linktr.ee/tarumainfo)), structured Featured Substack Article card, 2x2 resource badge grid, and keyboard shortcuts cheat sheet.
 23. **`MobileColorModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a thumb-friendly 4-segment App Shell switcher, the Cue Palette Accessibility Profile selector (`Standard` vs. `Protan Safe`), and 6 compact screenplay preset cards.
 
 ### Type Definitions & Data Schemas

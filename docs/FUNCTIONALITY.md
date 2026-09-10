@@ -172,6 +172,14 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 - **Continuous Operation While Video Is Collapsed**: Even when the video viewport is hidden via the `Hide Video` toggle or <kbd>V</kbd> key, the transport controls remain pinned in the header, allowing users to control playback and audio during timeline screen recording.
 - **Fluid Viewport Responsiveness**: Button labels automatically collapse to compact icon buttons on mobile/tablet viewports (`hidden sm:inline`), ensuring zero header wrapping.
 
+### Global Header Navigation & External Resources (`AppHeader`, `ScriptHeaderControls`)
+- **Desktop Navigation Action Pills**: The top global header toolbar provides quick-access action pills (`[Article]`, `[Guide]`, `[Library]`, `[Support]`):
+  - **`Article`**: Direct link to the official introductory deep dive (*Introducing SceneFlow: Script-to-Screen Synchronization* on Substack), styled via `UI_TOKENS.button.actionPill` with responsive text collapsing (`hidden xl:inline`) on compact viewports.
+  - **`Guide`**: Loads the official starter guide screenplay project into the active workspace.
+  - **`Library`**: Opens the curated modal catalogue of screenplay examples and templates.
+  - **`Support`**: Direct external link to Ko-fi creator support.
+- **Mobile Header Density**: In mobile viewports (`ScriptHeaderControls`), the Article button is rendered as a compact icon-only control (`<Newspaper size={12} />`) with accessible `title` and `aria-label` tags to preserve toolbar space alongside the Theme palette, Library, and Support controls.
+
 
 ---
 
@@ -184,6 +192,10 @@ Users can choose which cue categories trigger auto-scrolling via the "Focus Mode
 - Defaults to tracking `dialogue`.
 - Can be multi-selected to follow any combination (e.g., `dialogue` + `action` + `camera`).
 - Features quick "Select All" and "Reset" toggles.
+- **Unified Split-Button Geometry**: Features a unified split button linking the primary auto-scroll toggle with the focus dropdown chevron, bound by `items-stretch` to guarantee equal height and consistent color styling without stepped lips or color mismatch.
+- **Dynamic Category Indicators**: Indicator dots dynamically calibrate to the active script paper theme and cue palette profile (Standard 360° vs. Protan & Deutan Safe) via `getCueColorForTheme`, reinforced with an active ring border (`ring-1 ring-white/40`) when selected so colors never clash or wash out against primary blue selection surfaces.
+- **Viewport-Safe Responsive Dropdown Alignment**: The Focus Mode dropdown anchors with left-alignment (`left-0`), expanding downward and rightward into the viewport so all category items and controls remain fully visible without mobile boundary clipping or offscreen overflow.
+- **Uppercase Category Nomenclature**: Category labels are rendered in uppercase with letter tracking (`uppercase tracking-wider`), matching standard screenplay industry formatting conventions (ALL CAPS sluglines and cues) and ensuring acronyms like **VFX** are cleanly rendered without awkward title-casing.
 
 ### Priority Resolution Logic
 When multiple cues are active simultaneously:
@@ -221,11 +233,11 @@ Users can toggle between six screenplay visual themes via the desktop `ScriptCol
   - *OLED Blackout*: Pure black (`#000000`) for power efficiency and high-contrast glow.
   - *Navy Slate (Cyber Matrix)*: Deep navy-tinted dark paper with atmospheric glow.
 - **Desktop Theme Modal (`ScriptColorModal`)**:
-  - **Theme Presets Tab**: Shows side-by-side cards with live mini paper previews (heading banner, script text line, staging pill, and cue highlight chips).
-  - **Element Inspector Tab**: Displays active paper and structural tokens alongside the full 8-category highlight spectrum.
+  - **Theme Presets Tab**: Compact zero-scroll layout featuring a top controls row (Cue Palette Accessibility Profile segmented buttons + Pure Black Canvas toggle switch) above a 2-column grid of theme cards with live mini paper previews (heading banner, dialogue line, staging pill, and cue highlight dots) and non-overlapping selection checkmarks.
+  - **Element Inspector Tab**: Displays active paper and structural tokens alongside the full 8-category highlight spectrum with live accessibility profile calibration.
   - Includes a single-click "Reset" button to restore the default *Studio Crisp* theme.
 - **Mobile Theme Drawer (`MobileColorModal`)**:
-  - A touch-friendly bottom-sheet drawer with a 4-segment App Shell switcher (`Auto`, `Light`, `Warm`, `Dark`) and 6 compact screenplay cards styled in their true paper colors and typography contrast.
+  - A touch-friendly bottom-sheet drawer with a 4-segment App Shell switcher (`Auto`, `Light`, `Warm`, `Dark`) and 6 compact screenplay cards styled in their true paper colors and typography contrast, triggered via the icon-only palette button (`<Palette size={12} />`) in the mobile playback header.
 
 ### Cue Palette Accessibility Profile (Standard vs. Protan & Deutan Safe)
 Accessible directly inside both `ScriptColorModal` and `MobileColorModal`:
@@ -267,6 +279,8 @@ Fine-tunes highlight visibility timing before and after actual cue timestamps:
 - **Negative Offsets**: Supports negative values to display highlights earlier or end them sooner.
 - **Formula**: `Effective Visibility Window = [StartTime - (GlobalBefore + CategoryBefore), EndTime + (GlobalAfter + CategoryAfter)]`.
 - **Timeline & Inspector Synchronization**: The timeline's active playhead detection and docked inspector honor the full visibility window, illuminating cues across their `before`/`after` lead-in while maintaining accurate audio media positions on the ruler.
+- **Dynamic Theme-Aware Swatches**: Each category configuration card displays a color indicator dot dynamically resolved with the active script theme and CVD accessibility profile via `getCueColorForTheme`.
+- **Theme-Calibrated Master Control**: The General Master Offset hero panel and its high-density numerical inputs strictly adhere to App Shell design system tokens (`UI_TOKENS.panel.accentCardBlue` and `UI_TOKENS.input.numberBoxLg`), providing seamless alpha-tinted styling across Light, Warm, Dark, and Pure Black themes.
 - Reset button restores all timing settings to `0.0s` defaults.
 
 ---
@@ -307,8 +321,9 @@ For a complete and up-to-date list of all available sceneflow projects, release 
 
 ### Desktop App Info Modal (`AppInfoModal`)
 Accessible via the `i` (Info) icon button in the desktop header toolbar:
-- **Dynamic Version & Metadata**: Automatically loads current version (`v2.3.0`), app title, and description directly from `metadata.json`.
+- **Dynamic Version & Metadata**: Automatically loads current version (`v2.3.1`), app title, and description directly from `metadata.json`.
 - **Author Attribution**: Features creator credit for **Taruma Sakti** in header and footer linking directly to [Linktree](https://linktr.ee/tarumainfo).
+- **Featured Substack Deep Dive**: Prominent hero card showcasing the official introductory article (*Introducing SceneFlow: Script-to-Screen Synchronization* on Substack) with a dedicated header badge, full-width summary, and direct article link.
 - **Interactive Resource Grid**: 2x2 resource links for GitHub Repository, Documentation / Guide, Release Notes (Changelog), and Ko-fi Support.
 - **MIT License**: License status indicator.
 

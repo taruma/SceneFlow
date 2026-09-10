@@ -8,10 +8,13 @@ import {
   Coffee, 
   Palette,
   MoveHorizontal, 
-  AlignVerticalJustifyCenter 
+  AlignVerticalJustifyCenter,
+  Newspaper
 } from 'lucide-react';
 import { COLORS, SCRIPT_WIDTH_PRESETS, SCROLL_FOCUS_PRESETS } from '../constants/script';
+import { EXTERNAL_LINKS } from '../constants/links';
 import { ScriptWidthPresetId, ScrollFocusPresetId } from '../types/script';
+import { getCueColorForTheme, type CuePaletteProfile } from '../lib/scriptStyles';
 import { cn } from '../lib/utils';
 import { UI_TOKENS } from '../styles/tokens/ui';
 
@@ -34,6 +37,8 @@ interface ScriptHeaderControlsProps {
   isScrollFocusDropdownOpen: boolean;
   setIsScrollFocusDropdownOpen: (open: boolean) => void;
   currentTime: number;
+  scriptThemeId?: string;
+  cuePaletteProfile?: CuePaletteProfile;
 }
 
 export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
@@ -55,6 +60,8 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
   isScrollFocusDropdownOpen,
   setIsScrollFocusDropdownOpen,
   currentTime,
+  scriptThemeId,
+  cuePaletteProfile = 'standard',
 }) => {
   return (
     <div className={mode === 'playback' ? UI_TOKENS.layout.scriptHeaderPlayback : UI_TOKENS.layout.scriptHeader}>
@@ -65,12 +72,14 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
       <div className="flex items-center gap-2 lg:gap-4">
         {mode === 'playback' && (
           <div className="flex items-center gap-2">
-            <div className="relative flex items-center">
+            <div className="relative flex items-stretch">
               <button
                 onClick={() => setIsAutoScrollEnabled(!isAutoScrollEnabled)}
                 className={cn(
                   "flex items-center gap-1.5 px-2 py-1 rounded-l-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border-y border-l shadow-sm",
-                  isAutoScrollEnabled ? "bg-blue-500 text-white border-blue-600" : "bg-surface text-text-faint border-border-main hover:text-text-main"
+                  isAutoScrollEnabled 
+                    ? "bg-blue-500 text-white border-blue-600 hover:bg-blue-600" 
+                    : "bg-surface text-text-faint border-border-main hover:text-text-main hover:bg-surface-hover"
                 )}
                 title={isAutoScrollEnabled ? "Auto-scroll enabled" : "Auto-scroll disabled"}
               >
@@ -80,9 +89,13 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
               <button
                 onClick={() => setIsAutoScrollDropdownOpen(!isAutoScrollDropdownOpen)}
                 className={cn(
-                  "px-1 py-1 rounded-r-lg border-y border-r shadow-sm transition-all active:scale-95",
-                  isAutoScrollEnabled ? "bg-blue-600 text-white border-blue-700" : "bg-surface text-text-faint border-border-main hover:text-text-main"
+                  "flex items-center justify-center px-1.5 py-1 rounded-r-lg border-y border-r border-l shadow-sm transition-all active:scale-95",
+                  isAutoScrollEnabled 
+                    ? "bg-blue-500 text-white border-blue-600 border-l-blue-600/50 hover:bg-blue-600" 
+                    : "bg-surface text-text-faint border-border-main border-l-border-subtle hover:text-text-main hover:bg-surface-hover"
                 )}
+                title="Auto-scroll settings"
+                aria-label="Auto-scroll settings"
               >
                 <ChevronDown size={10} className={cn("transition-transform duration-200", isAutoScrollDropdownOpen && "rotate-180")} />
               </button>
@@ -113,6 +126,7 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                     <div className="p-1 max-h-64 overflow-y-auto">
                       {COLORS.map(color => {
                         const isSelected = autoScrollTargets.includes(color.type);
+                        const themed = getCueColorForTheme(color.type, scriptThemeId as any, cuePaletteProfile);
                         return (
                           <button
                             key={color.type}
@@ -127,12 +141,18 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                               });
                             }}
                             className={cn(
-                              "w-full flex items-center justify-between px-3 py-2 rounded-lg text-[10px] font-bold transition-colors capitalize",
+                              "w-full flex items-center justify-between px-3 py-2 rounded-lg text-[10px] font-bold tracking-wider uppercase transition-colors",
                               isSelected ? "bg-btn-primary-bg text-btn-primary-text" : "text-text-body hover:bg-surface-subtle"
                             )}
                           >
                             <div className="flex items-center gap-2">
-                              <div className={cn("w-1.5 h-1.5 rounded-full", color.class)} />
+                              <div 
+                                className={cn(
+                                  "w-2 h-2 rounded-full shrink-0 shadow-2xs",
+                                  isSelected && "ring-1 ring-white/40"
+                                )}
+                                style={{ backgroundColor: themed.dotColor }}
+                              />
                               {color.type}
                             </div>
                             {isSelected && <Check size={10} />}
@@ -147,12 +167,23 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
             {setIsColorModalOpen && (
               <button 
                 onClick={() => setIsColorModalOpen(true)}
-                className="lg:hidden flex items-center gap-1 px-2 py-1 bg-surface-muted hover:bg-surface-hover rounded text-[10px] font-bold text-text-body transition-colors active:scale-95"
+                className="lg:hidden flex items-center justify-center p-1.5 bg-surface-muted hover:bg-surface-hover rounded-lg text-text-body hover:text-text-main transition-colors active:scale-95 shadow-xs"
                 title="Screenplay & App Theme Settings"
+                aria-label="Screenplay & App Theme Settings"
               >
-                <Palette size={10} /> Theme
+                <Palette size={12} />
               </button>
             )}
+            <a 
+              href={EXTERNAL_LINKS.article}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Read Introduction Article on Substack"
+              aria-label="Read Introduction Article on Substack"
+              className="lg:hidden flex items-center justify-center p-1.5 bg-surface-muted hover:bg-surface-hover rounded-lg text-text-body hover:text-text-main transition-colors active:scale-95 shadow-xs"
+            >
+              <Newspaper size={12} />
+            </a>
             <button 
               onClick={() => setIsLibraryOpen(true)}
               className="lg:hidden flex items-center gap-1 px-2 py-1 bg-surface-muted hover:bg-surface-hover rounded text-[10px] font-bold text-text-body transition-colors active:scale-95"
@@ -160,7 +191,7 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
               <Book size={10} /> Library
             </button>
             <a 
-              href="https://ko-fi.com/tarumainfo"
+              href={EXTERNAL_LINKS.kofi}
               target="_blank"
               rel="noopener noreferrer"
               title="Support on Ko-fi"

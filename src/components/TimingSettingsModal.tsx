@@ -2,6 +2,7 @@ import React from 'react';
 import { Settings, X, RefreshCw } from 'lucide-react';
 import { cn } from '../lib/utils';
 import type { TimingSettings, ColorCategory } from '../types/script';
+import { getCueColorForTheme, type CuePaletteProfile } from '../lib/scriptStyles';
 import { UI_TOKENS } from '../styles/tokens/ui';
 import { useEscapeKey } from '../hooks/useEscapeKey';
 
@@ -9,6 +10,8 @@ interface TimingSettingsModalProps {
   isOpen: boolean;
   settings?: Record<string, TimingSettings>;
   colors: ColorCategory[];
+  scriptThemeId?: string;
+  cuePaletteProfile?: CuePaletteProfile;
   onClose: () => void;
   onUpdateSetting: (category: string, field: 'before' | 'after', value: number) => void;
   onResetClick: () => void;
@@ -18,6 +21,8 @@ export function TimingSettingsModal({
   isOpen,
   settings,
   colors,
+  scriptThemeId,
+  cuePaletteProfile = 'standard',
   onClose,
   onUpdateSetting,
   onResetClick,
@@ -56,13 +61,13 @@ export function TimingSettingsModal({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* General Master Control - Highlighted */}
-            <div className="md:col-span-3 p-6 bg-blue-50 border-2 border-blue-100 rounded-3xl space-y-4">
+            <div className={cn("md:col-span-3", UI_TOKENS.panel.accentCardBlue)}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
-                  <span className="text-xs font-black uppercase tracking-widest text-blue-600">General Master Offset</span>
+                  <span className="text-xs font-black uppercase tracking-widest text-blue-500">General Master Offset</span>
                 </div>
-                <p className="text-[10px] font-bold text-blue-400 italic">Adds extra time to ALL categories globally</p>
+                <p className="text-[10px] font-bold text-text-muted italic">Adds extra time to ALL categories globally</p>
               </div>
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -94,40 +99,46 @@ export function TimingSettingsModal({
 
             {/* Specific Category Grid */}
             <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {colors.map(color => (
-                <div key={color.type} className="p-4 bg-surface-subtle border border-border-subtle rounded-2xl space-y-3 hover:bg-surface hover:shadow-md transition-all">
-                  <div className="flex items-center gap-2">
-                    <div className={cn("w-2.5 h-2.5 rounded-full", color.class)} />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-text-body">{color.type}</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="space-y-1">
-                      <label className={UI_TOKENS.input.labelMini}>Before (s)</label>
-                      <input 
-                        type="number" step="0.1"
-                        value={settings?.[color.type]?.before ?? 0}
-                        onChange={(e) => {
-                          const val = parseFloat(e.target.value) || 0;
-                          onUpdateSetting(color.type, 'before', val);
-                        }}
-                        className={UI_TOKENS.input.numberBox}
+              {colors.map(color => {
+                const themed = getCueColorForTheme(color.type, scriptThemeId as any, cuePaletteProfile);
+                return (
+                  <div key={color.type} className="p-4 bg-surface-subtle border border-border-subtle rounded-2xl space-y-3 hover:bg-surface hover:shadow-md transition-all">
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" 
+                        style={{ backgroundColor: themed.dotColor }}
                       />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-text-body">{color.type}</span>
                     </div>
-                    <div className="space-y-1">
-                      <label className={UI_TOKENS.input.labelMini}>After (s)</label>
-                      <input 
-                        type="number" step="0.1"
-                        value={settings?.[color.type]?.after ?? 0}
-                        onChange={(e) => {
-                          const val = parseFloat(e.target.value) || 0;
-                          onUpdateSetting(color.type, 'after', val);
-                        }}
-                        className={UI_TOKENS.input.numberBox}
-                      />
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="space-y-1">
+                        <label className={UI_TOKENS.input.labelMini}>Before (s)</label>
+                        <input 
+                          type="number" step="0.1"
+                          value={settings?.[color.type]?.before ?? 0}
+                          onChange={(e) => {
+                            const val = parseFloat(e.target.value) || 0;
+                            onUpdateSetting(color.type, 'before', val);
+                          }}
+                          className={UI_TOKENS.input.numberBox}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className={UI_TOKENS.input.labelMini}>After (s)</label>
+                        <input 
+                          type="number" step="0.1"
+                          value={settings?.[color.type]?.after ?? 0}
+                          onChange={(e) => {
+                            const val = parseFloat(e.target.value) || 0;
+                            onUpdateSetting(color.type, 'after', val);
+                          }}
+                          className={UI_TOKENS.input.numberBox}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

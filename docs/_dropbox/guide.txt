@@ -127,24 +127,53 @@ SceneFlow provides 8 calibrated color categories:
 
 [How to Add a Cue]
 (Creating timeline highlights)
-Switch to 'Edit' mode and highlight any text segment in your script. The 'Cue Settings' modal pops up instantly, allowing you to pick a category and set Start and End timestamps.
+Switch to 'Edit' mode and highlight any text segment in your script. The 'New Sync Cue' panel appears in the left sidebar, allowing you to pick a category and set Start and End timestamps (click the Clock icon to snap to the player's current video time).
 
 [Editing, Overlaps & Deleting]
 (Managing existing cues)
-Click any highlighted cue in the script to adjust its duration or category. If multiple cues overlap, click to pick the exact cue you want to inspect. To remove a cue, click the Trash icon in the left 'Timeline Cues' panel.
+Click any highlighted cue in the script to adjust its duration or category. You can also edit cue text in-place from the sidebar panel. If multiple cues overlap, click to pick the exact cue you want to inspect. To remove a cue, click the Trash icon in the left sidebar.
 
 [Alignment & Alternatives]
 (Smart text tracking)
 If you edit script text after creating cues, click 'Align' in the sidebar to automatically re-anchor highlights. If a repeated phrase matches the wrong instance, click 'Find Alternative' to cycle occurrences.
+
+[Timing Settings]
+(Lead-in and decay buffers)
+Open 'Timing Settings' to set global or category-specific 'before' and 'after' offset buffers, adjusting when highlights illuminate and decay relative to media timestamps.
 
 ---
 
 V. PLAYBACK & VIEWPORT CONTROLS:
 (Optimizing your review workspace)
 
+[Multi-Track Sync Timeline]
+(Visualizing cues like an NLE)
+In 'Playback' mode, the left panel features an NLE-inspired multi-track timeline mapping cues across horizontal category tracks:
+- 35% Anticipation Playhead: The vertical playhead stays anchored at 35% of the timeline width, giving lookahead space for approaching beats.
+- Real-Time Timecode Ruler: Displays synchronous 1-second ticks and MM:SS timestamps gliding with media playback.
+- Timeline Zoom Presets: Switch between 4s (close-up), 8s (standard), and 16s (overview) time windows.
+- Track Height Modes: Choose Flex (dynamic expansion) or Fixed (locked sub-lanes for zero layout shift).
+- Track Mute Toggles: Click any category lane header to mute or solo that track.
+- View Switcher: Toggle between the multi-track [Timeline] and classic floating [Cards] view.
+
+[Studio VU Meter & Paused Inspector]
+(Real-time cue feedback)
+- VU Meter: An 8-slot category LED strip and active cue counter illuminate in real time.
+- Paused Inspector: Pausing playback reveals an inspector card under the timeline with multi-cue tabs and an instant 'Replay' button.
+
+[Collapsible Video Player]
+(Screen recording mode)
+Press the 'V' key or click '[ Hide Video ]' in the playback header to collapse the video player. Audio and timeline sync continue playing seamlessly, giving full height to the timeline and script for clean screen recordings.
+
+[Dual-Axis Splitters]
+(Customizing workspace proportions)
+- Horizontal Splitter: Drag between the left playback panel and right script preview to adjust workspace width (defaults to 65:35).
+- Vertical Video Splitter: Drag between the video player and timeline (160px to 480px) to balance video size against timeline tracks.
+- Reset View: Click the Reset View icon (RotateCcw) in the top header to restore default split proportions.
+
 [Auto-Scroll & Focus Mode]
 (Following the action in real-time)
-In 'Playback' mode, the script highlights and scrolls in real-time with the video. Click the 'Focus Mode' dropdown next to Auto-Scroll to filter which cue categories trigger scrolling (e.g., follow Dialogue only).
+In 'Playback' mode, the script highlights and scrolls in real-time with the video. Click the 'Focus Mode' dropdown next to Auto-Scroll to multi-select which cue categories trigger scrolling (e.g., follow Dialogue only).
 
 [Focus Line Position]
 (Customizing the viewport anchor)
@@ -153,6 +182,19 @@ Choose where the active cue centers in your viewport during playback: Top (35%),
 [Script Width Presets]
 (Tailoring the reading canvas)
 Select from 5 width presets (from Compact to Full) to adjust your reading canvas for side-by-side video inspection.
+
+[Theming & Pure Black Canvas]
+(Visual styles & video overlay mode)
+- Themes: Choose between 3 App Shell modes (Light, Warm, Dark) and 6 script paper themes.
+- Pure Black Mode: Forces pure #000000 on dark themes, allowing clean keying via Screen or Lighten blend modes in Premiere Pro, DaVinci Resolve, or OBS.
+- Accessibility: Toggle between Standard Cinema and Protan & Deutan Safe color palettes.
+
+[Keyboard Shortcuts]
+(Fast playback navigation)
+- Space / K: Play or Pause video
+- Left / Right or J / L: Seek -5s / +5s
+- V: Toggle video player collapse
+- Esc: Close active modals
 
 ---
 
@@ -225,15 +267,24 @@ Ensure strict, unbroken continuity extending directly from the final frame of @V
 ---
 
 VII. PERSISTENCE & SHARING:
-(Managing your projects)
+(Managing projects and exploring catalogue)
 
-[Saving & Exporting]
+[Saving, Exporting & Importing]
 (Keeping your work safe)
-Your work saves automatically to your local browser storage.
-- Video Source: Paste any YouTube URL or supported video link at the top.
-- Save Sync: Download a portable JSON file containing your script, staging metadata, and cues.
-- Open Sync: Load any saved JSON project.
-- Library: Explore pre-built masterclass examples in both Screenplay and Auteur Script styles.
+Your work saves automatically to your browser localStorage across sessions.
+- Video Source: Enter any YouTube URL or supported video link in Edit mode.
+- Save Sync: Download a portable JSON project bundle containing script text, staging directives, cues, and settings.
+- Open Sync: Upload and restore any saved JSON project.
+- URL Parameters: Share links with ?example=ID or ?project=URL to instantly load remote or catalogue projects with confirmation guards.
+
+[Curated Library Catalogue]
+(Masterclass reference works)
+Explore the interactive Library modal featuring curated productions across 4 distinct sections:
+- AI Scenes: Flagship dialogue and character performances.
+- The Written Motion: Multi-part cinematic anthologies.
+- FRAME Series: High-concept visual experiments.
+- AI Clips: Rapid single-prompt vignettes.
+Includes sorting by Latest, Oldest, or A-Z, category filter badges, and mobile-friendly drawer navigation.
 
 ---
 
