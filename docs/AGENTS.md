@@ -134,3 +134,28 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
    - Keep playback visualization components modularized inside `src/components/active-highlights/` rather than expanding `App.tsx`.
    - Consume the public API barrel export (`src/components/active-highlights/index.ts`).
 
+5. **Playback Left Panel Isolation**:
+   - Maintain strict container separation between Playback mode (`src/components/playback/PlaybackLeftPanel.tsx`) and Edit mode in `App.tsx`.
+   - Never cross-contaminate playback containers with edit-mode sticky scroll animations, form paddings, or modal listeners.
+
+6. **Timeline Density & Geometry Synchronization**:
+   - Support `TimelineDensity` (`'comfortable' | 'compact'`) across timeline components for dynamic vertical scaling (32px vs 24px track heights).
+   - Ensure category headers on `TimelineLane` handle both active/idle and muted/hidden visual states when wired to visibility toggles.
+   - **Strict Geometry Coupling**: Always pass `density` down to `TimelineCueBlock` to keep top offsets (`subLaneIndex * step + padding`) and block heights (18px vs 22px) mathematically synchronized with `TimelineLane`'s track container height, preventing sub-lane clipping or row jumping.
+
+7. **Responsive Split Pane & Drag Performance**:
+   - Keep panel split logic desktop-only (`hidden lg:flex`); mobile/tablet devices must always stack vertically (`flex-col`) with full width (`w-full`).
+   - **Zero-Latency Dragging**: Temporarily suppress all CSS transitions across panels during active drag operations via the global `.is-resizing-split` class on `document.body`.
+   - **Hardware VSync Throttling**: Always clamp pointermove updates to display refresh intervals using `requestAnimationFrame`.
+   - **Decoupled Persistence**: Never invoke synchronous disk I/O (`localStorage.setItem`) inside continuous mousemove/pointermove loops. Update in-memory state during drag, and commit to storage only upon pointer release (`commitSplitRatio`).
+
+8. **Vertical Video Resizing & Aspect Ratio Invariants**:
+   - Directly resize video height using the horizontal divider (`VideoSplitDivider.tsx`) rather than arbitrary width percentages.
+   - **Proportional 16:9 Scaling**: Container must couple `height: ${videoHeight}px` with `aspectRatio: '16 / 9'` and `maxWidth: '100%'`, preventing video distortion and eliminating empty lateral gutters.
+   - **Performance & IFrame Guard**: Leverage pointer capture and the body `.is-resizing-split` overlay to prevent YouTube iframe event absorption during vertical drags. Commit disk I/O only on pointer up (`commitVideoHeight`).
+9. **Header Layout Stability & Studio VU Meter Invariants**:
+   - **Zero-Layout-Shift Indicator Strips**: Avoid rendering variable-length dynamic arrays of cue instance dots in high-frequency playback headers, as rapid cue count fluctuations (`4 → 11 → 5`) cause severe visual jitter and layout shifts. Use a fixed-slot category indicator strip (`COLORS` order) where slot positions are permanently anchored and illuminate dynamically via `resolveCueColor()`.
+   - **Numeric Tabular Width Isolation**: When displaying numeric counters that oscillate between single and double digits during playback, always isolate the digit inside a dedicated fixed-width slot (`min-w-[14px] font-mono tabular-nums text-center`) to mathematically prevent horizontal jitter.
+   - **Collapsible Secondary Filters**: Muting/category filter pill rows in playback headers must remain collapsible by default (`localStorage` key `sceneflow_highlight_filter_expanded`) to prioritize vertical viewport space for timeline lanes, accompanied by an active indicator pip on the toggle button whenever filters are muted.
+
+

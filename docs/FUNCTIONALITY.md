@@ -93,6 +93,8 @@ During video playback, the sidebar presents a real-time visualization of all act
 Inspired by professional Non-Linear Editors (NLEs), the timeline maps cues onto horizontal category tracks (Dialogue, Action, Camera, Audio, etc.):
 - **Stationary 35% Anticipation Playhead**: The vertical laser line and top pip marker remain anchored at 35% of the container width, providing generous lookahead space for approaching dialogue and sound cues.
 - **Continuous Real-Time Timecode Ruler**: Glides underneath the tracks in real-time, displaying 1-second ticks and major `MM:SS` timecode labels.
+- **Dynamic Density Scaling (`TimelineDensity`)**: Supports `'comfortable'` (32px track height) and `'compact'` (24px track height) modes, optimizing vertical space across varying screen sizes.
+- **Interactive Lane Header Toggles**: Track headers on `TimelineLane` (`[• CATEGORY]`) serve as interactive buttons to mute/unmute that category directly, showing pulsing active glow or dimmed strikethrough styling when hidden.
 - **Global Greedy Interval Scheduling**: Multiple overlapping cues within the same category automatically stack into stable sub-lanes (`subLaneIndex`), calculated globally across the script to prevent any row-jumping or vertical layout shifting during scrubbing.
 - **Zero Layout Shift & Micro-Performance**: Uses hardware-accelerated linear CSS transitions (`100ms linear`) and `will-change: left, width` in tight sync with the YouTube player clock.
 - **Seek Without Unwanted Playback**: Clicking any cue block seeks the player to that timestamp while preserving the paused state without triggering YouTube's unbuffered autoplay quirk.
@@ -104,15 +106,32 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 - **Screenplay Quote**: Displays the full screenplay excerpt in large, readable serif italics.
 - **Instant Replay**: Clicking "Replay" jumps to the cue's start time and immediately initiates playback.
 
+### Studio VU Meter & Layout Stability
+- **Fixed-Slot Category LED Strip**: Anchored directly beside the section title, an 8-slot category VU meter (`Dialogue`, `Action`, `Camera`, `Shot`, `Audio`, `VFX`, `Transition`, `Environment`) illuminates in theme-calibrated colors (`resolveCueColor`) whenever cues in that category are active.
+- **Zero-Layout-Shift Numerical Box**: The active cue count is isolated inside a fixed-width monospace tabular container (`min-w-[14px] font-mono tabular-nums`), mathematically eliminating visual jitter and horizontal shifting when cue counts oscillate between single and double digits during playback.
+
 ### View Mode Switcher (Timeline vs. Cards)
 - **Segmented Control**: The panel header features a `[ 📊 Timeline | 🗂 Cards ]` switcher.
 - **Classic Cards View**: Users can switch back to the legacy floating cards presentation at any time.
 - **Persistence**: View mode selection persists across sessions in `localStorage` (`sceneflow_highlight_view_mode`).
 
-### Category Legend & Filter Controls (`HighlightFilterBar`)
-- Clickable pills for each cue category with dynamic count indicators.
-- Pulsing animated glow indicates which categories have cues currently active under the playhead.
-- Clicking a category pill toggles its visibility in both the timeline tracks and the script viewer.
+### Collapsible Filter Drawer & Toolbar (`HighlightFilterBar`)
+- **Smooth Drawer Collapse**: The 8-category filter pill bar is tucked into a smoothly collapsible container (`max-h-32 opacity-100` ⇋ `max-h-0 opacity-0`), saving ~35–40px of vertical space for the multi-track timeline tracks.
+- **Toolbar Toggle Button**: A dedicated `Filters` button sits immediately to the left of the view switcher in the header toolbar, persisting its expanded/collapsed state in `localStorage` (`sceneflow_highlight_filter_expanded`).
+- **Muted Filter Pip**: When any categories are muted, the `Filters` button displays an active pulsing blue pip to ensure users are always aware filters are active even with the drawer collapsed.
+- **Interactive Pills**: Clickable category pills with dynamic count indicators, theme colors, and active pulsing indicators. Toggle category visibility in both the timeline tracks and the script viewer.
+
+### Asymmetric Dual-Axis Split & Zero-Scroll Layout
+- **Horizontal Panel Splitter (`SplitPaneDivider`)**: Desktop users can drag the vertical divider between the left playback panel and the screenplay preview to customize workspace proportions. Defaults to 42% Video / 58% Script (clamped between 30% and 65%).
+- **Vertical Video ⇕ Timeline Splitter (`VideoSplitDivider`)**: Replaces manual percentage size sliders with an interactive horizontal handle directly between the Video Player and the Active Highlights timeline.
+  - Dragging down expands the video height (up to 480px) for detailed visual review.
+  - Dragging up shrinks the video height (down to 160px), allocating maximum vertical space to multi-track timeline lanes.
+  - Automatic 16:9 aspect scaling (`aspect-video` + `maxWidth: 100%`) ensures zero video distortion and completely eliminates lateral empty gutters.
+- **Clean Headroom**: The redundant "NOW PLAYING" header row and percentage slider have been completely eliminated, reclaiming ~28px of top vertical space.
+- **Hardware VSync Dragging (60–144fps)**: Pointer movements are throttled via `requestAnimationFrame` with pointer capture and `.is-resizing-split` CSS transition suppression on `document.body` for lag-free cursor tracking.
+- **Unified Header "Reset View" (`AppHeader`)**: A single click on the `RotateCcw` button in the header toolbar (or double-clicking either divider) immediately snaps both the 42:58 horizontal panel split and the 240px vertical video height back to defaults.
+- **Decoupled Persistence**: Changes commit to `localStorage` (`sceneflow_split_ratio`, `sceneflow_video_height`) only upon pointer release to eliminate main-thread disk I/O bottlenecks.
+
 
 ---
 
@@ -197,7 +216,7 @@ Fine-tunes highlight visibility timing before and after actual cue timestamps:
 ## 8. Persistence, Sharing, & Library Catalogue
 
 ### Local Persistence
-All project states (`screenplay_sync_state`), theme preferences (`sceneflow_script_theme`), width presets (`sceneflow_script_width_preset`), scroll focus settings (`sceneflow_scroll_focus_preset`), and timeline view mode (`sceneflow_highlight_view_mode`) persist in `localStorage`.
+All project states (`screenplay_sync_state`), theme preferences (`sceneflow_script_theme`), width presets (`sceneflow_script_width_preset`), scroll focus settings (`sceneflow_scroll_focus_preset`), timeline view mode (`sceneflow_highlight_view_mode`), and filter drawer state (`sceneflow_highlight_filter_expanded`) persist in `localStorage`.
 
 ### Default Project & Quick Start Guide
 - Fresh visits default to loading the **Scene Frequency** (`scene_frequency.json`) guide script.

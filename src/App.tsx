@@ -25,6 +25,8 @@ import { ScriptColorModal } from './components/ScriptColorModal';
 import { MobileColorModal } from './components/MobileColorModal';
 import { AppInfoModal } from './components/AppInfoModal';
 import { AppHeader } from './components/AppHeader';
+import { PlaybackLeftPanel } from './components/playback/PlaybackLeftPanel';
+import { SplitPaneDivider } from './components/common/SplitPaneDivider';
 import { ActiveHighlightsPanel } from './components/ActiveHighlightsPanel';
 import { TimelineCuesPanel } from './components/TimelineCuesPanel';
 import { ScriptHeaderControls } from './components/ScriptHeaderControls';
@@ -95,8 +97,9 @@ export default function App() {
   });
 
   const {
-    videoWidth,
-    setVideoWidth,
+    videoHeight,
+    setVideoHeight,
+    commitVideoHeight,
     scriptWidthPreset,
     setScriptWidthPreset,
     isWidthDropdownOpen,
@@ -111,6 +114,11 @@ export default function App() {
     setIsColorModalOpen,
     hiddenCueTypes,
     toggleCueTypeVisibility,
+    splitRatio,
+    setSplitRatio,
+    commitSplitRatio,
+    resetViewLayout,
+    isViewCustomized,
   } = useScriptPreferences();
 
   const { theme: activeTheme } = useScriptTheme(scriptThemeId);
@@ -629,6 +637,8 @@ export default function App() {
         themeMode={themeMode}
         effectiveThemeCategory={effectiveCategory}
         onCycleThemeMode={cycleThemeMode}
+        isViewCustomized={isViewCustomized}
+        onResetView={resetViewLayout}
       />
 
       <main className={cn(
@@ -636,116 +646,93 @@ export default function App() {
         mode === 'playback' && "overflow-y-auto lg:overflow-hidden"
       )}>
         {/* Left Panel: Media & Controls */}
-        <div 
-          ref={leftPanelRef}
-          onScroll={(e) => setLeftPanelScroll(e.currentTarget.scrollTop)}
-          className={cn(
-            UI_TOKENS.layout.leftPanelBase,
-            "transition-all duration-500",
-            mode === 'edit' 
-              ? "w-full lg:w-1/2 border-r p-4 lg:p-10 overflow-y-auto scrollbar-hide" 
-              : "w-full lg:w-1/2 border-r p-0 lg:p-10 gap-0 lg:gap-6 lg:overflow-y-auto scrollbar-hide sticky top-0 z-30 shadow-md lg:shadow-none"
-          )}
-        >
-          {/* YouTube Source Input - Not Sticky in Edit Mode */}
-          {mode === 'edit' && (
+        {mode === 'playback' ? (
+          <PlaybackLeftPanel
+            youtubeId={state.youtubeId}
+            videoHeight={videoHeight}
+            setVideoHeight={setVideoHeight}
+            commitVideoHeight={commitVideoHeight}
+            isDesktop={isDesktop}
+            playerState={playerState}
+            currentTime={currentTime}
+            onReady={onReady}
+            onStateChange={onStateChange}
+            seekTo={seekTo}
+            cues={state.cues}
+            settings={state.settings}
+            isCueVisible={isCueVisible}
+            activeCueTypes={activeCueTypes}
+            hiddenCueTypes={hiddenCueTypes}
+            toggleCueTypeVisibility={toggleCueTypeVisibility}
+            scriptThemeId={scriptThemeId}
+            style={isDesktop ? { width: `${splitRatio}%` } : undefined}
+          />
+        ) : (
+          <div 
+            ref={leftPanelRef}
+            onScroll={(e) => setLeftPanelScroll(e.currentTarget.scrollTop)}
+            style={isDesktop ? { width: `${splitRatio}%` } : undefined}
+            className={cn(
+              UI_TOKENS.layout.leftPanelBase,
+              "w-full border-r p-4 lg:p-10 overflow-y-auto scrollbar-hide transition-all duration-300"
+            )}
+          >
+            {/* YouTube Source Input - Not Sticky in Edit Mode */}
             <YoutubeSourceInput
               youtubeId={state.youtubeId}
               onChange={(value) => setState(prev => ({ ...prev, youtubeId: value }))}
               onClear={() => setState(prev => ({ ...prev, youtubeId: '' }))}
               hasPlayer={!!player}
             />
-          )}
 
-          {/* Video Player Section - Sticky in Edit Mode */}
-          <section className={cn(
-            "transition-all duration-300 z-30 sticky top-0", 
-            mode === 'playback' && "space-y-4 lg:space-y-6",
-            mode === 'edit' && "-mx-4 lg:-mx-10 px-4 lg:px-10",
-            mode === 'edit' && leftPanelScroll <= 80 && "bg-surface border-b border-border-subtle pb-6 mb-8 space-y-4",
-            mode === 'edit' && leftPanelScroll > 80 && "bg-transparent pointer-events-none space-y-0 pb-0 mb-0"
-          )}>
-            <div className={cn(
-              "flex items-center justify-between transition-all duration-300", 
-              mode === 'playback' && "hidden lg:flex", 
-              mode === 'edit' && "flex",
-              mode === 'edit' && leftPanelScroll > 80 && "opacity-0 h-0 overflow-hidden mb-0"
+            {/* Video Player Section - Sticky in Edit Mode */}
+            <section className={cn(
+              "transition-all duration-300 z-30 sticky top-0 -mx-4 lg:-mx-10 px-4 lg:px-10", 
+              leftPanelScroll <= 80 && "bg-surface border-b border-border-subtle pb-6 mb-8 space-y-4",
+              leftPanelScroll > 80 && "bg-transparent pointer-events-none space-y-0 pb-0 mb-0"
             )}>
-               <h2 className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-text-faint flex items-center gap-2">
-                <Video size={14} /> {mode === 'edit' ? 'Media Preview' : 'Now Playing'}
-              </h2>
-              {mode === 'playback' && isDesktop && (
-                <div className="flex items-center gap-3 animate-in fade-in slide-in-from-right-2 duration-500">
-                  <span className="text-[9px] font-black uppercase tracking-widest text-text-faint">Size</span>
-                  <input 
-                    type="range" 
-                    min="40" 
-                    max="100" 
-                    step="5"
-                    value={videoWidth}
-                    onChange={(e) => setVideoWidth(parseInt(e.target.value))}
-                    className="w-24 h-1 bg-surface-muted rounded-lg appearance-none cursor-pointer accent-text-muted hover:accent-text-main transition-all"
-                  />
-                  <span className="text-[9px] font-mono font-bold text-text-faint w-8">{videoWidth}%</span>
-                </div>
-              )}
-            </div>
-            
-            <div className={cn(
-              "aspect-video bg-black overflow-hidden shadow-2xl ring-1 ring-border-main relative group transition-all duration-500 origin-top-left pointer-events-auto",
-              mode === 'edit' ? "rounded-3xl" : "rounded-none lg:rounded-3xl",
-              mode === 'edit' && leftPanelScroll > 80 && "w-1/2 rounded-2xl shadow-2xl scale-90 -translate-y-2"
-            )}
-            style={mode === 'playback' && isDesktop ? { width: `${videoWidth}%`, margin: '0 auto' } : {}}
-            >
-              <YouTube
-                key={extractYoutubeId(state.youtubeId)}
-                videoId={extractYoutubeId(state.youtubeId)}
-                opts={{
-                  width: '100%',
-                  height: '100%',
-                  playerVars: {
-                    autoplay: 0,
-                    modestbranding: 1,
-                    rel: 0,
-                    controls: 1,
-                    origin: typeof window !== 'undefined' ? window.location.origin : undefined,
-                  },
-                }}
-                onReady={onReady}
-                onStateChange={onStateChange}
-                className="w-full h-full bg-black"
-                iframeClassName="w-full h-full block border-0 bg-black"
-              />
-            </div>
-            
-            {mode === 'playback' && (
-              <ActiveHighlightsPanel
-                cues={state.cues}
-                settings={state.settings}
-                isCueVisible={isCueVisible}
-                activeCueTypes={activeCueTypes}
-                hiddenCueTypes={hiddenCueTypes}
-                toggleCueTypeVisibility={toggleCueTypeVisibility}
-                scriptThemeId={scriptThemeId}
-                currentTime={currentTime}
-                isPlaying={playerState === 1}
-                onSeekTo={(seconds, autoPlay) => seekTo(seconds, true, autoPlay)}
-                onSeekCue={(cue, autoPlay) => seekTo(cue.startTime, true, autoPlay)}
-              />
-            )}
-          </section>
+              <div className={cn(
+                "flex items-center justify-between transition-all duration-300", 
+                leftPanelScroll > 80 && "opacity-0 h-0 overflow-hidden mb-0"
+              )}>
+                <h2 className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-text-faint flex items-center gap-2">
+                  <Video size={14} /> Media Preview
+                </h2>
+              </div>
+              
+              <div className={cn(
+                "aspect-video bg-black overflow-hidden shadow-2xl ring-1 ring-border-main relative group transition-all duration-500 origin-top-left pointer-events-auto rounded-3xl",
+                leftPanelScroll > 80 && "w-1/2 rounded-2xl shadow-2xl scale-90 -translate-y-2"
+              )}>
+                <YouTube
+                  key={extractYoutubeId(state.youtubeId)}
+                  videoId={extractYoutubeId(state.youtubeId)}
+                  opts={{
+                    width: '100%',
+                    height: '100%',
+                    playerVars: {
+                      autoplay: 0,
+                      modestbranding: 1,
+                      rel: 0,
+                      controls: 1,
+                      origin: typeof window !== 'undefined' ? window.location.origin : undefined,
+                    },
+                  }}
+                  onReady={onReady}
+                  onStateChange={onStateChange}
+                  className="w-full h-full bg-black"
+                  iframeClassName="w-full h-full block border-0 bg-black"
+                />
+              </div>
+            </section>
 
-          {/* Script Management Section - Only in Edit Mode */}
-          {mode === 'edit' && (
+            {/* Script Management Section - Only in Edit Mode */}
             <ScriptManagementBar
               lineCount={state.scriptText.split('\n').length}
               onOpenRawScriptModal={() => setIsScriptModalOpen(true)}
             />
-          )}
 
-          {/* Edit Mode Controls */}
-          {mode === 'edit' && (
+            {/* Edit Mode Controls */}
             <TimelineCuesPanel
               cues={state.cues}
               scriptThemeId={scriptThemeId}
@@ -760,14 +747,27 @@ export default function App() {
               isAligning={isAligning}
               alignSuccess={alignSuccess}
             />
-          )}
-        </div>
+          </div>
+        )}
+
+        {/* Desktop Resizable Split Pane Divider */}
+        {isDesktop && (
+          <SplitPaneDivider
+            splitRatio={splitRatio}
+            onSplitChange={setSplitRatio}
+            onSplitCommit={commitSplitRatio}
+            onReset={resetViewLayout}
+          />
+        )}
 
         {/* Right Panel: The Screenplay */}
-        <div className={cn(
-          UI_TOKENS.layout.rightPanelBase,
-          mode === 'edit' ? "hidden lg:flex w-full lg:w-1/2 h-full" : "w-full lg:w-1/2 flex-1"
-        )}>
+        <div 
+          style={isDesktop ? { width: `${100 - splitRatio}%` } : undefined}
+          className={cn(
+            UI_TOKENS.layout.rightPanelBase,
+            mode === 'edit' ? "hidden lg:flex w-full h-full" : "w-full flex-1"
+          )}
+        >
           <ScriptHeaderControls
             mode={mode}
             isAutoScrollEnabled={isAutoScrollEnabled}

@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Video, Activity, Layers } from 'lucide-react';
+import { Video, Activity, Layers, Filter } from 'lucide-react';
 import { COLORS } from '../../constants/script';
 import { useScriptTheme } from '../../hooks/useScriptTheme';
 import { cn } from '../../lib/utils';
@@ -10,6 +10,7 @@ import { HighlightTimelineView } from './views/HighlightTimelineView';
 import { HighlightCardsView } from './views/HighlightCardsView';
 
 const STORAGE_KEY = 'sceneflow_highlight_view_mode';
+const FILTER_STORAGE_KEY = 'sceneflow_highlight_filter_expanded';
 
 /**
  * Top-level Active Highlights Panel orchestrator.
@@ -35,6 +36,7 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
   viewMode: controlledMode,
   onViewModeChange,
   onCueClick,
+  density,
 }) => {
   const { resolveCueColor } = useScriptTheme(scriptThemeId as any);
 
@@ -46,6 +48,25 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
     }
     return 'timeline';
   });
+
+  // Persistent filter bar visibility state (default to collapsed for optimal vertical space)
+  const [isFilterExpanded, setIsFilterExpanded] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(FILTER_STORAGE_KEY);
+      if (saved !== null) return saved === 'true';
+    }
+    return false;
+  });
+
+  const toggleFilterExpanded = () => {
+    setIsFilterExpanded(prev => {
+      const next = !prev;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(FILTER_STORAGE_KEY, String(next));
+      }
+      return next;
+    });
+  };
 
   const activeMode = controlledMode || internalMode;
 
@@ -70,14 +91,96 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
   }, [cues, isCueVisible]);
 
   return (
-    <div className="hidden lg:flex flex-col flex-1 mt-6 animate-in fade-in slide-in-from-left-4 duration-700 min-h-0">
-      {/* Panel Header, View Switcher & Counter */}
-      <div className="flex items-center justify-between mb-3 gap-2">
-        <h3 className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-2")}>
-          <Video size={14} /> Active Highlights
-        </h3>
+    <div className="hidden lg:flex flex-col flex-1 mt-1 animate-in fade-in slide-in-from-left-4 duration-500 min-h-0">
+      {/* Panel Header, View Switcher, Filter Toggle & Counter */}
+      <div className="flex items-center justify-between mb-2.5 gap-2">
+        {/* Left: Section Title + Live Active Count & Colored Cue Dots */}
+        <div className="flex items-center gap-2 min-w-0">
+          <h3 className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-2 shrink-0")}>
+            <Video size={14} /> Active Highlights
+          </h3>
 
-        <div className="flex items-center gap-2">
+          {/* Active Count Badge with Studio VU Meter (Fixed-slot Category Pips) */}
+          <div
+            className={cn(
+              "flex items-center gap-2 px-2.5 py-1 rounded-lg border shadow-xs select-none transition-all duration-200",
+              visibleCues.length > 0
+                ? "bg-surface-subtle border-border-main text-text-muted"
+                : "bg-surface-subtle/60 border-border-subtle text-text-faint"
+            )}
+            title={
+              visibleCues.length > 0
+                ? `${visibleCues.length} active cue${visibleCues.length === 1 ? '' : 's'} across active categories`
+                : 'No active cues at current timestamp'
+            }
+          >
+            <span className="text-[9px] font-black tracking-wider uppercase leading-none flex items-center gap-1">
+              <span>Active:</span>
+              <span className="font-mono tabular-nums inline-block min-w-[14px] text-center">
+                {visibleCues.length}
+              </span>
+            </span>
+
+            {/* Fixed 8-Slot Category LED Indicator Strip */}
+            <div className="flex items-center gap-1 pl-1 border-l border-border-subtle">
+              {COLORS.map(color => {
+                const isMuted = hiddenCueTypes.has(color.type);
+                const isActive = !isMuted && activeCueTypes.has(color.type);
+                const themed = resolveCueColor(color.type);
+
+                return (
+                  <span
+                    key={color.type}
+                    className={cn(
+                      "w-1.5 h-1.5 rounded-full transition-all duration-200 shrink-0",
+                      isActive
+                        ? "ring-1 ring-black/15 dark:ring-white/25 scale-110 shadow-xs"
+                        : isMuted
+                        ? "bg-border-subtle/40 opacity-25"
+                        : "bg-border-main/60 opacity-40 hover:opacity-75"
+                    )}
+                    style={{
+                      backgroundColor: isActive ? `rgb(${themed.rgb})` : undefined,
+                    }}
+                    title={
+                      isMuted
+                        ? `${color.type.toUpperCase()} (Muted in filters)`
+                        : isActive
+                        ? `${color.type.toUpperCase()} (Active now)`
+                        : `${color.type.toUpperCase()} (Inactive)`
+                    }
+                  />
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Filter Toggle + Segmented View Switcher */}
+        <div className="flex items-center gap-1.5 shrink-0">
+          {/* Category Filter Pill Bar Toggle Button */}
+          <button
+            type="button"
+            onClick={toggleFilterExpanded}
+            title={isFilterExpanded ? "Hide category filters" : "Show category filters"}
+            aria-expanded={isFilterExpanded}
+            className={cn(
+              "flex items-center gap-1 px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all select-none border shadow-xs",
+              isFilterExpanded
+                ? "bg-surface text-text-main border-border-main"
+                : "bg-surface-subtle hover:bg-surface text-text-muted hover:text-text-main border-border-subtle hover:border-border-main"
+            )}
+          >
+            <Filter size={10} className={hiddenCueTypes.size > 0 ? "text-blue-500" : ""} />
+            <span className="leading-none hidden sm:inline">Filters</span>
+            {hiddenCueTypes.size > 0 && (
+              <span
+                className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse shrink-0"
+                title={`${hiddenCueTypes.size} category filter${hiddenCueTypes.size === 1 ? '' : 's'} muted`}
+              />
+            )}
+          </button>
+
           {/* Segmented View Switcher */}
           <div className="flex items-center p-0.5 bg-surface-subtle border border-border-subtle rounded-lg shadow-xs">
             <button
@@ -109,21 +212,25 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
               <span className="leading-none">Cards</span>
             </button>
           </div>
-
-          {/* Active Count Badge */}
-          <span className="flex items-center justify-center px-2.5 py-1 bg-surface-subtle border border-border-subtle rounded-lg text-[9px] font-black tracking-wider uppercase text-text-muted shadow-xs select-none">
-            {visibleCues.length} active
-          </span>
         </div>
       </div>
 
-      {/* Category Legend & Filter Controls */}
-      <HighlightFilterBar
-        activeCueTypes={activeCueTypes}
-        hiddenCueTypes={hiddenCueTypes}
-        onToggleCueType={toggleCueTypeVisibility}
-        resolveCueColor={resolveCueColor}
-      />
+      {/* Collapsible Category Legend & Filter Controls */}
+      <div
+        className={cn(
+          "transition-all duration-300 ease-in-out overflow-hidden",
+          isFilterExpanded
+            ? "max-h-32 opacity-100"
+            : "max-h-0 opacity-0 pointer-events-none"
+        )}
+      >
+        <HighlightFilterBar
+          activeCueTypes={activeCueTypes}
+          hiddenCueTypes={hiddenCueTypes}
+          onToggleCueType={toggleCueTypeVisibility}
+          resolveCueColor={resolveCueColor}
+        />
+      </div>
 
       {/* View Presentation Switcher */}
       {activeMode === 'timeline' ? (
@@ -136,6 +243,8 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
           resolveCueColor={resolveCueColor}
           onSeekCue={onSeekCue || onCueClick}
           onSeekTo={onSeekTo}
+          density={density}
+          onToggleCueType={toggleCueTypeVisibility}
         />
       ) : (
         <HighlightCardsView

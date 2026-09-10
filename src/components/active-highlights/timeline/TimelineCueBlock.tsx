@@ -1,6 +1,6 @@
 import React from 'react';
 import { Cue } from '../../../types/script';
-import { TimelineCalculatedCue } from '../types';
+import { TimelineCalculatedCue, TimelineDensity } from '../types';
 import { cn } from '../../../lib/utils';
 import { formatTimelineTimecode } from './useTimelineWindow';
 
@@ -9,6 +9,7 @@ interface TimelineCueBlockProps {
   onClick?: (cue: Cue) => void;
   isSelected?: boolean;
   isPlaying?: boolean;
+  density?: TimelineDensity;
 }
 
 /**
@@ -25,10 +26,13 @@ export const TimelineCueBlock = React.memo<TimelineCueBlockProps>(({
   onClick,
   isSelected = false,
   isPlaying = false,
+  density = 'comfortable',
 }) => {
   const { cue, leftPercent, widthPercent, isPlayheadInside, themedColor, subLaneIndex = 0 } = item;
   const rgb = themedColor.rgb || '255, 255, 255';
-  const topPx = subLaneIndex * 26 + 3;
+  const isCompact = density === 'compact';
+  const topPx = isCompact ? subLaneIndex * 20 + 2 : subLaneIndex * 26 + 3;
+  const blockHeight = isCompact ? '18px' : '22px';
 
   const tooltip = `${cue.type?.toUpperCase() || 'CUE'}: "${cue.selectedText}" (${formatTimelineTimecode(cue.startTime)} - ${formatTimelineTimecode(cue.endTime)})`;
 
@@ -48,14 +52,15 @@ export const TimelineCueBlock = React.memo<TimelineCueBlockProps>(({
         left: `${leftPercent}%`,
         width: `${widthPercent}%`,
         top: `${topPx}px`,
-        height: '22px',
+        height: blockHeight,
         backgroundColor: `rgba(${rgb}, ${isPlayheadInside ? 0.35 : 0.18})`,
         borderColor: `rgba(${rgb}, ${isPlayheadInside ? 0.9 : 0.45})`,
         willChange: 'left, width',
         transition: isPlaying ? 'left 100ms linear, width 100ms linear' : 'none',
       }}
       className={cn(
-        "absolute flex items-center px-2 rounded-md border text-[11px] font-sans transition-colors duration-150 cursor-pointer select-none overflow-hidden",
+        "absolute flex items-center px-2 rounded-md border font-sans transition-colors duration-150 cursor-pointer select-none overflow-hidden",
+        isCompact ? "text-[10px]" : "text-[11px]",
         "hover:brightness-125 hover:z-20",
         isPlayheadInside && "ring-1 shadow-sm z-10 font-semibold",
         isSelected && "ring-2 ring-white/80 z-30"

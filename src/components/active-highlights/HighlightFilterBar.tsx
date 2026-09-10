@@ -39,7 +39,7 @@ export const HighlightFilterBar = React.memo<HighlightFilterBarProps>(({
   resolveCueColor,
 }) => {
   return (
-    <div className="flex flex-wrap items-center justify-center gap-1.5 mb-4">
+    <div className="flex flex-wrap items-center justify-center gap-1.5 mb-2.5">
       {COLORS.map(color => {
         const isActive = activeCueTypes.has(color.type);
         const isHidden = hiddenCueTypes.has(color.type);

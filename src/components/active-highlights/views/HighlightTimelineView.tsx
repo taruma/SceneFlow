@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Cue, TimingSettings } from '../../../types/script';
 import { CueThemeResolvedColor } from '../../../styles';
 import { isCueActive } from '../../../lib/cueUtils';
+import { TimelineDensity } from '../types';
 import { useTimelineWindow } from '../timeline/useTimelineWindow';
 import { TimelineLane } from '../timeline/TimelineLane';
 import { TimelinePlayheadRuler } from '../timeline/TimelinePlayheadRuler';
@@ -18,6 +19,8 @@ interface HighlightTimelineViewProps {
   resolveCueColor: (typeOrClass?: string) => CueThemeResolvedColor;
   onSeekCue?: (cue: Cue, autoPlay?: boolean) => void;
   onSeekTo?: (seconds: number, autoPlay?: boolean) => void;
+  density?: TimelineDensity;
+  onToggleCueType?: (type: string) => void;
 }
 
 /**
@@ -33,6 +36,8 @@ export const HighlightTimelineView: React.FC<HighlightTimelineViewProps> = ({
   resolveCueColor,
   onSeekCue,
   onSeekTo,
+  density = 'comfortable',
+  onToggleCueType,
 }) => {
   const [selectedCue, setSelectedCue] = useState<Cue | null>(null);
 
@@ -96,6 +101,9 @@ export const HighlightTimelineView: React.FC<HighlightTimelineViewProps> = ({
                 onCueClick={handleCueClick}
                 themedColor={themed}
                 isPlaying={isPlaying}
+                density={density}
+                isHidden={hiddenCueTypes.has(category.type)}
+                onToggleVisibility={onToggleCueType}
               />
             );
           })}

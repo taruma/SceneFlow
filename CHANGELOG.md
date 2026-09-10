@@ -15,21 +15,53 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Deterministic Global Sub-Lane Stacking (`useTimelineWindow.ts`)**: Implemented greedy interval scheduling across all script cues to assign fixed, permanent sub-lane indices, completely eliminating vertical row-jumping or card juggling during scrubbing and playback.
   - **Docked Paused Cue Inspector (`PausedInspectorCard.tsx`)**: Automatically docks below the timeline whenever playback is paused or a cue block is clicked, featuring multi-cue tab switching, category-themed badges, large serif italic screenplay quotes, precision timestamps (`MM:SS.s`), and a dedicated "Replay" action.
   - **Segmented View Mode Switcher (`ActiveHighlightsPanel.tsx`)**: Added a persistent header toggle (`[ 📊 Timeline | 🗂 Cards ]`) stored in `localStorage` (`sceneflow_highlight_view_mode`), allowing users to switch between the modern multi-track timeline and the classic floating cards view at any time.
+  - **Active Highlights Header Redesign & Studio VU Meter (`ActiveHighlightsPanel.tsx`)**:
+    - Re-architected the panel header into a unified two-column layout: left side groups the section title with the active counter, while the right side consolidates interactive toolbar controls.
+    - **Studio VU Meter (Fixed-Slot Category LED Strip)**: Implemented an 8-slot category LED indicator strip (`Dialogue`, `Action`, `Camera`, `Shot`, `Audio`, `VFX`, `Transition`, `Environment`) anchored beside the count, illuminating dynamically in theme-calibrated colors (`resolveCueColor`) with zero layout shift during playback.
+    - **Jitter-Free Numerical Isolation**: Isolated the active cue counter in a dedicated fixed-width slot (`min-w-[14px] font-mono tabular-nums`), preventing horizontal width jumping when cue counts oscillate between single and double digits.
+    - **Collapsible Filter Drawer**: Converted the 8-category pill filter bar into a smoothly collapsible drawer (`max-h-32 opacity-100` ⇋ `max-h-0 opacity-0`), reclaiming ~35–40px of vertical space for the timeline tracks.
+    - **Persistent Toolbar Button & Mute Indicator**: Added a dedicated `Filters` button to the right toolbar with `localStorage` memory (`sceneflow_highlight_filter_expanded`) and an animated pulsing dot indicator when any categories are actively muted.
   - **High-Craft Sub-Package Modularization**: Fully decomposed the monolithic highlights component into a dedicated, modular folder structure (`src/components/active-highlights/`) with a public API barrel export (`index.ts`), clean contracts (`types.ts`), headless calculation hook (`useTimelineWindow.ts`), and isolated track primitives (`TimelineLane.tsx`, `TimelineCueBlock.tsx`).
+- **Draggable Asymmetric Split Pane (`src/components/common/SplitPaneDivider.tsx`, `src/hooks/useScriptPreferences.ts`, `src/App.tsx`)**:
+  - Replaced the rigid 50/50 desktop split with an interactive, draggable split divider, defaulting to a calibrated **42% Video / 58% Script** ratio (clamped between 30% and 65%) and persisted in `localStorage` (`sceneflow_split_ratio`).
+  - Added desktop-only `SplitPaneDivider` component with direct pointer capture, transparent iframe drag guard, keyboard arrow adjustment, and double-click reset.
+  - Implemented `requestAnimationFrame` hardware VSync throttling and `.is-resizing-split` CSS transition suppression, delivering 60–144fps lag-free resizing.
+  - Decoupled real-time in-memory drag state updates from disk I/O, writing to `localStorage` only upon drag release (`commitSplitRatio`).
+- **Vertical Video ⇕ Timeline Split Divider & Proportional Sizing (`src/components/playback/VideoSplitDivider.tsx`, `src/components/playback/PlaybackLeftPanel.tsx`, `src/hooks/useScriptPreferences.ts`)**:
+  - Replaced the manual percentage `Size` slider with an interactive desktop horizontal split handle (`VideoSplitDivider`) positioned directly between the Video Player and the Active Highlights timeline.
+  - Implemented direct vertical height resizing (default: `240px`, clamped between `160px` and `480px`) with automatic 16:9 proportional aspect scaling (`aspect-video`), completely eliminating dead horizontal gutters and preserving true video geometry.
+  - Replaced the cluttered "NOW PLAYING" slider row with a minimal, uppercase tracked `PLAYBACK` section header (`UI_TOKENS.layout.sectionTitle`), establishing visual consistency with `ACTIVE HIGHLIGHTS` and `SCRIPT PREVIEW`.
+  - Added high-performance pointer capture, `requestAnimationFrame` hardware VSync throttling, iframe pointer event suppression, keyboard accessibility (`ArrowUp`/`ArrowDown`), and double-click reset to 240px.
+  - Integrated `videoHeight` persistence (`sceneflow_video_height`) with debounced write-on-release (`commitVideoHeight`), and unified it with the header's "Reset View" button to reset both panel split and video height in one click.
+- **Header "Reset View" Button (`src/components/AppHeader.tsx`, `src/hooks/useScriptPreferences.ts`)**:
+  - Added a dedicated reset button (`RotateCcw`) to the desktop header toolbar with active indicator dot and dynamic tooltips, restoring default 42:58 split and 100% video size in a single click.
 - **Timing Buffers Activation Synchronization (The Dual-Time Principle) (`useTimelineWindow.ts`, `HighlightTimelineView.tsx`, `ActiveHighlightsPanel.tsx`)**:
   - Integrated `state.settings` into the timeline so that cue blocks and category indicator dots illuminate (`isPlayheadInside`) across the full `before` lead-in and `after` hold buffers via `isCueActive()`.
   - Docked paused cue inspector displays active cues in lockstep with the highlighted screenplay text while preserving physical audio media boundaries (`startTime` $\to$ `endTime`) on the timecode ruler.
 
 ### Fixed
+- **Timeline Sub-Lane Density Synchronization (`src/components/active-highlights/timeline/`)**:
+  - Fixed a sub-lane clipping bug where compact density shortened track container heights while cue blocks remained at 26px vertical offsets.
+  - Forwarded `density` from `TimelineLane` into `TimelineCueBlock`, ensuring top offsets (`subLaneIndex * step + padding`) and block heights (18px vs 22px) stay strictly in lockstep with container bounds.
 - **Playback State-Aware Seeking & Auto-Play Suppression (`src/hooks/useYouTubePlayer.ts`, `src/App.tsx`, `src/hooks/useCueEditor.ts`)**:
   - Fixed an issue where clicking a cue on the timeline or in the script while paused triggered YouTube's unbuffered seek autoplay quirk (`BUFFERING (3) -> PLAYING (1)`).
   - Implemented pre-emptive and post-seek `player.pauseVideo()` enforcement alongside `player.seekTo()`.
   - Added an auto-expiring 600ms seek guard timeout to prevent the "ghost pause" bug, ensuring that subsequent clicks on the YouTube player frame start playback immediately on the first click.
   - Propagated explicit `autoPlay: true` intent through props so the inspector's "Replay" action immediately seeks and begins playback.
   - Protected edit-mode cue selection in `useCueEditor.ts` against involuntary playback when paused.
-- **Filter Bar & Header Optical Alignment (`HighlightFilterBar.tsx`, `ActiveHighlightsPanel.tsx`)**:
-  - Centered and optically aligned filter badge pills and active indicator dots.
-  - Harmonized header mode toggle buttons and active count badges for consistent vertical baselines.
+
+### Refactored
+- **Zero-Scroll Playback Left Panel Optimization (`src/components/playback/PlaybackLeftPanel.tsx`, `src/components/active-highlights/`)**:
+  - Optimized playback column padding from `lg:p-10` to `lg:px-6 lg:py-3.5` (reclaiming ~52px of blank vertical whitespace) and tightened inter-section gaps.
+  - Scaled the 16:9 player and timeline components so that the video, filter pills, multi-track lanes, and timecode ruler fit on screen simultaneously with 0px vertical scrolling.
+  - Preserved standard `comfortable` track density (32px track height) as the unclipped default.
+- **Playback & Edit Left Panel Decoupling (`src/components/playback/PlaybackLeftPanel.tsx`, `src/App.tsx`)**:
+  - Extracted dedicated `PlaybackLeftPanel` component to isolate video player rendering, sizing controls, and active highlights from Edit mode.
+  - Eliminated mixed-mode conditional ternaries and sticky scroll listeners in `App.tsx`, providing a clean, isolated container architecture for playback viewport optimizations.
+- **Timeline Density & Interactive Category Visibility (`src/components/active-highlights/`)**:
+  - Introduced `TimelineDensity` (`'comfortable' | 'compact'`) support across `types.ts`, `ActiveHighlightsPanel.tsx`, `HighlightTimelineView.tsx`, and `TimelineLane.tsx` for dynamic track heights (32px vs 24px).
+  - Enhanced `TimelineLane` category headers into interactive buttons that toggle cue category visibility directly with active/muted visual states.
+  - Updated `useTimelineWindow.ts` to expose `scriptCategories` alongside `existingCategories` for robust category presence tracking.
 
 ## [2.2.0] - 2026-08-29
 
