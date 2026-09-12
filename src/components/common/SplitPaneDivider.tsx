@@ -36,6 +36,7 @@ export const SplitPaneDivider: React.FC<SplitPaneDividerProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const dividerRef = useRef<HTMLDivElement>(null);
+  const activePointerIdRef = useRef<number | null>(null);
   const rafId = useRef<number | null>(null);
   const latestRatio = useRef<number>(splitRatio);
 
@@ -46,30 +47,11 @@ export const SplitPaneDivider: React.FC<SplitPaneDividerProps> = ({
     }
   }, [splitRatio, isDragging]);
 
-  const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (e.button !== 0) return; // Only primary mouse button
-    e.preventDefault();
-    e.stopPropagation();
-
-    try {
-      e.currentTarget.setPointerCapture(e.pointerId);
-    } catch {
-      // Fallback if setPointerCapture is unsupported
-    }
-
-    latestRatio.current = splitRatio;
-    document.body.classList.add('is-resizing-split');
-    setIsDragging(true);
-  }, [splitRatio]);
-
-  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isDragging) return;
-    e.preventDefault();
-
+  const updateRatioFromPointer = useCallback((clientX: number) => {
     const windowWidth = window.innerWidth;
     if (windowWidth <= 0) return;
 
-    const rawRatio = (e.clientX / windowWidth) * 100;
+    const rawRatio = (clientX / windowWidth) * 100;
     // Guard minimum ratio with an absolute pixel floor so the left panel stays usable
     const pixelMinRatio = (MIN_PANEL_PIXEL_WIDTH / windowWidth) * 100;
     const effectiveMinRatio = Math.min(maxRatio, Math.max(minRatio, pixelMinRatio));
@@ -83,18 +65,18 @@ export const SplitPaneDivider: React.FC<SplitPaneDividerProps> = ({
         rafId.current = null;
       });
     }
-  }, [isDragging, minRatio, maxRatio, onSplitChange]);
+  }, [minRatio, maxRatio, onSplitChange]);
 
-  const handlePointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isDragging) return;
-    e.preventDefault();
-
-    try {
-      if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-        e.currentTarget.releasePointerCapture(e.pointerId);
+  const stopDragging = useCallback(() => {
+    if (activePointerIdRef.current !== null && dividerRef.current) {
+      try {
+        if (dividerRef.current.hasPointerCapture(activePointerIdRef.current)) {
+          dividerRef.current.releasePointerCapture(activePointerIdRef.current);
+        }
+      } catch {
+        // Ignore cleanup error
       }
-    } catch {
-      // Ignore cleanup error
+      activePointerIdRef.current = null;
     }
 
     if (rafId.current !== null) {
@@ -108,7 +90,49 @@ export const SplitPaneDivider: React.FC<SplitPaneDividerProps> = ({
     // Commit to persistent storage only upon pointer release
     onSplitChange(latestRatio.current);
     onSplitCommit?.(latestRatio.current);
-  }, [isDragging, onSplitChange, onSplitCommit]);
+  }, [onSplitChange, onSplitCommit]);
+
+  const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0) return; // Only primary mouse button
+    e.preventDefault();
+    e.stopPropagation();
+
+    activePointerIdRef.current = e.pointerId;
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {
+      // Fallback if setPointerCapture is unsupported
+    }
+
+    latestRatio.current = splitRatio;
+    document.body.classList.add('is-resizing-split');
+    setIsDragging(true);
+  }, [splitRatio]);
+
+  // Window-level event subscriptions while dragging to guarantee capture stability across iframes/viewports
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const onPointerMove = (e: PointerEvent) => {
+      e.preventDefault();
+      updateRatioFromPointer(e.clientX);
+    };
+
+    const onPointerUp = (e: PointerEvent) => {
+      e.preventDefault();
+      stopDragging();
+    };
+
+    window.addEventListener('pointermove', onPointerMove, { passive: false });
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
+
+    return () => {
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerUp);
+    };
+  }, [isDragging, updateRatioFromPointer, stopDragging]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
@@ -146,7 +170,7 @@ export const SplitPaneDivider: React.FC<SplitPaneDividerProps> = ({
       {/* Transparent overlay guard to prevent iframe hover/capture during dragging */}
       {isDragging && (
         <div 
-          className="fixed inset-0 z-[100] cursor-col-resize select-none bg-transparent"
+          className="fixed inset-0 z-[100] cursor-col-resize select-none touch-none bg-transparent"
           style={{ pointerEvents: 'auto' }}
         />
       )}
@@ -161,16 +185,14 @@ export const SplitPaneDivider: React.FC<SplitPaneDividerProps> = ({
         aria-valuemax={maxRatio}
         aria-label="Resize left playback and right screenplay panels"
         onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
+        onLostPointerCapture={stopDragging}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onDoubleClick={onReset}
         onKeyDown={handleKeyDown}
         title="Drag to resize panels • Double-click to reset view"
         className={cn(
-          "hidden lg:flex relative items-center justify-center select-none cursor-col-resize z-30 shrink-0",
+          "hidden lg:flex relative items-center justify-center select-none touch-none cursor-col-resize z-30 shrink-0",
           "w-3 -mx-1.5 transition-colors duration-200 outline-none group focus-visible:ring-2 focus-visible:ring-blue-500",
           className
         )}

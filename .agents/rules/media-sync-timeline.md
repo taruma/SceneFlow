@@ -36,6 +36,7 @@ YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds
 ## 6. Responsive Split Pane & Drag Performance
 - Keep panel split logic desktop-only (`hidden lg:flex`); mobile/tablet devices must always stack vertically (`flex-col`) with full width (`w-full`).
 - **Absolute Pixel Minimum Constraint (`MIN_PANEL_PIXEL_WIDTH = 380`)**: Pointer dragging and keyboard adjustments calculate `effectiveMinRatio = Math.max(minRatio, (380 / windowWidth) * 100)` to guarantee the left playback column cannot be collapsed into an unusable micro-sliver on smaller desktop screens (1024px–1366px).
+- **Window-Bound Pointer Tracking & Gesture Safety**: Split and resizer drag listeners (`pointermove`, `pointerup`, `pointercancel`) must be subscribed to `window` rather than confined to the drag handle element, with `touch-none` (`touch-action: none`) declared to prevent Windows Precision Touchpad and touch gestures from firing premature `pointercancel` aborts.
 - **Zero-Latency Dragging**: Temporarily suppress all CSS transitions across panels during active drag operations via the global `.is-resizing-split` class on `document.body`.
 - **Hardware VSync Throttling**: Always clamp pointermove updates to display refresh intervals using `requestAnimationFrame`.
 - **Decoupled Persistence**: Never invoke synchronous disk I/O (`localStorage.setItem`) inside continuous mousemove/pointermove loops. Update in-memory state during drag, and commit to storage only upon pointer release (`commitSplitRatio`).
@@ -43,8 +44,8 @@ YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds
 ## 7. Vertical Video Resizing & Aspect Ratio Invariants
 - Direct vertical manipulation via `VideoSplitDivider.tsx` takes precedence over percentage-based width sliders.
 - **Aspect Ratio Integrity**: Combine `height: ${videoHeight}px` with `aspectRatio: '16 / 9'` and `maxWidth: '100%'` on the video container to ensure no lateral empty gutters and zero distortion.
-- **Drag Performance & IFrame Guard**: Leverage pointer capture and `.is-resizing-split` to prevent YouTube iframe event absorption during vertical drags.
-- **Unified Reset State**: The header "Reset View" action must reset both the horizontal panel split (42%) and vertical video height (240px) in lockstep.
+- **Drag Performance, IFrame Guard & Deadband Elimination**: Leverage window-level pointer event subscriptions, explicit pointer capture fallbacks, and `.is-resizing-split` to prevent YouTube iframe event absorption during vertical drags. Re-anchor the drag origin when reaching min (160px) or max (480px) constraints to eliminate boundary deadbands when reversing direction.
+- **Unified Reset State**: The header "Reset View" action must reset both the horizontal panel split (65%) and vertical video height (220px) in lockstep.
 
 ## 8. Header Layout Stability & Adaptive Two-Tier Toolbar Invariants
 - **Adaptive Toolbar Architecture**: High-frequency headers must dynamically adapt to container width via `ResizeObserver` (560px threshold). When wide ($\ge 560\text{px}$), all controls are consolidated into a single unified row (`Highlights` + VU meter on left; Track Height + Zoom + Filters + View Switcher on right), reserving maximum vertical headroom for timeline tracks. When dragged narrow ($< 560\text{px}$), the header automatically transforms into a Two-Tier layout (Tier 1: Title + VU meter + View Switcher; Tier 2: Zoom + Track Height + Filters) to eliminate button collisions and text squishing.

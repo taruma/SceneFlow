@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.3-dev] - Unreleased
+
+### Fixed
+- **Layout Divider Drag Unselection & Gesture Drop Fix (`src/components/playback/VideoSplitDivider.tsx`, `src/components/common/SplitPaneDivider.tsx`)**:
+  - Replaced element-confined pointer capture with global window-level event subscriptions (`pointermove`, `pointerup`, `pointercancel`) during drag operations, ensuring panel resizing never drops or unselects when the cursor sweeps rapidly across the viewport or into cross-origin YouTube `<iframe>` boundaries.
+  - Added `touch-none` (`touch-action: none`) and `select-none` to both dividers and the full-screen overlay guard, preventing Windows Precision Touchpad and touch gestures from mistaking layout drag gestures for vertical scrolling/panning and firing premature `pointercancel` events.
+  - Implemented deadband elimination on boundary clamping in `VideoSplitDivider`: dynamically re-anchors the reference coordinate when mouse movement travels past the 160px minimum or 480px maximum limits, ensuring the resizer responds immediately when reversing drag direction.
+  - Added `onLostPointerCapture={stopDragging}` fallbacks and explicit cleanup of pointer captures upon drag termination to prevent desynchronized drag states.
+
 ## [2.3.2] - 2026-09-12
 
 ### Added

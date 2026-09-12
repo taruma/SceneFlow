@@ -40,6 +40,7 @@ export const VideoSplitDivider: React.FC<VideoSplitDividerProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const dividerRef = useRef<HTMLDivElement>(null);
+  const activePointerIdRef = useRef<number | null>(null);
   const rafId = useRef<number | null>(null);
   const startYRef = useRef<number>(0);
   const startHeightRef = useRef<number>(videoHeight);
@@ -52,11 +53,61 @@ export const VideoSplitDivider: React.FC<VideoSplitDividerProps> = ({
     }
   }, [videoHeight, isDragging]);
 
+  const updateHeightFromPointer = useCallback((clientY: number) => {
+    const deltaY = clientY - startYRef.current;
+    const rawHeight = startHeightRef.current + deltaY;
+    const clampedHeight = Math.min(maxHeight, Math.max(minHeight, Math.round(rawHeight)));
+
+    // Deadband prevention: When cursor travels past boundaries, dynamically re-anchor
+    // startYRef so reversing mouse direction responds instantaneously without dead travel.
+    if (rawHeight < minHeight) {
+      startYRef.current = clientY - (minHeight - startHeightRef.current);
+    } else if (rawHeight > maxHeight) {
+      startYRef.current = clientY - (maxHeight - startHeightRef.current);
+    }
+
+    latestHeightRef.current = clampedHeight;
+
+    // Throttle to VSync frame rate to eliminate lag
+    if (rafId.current === null) {
+      rafId.current = requestAnimationFrame(() => {
+        onHeightChange(latestHeightRef.current);
+        rafId.current = null;
+      });
+    }
+  }, [minHeight, maxHeight, onHeightChange]);
+
+  const stopDragging = useCallback(() => {
+    if (activePointerIdRef.current !== null && dividerRef.current) {
+      try {
+        if (dividerRef.current.hasPointerCapture(activePointerIdRef.current)) {
+          dividerRef.current.releasePointerCapture(activePointerIdRef.current);
+        }
+      } catch {
+        // Ignore release error
+      }
+      activePointerIdRef.current = null;
+    }
+
+    if (rafId.current !== null) {
+      cancelAnimationFrame(rafId.current);
+      rafId.current = null;
+    }
+
+    document.body.classList.remove('is-resizing-split');
+    setIsDragging(false);
+
+    // Commit to persistent storage only upon pointer release
+    onHeightChange(latestHeightRef.current);
+    onHeightCommit?.(latestHeightRef.current);
+  }, [onHeightChange, onHeightCommit]);
+
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (e.button !== 0) return; // Primary mouse button only
     e.preventDefault();
     e.stopPropagation();
 
+    activePointerIdRef.current = e.pointerId;
     try {
       e.currentTarget.setPointerCapture(e.pointerId);
     } catch {
@@ -71,48 +122,30 @@ export const VideoSplitDivider: React.FC<VideoSplitDividerProps> = ({
     setIsDragging(true);
   }, [videoHeight]);
 
-  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+  // Window-level event subscriptions while dragging to guarantee capture stability across iframes/viewports
+  useEffect(() => {
     if (!isDragging) return;
-    e.preventDefault();
 
-    const deltaY = e.clientY - startYRef.current;
-    const rawHeight = startHeightRef.current + deltaY;
-    const clampedHeight = Math.min(maxHeight, Math.max(minHeight, Math.round(rawHeight)));
-    latestHeightRef.current = clampedHeight;
+    const onPointerMove = (e: PointerEvent) => {
+      e.preventDefault();
+      updateHeightFromPointer(e.clientY);
+    };
 
-    // Throttle to VSync frame rate to eliminate lag
-    if (rafId.current === null) {
-      rafId.current = requestAnimationFrame(() => {
-        onHeightChange(latestHeightRef.current);
-        rafId.current = null;
-      });
-    }
-  }, [isDragging, minHeight, maxHeight, onHeightChange]);
+    const onPointerUp = (e: PointerEvent) => {
+      e.preventDefault();
+      stopDragging();
+    };
 
-  const handlePointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isDragging) return;
-    e.preventDefault();
+    window.addEventListener('pointermove', onPointerMove, { passive: false });
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
 
-    try {
-      if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-        e.currentTarget.releasePointerCapture(e.pointerId);
-      }
-    } catch {
-      // Ignore cleanup error
-    }
-
-    if (rafId.current !== null) {
-      cancelAnimationFrame(rafId.current);
-      rafId.current = null;
-    }
-
-    document.body.classList.remove('is-resizing-split');
-    setIsDragging(false);
-
-    // Commit to persistent storage only upon pointer release
-    onHeightChange(latestHeightRef.current);
-    onHeightCommit?.(latestHeightRef.current);
-  }, [isDragging, onHeightChange, onHeightCommit]);
+    return () => {
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerUp);
+    };
+  }, [isDragging, updateHeightFromPointer, stopDragging]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'ArrowUp') {
@@ -146,7 +179,7 @@ export const VideoSplitDivider: React.FC<VideoSplitDividerProps> = ({
       {/* Transparent overlay guard to prevent iframe hover/capture during dragging */}
       {isDragging && (
         <div 
-          className="fixed inset-0 z-[100] cursor-row-resize select-none bg-transparent"
+          className="fixed inset-0 z-[100] cursor-row-resize select-none touch-none bg-transparent"
           style={{ pointerEvents: 'auto' }}
         />
       )}
@@ -161,16 +194,14 @@ export const VideoSplitDivider: React.FC<VideoSplitDividerProps> = ({
         aria-valuemax={maxHeight}
         aria-label="Resize video player height"
         onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
+        onLostPointerCapture={stopDragging}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onDoubleClick={onReset}
         onKeyDown={handleKeyDown}
         title="Drag to resize video height • Double-click to reset"
         className={cn(
-          "hidden lg:flex relative items-center justify-center select-none cursor-row-resize z-20 shrink-0",
+          "hidden lg:flex relative items-center justify-center select-none touch-none cursor-row-resize z-20 shrink-0",
           "h-6 w-full my-2.5 py-2 transition-colors duration-200 outline-none group focus-visible:ring-2 focus-visible:ring-blue-500",
           className
         )}

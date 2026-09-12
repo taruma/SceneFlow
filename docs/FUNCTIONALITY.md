@@ -150,7 +150,7 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
   - Dragging up shrinks the video height (down to 160px), allocating maximum vertical space to multi-track timeline lanes.
   - Automatic 16:9 aspect scaling (`aspect-video` + `maxWidth: 100%`) ensures zero video distortion and completely eliminates lateral empty gutters.
 - **Clean Headroom**: The redundant "NOW PLAYING" header row and percentage slider have been completely eliminated, reclaiming ~28px of top vertical space.
-- **Hardware VSync Dragging (60–144fps)**: Pointer movements are throttled via `requestAnimationFrame` with pointer capture and `.is-resizing-split` CSS transition suppression on `document.body` for lag-free cursor tracking.
+- **Hardware VSync Dragging (60–144fps) & Gesture Safety**: Pointer movements are throttled via `requestAnimationFrame` with global `window`-level event subscriptions, `touch-action: none` gesture protection against Windows/touchpad scroll collisions, dynamic boundary deadband re-anchoring, and `.is-resizing-split` CSS transition suppression on `document.body` for rock-solid, uninterrupted cursor tracking.
 - **Unified Header "Reset View" (`AppHeader`)**: A single click on the `RotateCcw` button in the header toolbar (or double-clicking either divider) immediately snaps both the 65:35 horizontal panel split and the 220px vertical video height back to defaults.
 - **Decoupled Persistence**: Changes commit to `localStorage` (`sceneflow_split_ratio`, `sceneflow_video_height`) only upon pointer release to eliminate main-thread disk I/O bottlenecks.
 
