@@ -66,12 +66,14 @@ export const HighlightTimelineView: React.FC<HighlightTimelineViewProps> = ({
   });
 
   // Identify all cues currently active under the playhead (respecting timing buffers)
+  // Only evaluated when paused or when inspecting a selected cue, avoiding redundant filtering during active playback
   const activeCuesUnderPlayhead = useMemo(() => {
+    if (isPlaying && selectedCue === null) return [];
     return (cues || []).filter(cue => {
       if (hiddenCueTypes.has(cue.type || 'dialogue')) return false;
       return isCueActive(cue, currentTime, settings);
     });
-  }, [cues, hiddenCueTypes, currentTime, settings]);
+  }, [cues, hiddenCueTypes, currentTime, settings, isPlaying, selectedCue]);
 
   // If playback resumes, clear manually selected cue so inspector follows live playhead
   useEffect(() => {

@@ -64,6 +64,18 @@ export function useAutoScroll({
     }
   }, [lastScrolledCueId, scriptRef, isDesktop, onScrollFocusChange]);
 
+  const rafRef = React.useRef<number | null>(null);
+
+  // Clean up pending animation frames on unmount
+  useEffect(() => {
+    return () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+    };
+  }, []);
+
   // Auto-scroll logic on currentTime updates
   useEffect(() => {
     if (mode === 'playback' && isAutoScrollEnabled) {
@@ -91,7 +103,11 @@ export function useAutoScroll({
         const element = document.getElementById(`cue-${activeCue.id}`);
         const container = scriptRef.current;
         if (element && container) {
-          setTimeout(() => {
+          if (rafRef.current !== null) {
+            cancelAnimationFrame(rafRef.current);
+          }
+
+          rafRef.current = requestAnimationFrame(() => {
             const containerRect = container.getBoundingClientRect();
             const elementRect = element.getBoundingClientRect();
             const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
@@ -106,11 +122,16 @@ export function useAutoScroll({
               targetScrollTop = relativeTop - (containerRect.height / 2) + (elementRect.height / 2);
             }
             
-            container.scrollTo({
-              top: Math.max(0, targetScrollTop),
-              behavior: 'smooth',
-            });
-          }, 50);
+            const finalTarget = Math.max(0, targetScrollTop);
+            // Deadband guard: avoid micro-scroll jitter when consecutive cues are on the same line
+            if (Math.abs(container.scrollTop - finalTarget) > 10) {
+              container.scrollTo({
+                top: finalTarget,
+                behavior: 'smooth',
+              });
+            }
+            rafRef.current = null;
+          });
           setLastScrolledCueId(activeCue.id);
         }
       } else if (!activeCue) {

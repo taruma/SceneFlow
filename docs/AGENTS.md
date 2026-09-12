@@ -58,9 +58,15 @@ The parser relies on deterministic line-by-line regex patterns. When modifying o
 
 ## 4. Sync Logic & Rendering Performance
 
-The `renderedScript` `useMemo` in `src/App.tsx` is executed frequently as playback time updates:
+The `renderedScript` rendering pipeline in `src/App.tsx` runs frequently as YouTube video playback advances (`currentTime` updates every 100ms):
 
-- **Avoid Heavy Computations**: Do not insert complex calculations or synchronous operations inside the `processedLines.forEach` loop.
+- **Decoupled Script Parsing**: Never run `processScript()` inside hooks or render passes that depend on `currentTime`. Script text parsing must remain independently memoized (`processedLines = useMemo(() => processScript(state.scriptText || ""), [state.scriptText])`), executing strictly when the text changes.
+- **Pre-Indexed Cue Mapping**: Never perform nested array filtering (`cues.filter()`) across all screenplay lines during playback. Pre-index overlapping cues by line index (`cuesByLineIndex = useMemo(..., [state.cues, processedLines])`) and provide a stable `EMPTY_CUES_ARRAY` reference for lines without cues.
+- **Memoized Line-Level Isolation (`ScriptLine`)**: Delegate line rendering to `<ScriptLine />` wrapped in `React.memo` with `areScriptLinePropsEqual`. Lines with no cues must immediately return `true` to skip re-renders. Lines with cues must re-render only when a cue on that line changes active status or exceeds a 0.005 opacity transition delta.
+- **Analog Cue Highlight Transitions**: Cue highlight `<span>` elements must apply linear CSS transitions (`transition: background-color 100ms linear, box-shadow 100ms linear`) strictly during playback mode (`mode === 'playback' && !isTemp`). This offloads color and glow fading between 100ms timer ticks directly to the GPU compositor for smooth analog illumination without CPU load.
+- **Frame-Aligned Auto-Scrolling (`useAutoScroll`)**: Always schedule auto-scroll DOM rect reads and smooth scrolling via `requestAnimationFrame` with a cancellation cleanup ref (`rafRef`). Never use arbitrary `setTimeout` delays. Enforce a 10px deadband threshold (`Math.abs(container.scrollTop - targetScrollTop) > 10`) before invoking `scrollTo` to eliminate micro-jitter when consecutive cues trigger on the same line.
+- **Reference-Stable Active Categories**: In `App.tsx`, preserve `activeCueTypes` `Set` reference equality across 100ms timer ticks when active category members have not changed, preventing spurious re-renders across the left playback panel tree.
+- **Dormant Component Calculations**: In `HighlightTimelineView.tsx`, short-circuit `activeCuesUnderPlayhead` during playback when `selectedCue === null` to avoid redundant cue array filtering while `PausedInspectorCard` is unmounted.
 - **Stable React Keys**: Ensure rendered elements have stable `key` attributes based on `lineIdx`, `cue.id`, or unique segment offsets (`${lineIdx}-${start}`).
 - **Opacity Transitions**: In playback mode, opacity is calculated dynamically against per-category before/after buffers. In edit mode, non-active cues remain visible at reduced opacity (0.4) for editing affordance.
 
@@ -160,6 +166,7 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
 7. **Responsive Split Pane & Drag Performance**:
    - Keep panel split logic desktop-only (`hidden lg:flex`); mobile/tablet devices must always stack vertically (`flex-col`) with full width (`w-full`).
    - **Absolute Pixel Minimum Constraint (`MIN_PANEL_PIXEL_WIDTH = 380`)**: In addition to percentage ratio bounds (`MIN_SPLIT_RATIO = 30`), pointer dragging and keyboard adjustments calculate `effectiveMinRatio = Math.max(minRatio, (380 / windowWidth) * 100)` to guarantee the left playback panel cannot be collapsed into an unusable micro-sliver on smaller desktop screens (1024px–1366px).
+   - **Window-Bound Pointer Tracking & Gesture Safety**: Split and resizer drag listeners (`pointermove`, `pointerup`, `pointercancel`) must be subscribed to `window` rather than confined to the drag handle element, with `touch-none` (`touch-action: none`) declared to prevent Windows Precision Touchpad and touch gestures from firing premature `pointercancel` aborts.
    - **Zero-Latency Dragging**: Temporarily suppress all CSS transitions across panels during active drag operations via the global `.is-resizing-split` class on `document.body`.
    - **Hardware VSync Throttling**: Always clamp pointermove updates to display refresh intervals using `requestAnimationFrame`.
    - **Decoupled Persistence**: Never invoke synchronous disk I/O (`localStorage.setItem`) inside continuous mousemove/pointermove loops. Update in-memory state during drag, and commit to storage only upon pointer release (`commitSplitRatio`).
@@ -167,7 +174,7 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
 8. **Vertical Video Resizing & Aspect Ratio Invariants**:
    - Directly resize video height using the horizontal divider (`VideoSplitDivider.tsx`) rather than arbitrary width percentages.
    - **Proportional 16:9 Scaling**: Container must couple `height: ${videoHeight}px` with `aspectRatio: '16 / 9'` and `maxWidth: '100%'`, preventing video distortion and eliminating empty lateral gutters.
-   - **Performance & IFrame Guard**: Leverage pointer capture and the body `.is-resizing-split` overlay to prevent YouTube iframe event absorption during vertical drags. Commit disk I/O only on pointer up (`commitVideoHeight`).
+   - **Performance, IFrame Guard & Deadband Elimination**: Leverage window-level pointer event subscriptions, explicit pointer capture fallbacks, and the body `.is-resizing-split` overlay to prevent YouTube iframe event absorption during vertical drags. Re-anchor the drag origin when reaching min (160px) or max (480px) constraints to eliminate boundary deadbands when reversing direction. Commit disk I/O only on pointer up (`commitVideoHeight`).
 9. **Header Layout Stability & Adaptive Two-Tier Toolbar Invariants**:
    - **Adaptive Toolbar Architecture**: High-frequency headers must dynamically adapt to container width via `ResizeObserver` (560px threshold). When wide ($\ge 560\text{px}$), all controls are consolidated into a single unified row (`Highlights` + VU meter on left; Track Height + Zoom + Filters + View Switcher on right), reserving maximum vertical headroom for timeline tracks. When dragged narrow ($< 560\text{px}$), the header automatically transforms into a Two-Tier layout (Tier 1: Title + VU meter + View Switcher; Tier 2: Zoom + Track Height + Filters) to eliminate button collisions and text squishing.
    - **Compact Track Header Geometry (`w-18` / 72px)**: Category headers on `TimelineLane` must use compact fixed widths (`w-18` with `text-[8.5px]`) to maximize the available horizontal timeline track canvas for cue blocks.

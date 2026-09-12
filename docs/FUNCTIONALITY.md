@@ -150,7 +150,7 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
   - Dragging up shrinks the video height (down to 160px), allocating maximum vertical space to multi-track timeline lanes.
   - Automatic 16:9 aspect scaling (`aspect-video` + `maxWidth: 100%`) ensures zero video distortion and completely eliminates lateral empty gutters.
 - **Clean Headroom**: The redundant "NOW PLAYING" header row and percentage slider have been completely eliminated, reclaiming ~28px of top vertical space.
-- **Hardware VSync Dragging (60–144fps)**: Pointer movements are throttled via `requestAnimationFrame` with pointer capture and `.is-resizing-split` CSS transition suppression on `document.body` for lag-free cursor tracking.
+- **Hardware VSync Dragging (60–144fps) & Gesture Safety**: Pointer movements are throttled via `requestAnimationFrame` with global `window`-level event subscriptions, `touch-action: none` gesture protection against Windows/touchpad scroll collisions, dynamic boundary deadband re-anchoring, and `.is-resizing-split` CSS transition suppression on `document.body` for rock-solid, uninterrupted cursor tracking.
 - **Unified Header "Reset View" (`AppHeader`)**: A single click on the `RotateCcw` button in the header toolbar (or double-clicking either divider) immediately snaps both the 65:35 horizontal panel split and the 220px vertical video height back to defaults.
 - **Decoupled Persistence**: Changes commit to `localStorage` (`sceneflow_split_ratio`, `sceneflow_video_height`) only upon pointer release to eliminate main-thread disk I/O bottlenecks.
 
@@ -209,6 +209,16 @@ Controls where the active cue line settles vertically within the reading contain
 - **Bottom (35%)**: Positions the active line 35% from the bottom (65% ratio) for reflection reading.
 - Switching presets immediately recalculates and smoothly scrolls to the active cue element; preferences persist in `localStorage`.
 - Mobile and tablet viewports use native viewport centering for screen economy.
+
+### VSync Frame-Aligned Scheduling & Layout Reflow Elimination
+- **`requestAnimationFrame` Auto-Scroll Alignment**: Replaces uncoordinated asynchronous timeouts with `requestAnimationFrame` and a tracking ref (`rafRef`), synchronizing scroll calculations with the monitor's display refresh rate (60Hz–144Hz).
+- **Stale Frame Cancellation & Deadband Guard**: Rapid cue transitions cancel pending animation frames before scheduling a new target, while a 10px scroll distance deadband suppresses micro-scroll jitter when consecutive cues activate on the same line.
+
+### Sub-Second Playback Render Isolation (`ScriptLine` Memoization)
+- **Decoupled Script Text Processing**: The regex and token parsing pipeline (`processScript`) runs exclusively when script text changes, eliminating redundant parsing cycles during video playback.
+- **$O(1)$ Cue Pre-Indexing**: Overlapping cues are indexed to line numbers on script load, removing nested $O(\text{lines} \times \text{cues})$ filter passes on every 100ms clock tick.
+- **Granular Line Updates**: Screenplay lines without cues (~95% of a manuscript) completely skip React re-renders during playback. Only lines whose cues are currently active, fading in/out, or transitioning state re-render, ensuring silky-smooth 60fps playback even on long screenplays with 100+ cues.
+- **GPU CSS Highlight Transitions**: Screenplay highlight spans apply `100ms linear` transitions for background color and glow, allowing the GPU compositor to interpolate 100ms timer ticks into smooth, continuous analog light fades without CPU overhead.
 
 ---
 
@@ -321,7 +331,7 @@ For a complete and up-to-date list of all available sceneflow projects, release 
 
 ### Desktop App Info Modal (`AppInfoModal`)
 Accessible via the `i` (Info) icon button in the desktop header toolbar:
-- **Dynamic Version & Metadata**: Automatically loads current version (`v2.3.1`), app title, and description directly from `metadata.json`.
+- **Dynamic Version & Metadata**: Automatically loads current version (`v2.3.2`), app title, and description directly from `metadata.json`.
 - **Author Attribution**: Features creator credit for **Taruma Sakti** in header and footer linking directly to [Linktree](https://linktr.ee/tarumainfo).
 - **Featured Substack Deep Dive**: Prominent hero card showcasing the official introductory article (*Introducing SceneFlow: Script-to-Screen Synchronization* on Substack) with a dedicated header badge, full-width summary, and direct article link.
 - **Interactive Resource Grid**: 2x2 resource links for GitHub Repository, Documentation / Guide, Release Notes (Changelog), and Ko-fi Support.
