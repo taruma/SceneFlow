@@ -331,7 +331,7 @@ For a complete and up-to-date list of all available sceneflow projects, release 
 
 ### Desktop App Info Modal (`AppInfoModal`)
 Accessible via the `i` (Info) icon button in the desktop header toolbar:
-- **Dynamic Version & Metadata**: Automatically loads current version (`v2.3.1`), app title, and description directly from `metadata.json`.
+- **Dynamic Version & Metadata**: Automatically loads current version (`v2.3.2`), app title, and description directly from `metadata.json`.
 - **Author Attribution**: Features creator credit for **Taruma Sakti** in header and footer linking directly to [Linktree](https://linktr.ee/tarumainfo).
 - **Featured Substack Deep Dive**: Prominent hero card showcasing the official introductory article (*Introducing SceneFlow: Script-to-Screen Synchronization* on Substack) with a dedicated header badge, full-width summary, and direct article link.
 - **Interactive Resource Grid**: 2x2 resource links for GitHub Repository, Documentation / Guide, Release Notes (Changelog), and Ko-fi Support.
