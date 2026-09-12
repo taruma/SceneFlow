@@ -37,7 +37,7 @@ SceneFlow follows a modular, 5-layer architecture that separates script parsing,
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
 │                              UI LAYER                                  │
-│  src/App.tsx (orchestrator)  •  src/components/* (21 sub-components)    │
+│  src/App.tsx (orchestrator)  •  src/components/* (24 sub-components)    │
 │  src/types/script.ts (14 domain interfaces)                            │
 └────────────────────────────────────────────────────────────────────────┘
 ```
