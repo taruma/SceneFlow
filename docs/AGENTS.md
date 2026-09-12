@@ -58,9 +58,12 @@ The parser relies on deterministic line-by-line regex patterns. When modifying o
 
 ## 4. Sync Logic & Rendering Performance
 
-The `renderedScript` `useMemo` in `src/App.tsx` is executed frequently as playback time updates:
+The `renderedScript` rendering pipeline in `src/App.tsx` runs frequently as YouTube video playback advances (`currentTime` updates every 100ms):
 
-- **Avoid Heavy Computations**: Do not insert complex calculations or synchronous operations inside the `processedLines.forEach` loop.
+- **Decoupled Script Parsing**: Never run `processScript()` inside hooks or render passes that depend on `currentTime`. Script text parsing must remain independently memoized (`processedLines = useMemo(() => processScript(state.scriptText || ""), [state.scriptText])`), executing strictly when the text changes.
+- **Pre-Indexed Cue Mapping**: Never perform nested array filtering (`cues.filter()`) across all screenplay lines during playback. Pre-index overlapping cues by line index (`cuesByLineIndex = useMemo(..., [state.cues, processedLines])`) and provide a stable `EMPTY_CUES_ARRAY` reference for lines without cues.
+- **Memoized Line-Level Isolation (`ScriptLine`)**: Delegate line rendering to `<ScriptLine />` wrapped in `React.memo` with `areScriptLinePropsEqual`. Lines with no cues must immediately return `true` to skip re-renders. Lines with cues must re-render only when a cue on that line changes active status or exceeds a 0.005 opacity transition delta.
+- **Frame-Aligned Auto-Scrolling (`useAutoScroll`)**: Always schedule auto-scroll DOM rect reads and smooth scrolling via `requestAnimationFrame` with a cancellation cleanup ref (`rafRef`). Never use arbitrary `setTimeout` delays, which cause layout thrashing and stutter during rapid dialogue transitions.
 - **Stable React Keys**: Ensure rendered elements have stable `key` attributes based on `lineIdx`, `cue.id`, or unique segment offsets (`${lineIdx}-${start}`).
 - **Opacity Transitions**: In playback mode, opacity is calculated dynamically against per-category before/after buffers. In edit mode, non-active cues remain visible at reduced opacity (0.4) for editing affordance.
 

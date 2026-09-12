@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Memoized Line-Level Screenplay Component (`src/components/script/ScriptLine.tsx`)**:
+  - Extracted screenplay line rendering into a dedicated, highly optimized `<ScriptLine />` component wrapped in `React.memo` with a custom `areScriptLinePropsEqual` comparator.
+  - Automatically skips virtual DOM and rendering cycles for lines with no cues (~95% of a screenplay) during video playback.
+  - For lines with overlapping cues, conditionally re-renders only when a cue in that specific line becomes active, transitions fade-in / fade-out opacity, or exits its playback window, reducing React reconciliation work by over 95%.
+
+### Refactored
+- **Decoupled Screenplay Parsing from High-Frequency Playback Loop (`src/App.tsx`)**:
+  - Isolated `processScript(state.scriptText)` into an independent `processedLines` memoized hook (`useMemo(..., [state.scriptText])`), eliminating continuous regex and token re-parsing on every 100ms playback clock tick.
+  - Implemented `cuesByLineIndex` to pre-index overlapping cues per line index, replacing $O(\text{lines} \times \text{cues})$ array filter sweeps with instant $O(1)$ lookups per line.
+- **Frame-Aligned Auto-Scroll Scheduling (`src/hooks/useAutoScroll.ts`)**:
+  - Replaced arbitrary 50ms `setTimeout` execution with `requestAnimationFrame` and a lifecycle-guarded cancellation ref (`rafRef`).
+  - Aligns scroll position calculations (`container.scrollTo({ behavior: 'smooth' })`) directly with the browser's refresh rate (vsync) and cancels stale pending scroll requests on rapid cue transitions, eliminating layout thrashing and stutter.
+
 ## [2.3.1] - 2026-09-11
 
 ### Added

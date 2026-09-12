@@ -64,6 +64,18 @@ export function useAutoScroll({
     }
   }, [lastScrolledCueId, scriptRef, isDesktop, onScrollFocusChange]);
 
+  const rafRef = React.useRef<number | null>(null);
+
+  // Clean up pending animation frames on unmount
+  useEffect(() => {
+    return () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+    };
+  }, []);
+
   // Auto-scroll logic on currentTime updates
   useEffect(() => {
     if (mode === 'playback' && isAutoScrollEnabled) {
@@ -91,7 +103,11 @@ export function useAutoScroll({
         const element = document.getElementById(`cue-${activeCue.id}`);
         const container = scriptRef.current;
         if (element && container) {
-          setTimeout(() => {
+          if (rafRef.current !== null) {
+            cancelAnimationFrame(rafRef.current);
+          }
+
+          rafRef.current = requestAnimationFrame(() => {
             const containerRect = container.getBoundingClientRect();
             const elementRect = element.getBoundingClientRect();
             const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
@@ -110,7 +126,8 @@ export function useAutoScroll({
               top: Math.max(0, targetScrollTop),
               behavior: 'smooth',
             });
-          }, 50);
+            rafRef.current = null;
+          });
           setLastScrolledCueId(activeCue.id);
         }
       } else if (!activeCue) {

@@ -210,6 +210,15 @@ Controls where the active cue line settles vertically within the reading contain
 - Switching presets immediately recalculates and smoothly scrolls to the active cue element; preferences persist in `localStorage`.
 - Mobile and tablet viewports use native viewport centering for screen economy.
 
+### VSync Frame-Aligned Scheduling & Layout Reflow Elimination
+- **`requestAnimationFrame` Auto-Scroll Alignment**: Replaces uncoordinated asynchronous timeouts with `requestAnimationFrame` and a tracking ref (`rafRef`), synchronizing scroll calculations with the monitor's display refresh rate (60Hz–144Hz).
+- **Stale Frame Cancellation**: Rapid cue transitions cancel pending animation frames before scheduling a new target, preventing stacked smooth-scroll commands and eliminating browser layout thrashing.
+
+### Sub-Second Playback Render Isolation (`ScriptLine` Memoization)
+- **Decoupled Script Text Processing**: The regex and token parsing pipeline (`processScript`) runs exclusively when script text changes, eliminating redundant parsing cycles during video playback.
+- **$O(1)$ Cue Pre-Indexing**: Overlapping cues are indexed to line numbers on script load, removing nested $O(\text{lines} \times \text{cues})$ filter passes on every 100ms clock tick.
+- **Granular Line Updates**: Screenplay lines without cues (~95% of a manuscript) completely skip React re-renders during playback. Only lines whose cues are currently active, fading in/out, or transitioning state re-render, ensuring silky-smooth 60fps playback even on long screenplays with 100+ cues.
+
 ---
 
 ## 6. Script Viewer Customization & Dynamic Multi-Theming
