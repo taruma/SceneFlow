@@ -122,10 +122,14 @@ export function useAutoScroll({
               targetScrollTop = relativeTop - (containerRect.height / 2) + (elementRect.height / 2);
             }
             
-            container.scrollTo({
-              top: Math.max(0, targetScrollTop),
-              behavior: 'smooth',
-            });
+            const finalTarget = Math.max(0, targetScrollTop);
+            // Deadband guard: avoid micro-scroll jitter when consecutive cues are on the same line
+            if (Math.abs(container.scrollTop - finalTarget) > 10) {
+              container.scrollTo({
+                top: finalTarget,
+                behavior: 'smooth',
+              });
+            }
             rafRef.current = null;
           });
           setLastScrolledCueId(activeCue.id);

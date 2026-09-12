@@ -12,14 +12,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Extracted screenplay line rendering into a dedicated, highly optimized `<ScriptLine />` component wrapped in `React.memo` with a custom `areScriptLinePropsEqual` comparator.
   - Automatically skips virtual DOM and rendering cycles for lines with no cues (~95% of a screenplay) during video playback.
   - For lines with overlapping cues, conditionally re-renders only when a cue in that specific line becomes active, transitions fade-in / fade-out opacity, or exits its playback window, reducing React reconciliation work by over 95%.
+- **Analog Cue Highlight Fading & Box-Shadow Interpolation (`src/components/script/ScriptLine.tsx`)**:
+  - Integrated GPU CSS transitions (`transition: background-color 100ms linear, box-shadow 100ms linear`) during playback mode, transforming discrete 100ms opacity steps into continuous analog lighting transitions without CPU overhead.
 
 ### Refactored
 - **Decoupled Screenplay Parsing from High-Frequency Playback Loop (`src/App.tsx`)**:
   - Isolated `processScript(state.scriptText)` into an independent `processedLines` memoized hook (`useMemo(..., [state.scriptText])`), eliminating continuous regex and token re-parsing on every 100ms playback clock tick.
   - Implemented `cuesByLineIndex` to pre-index overlapping cues per line index, replacing $O(\text{lines} \times \text{cues})$ array filter sweeps with instant $O(1)$ lookups per line.
-- **Frame-Aligned Auto-Scroll Scheduling (`src/hooks/useAutoScroll.ts`)**:
+- **Reference-Stable Active Cue Categories (`src/App.tsx`)**:
+  - Stabilized `activeCueTypes` `Set<string>` reference across 100ms timer ticks, preserving shallow object equality when active categories are unchanged and preventing unnecessary re-renders in `PlaybackLeftPanel`.
+- **Dormant Paused Inspector Filtering (`src/components/active-highlights/views/HighlightTimelineView.tsx`)**:
+  - Short-circuited `activeCuesUnderPlayhead` cue filtering during active playback while the inspector card is unmounted, eliminating redundant background array sweeps.
+- **Frame-Aligned Auto-Scroll Scheduling & Deadband Guard (`src/hooks/useAutoScroll.ts`)**:
   - Replaced arbitrary 50ms `setTimeout` execution with `requestAnimationFrame` and a lifecycle-guarded cancellation ref (`rafRef`).
   - Aligns scroll position calculations (`container.scrollTo({ behavior: 'smooth' })`) directly with the browser's refresh rate (vsync) and cancels stale pending scroll requests on rapid cue transitions, eliminating layout thrashing and stutter.
+  - Added a 10px scroll distance deadband to prevent micro-scroll jitter when consecutive cues trigger on the same line.
 
 ## [2.3.1] - 2026-09-11
 

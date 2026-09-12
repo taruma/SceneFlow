@@ -231,6 +231,7 @@ export default function App() {
   });
 
 
+  const prevActiveCueTypesRef = useRef<Set<string>>(new Set());
   const activeCueTypes = useMemo(() => {
     const active = new Set<string>();
     (state.cues || []).forEach(c => {
@@ -238,6 +239,22 @@ export default function App() {
         active.add(c.type || 'dialogue');
       }
     });
+
+    const prev = prevActiveCueTypesRef.current;
+    if (prev.size === active.size) {
+      let isSame = true;
+      for (const t of active) {
+        if (!prev.has(t)) {
+          isSame = false;
+          break;
+        }
+      }
+      if (isSame) {
+        return prev;
+      }
+    }
+
+    prevActiveCueTypesRef.current = active;
     return active;
   }, [state.cues, state.settings, currentTime]);
 

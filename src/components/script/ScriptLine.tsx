@@ -278,6 +278,7 @@ function ScriptLineComponent({
         )}
         style={{
           backgroundColor: `rgba(${rgb}, ${finalOpacity})`,
+          transition: mode === 'playback' && !isTemp ? 'background-color 100ms linear, box-shadow 100ms linear' : 'none',
           ...(activeTheme.isDark && finalOpacity > 0.08 ? {
             boxShadow: primaryCue.type === 'dialogue'
               ? `0 0 0 1px rgba(253, 224, 71, 0.45), 0 0 6px rgba(253, 224, 71, 0.18)`

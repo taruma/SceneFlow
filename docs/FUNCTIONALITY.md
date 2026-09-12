@@ -212,12 +212,13 @@ Controls where the active cue line settles vertically within the reading contain
 
 ### VSync Frame-Aligned Scheduling & Layout Reflow Elimination
 - **`requestAnimationFrame` Auto-Scroll Alignment**: Replaces uncoordinated asynchronous timeouts with `requestAnimationFrame` and a tracking ref (`rafRef`), synchronizing scroll calculations with the monitor's display refresh rate (60Hz–144Hz).
-- **Stale Frame Cancellation**: Rapid cue transitions cancel pending animation frames before scheduling a new target, preventing stacked smooth-scroll commands and eliminating browser layout thrashing.
+- **Stale Frame Cancellation & Deadband Guard**: Rapid cue transitions cancel pending animation frames before scheduling a new target, while a 10px scroll distance deadband suppresses micro-scroll jitter when consecutive cues activate on the same line.
 
 ### Sub-Second Playback Render Isolation (`ScriptLine` Memoization)
 - **Decoupled Script Text Processing**: The regex and token parsing pipeline (`processScript`) runs exclusively when script text changes, eliminating redundant parsing cycles during video playback.
 - **$O(1)$ Cue Pre-Indexing**: Overlapping cues are indexed to line numbers on script load, removing nested $O(\text{lines} \times \text{cues})$ filter passes on every 100ms clock tick.
 - **Granular Line Updates**: Screenplay lines without cues (~95% of a manuscript) completely skip React re-renders during playback. Only lines whose cues are currently active, fading in/out, or transitioning state re-render, ensuring silky-smooth 60fps playback even on long screenplays with 100+ cues.
+- **GPU CSS Highlight Transitions**: Screenplay highlight spans apply `100ms linear` transitions for background color and glow, allowing the GPU compositor to interpolate 100ms timer ticks into smooth, continuous analog light fades without CPU overhead.
 
 ---
 

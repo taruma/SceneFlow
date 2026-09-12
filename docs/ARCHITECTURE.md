@@ -188,7 +188,7 @@ Real-time playback auto-scroll engine:
 - Filters active cues by multi-select focus types (`autoScrollTargets`).
 - Prioritizes the most recently started cue at the farthest script position.
 - Computes viewport scroll position using the active `ScrollFocusPreset.ratio` on desktop and center alignment on mobile.
-- Uses `requestAnimationFrame` and a lifecycle-guarded cancellation ref (`rafRef`) to synchronize smooth scrolling with the browser's display refresh rate (VSync), canceling pending frames on rapid cue transitions to eliminate layout thrashing.
+- Uses `requestAnimationFrame` and a lifecycle-guarded cancellation ref (`rafRef`) with a 10px deadband threshold to synchronize smooth scrolling with the browser's display refresh rate (VSync), canceling pending frames on rapid cue transitions and eliminating layout thrashing.
 
 ### `useCueEditor`
 Cue authoring and editing state machine:
@@ -266,7 +266,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 21. **`StagingModal.tsx`**: Monospace overlay displaying hidden camera, lighting, or lookbook directives from `[[STAGING]]` blocks.
 22. **`AppInfoModal.tsx`**: Desktop application info and about dialog displaying dynamic versioning from `metadata.json`, author attribution for Taruma Sakti ([Linktree](https://linktr.ee/tarumainfo)), structured Featured Substack Article card, 2x2 resource badge grid, and keyboard shortcuts cheat sheet.
 23. **`MobileColorModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a thumb-friendly 4-segment App Shell switcher, the Cue Palette Accessibility Profile selector (`Standard` vs. `Protan Safe`), and 6 compact screenplay preset cards.
-24. **`ScriptLine.tsx` (`src/components/script/ScriptLine.tsx`)**: Dedicated memoized line component encapsulating screenplay line-level rendering, staging badges, roman titles, separators, brief formatting, and cue highlights. Implements an optimized `areScriptLinePropsEqual` custom comparator that skips re-renders for lines with no cues (~95% of lines) and only re-renders lines when overlapping cues become active, change opacity, or exit their playback window.
+24. **`ScriptLine.tsx` (`src/components/script/ScriptLine.tsx`)**: Dedicated memoized line component encapsulating screenplay line-level rendering, staging badges, roman titles, separators, brief formatting, and cue highlights. Implements an optimized `areScriptLinePropsEqual` custom comparator that skips re-renders for lines with no cues (~95% of lines) and only re-renders lines when overlapping cues become active, change opacity, or exit their playback window. Applies GPU CSS transitions (`100ms linear`) to highlight spans during playback for analog fading without CPU overhead.
 
 ### Type Definitions & Data Schemas
 - **`src/types/script.ts`**: Defines 14 domain interfaces and types: `Cue`, `TimingSettings`, `ColorCategory`, `AppState`, `ScriptWidthPresetId`, `ScriptWidthPreset`, `ScrollFocusPresetId`, `ScrollFocusPreset`, `TextSelection`, `DeleteConfirmationState`, `ResetConfirmationState`, `OverlapPickerState`, `AlternativeLocation`, and `AppMode`.
