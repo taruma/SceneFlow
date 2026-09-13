@@ -216,7 +216,7 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
     - The top application header strictly follows a 3-zone spatial composition: Left Wing (Logo + `[ File ▾ ]` desktop dropdown menu), Center Stage (Centered `[ ▶ Playback | ✏️ Edit ]` segmented mode switcher), and Right Wing (`[ 📚 LIBRARY ]` standalone gateway, `[ ☕ Support ]` Ko-fi pill, `[ ⚙️ Settings ▾ ]` dropdown pill, and `[ ℹ ]` Info trigger).
     - **Modular Subcomponent Decomposition (`src/components/header/`)**:
       - `FileMenuDropdown.tsx`: Dedicated 3-tier project I/O, canvas creation, and guide/library menu.
-      - `SettingsMenuDropdown.tsx`: Consolidated Studio Preferences dropdown housing the 4-theme picker, shortcut badge rows (`Shift+C`, `Shift+T`, `Shift+R`), and dynamic `Custom` layout badge.
+      - `SettingsMenuDropdown.tsx`: Consolidated Studio Preferences dropdown housing the header `[↺ Reset All]` action, 4-theme picker, Reading Canvas & Viewport controls (Script Width and Focus Line segmented rows), shortcut badge rows (`Shift+C`, `Shift+T`, `Shift+R`), and dynamic `Custom` layout badge.
       - `ModeSegmentedControl.tsx`: Centered mode switcher with mode-specific active accents and ARIA group attributes.
     - **0 Hz Header Re-Render Invariant (`AppHeader`, `ScriptHeaderControls`)**:
       - Neither `AppHeader` nor `ScriptHeaderControls` receive `currentTime` or subscribe to high-frequency video playback clock ticks.

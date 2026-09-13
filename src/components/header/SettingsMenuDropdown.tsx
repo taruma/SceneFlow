@@ -34,6 +34,8 @@ export interface SettingsMenuDropdownProps {
   setScriptWidthPreset?: (preset: ScriptWidthPresetId) => void;
   scrollFocusPreset?: ScrollFocusPresetId;
   applyScrollFocus?: (preset: ScrollFocusPresetId) => void;
+  isPreferencesCustomized?: boolean;
+  onResetAll?: () => void;
 }
 
 export const SettingsMenuDropdown: React.FC<SettingsMenuDropdownProps> = memo(({
@@ -52,6 +54,8 @@ export const SettingsMenuDropdown: React.FC<SettingsMenuDropdownProps> = memo(({
   setScriptWidthPreset,
   scrollFocusPreset = 'top',
   applyScrollFocus,
+  isPreferencesCustomized = false,
+  onResetAll,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -89,8 +93,8 @@ export const SettingsMenuDropdown: React.FC<SettingsMenuDropdownProps> = memo(({
             isOpen && "rotate-180"
           )} 
         />
-        {isViewCustomized && (
-          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" title="Layout is customized" />
+        {(isViewCustomized || isPreferencesCustomized) && (
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" title="Customized preferences or layout" />
         )}
       </button>
 
@@ -104,6 +108,18 @@ export const SettingsMenuDropdown: React.FC<SettingsMenuDropdownProps> = memo(({
           {/* Header */}
           <div className={UI_TOKENS.dropdown.header}>
             <p className={UI_TOKENS.dropdown.headerText}>Studio Preferences</p>
+            {onResetAll && isPreferencesCustomized && (
+              <button
+                onClick={() => {
+                  onResetAll();
+                }}
+                className="text-[9px] font-bold text-blue-500 hover:text-blue-600 uppercase tracking-wider flex items-center gap-1 transition-all active:scale-95"
+                title="Reset theme, script width, focus line, and layout to defaults"
+              >
+                <RotateCcw size={10} />
+                <span>Reset All</span>
+              </button>
+            )}
           </div>
 
           {/* Quick 4-Theme Selector */}

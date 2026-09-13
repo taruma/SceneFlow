@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added visual `<kbd>` shortcut badges (`UI_TOKENS.badge.shortcut`) positioned on the right side of each settings row in `[ ⚙️ Settings ▾ ]`.
   - Expanded `menuSettings` dropdown width to `w-72` (288px) for comfortable padding and zero label wrapping.
   - Added auto-close effect on `AppHeader` when modal dialogs mount, and registered new shortcuts in `AppInfoModal`.
+- **Studio Preferences "Reset All" Action (`src/components/header/SettingsMenuDropdown.tsx`, `src/components/AppHeader.tsx`, `src/App.tsx`)**:
+  - Added a discrete `[↺ Reset All]` action in the header of the Studio Preferences dropdown (`SettingsMenuDropdown.tsx`), appearing dynamically whenever any preference or layout option is non-default.
+  - Instantly restores App Theme (`auto`), Script Width (`standard` / 576px), Scroll Focus (`top` / 35%), and View Layout (50% split, 240px video height, uncollapsed) to factory defaults in a single click.
+  - Harmoniously complements the focused `Reset View Layout (Shift+R)` action, which enables resetting window pan geometry without affecting chosen color themes or reading widths.
 
 ### Refactored
 - **Modular Studio Header Architecture & Decoupled Subcomponents (`src/components/AppHeader.tsx`, `src/components/header/*`, `src/hooks/useClickOutside.ts`, `src/hooks/index.ts`)**:

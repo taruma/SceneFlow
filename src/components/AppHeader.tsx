@@ -42,6 +42,8 @@ export interface AppHeaderProps {
   setScriptWidthPreset?: (preset: ScriptWidthPresetId) => void;
   scrollFocusPreset?: ScrollFocusPresetId;
   applyScrollFocus?: (preset: ScrollFocusPresetId) => void;
+  isPreferencesCustomized?: boolean;
+  onResetAll?: () => void;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = memo(({
@@ -69,6 +71,8 @@ export const AppHeader: React.FC<AppHeaderProps> = memo(({
   setScriptWidthPreset,
   scrollFocusPreset,
   applyScrollFocus,
+  isPreferencesCustomized = false,
+  onResetAll,
 }) => {
   const [activeMenu, setActiveMenu] = useState<HeaderMenuId | null>(null);
 
@@ -169,6 +173,8 @@ export const AppHeader: React.FC<AppHeaderProps> = memo(({
           setScriptWidthPreset={setScriptWidthPreset}
           scrollFocusPreset={scrollFocusPreset}
           applyScrollFocus={applyScrollFocus}
+          isPreferencesCustomized={isPreferencesCustomized}
+          onResetAll={onResetAll}
         />
 
         {/* Standalone Info Button */}

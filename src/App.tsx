@@ -230,6 +230,19 @@ export default function App() {
     onScrollFocusChange: setScrollFocusPreset,
   });
 
+  const isPreferencesCustomized = 
+    themeMode !== 'auto' ||
+    scriptWidthPreset !== 'standard' ||
+    scrollFocusPreset !== 'top' ||
+    isViewCustomized;
+
+  const handleResetAllPreferences = useCallback(() => {
+    setThemeMode('auto');
+    setScriptWidthPreset('standard');
+    applyScrollFocus('top');
+    resetViewLayout();
+  }, [setThemeMode, setScriptWidthPreset, applyScrollFocus, resetViewLayout]);
+
 
   const prevActiveCueTypesRef = useRef<Set<string>>(new Set());
   const activeCueTypes = useMemo(() => {
@@ -520,6 +533,8 @@ export default function App() {
         setScriptWidthPreset={setScriptWidthPreset}
         scrollFocusPreset={scrollFocusPreset}
         applyScrollFocus={applyScrollFocus}
+        isPreferencesCustomized={isPreferencesCustomized}
+        onResetAll={handleResetAllPreferences}
       />
 
       <main className={cn(
