@@ -19,6 +19,7 @@ SceneFlow maintains two distinct visual tiers that must never leak into or corru
 - When `themeMode === 'auto'`, the shell mirrors the script theme category.
 - When `themeMode` is explicitly set to `'light'`, `'warm'`, or `'dark'`, **Auto Color is OFF**. In this state, the script paper tier remains 100% independent.
 - **Rule**: Never evaluate the App Shell's `effectiveCategory` when determining script paper styles, Color Modal status badges, or script-specific modifiers. Always evaluate `scriptTheme.category` directly.
+- **App Shell Theme Selector**: The header's `[ ⚙️ Settings ▾ ]` dropdown (`SettingsMenuDropdown.tsx`) houses a direct 4-option grid selector (`Auto`, `Light`, `Warm`, `Dark`) mapped directly to `setThemeMode` from `useAppShellTheme` with accessible `role="radiogroup"` and `role="radio"` semantics.
 - **DOM Segregation**: Use separate DOM attributes (`data-pure-black-script="true"` vs. `data-pure-black-shell="true"`).
 
 ## 2. Video Compositing & Screen Recording Overlay Invariants

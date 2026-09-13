@@ -172,13 +172,23 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 - **Continuous Operation While Video Is Collapsed**: Even when the video viewport is hidden via the `Hide Video` toggle or <kbd>V</kbd> key, the transport controls remain pinned in the header, allowing users to control playback and audio during timeline screen recording.
 - **Fluid Viewport Responsiveness**: Button labels automatically collapse to compact icon buttons on mobile/tablet viewports (`hidden sm:inline`), ensuring zero header wrapping.
 
-### Global Header Navigation & External Resources (`AppHeader`, `ScriptHeaderControls`)
-- **Desktop Navigation Action Pills**: The top global header toolbar provides quick-access action pills (`[Article]`, `[Guide]`, `[Library]`, `[Support]`):
-  - **`Article`**: Direct link to the official introductory deep dive (*Introducing SceneFlow: Script-to-Screen Synchronization* on Substack), styled via `UI_TOKENS.button.actionPill` with responsive text collapsing (`hidden xl:inline`) on compact viewports.
-  - **`Guide`**: Loads the official starter guide screenplay project into the active workspace.
-  - **`Library`**: Opens the curated modal catalogue of screenplay examples and templates.
-  - **`Support`**: Direct external link to Ko-fi creator support.
-- **Mobile Header Density**: In mobile viewports (`ScriptHeaderControls`), the Article button is rendered as a compact icon-only control (`<Newspaper size={12} />`) with accessible `title` and `aria-label` tags to preserve toolbar space alongside the Theme palette, Library, and Support controls.
+### Global 3-Zone Studio Header Layout (`AppHeader`, `ScriptHeaderControls`)
+- **Balanced 3-Zone Composition**: Replaced the previous single-row cluster with a studio-grade 3-zone layout separating brand utilities, workflow state, and content/preferences:
+  - **Left Wing (Brand & File Management)**: Houses the SceneFlow logo alongside a dedicated desktop `[ File ▾ ]` dropdown menu (`UI_TOKENS.button.filePill`), organized into three distinct tiers separated by hairline dividers:
+    1. *Project I/O*: `Open Project...` and `Save Project` for the primary inspect-and-sync workflow.
+    2. *Blank Canvas*: `New Project` with confirmation modal to clear the workspace and open Edit mode.
+    3. *Resources & Discovery*: `Starter Guide` (`guide.json`) for the full interactive tutorial and `Browse Library...` for community screenplays.
+  - **Center Stage (Workflow Mode Switcher)**: Features a centered segmented control (`[ ▶ Playback | ✏️ Edit ]`) with mode-specific active accents (soft blue for Playback, soft amber for Edit) and responsive icon collapsing. Both modes remain visible side-by-side, providing instant discoverability of the application's dual-mode architecture.
+  - **Right Wing (Content, Support & Studio Tools)**:
+    - **Standalone Library Gateway (`[ 📚 LIBRARY ]`)**: Featured prominently on a neutral surface pill (`UI_TOKENS.button.libraryPop`) with an amber book icon and uppercase tracked typography as the primary content discovery hub for screenplay examples and templates.
+    - **Support on Ko-fi (`[ ☕ Support ]`)**: Vibrant warm red/coral button positioned directly adjacent to the Library.
+    - **Studio Preferences Dropdown (`[ ⚙️ Settings ▾ ]`)**: Houses a direct 4-theme quick-selector grid (`Auto`, `Light`, `Warm`, `Dark`), Script Paper & Colors modal trigger (with <kbd>Shift+C</kbd> badge), Timing & Durations modal trigger (with <kbd>Shift+T</kbd> badge), and Reset View Layout trigger (with <kbd>Shift+R</kbd> badge, live pulse dot indicator, and dynamic `Custom` badge when layout is customized).
+    - **Dedicated Info Trigger (`[ ℹ ]`)**: 1-click access to keyboard shortcuts directory, about details, and the deep-dive Substack overview card.
+- **Fluid Single-Click Outside Dismissal**: Floating menus use `useClickOutside` to detect outside clicks on `mousedown`, eliminating full-screen blocking backdrops. Users can switch directly between *File*, *Settings*, and *Library* in a single fluid click without needing an intermediate dismissal click.
+- **Truthful Shortcuts & Streamlined Badges**: All menus strictly display truthful functionality without non-existing keyboard shortcut annotations (<kbd>Ctrl+O</kbd>, <kbd>Ctrl+S</kbd>, <kbd>?</kbd>) or decorative pseudo-badges, ensuring clean, focused typography.
+- **Resource Integration**: The official Substack introductory article is linked cleanly within `LibraryModal` (`[ Introduction ]`), `MobileLibraryModal` (`[ Intro ]`), and `AppInfoModal`, freeing the main editing view and mobile header controls from redundant article buttons.
+- **Decoupled Playback Performance (0 Hz Header Re-Render)**: Global header chrome is completely decoupled from playback time updates, eliminating high-frequency virtual DOM diffing during media playback. Mobile preserves its compact timecode pill in `ScriptHeaderControls`.
+- **Strict Mobile Exclusion**: Declared with unconditional `hidden lg:flex` to ensure desktop-only cue editing controls never leak into mobile playback viewports.
 
 
 ---
@@ -300,13 +310,16 @@ Fine-tunes highlight visibility timing before and after actual cue timestamps:
 ### Local Persistence
 All project states (`screenplay_sync_state`), theme preferences (`sceneflow_script_theme`), cue palette accessibility profile (`sceneflow_cue_palette_profile`), width presets (`sceneflow_script_width_preset`), scroll focus settings (`sceneflow_scroll_focus_preset`), timeline view mode (`sceneflow_highlight_view_mode`), and filter drawer state (`sceneflow_highlight_filter_expanded`) persist in `localStorage`.
 
-### Default Project & Quick Start Guide
-- Fresh visits default to loading the **Scene Frequency** (`scene_frequency.json`) guide script.
-- Clicking the header **Guide** button loads the official instructional tutorial (`blank.json`) in playback mode.
+### Default Project, New Projects, & Starter Guide
+- **Default Load**: Fresh visits default to loading the **Scene Frequency** (`scene_frequency.json`) demo script.
+- **`[ File ▾ ]` Desktop Dropdown Menu**: Accessible from the desktop header with a 3-tier organized structure:
+  1. *Project I/O*: `Open Project...` (local `.json` file upload) and `Save Project` (export active state).
+  2. *Blank Canvas*: `New Project` prompts confirmation to clear the workspace with a fresh empty template (`blank.json`) and automatically transitions into Edit mode.
+  3. *Reference & Discovery*: `Starter Guide` loads the official 1,200+ line interactive instructional guide (`guide.json`) in Playback mode; `Browse Library...` opens the curated example catalog modal.
 
 ### Export & Import
-- **Export**: Downloads current project as a JSON bundle containing `youtubeId`, `scriptText`, `cues`, and `settings`.
-- **Import**: Uploads any valid SceneFlow JSON file and triggers automatic cue realignment.
+- **Export (`Save Project`)**: Downloads current project as a JSON bundle containing `youtubeId`, `scriptText`, `cues`, and `settings`.
+- **Import (`Open Project...`)**: Uploads any valid SceneFlow JSON file and triggers automatic cue realignment.
 
 ### Query Parameters
 - `?example=ID`: Loads any built-in example from the catalogue (e.g., `?example=mosaic`, `?example=twm_vol1`, `?example=scene_frequency`).
@@ -323,6 +336,7 @@ For a complete and up-to-date list of all available sceneflow projects, release 
 - **Contextual Section Badges**: Displays source category badges on cards in aggregated views ("All Works", "Featured Works") and suppresses them within category-specific views.
 - **Sorting Controls**: Toggle lists by "Latest" (newest release date), "Oldest", or "A-Z" alphabetical order. Inactive/draft scripts are automatically placed at the bottom.
 - **Dual Modal Architecture**: Full modal dialog on desktop viewports (`LibraryModal`), touch-friendly bottom-sheet drawer on mobile viewports (`MobileLibraryModal`).
+- **Foundational Introduction Link**: Direct link to the official introductory publication on Substack accessible in modal headers (`[ Introduction ]` on desktop, `[ Intro ]` on mobile).
 - **Community Support**: Direct Ko-fi donation link (`https://ko-fi.com/tarumainfo`) integrated into desktop and mobile headers.
 
 ---
@@ -343,9 +357,12 @@ Available on desktop across both Playback and Edit modes with automatic input/te
 - `←` / `→` (ArrowLeft / ArrowRight): Seek -5s / +5s.
 - `J` / `L`: Seek -5s / +5s (YouTube standard navigation hotkeys).
 - `V`: Toggle video player visibility / collapse (Playback mode).
+- `Shift + C`: Open Script Paper & Colors modal.
+- `Shift + T`: Open Timing & Durations modal.
+- `Shift + R`: Reset View Layout & Video Size to defaults.
 - `Esc`: Close any active modal or popover (`ScriptColorModal`, `TimingSettingsModal`, `LibraryModal`, `MobileLibraryModal`, `RawScriptModal`, `RawCuesModal`, `DeleteConfirmationModal`, `ResetConfirmationModal`, `StagingModal`, `AppInfoModal`, `OverlapPicker`).
 - **Backdrop Dismissal**: Clicking outside modal content on the backdrop overlay dismisses the active modal.
-- **Shortcuts Safeguard**: All playback hotkeys are automatically gated and disabled whenever any modal or confirmation prompt is open.
+- **Shortcuts Safeguard**: All playback and studio hotkeys are automatically gated and disabled whenever any modal or confirmation prompt is open, or when typing inside inputs, textareas, or contentEditable elements.
 
 
 

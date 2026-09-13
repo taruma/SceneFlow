@@ -89,7 +89,7 @@ export function useScriptStorage() {
       const data = await res.json();
       const finalData = { 
         ...data, 
-        cues: sanitizeCues(data.cues),
+        cues: sanitizeCues(data.cues || []),
         settings: data.settings || DEFAULT_SETTINGS 
       };
       setState(finalData);
@@ -97,6 +97,32 @@ export function useScriptStorage() {
       return finalData;
     } catch (err) {
       console.error("Failed to load blank script", err);
+      const fallbackData = {
+        youtubeId: '',
+        scriptText: '',
+        cues: [],
+        settings: DEFAULT_SETTINGS,
+      };
+      setState(fallbackData);
+      localStorage.setItem('screenplay_sync_state', JSON.stringify(fallbackData));
+      return fallbackData;
+    }
+  }, []);
+
+  const loadGuide = useCallback(async () => {
+    try {
+      const res = await fetch('/examples/guide.json');
+      const data = await res.json();
+      const finalData = { 
+        ...data, 
+        cues: sanitizeCues(data.cues),
+        settings: data.settings || DEFAULT_SETTINGS 
+      };
+      setState(finalData);
+      localStorage.setItem('screenplay_sync_state', JSON.stringify(finalData));
+      return finalData;
+    } catch (err) {
+      console.error("Failed to load guide script", err);
       throw err;
     }
   }, []);
@@ -151,6 +177,7 @@ export function useScriptStorage() {
     isRemoteLoading,
     resetToDefault,
     loadBlank,
+    loadGuide,
     loadExample,
     loadRemoteProject,
   };

@@ -203,8 +203,9 @@ Automated cue realignment orchestration:
 
 ### `useKeyboardShortcuts`
 Global keyboard shortcut handler:
-- `Space` / `KeyK` = play/pause toggle, `ArrowLeft` / `KeyJ` = -5s seek, `ArrowRight` / `KeyL` = +5s seek, `KeyV` = toggle video player collapse in Playback mode.
-- Gates execution when input/textarea elements are focused or any modal is open.
+- **Playback hotkeys** (requires active player): `Space` / `KeyK` = play/pause toggle, `ArrowLeft` / `KeyJ` = -5s seek, `ArrowRight` / `KeyL` = +5s seek, `KeyV` = toggle video player collapse in Playback mode.
+- **Studio Preferences hotkeys**: `Shift+C` = open Script Paper & Colors modal, `Shift+T` = open Timing & Durations modal, `Shift+R` = reset view layout to defaults.
+- Gates execution when input/textarea/contentEditable elements are focused or any modal is open, and validates `!e.ctrlKey && !e.metaKey && !e.altKey` to prevent conflicts with browser hotkeys.
 - Also tracks `isDesktop` via `window.innerWidth >= 1024` resize listener.
 
 ### `useScriptTheme`
@@ -217,7 +218,11 @@ Theme metadata and color resolution hook:
 Modal and dialog `Escape` key dismissal hook:
 - Attaches a lightweight `keydown` listener to `window` specifically for the `Escape` key.
 - Lifecycle-guarded: only active when `isOpen === true`, automatically unbinding immediately on modal close or unmount.
-- Eliminates duplicated keyboard event handling across modal components and popovers.
+### `useClickOutside`
+Outside-click detection hook for floating menus and dropdown panels:
+- Attaches lightweight `mousedown` and `touchstart` event listeners to `document`.
+- Accepts target `ref` and callback, executing only when interactions occur strictly outside the target node tree.
+- Eliminates the need for full-screen fixed transparent backdrop `div` overlays (`fixed inset-0 z-40`), allowing direct single-click switching between adjacent header controls.
 
 ---
 
@@ -235,7 +240,11 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 - **Cue Sanitization Pipeline**: All data ingress paths (localStorage restore, default load, blank, example, remote fetch) route through `sanitizeCues()` in `useScriptStorage`, guaranteeing deterministic IDs and `type`/`colorClass` normalization.
 
 ### Modular Sub-components (`src/components/`)
-1. **`AppHeader.tsx`**: Global navigation header with SceneFlow logo, Article/Guide/Library/Ko-fi action buttons, real-time playback clock, Playback/Edit mode toggle, and the "Reset View" layout button (`RotateCcw`).
+1. **`AppHeader` Sub-Package (`src/components/AppHeader.tsx`, `src/components/header/`)**:
+   - **`AppHeader.tsx`**: Top-level 3-zone desktop studio navigation orchestrator unconditionally hidden on mobile (`hidden lg:flex`). Fully decoupled from the ~10Hz video playback loop (zero `currentTime` prop) and wrapped in `React.memo` to ensure 0 Hz re-render overhead during media playback. Manages unified `activeMenu: HeaderMenuId | null` state.
+   - **`FileMenuDropdown.tsx`**: 3-tier hierarchical file dropdown (`[ File ▾ ]`) separating Project I/O (`Open Project...`, `Save Project`), Blank Canvas (`New Project`), and Resource Discovery (`Starter Guide`, `Browse Library...`) with `useClickOutside` and full WAI-ARIA menu roles.
+   - **`SettingsMenuDropdown.tsx`**: Consolidated Studio Preferences menu (`[ ⚙️ Settings ▾ ]`) featuring 4-theme radio grid (`Auto`, `Light`, `Warm`, `Dark`), action rows with `<kbd>` shortcut badges (`Shift+C`, `Shift+T`, `Shift+R`), and dynamic `Custom` layout badge.
+   - **`ModeSegmentedControl.tsx`**: Centered segmented mode switcher (`[ ▶ Playback | ✏️ Edit ]`) with mode-specific active accents, responsive icon collapsing, and ARIA group attributes.
 2. **`InitializingScreen.tsx`**: Branded initial load screen displaying the SceneFlow logo with subtle animation.
 3. **`YoutubeSourceInput.tsx`**: YouTube URL/ID input with live player connection indicator and automatic ID extraction using `UI_TOKENS.input`.
 4. **`ScriptManagementBar.tsx`**: Screenplay status banner showing loaded line count with an "Edit Raw" action button styled with `UI_TOKENS`.
@@ -245,10 +254,10 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 8. **`RawCuesModal.tsx`**: Modal dialog for viewing and editing raw cue data in JSON format, with `sanitizeCues()` applied on save and styled via `UI_TOKENS`.
 9. **`OverlapPicker.tsx`**: Floating context popup for selecting which overlapping cue to edit at a shared position.
 10. **`DeleteConfirmationModal.tsx`**: Confirmation dialog with cue text preview prior to permanent deletion styled via `UI_TOKENS`.
-11. **`ResetConfirmationModal.tsx`**: Multi-purpose confirmation dialog for resetting settings, loading guide scripts, loading examples, or fetching remote projects, featuring integrated CORS error reporting and styled via `UI_TOKENS`.
+11. **`ResetConfirmationModal.tsx`**: Multi-purpose confirmation dialog for resetting settings, starting a clean blank project (`new`), loading the interactive starter guide (`guide`), loading examples, or fetching remote projects, featuring integrated CORS error reporting and styled via `UI_TOKENS`.
 12. **`TimingSettingsModal.tsx`**: Full-screen configuration modal for per-category timing buffers (before/after offsets) and General Master Offset, displaying dynamic theme- and accessibility-profile-calibrated category dots via `getCueColorForTheme` and styled using `UI_TOKENS`.
 13. **`ScriptColorModal.tsx`**: Theme and color management dialog featuring a compact zero-scroll "Theme Presets" tab with 2-column widescreen paper preview cards, top-tier dual controls (Cue Palette Accessibility Profile and Pure Black Video Overlay toggle), collision-free selection indicators, and an "Element Inspector" tab displaying token details and the 8-category highlight spectrum using `UI_TOKENS.swatch`.
-14. **`ScriptHeaderControls.tsx`**: Playback-mode control bar with auto-scroll toggle, viewport-safe left-aligned target-type multi-select Focus Mode dropdown (`UI_TOKENS.dropdown.menu` with dynamic `getCueColorForTheme` category dots synchronized to active script theme and CVD profile), reading width preset selector, scroll focus preset selector, and compact mobile icon-only Theme and Article buttons.
+14. **`ScriptHeaderControls.tsx`**: Playback-mode control bar with auto-scroll toggle, viewport-safe left-aligned target-type multi-select Focus Mode dropdown (`UI_TOKENS.dropdown.menu` with dynamic `getCueColorForTheme` category dots synchronized to active script theme and CVD profile), reading width preset selector, scroll focus preset selector, and compact mobile icon-only Theme Palette button.
 15. **`ActiveHighlightsPanel` (`src/components/active-highlights/`)**: Modular playback visualization sub-package featuring:
     - **`ActiveHighlightsPanel.tsx`**: Main orchestrator featuring an **Adaptive Header** layout via `ResizeObserver` (560px threshold): consolidates into a single unified row when wide ($\ge 560\text{px}$) to save vertical headroom, and automatically splits into a Two-Tier Header when narrow ($< 560\text{px}$) where Tier 1 houses `Highlights` + Studio VU Meter + View Switcher, and Tier 2 houses Track Height + Zoom presets + Filters toggle button.
     - **`HighlightTimelineView.tsx`**: Multi-Track Sync Timeline view with dynamic density scaling (`TimelineDensity`: `'comfortable'` 32px vs. `'compact'` 24px), timeline zoom preset integration (`zoomPreset`), height mode integration (`heightMode`: `'flexible' | 'fixed'`), stationary 35% anticipation playhead, and docked inspector card.
@@ -261,8 +270,8 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 16. **`PlaybackLeftPanel.tsx` (`src/components/playback/PlaybackLeftPanel.tsx`)**: Dedicated playback left panel container encapsulating the media player viewport, proportional 16:9 vertical scaling, zero-scroll vertical padding, persistent header transport controls (`Play`, `Pause`, `Replay 0:00`), active highlights synchronization, and collapsible video player toggle with background audio continuity for screen recording, cleanly decoupled from edit-mode sticky scroll behaviors.
 17. **`SplitPaneDivider.tsx` (`src/components/common/SplitPaneDivider.tsx`)**: Desktop-only draggable vertical split pane divider featuring global `window`-level pointer event subscriptions, `touch-action: none` gesture safety, `requestAnimationFrame` VSync throttling, `.is-resizing-split` CSS transition suppression, double-click reset, transparent iframe drag guard, `onLostPointerCapture` fallback, and absolute pixel minimum constraint (`MIN_PANEL_PIXEL_WIDTH = 380`).
 18. **`VideoSplitDivider.tsx` (`src/components/playback/VideoSplitDivider.tsx`)**: Desktop-only draggable horizontal split divider between the Video Player and Active Highlights timeline featuring global `window`-level pointer event subscriptions, `touch-action: none` gesture safety, dynamic deadband elimination on boundary clamping, `requestAnimationFrame` VSync throttling, double-click reset, `onLostPointerCapture` fallback, and keyboard accessibility (`ArrowUp`/`ArrowDown`).
-19. **`LibraryModal.tsx`**: Desktop library catalogue modal featuring real-time search, category navigation, sorting (Latest, Oldest, A-Z), section badges, and featured curations.
-20. **`MobileLibraryModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a touch-friendly category filter and search interface.
+19. **`LibraryModal.tsx`**: Desktop library catalogue modal featuring real-time search, category navigation, sorting (Latest, Oldest, A-Z), section badges, featured curations, and `[ Introduction ]` link to the official Substack publication.
+20. **`MobileLibraryModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a touch-friendly category filter, search interface, and compact `[ Intro ]` link to the official Substack publication.
 21. **`StagingModal.tsx`**: Monospace overlay displaying hidden camera, lighting, or lookbook directives from `[[STAGING]]` blocks.
 22. **`AppInfoModal.tsx`**: Desktop application info and about dialog displaying dynamic versioning from `metadata.json`, author attribution for Taruma Sakti ([Linktree](https://linktr.ee/tarumainfo)), structured Featured Substack Article card, 2x2 resource badge grid, and keyboard shortcuts cheat sheet.
 23. **`MobileColorModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a thumb-friendly 4-segment App Shell switcher, the Cue Palette Accessibility Profile selector (`Standard` vs. `Protan Safe`), and 6 compact screenplay preset cards.

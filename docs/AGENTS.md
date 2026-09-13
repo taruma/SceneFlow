@@ -75,6 +75,10 @@ The `renderedScript` rendering pipeline in `src/App.tsx` runs frequently as YouT
 When modifying application state, storage keys, or external fetching:
 
 - **State Schema**: Maintain the `AppState` interface in `src/types/script.ts` (`youtubeId`, `scriptText`, `cues: Cue[]`, `settings?: Record<string, TimingSettings>`).
+- **Storage Hook Handlers (`useScriptStorage`)**:
+  - `loadBlank()`: Fetches `/examples/blank.json`, returning an empty canvas (`scriptText: ""`, `cues: []`, zeroed default settings) for clean project authoring.
+  - `loadGuide()`: Fetches `/examples/guide.json`, loading the comprehensive 1,200+ line interactive tutorial project in Playback mode.
+  - `resetConfirmation.type`: Supports `'settings' | 'data' | 'blank' | 'new' | 'guide' | 'example' | 'remote'`.
 - **LocalStorage Keys**:
   - `'screenplay_sync_state'`: Core project data (video ID, script text, cues, timing settings).
   - `'sceneflow_app_theme_mode'`: Active application shell theme mode (`AppThemeMode`: `'auto' | 'light' | 'warm' | 'dark'`).
@@ -205,5 +209,28 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
 
 14. **Centralized External Links & Navigation Architecture**:
     - Centralize all external publication, documentation, repository, and support URLs in `src/constants/links.ts` (`EXTERNAL_LINKS`) rather than hardcoding raw string literals across UI components.
-    - Desktop header action pills (`AppHeader.tsx`) must strictly consume `UI_TOKENS.button.actionPill` with responsive text collapsing (`hidden xl:inline`) and zero ad-hoc color overrides to ensure seamless visual harmony across Light, Warm, and Dark app shell themes.
-    - Mobile counterparts in `ScriptHeaderControls.tsx` must remain icon-only (`size={12}`) with accessible `title` and `aria-label` attributes, preserving horizontal toolbar space.
+    - Outbound resources (official Substack introductory publication) are embedded cleanly within modal headers (`[ Introduction ]` in `LibraryModal`, `[ Intro ]` in `MobileLibraryModal`, and hero card in `AppInfoModal`) rather than cluttering primary workspaces.
+    - Mobile counterparts in `ScriptHeaderControls.tsx` strictly prioritize essential controls (theme palette, library, and support) and omit redundant article links, preserving horizontal space on phones.
+
+15. **Global 3-Zone Studio Header Architecture (`AppHeader.tsx`, `src/components/header/*`)**:
+    - The top application header strictly follows a 3-zone spatial composition: Left Wing (Logo + `[ File ▾ ]` desktop dropdown menu), Center Stage (Centered `[ ▶ Playback | ✏️ Edit ]` segmented mode switcher), and Right Wing (`[ 📚 LIBRARY ]` standalone gateway, `[ ☕ Support ]` Ko-fi pill, `[ ⚙️ Settings ▾ ]` dropdown pill, and `[ ℹ ]` Info trigger).
+    - **Modular Subcomponent Decomposition (`src/components/header/`)**:
+      - `FileMenuDropdown.tsx`: Dedicated 3-tier project I/O, canvas creation, and guide/library menu.
+      - `SettingsMenuDropdown.tsx`: Consolidated Studio Preferences dropdown housing the 4-theme picker, shortcut badge rows (`Shift+C`, `Shift+T`, `Shift+R`), and dynamic `Custom` layout badge.
+      - `ModeSegmentedControl.tsx`: Centered mode switcher with mode-specific active accents and ARIA group attributes.
+    - **0 Hz Playback Re-Render Invariant**:
+      - `AppHeader` and its subcomponents must **never** receive `currentTime` or subscribe to the high-frequency (~10Hz) video playback clock.
+      - All header subcomponents must be wrapped in `React.memo`, and all callbacks passed from `App.tsx` (`exportJson`, `importJson`, `handleNewProject`, `handleOpenGuide`) must be stabilized with `useCallback`. During video playback, `AppHeader` virtual DOM diffing remains 100% idle.
+    - **Single-Click Outside Dismissal Invariant (`useClickOutside`)**:
+      - Floating menus must close via outside-click detection (`useClickOutside` listening on `mousedown`/`touchstart`) bound to the container element rather than full-screen transparent backdrops (`fixed inset-0 z-40`). This ensures clicking an adjacent header button immediately closes the current menu and triggers the target action in a single gesture without double-clicking.
+    - **Unified Menu State Invariant (`activeMenu: HeaderMenuId | null`)**:
+      - Dropdown visibility must be managed through a single union state (`export type HeaderMenuId = 'file' | 'settings'`) rather than isolated boolean flags, preventing state collision and enabling frictionless scalability for new header tools.
+    - **Mobile Viewport Exclusion Invariant (`hidden lg:flex`)**:
+      - SceneFlow mobile viewports are strictly playback/review experiences; edit mode and desktop cue authoring are desktop-only (`hidden lg:flex`). `AppHeader` must be declared unconditionally with `hidden lg:flex` so desktop controls never leak onto mobile screens during window resizing.
+    - **Truthful Shortcuts & Badging Discipline**: Never add visual shortcut badges (<kbd>Ctrl+O</kbd>, <kbd>Ctrl+S</kbd>, <kbd>?</kbd>) or tooltip annotations for actions lacking active event listeners in `useKeyboardShortcuts.ts` or `useEscapeKey.ts`.
+    - **File Dropdown Menu (`[ File ▾ ]`)**: Local JSON import/export actions, new project creation, and guide/library access belong inside the desktop `[ File ▾ ]` dropdown (`UI_TOKENS.button.filePill`), keeping mobile headers clean. The menu is organized into three tiered functional groups separated by hairline borders:
+      1. *Project I/O*: `Open Project...` and `Save Project` (top tier for instant inspection and synchronization of existing projects).
+      2. *Blank Canvas*: `New Project` (middle tier to clear the workspace and open Edit mode).
+      3. *Reference & Discovery*: `Starter Guide` (`guide.json`) and `Browse Library...` (bottom tier).
+    - **Top Header Chrome Constraints**: Top header chrome must **never** render raw floating timecode; playback timing belongs exclusively to the media player and Active Highlights timeline.
+    - **Studio Preferences Dropdown**: Studio preferences must be consolidated inside the `[ ⚙️ Settings ▾ ]` dropdown, providing direct 4-theme selection (`Auto`, `Light`, `Warm`, `Dark`), Script Color presets access (with `<kbd>Shift+C</kbd>` badge), Timing Settings access (with `<kbd>Shift+T</kbd>` badge), and a live customized layout reset indicator (with `<kbd>Shift+R</kbd>` badge). Keyboard shortcuts in `useKeyboardShortcuts.ts` are guarded with `!e.ctrlKey && !e.metaKey && !e.altKey` and input/modal checks to prevent any clash with browser or playback keys.

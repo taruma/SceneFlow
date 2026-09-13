@@ -60,7 +60,7 @@ export interface DeleteConfirmationState {
 
 export interface ResetConfirmationState {
   isOpen: boolean;
-  type: 'settings' | 'data' | 'blank' | 'example' | 'remote' | null;
+  type: 'settings' | 'data' | 'blank' | 'new' | 'guide' | 'example' | 'remote' | null;
   examplePath?: string;
   exampleTitle?: string;
   remoteUrl?: string;

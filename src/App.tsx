@@ -71,6 +71,7 @@ export default function App() {
     isRemoteLoading,
     resetToDefault,
     loadBlank: loadBlankStorage,
+    loadGuide: loadGuideStorage,
     loadExample: loadExampleStorage,
     loadRemoteProject: loadRemoteProjectStorage,
   } = useScriptStorage();
@@ -208,6 +209,9 @@ export default function App() {
     togglePlayPause,
     jumpBy,
     onToggleVideo: mode === 'playback' ? toggleVideoCollapsed : undefined,
+    onOpenColors: () => setIsColorModalOpen(true),
+    onOpenTiming: () => setIsSettingsOpen(true),
+    onResetView: resetViewLayout,
     disabled: isAnyModalOpen,
   });
 
@@ -325,15 +329,26 @@ export default function App() {
     }
   };
 
-  const loadBlank = async () => {
+  const createNewProject = async () => {
     try {
-      const finalData = await loadBlankStorage();
+      await loadBlankStorage();
+      setMode('edit');
+      setCurrentTime(0);
+      setResetConfirmation({ isOpen: false, type: null, error: null });
+    } catch (err) {
+      console.error("Failed to create new project", err);
+    }
+  };
+
+  const loadGuide = async () => {
+    try {
+      const finalData = await loadGuideStorage();
       setMode('playback');
       setCurrentTime(0);
       setResetConfirmation({ isOpen: false, type: null, error: null });
       realignCues(finalData);
     } catch (err) {
-      alert("Failed to load blank script.");
+      alert("Failed to load starter guide.");
     }
   };
 
@@ -372,11 +387,11 @@ export default function App() {
     return isCueActive(c, currentTime, state.settings);
   };
 
-  const exportJson = () => {
+  const exportJson = useCallback(() => {
     exportStateToJsonFile(state);
-  };
+  }, [state]);
 
-  const importJson = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const importJson = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
@@ -393,7 +408,15 @@ export default function App() {
       }
     };
     reader.readAsText(file);
-  };
+  }, [realignCues, setState]);
+
+  const handleNewProject = useCallback(() => {
+    setResetConfirmation({ isOpen: true, type: 'new', error: null });
+  }, [setResetConfirmation]);
+
+  const handleOpenGuide = useCallback(() => {
+    setResetConfirmation({ isOpen: true, type: 'guide', error: null });
+  }, [setResetConfirmation]);
 
   // Memoize script parsing independently of currentTime
   const processedLines = useMemo(() => {
@@ -479,10 +502,10 @@ export default function App() {
       <AppHeader
         mode={mode}
         setMode={setMode}
-        currentTime={currentTime}
         isLibraryOpen={isLibraryOpen}
         setIsLibraryOpen={setIsLibraryOpen}
-        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'blank', error: null })}
+        onNewProject={handleNewProject}
+        onOpenGuide={handleOpenGuide}
         isColorModalOpen={isColorModalOpen}
         setIsColorModalOpen={setIsColorModalOpen}
         isSettingsOpen={isSettingsOpen}
@@ -494,6 +517,7 @@ export default function App() {
         themeMode={themeMode}
         effectiveThemeCategory={effectiveCategory}
         onCycleThemeMode={cycleThemeMode}
+        onSetThemeMode={setThemeMode}
         isViewCustomized={isViewCustomized}
         onResetView={resetViewLayout}
       />
@@ -723,6 +747,7 @@ export default function App() {
       <LibraryModal
         isOpen={isLibraryOpen}
         onClose={() => setIsLibraryOpen(false)}
+        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'guide', error: null })}
         onSelectExample={(path, title) => {
           setResetConfirmation({ 
             isOpen: true, 
@@ -737,6 +762,7 @@ export default function App() {
       <MobileLibraryModal
         isOpen={isLibraryOpen}
         onClose={() => setIsLibraryOpen(false)}
+        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'guide', error: null })}
         onSelectExample={(path, title) => {
           setResetConfirmation({ 
             isOpen: true, 
@@ -796,8 +822,10 @@ export default function App() {
           if (resetConfirmation.type === 'settings') {
             setState(prev => ({ ...prev, settings: DEFAULT_SETTINGS }));
             setResetConfirmation({ isOpen: false, type: null, error: null });
-          } else if (resetConfirmation.type === 'blank') {
-            loadBlank();
+          } else if (resetConfirmation.type === 'new') {
+            createNewProject();
+          } else if (resetConfirmation.type === 'guide' || resetConfirmation.type === 'blank') {
+            loadGuide();
           } else if (resetConfirmation.type === 'data') {
             resetState();
           } else if (resetConfirmation.type === 'example' && resetConfirmation.examplePath) {

@@ -39,13 +39,15 @@ export function ResetConfirmationModal({
           <div>
             <h3 className={UI_TOKENS.modal.title}>
               {resetConfirmation.type === 'settings' ? 'Reset Timing Settings?' : 
-               resetConfirmation.type === 'blank' ? 'Load Guide Script?' : 
+               resetConfirmation.type === 'new' ? 'Create New Project?' :
+               (resetConfirmation.type === 'guide' || resetConfirmation.type === 'blank') ? 'Load Starter Guide?' : 
                resetConfirmation.type === 'example' ? `Load "${resetConfirmation.exampleTitle}"?` : 
                resetConfirmation.type === 'remote' ? 'Load Remote Project?' : 'Reset All Data?'}
             </h3>
             <p className={UI_TOKENS.modal.description}>
               {resetConfirmation.type === 'settings' ? 'This will restore all timing buffers to their factory default values.' : 
-               resetConfirmation.type === 'blank' ? 'This will load the official guide script and formatting reference in playback mode.' : 
+               resetConfirmation.type === 'new' ? 'This will clear your current script and cues with a clean blank canvas in Edit mode.' :
+               (resetConfirmation.type === 'guide' || resetConfirmation.type === 'blank') ? 'This will load the official instructional guide script and formatting reference in playback mode.' : 
                resetConfirmation.type === 'example' ? `This will replace your current script and cues with the "${resetConfirmation.exampleTitle}" demo.` :
                resetConfirmation.type === 'remote' ? `This will replace your current project with data from: ${resetConfirmation.remoteUrl}. Only load links from sources you trust.` :
                'This will delete all cues and restore the original demo script.'}

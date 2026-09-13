@@ -5,6 +5,58 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0-dev] - Unreleased
+
+### Added
+- **Separated Blank Project Creation & Official Starter Guide (`public/examples/guide.json`, `public/examples/blank.json`, `src/App.tsx`, `src/hooks/useScriptStorage.ts`)**:
+  - Extracted the 1,200+ line interactive tutorial script and 100+ cues into a dedicated `public/examples/guide.json` asset.
+  - Reset `public/examples/blank.json` into an authentic empty project template (empty script text, zero cues, zeroed timing buffers) for starting new screenplays from scratch without manual deletion.
+  - Added dedicated `loadGuide()` hook handler in `useScriptStorage` alongside `loadBlank()`.
+  - Extended `ResetConfirmationState` and `ResetConfirmationModal` to cleanly distinguish between `'new'` ("Create New Project?" with automatic transition to Edit mode) and `'guide'` ("Load Starter Guide?" with transition to Playback mode).
+- **Studio Preferences Keyboard Shortcuts & UI Badges (`src/hooks/useKeyboardShortcuts.ts`, `src/App.tsx`, `src/components/AppHeader.tsx`, `src/styles/tokens/ui.ts`, `src/components/AppInfoModal.tsx`)**:
+  - Implemented clash-free global keyboard shortcuts for primary studio preference actions: <kbd>Shift+C</kbd> (Script Paper & Colors modal), <kbd>Shift+T</kbd> (Timing & Durations modal), and <kbd>Shift+R</kbd> (Reset View Layout).
+  - Integrated `!e.ctrlKey && !e.metaKey && !e.altKey` and `contentEditable`/input/modal guards to guarantee zero conflict with browser hotkeys or text editing.
+  - Added visual `<kbd>` shortcut badges (`UI_TOKENS.badge.shortcut`) positioned on the right side of each settings row in `[ ⚙️ Settings ▾ ]`.
+  - Expanded `menuSettings` dropdown width to `w-72` (288px) for comfortable padding and zero label wrapping.
+  - Added auto-close effect on `AppHeader` when modal dialogs mount, and registered new shortcuts in `AppInfoModal`.
+
+### Refactored
+- **Modular Studio Header Architecture & Decoupled Subcomponents (`src/components/AppHeader.tsx`, `src/components/header/*`, `src/hooks/useClickOutside.ts`, `src/hooks/index.ts`)**:
+  - Decomposed the 451-line monolithic `AppHeader.tsx` into a lean ~170-line orchestrator and three dedicated subcomponents under `src/components/header/`:
+    - `FileMenuDropdown.tsx`: 3-tier hierarchical project I/O, blank canvas creation, and resource discovery dropdown.
+    - `SettingsMenuDropdown.tsx`: Studio preferences, quick 4-theme picker, shortcut badge rows (`Shift+C`, `Shift+T`, `Shift+R`), and dynamic `Custom` layout badge.
+    - `ModeSegmentedControl.tsx`: Centered playback vs. edit mode segmented toggle with responsive icon collapsing and ARIA group attributes.
+  - Implemented reusable `useClickOutside` hook utilizing `mousedown`/`touchstart` listeners, replacing blocking full-screen backdrop `div` elements and enabling fluid, single-click transitions between adjacent header dropdowns.
+  - Replaced multiple boolean flags (`isFileDropdownOpen`, `isSettingsDropdownOpen`) with a unified, conflict-free `activeMenu: HeaderMenuId | null` state, allowing effortless scaling for future header tools without $O(N^2)$ state synchronization.
+  - Enforced WAI-ARIA roles (`role="menu"`, `role="menuitem"`, `role="radiogroup"`, `role="radio"`, `role="group"`, `aria-haspopup="menu"`, `aria-expanded`) across all floating menus and triggers.
+- **Playback Loop Decoupling & 0 Hz Header Re-Render Optimization (`src/App.tsx`, `src/components/AppHeader.tsx`)**:
+  - Removed the zombie `currentTime` prop passed to `<AppHeader>`, decoupling the entire top header component tree from the ~10Hz video playback clock loop.
+  - Memoized callback props (`exportJson`, `importJson`, `handleNewProject`, `handleOpenGuide`) in `App.tsx` using `useCallback`.
+  - Wrapped `AppHeader` and all child header subcomponents in `React.memo`, keeping the header 100% idle during media playback.
+
+### Fixed
+- **Double-Click Menu Dismissal & Adjacent Button Swallowing (`src/hooks/useClickOutside.ts`, `src/components/header/*`)**:
+  - Eliminated transparent full-screen backdrops (`fixed inset-0 z-40`) that previously swallowed clicks on adjacent buttons when closing menus, enabling instant 1-click menu switching and button activation.
+- **Mobile Viewport Edit-Mode Header Leak (`src/components/AppHeader.tsx`)**:
+  - Resolved an issue where edit mode allowed the desktop header to render on mobile viewports by enforcing unconditional `hidden lg:flex` on `AppHeader`.
+
+### Changed
+- **3-Zone Studio Header Architecture & Decluttering (`src/components/AppHeader.tsx`, `src/styles/tokens/ui.ts`)**:
+  - Replaced the cluttered 14-button header with a balanced, studio-grade 3-zone layout (Left: Brand & File System, Center: Workflow Mode, Right: Content, Community & Studio Tools).
+  - **Left Wing (`[ File ▾ ]` Tiered Dropdown Menu)**: Replaced the raw document icon pair with a dedicated desktop `[ File ▾ ]` dropdown pill (`UI_TOKENS.button.filePill`), organized into three functional tiers separated by hairline dividers:
+    1. *Project I/O (Top Section)*: Immediate cursor access to `Open Project...` and `Save Project` for the primary inspect-and-sync workflow.
+    2. *Blank Canvas (Middle Section)*: `New Project` to clear the workspace for writing or pasting a new script.
+    3. *Resources & Discovery (Bottom Section)*: `Starter Guide` (amber sparkles) and `Browse Library...` (amber book).
+  - **Zero Non-Existing Shortcuts & Noise Reduction**: Completely audited and removed non-existing keyboard shortcut annotations (`Ctrl+O`, `Ctrl+S`) and tooltip shortcuts (`(?)` on Info button), while dropping visual noise badges (`Catalog`, `Presets`, `Overlaps`, `65:35`) across menus to keep typography focused and truthful.
+  - **Center Stage**: Introduced a centered segmented control (`[ ▶ Playback | ✏️ Edit ]`) with mode-specific active accents (soft blue for Playback, soft amber for Edit) and responsive icon collapse, providing immediate discoverability of the application's dual-mode architecture.
+  - **Right Wing**: Standardized the standalone Library gateway (`[ 📚 LIBRARY ]`) on a clean neutral surface pill (`UI_TOKENS.button.libraryPop`) featuring the amber book icon and uppercase tracking typography, alongside the Ko-fi support pill, unified Studio Preferences dropdown (`[ ⚙️ Settings ▾ ]`), and dedicated Info modal trigger.
+  - **Studio Preferences Dropdown**: Consolidated loose floating utility icons into a single settings dropdown featuring a direct 4-theme quick-selector grid (`Auto`, `Light`, `Warm`, `Dark`), Script Paper & Colors modal trigger, Timing & Durations modal trigger, and Reset View Layout trigger (with a live customized layout pulse dot and dynamic `Custom` state badge).
+  - **Timecode Removal from Global Header**: Removed floating timecode from the top app chrome, cleanly delegating playback timing to the Video Player transport bar and Timeline window underneath.
+- **Library Modal Onboarding & External Links Decluttering (`src/components/LibraryModal.tsx`, `src/components/MobileLibraryModal.tsx`, `src/components/ScriptHeaderControls.tsx`)**:
+  - Renamed the Substack publication link from `"Article"` to **`"Introduction"`** (`[ Introduction ]` on desktop `LibraryModal`, `[ Intro ]` on `MobileLibraryModal`), clarifying its purpose as a foundational overview of SceneFlow and script-to-screen synchronization.
+  - Removed the redundant `Starter Guide` button from the modal headers across desktop and mobile, centralizing starter guide loading inside the desktop `[ File ▾ ]` dropdown menu.
+  - Removed the redundant standalone article icon button (`<Newspaper />`) from the mobile screenplay header controls (`ScriptHeaderControls.tsx`), maximizing horizontal breathing room for theme colors, library, and support controls on phones.
+
 ## [2.3.2] - 2026-09-12
 
 ### Added
