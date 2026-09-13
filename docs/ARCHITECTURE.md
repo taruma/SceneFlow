@@ -98,6 +98,7 @@ Centralized application constants and configuration:
 - **`DEFAULT_SETTINGS`**: Default per-category and general timing buffers (all zeroed).
 - **`SCRIPT_WIDTH_PRESETS`**: Five reading-column width presets (`narrow` 384px, `compact` 448px, `standard` 576px, `wide` 768px, `full` 1024px).
 - **`SCROLL_FOCUS_PRESETS`**: Three auto-scroll anchor presets (`top` 35%, `center` 50%, `bottom` 65%).
+- **Preset Lookups & Defaults**: Exports default IDs (`DEFAULT_SCRIPT_WIDTH_PRESET_ID`, `DEFAULT_SCROLL_FOCUS_PRESET_ID`), default preset objects (`DEFAULT_SCRIPT_WIDTH_PRESET`, `DEFAULT_SCROLL_FOCUS_PRESET`), and typed lookup helpers `getScriptWidthPreset(id)` and `getScrollFocusPreset(id)` with guaranteed default fallbacks.
 
 ### `src/constants/links.ts`
 Centralized repository, guide, publication, and author links:
@@ -177,8 +178,9 @@ YouTube IFrame Player API wrapper:
 
 ### `useScriptPreferences`
 Persistent visual customization and layout management:
-- Stored in `localStorage`: reading column width preset (`sceneflow_script_width_preset`), auto-scroll focus preset (`sceneflow_scroll_focus_preset`), active theme ID (`sceneflow_script_theme`), cue palette accessibility profile (`sceneflow_cue_palette_profile`), asymmetric split ratio (`sceneflow_split_ratio`, default 65%), video player height (`sceneflow_video_height`, default 220px), and video collapse state (`sceneflow_playback_video_collapsed`).
+- Stored in `localStorage` via centralized `SCRIPT_PREFERENCES_STORAGE_KEYS`: reading column width preset (`sceneflow_script_width_preset`), auto-scroll focus preset (`sceneflow_scroll_focus_preset`), active theme ID (`sceneflow_script_theme`), cue palette accessibility profile (`sceneflow_cue_palette_profile`), asymmetric split ratio (`sceneflow_split_ratio`, default 65%), video player height (`sceneflow_video_height`, default 220px), and video collapse state (`sceneflow_playback_video_collapsed`).
 - Provides `resetViewLayout()` to instantly restore default 65:35 panel split, 220px video height, and expand the video player if collapsed.
+- Exposes `isScriptPreferencesCustomized` and `resetScriptPreferences()` for centralized factory preference resetting.
 - Exposes `isVideoCollapsed`, `setIsVideoCollapsed`, and `toggleVideoCollapsed` helpers.
 - Exposes `isViewCustomized` flag to drive the active status dot on the header "Reset View" button.
 - Manages dropdown visibility toggles, cue type category filter sets, cue palette accessibility profile (`cuePaletteProfile`, `setCuePaletteProfile`), and color picker modal state.
@@ -187,7 +189,7 @@ Persistent visual customization and layout management:
 Real-time playback auto-scroll engine:
 - Filters active cues by multi-select focus types (`autoScrollTargets`).
 - Prioritizes the most recently started cue at the farthest script position.
-- Computes viewport scroll position using the active `ScrollFocusPreset.ratio` on desktop and center alignment on mobile.
+- Computes viewport scroll position using the pure `calculateTargetScrollTop(relativeTop, containerHeight, elementHeight, isDesktop, focusRatio)` helper, referencing active `ScrollFocusPreset.ratio` on desktop and center alignment on mobile.
 - Uses `requestAnimationFrame` and a lifecycle-guarded cancellation ref (`rafRef`) with a 10px deadband threshold to synchronize smooth scrolling with the browser's display refresh rate (VSync), canceling pending frames on rapid cue transitions and eliminating layout thrashing.
 
 ### `useCueEditor`

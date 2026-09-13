@@ -15,7 +15,14 @@ import { cn } from '../../lib/utils';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
 import type { AppThemeMode, AppThemeCategory } from '../../hooks/useAppShellTheme';
-import { SCRIPT_WIDTH_PRESETS, SCROLL_FOCUS_PRESETS } from '../../constants/script';
+import { 
+  SCRIPT_WIDTH_PRESETS, 
+  SCROLL_FOCUS_PRESETS,
+  DEFAULT_SCRIPT_WIDTH_PRESET_ID,
+  DEFAULT_SCROLL_FOCUS_PRESET_ID,
+  getScriptWidthPreset,
+  getScrollFocusPreset
+} from '../../constants/script';
 import type { ScriptWidthPresetId, ScrollFocusPresetId } from '../../types/script';
 
 export interface SettingsMenuDropdownProps {
@@ -25,7 +32,6 @@ export interface SettingsMenuDropdownProps {
   themeMode?: AppThemeMode;
   effectiveThemeCategory?: AppThemeCategory;
   onSetThemeMode?: (mode: AppThemeMode) => void;
-  onCycleThemeMode?: () => void;
   onOpenColors: () => void;
   onOpenTiming: () => void;
   isViewCustomized?: boolean;
@@ -45,22 +51,21 @@ export const SettingsMenuDropdown: React.FC<SettingsMenuDropdownProps> = memo(({
   themeMode = 'auto',
   effectiveThemeCategory = 'light',
   onSetThemeMode,
-  onCycleThemeMode,
   onOpenColors,
   onOpenTiming,
   isViewCustomized = false,
   onResetView,
-  scriptWidthPreset = 'standard',
+  scriptWidthPreset = DEFAULT_SCRIPT_WIDTH_PRESET_ID,
   setScriptWidthPreset,
-  scrollFocusPreset = 'top',
+  scrollFocusPreset = DEFAULT_SCROLL_FOCUS_PRESET_ID,
   applyScrollFocus,
   isPreferencesCustomized = false,
   onResetAll,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const currentWidth = SCRIPT_WIDTH_PRESETS.find(p => p.id === scriptWidthPreset) || SCRIPT_WIDTH_PRESETS[2];
-  const currentFocus = SCROLL_FOCUS_PRESETS.find(p => p.id === scrollFocusPreset) || SCROLL_FOCUS_PRESETS[0];
+  const currentWidth = getScriptWidthPreset(scriptWidthPreset);
+  const currentFocus = getScrollFocusPreset(scrollFocusPreset);
 
   useClickOutside(containerRef, onClose, isOpen);
   useEscapeKey(onClose, isOpen);
@@ -139,11 +144,7 @@ export const SettingsMenuDropdown: React.FC<SettingsMenuDropdownProps> = memo(({
                     role="radio"
                     aria-checked={isSelected}
                     onClick={() => {
-                      if (onSetThemeMode) {
-                        onSetThemeMode(modeKey);
-                      } else if (onCycleThemeMode) {
-                        onCycleThemeMode();
-                      }
+                      onSetThemeMode?.(modeKey);
                     }}
                     className={cn(
                       "flex flex-col items-center justify-center py-1.5 rounded-lg text-[9px] font-bold capitalize transition-all active:scale-95",

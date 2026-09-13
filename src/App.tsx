@@ -41,7 +41,8 @@ import type { Cue, AppMode } from './types/script';
 import { 
   COLORS, 
   DEFAULT_SETTINGS, 
-  SCRIPT_WIDTH_PRESETS 
+  SCRIPT_WIDTH_PRESETS,
+  DEFAULT_SCROLL_FOCUS_PRESET_ID 
 } from './constants/script';
 import {
   sanitizeCues,
@@ -99,6 +100,8 @@ export default function App() {
     setScriptWidthPreset,
     scrollFocusPreset,
     setScrollFocusPreset,
+    isScriptPreferencesCustomized,
+    resetScriptPreferences,
     scriptThemeId,
     setScriptThemeId,
     cuePaletteProfile,
@@ -232,16 +235,15 @@ export default function App() {
 
   const isPreferencesCustomized = 
     themeMode !== 'auto' ||
-    scriptWidthPreset !== 'standard' ||
-    scrollFocusPreset !== 'top' ||
+    isScriptPreferencesCustomized ||
     isViewCustomized;
 
   const handleResetAllPreferences = useCallback(() => {
     setThemeMode('auto');
-    setScriptWidthPreset('standard');
-    applyScrollFocus('top');
+    resetScriptPreferences();
+    applyScrollFocus(DEFAULT_SCROLL_FOCUS_PRESET_ID);
     resetViewLayout();
-  }, [setThemeMode, setScriptWidthPreset, applyScrollFocus, resetViewLayout]);
+  }, [setThemeMode, resetScriptPreferences, applyScrollFocus, resetViewLayout]);
 
 
   const prevActiveCueTypesRef = useRef<Set<string>>(new Set());
@@ -525,7 +527,6 @@ export default function App() {
         exportJson={exportJson}
         themeMode={themeMode}
         effectiveThemeCategory={effectiveCategory}
-        onCycleThemeMode={cycleThemeMode}
         onSetThemeMode={setThemeMode}
         isViewCustomized={isViewCustomized}
         onResetView={resetViewLayout}
@@ -869,12 +870,7 @@ export default function App() {
         isOpen={isColorModalOpen}
         onClose={() => setIsColorModalOpen(false)}
         currentThemeId={scriptThemeId}
-        onSelectTheme={(themeId) => {
-          setScriptThemeId(themeId);
-          if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('sceneflow_script_theme', themeId);
-          }
-        }}
+        onSelectTheme={setScriptThemeId}
         themeMode={themeMode}
         setThemeMode={setThemeMode}
         effectiveThemeCategory={effectiveCategory}
@@ -889,12 +885,7 @@ export default function App() {
         isOpen={isColorModalOpen}
         onClose={() => setIsColorModalOpen(false)}
         currentThemeId={scriptThemeId}
-        onSelectTheme={(themeId) => {
-          setScriptThemeId(themeId);
-          if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('sceneflow_script_theme', themeId);
-          }
-        }}
+        onSelectTheme={setScriptThemeId}
         themeMode={themeMode}
         setThemeMode={setThemeMode}
         effectiveThemeCategory={effectiveCategory}

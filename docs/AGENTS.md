@@ -79,21 +79,22 @@ When modifying application state, storage keys, or external fetching:
   - `loadBlank()`: Fetches `/examples/blank.json`, returning an empty canvas (`scriptText: ""`, `cues: []`, zeroed default settings) for clean project authoring.
   - `loadGuide()`: Fetches `/examples/guide.json`, loading the comprehensive 1,200+ line interactive tutorial project in Playback mode.
   - `resetConfirmation.type`: Supports `'settings' | 'data' | 'blank' | 'new' | 'guide' | 'example' | 'remote'`.
-- **LocalStorage Keys**:
-  - `'screenplay_sync_state'`: Core project data (video ID, script text, cues, timing settings).
-  - `'sceneflow_app_theme_mode'`: Active application shell theme mode (`AppThemeMode`: `'auto' | 'light' | 'warm' | 'dark'`).
-  - `'sceneflow_script_theme'`: Active script viewer theme ID (`ScriptThemeId`).
-  - `'sceneflow_cue_palette_profile'`: Active cue palette accessibility profile (`CuePaletteProfile`: `'standard' | 'protanopia'`).
-  - `'sceneflow_script_width_preset'`: Active desktop script width preset (`ScriptWidthPresetId`).
-  - `'sceneflow_scroll_focus_preset'`: Active desktop auto-scroll focus anchor (`ScrollFocusPresetId`).
-  - `'sceneflow_highlight_view_mode'`: Active highlights presentation mode (`HighlightViewMode`: `'timeline' | 'cards'`).
-  - `'sceneflow_highlight_filter_expanded'`: Collapsed/expanded state of playback category filters (`boolean`).
-  - `'sceneflow_timeline_zoom_preset'`: Active timeline visible window zoom preset (`TimelineZoomPreset`: `'4s' | '8s' | '16s'`).
-  - `'sceneflow_timeline_height_mode'`: Active timeline track height mode (`TimelineHeightMode`: `'flexible' | 'fixed'`).
-  - `'sceneflow_split_ratio'`: Active desktop split pane ratio (`number`).
-  - `'sceneflow_video_height'`: Active playback video player height in pixels (`number`).
-  - `'sceneflow_playback_video_collapsed'`: Video player collapsed/hidden state in Playback mode (`boolean`).
-  - `'sceneflow_pure_black_bg'`: Pure Black Canvas / Video Overlay mode toggle state (`boolean`).
+- **LocalStorage Keys & Centralized Dictionary (`SCRIPT_PREFERENCES_STORAGE_KEYS`)**:
+  - Centralized in `src/hooks/useScriptPreferences.ts` under `SCRIPT_PREFERENCES_STORAGE_KEYS` to eliminate raw string literal duplication and typo risks across getters and setters:
+    - `'screenplay_sync_state'`: Core project data (video ID, script text, cues, timing settings).
+    - `'sceneflow_app_theme_mode'`: Active application shell theme mode (`AppThemeMode`: `'auto' | 'light' | 'warm' | 'dark'`).
+    - `'sceneflow_script_theme'`: Active script viewer theme ID (`ScriptThemeId`).
+    - `'sceneflow_cue_palette_profile'`: Active cue palette accessibility profile (`CuePaletteProfile`: `'standard' | 'protanopia'`).
+    - `'sceneflow_script_width_preset'`: Active desktop script width preset (`ScriptWidthPresetId`).
+    - `'sceneflow_scroll_focus_preset'`: Active desktop auto-scroll focus anchor (`ScrollFocusPresetId`).
+    - `'sceneflow_highlight_view_mode'`: Active highlights presentation mode (`HighlightViewMode`: `'timeline' | 'cards'`).
+    - `'sceneflow_highlight_filter_expanded'`: Collapsed/expanded state of playback category filters (`boolean`).
+    - `'sceneflow_timeline_zoom_preset'`: Active timeline visible window zoom preset (`TimelineZoomPreset`: `'4s' | '8s' | '16s'`).
+    - `'sceneflow_timeline_height_mode'`: Active timeline track height mode (`TimelineHeightMode`: `'flexible' | 'fixed'`).
+    - `'sceneflow_split_ratio'`: Active desktop split pane ratio (`number`).
+    - `'sceneflow_video_height'`: Active playback video player height in pixels (`number`).
+    - `'sceneflow_playback_video_collapsed'`: Video player collapsed/hidden state in Playback mode (`boolean`).
+    - `'sceneflow_pure_black_bg'`: Pure Black Canvas / Video Overlay mode toggle state (`boolean`).
 - **Query Parameters**: On application mount, inspect `window.location.search`:
   - `?example=ID`: Matches an example `id` from `EXAMPLE_SECTIONS` in `src/examples.ts`.
   - `?project=URL`: Loads a remote CORS-enabled JSON project.
@@ -234,3 +235,6 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
       3. *Reference & Discovery*: `Starter Guide` (`guide.json`) and `Browse Library...` (bottom tier).
     - **Top Header Chrome Constraints**: Top header chrome must **never** render raw floating timecode; playback timing belongs exclusively to the media player and Active Highlights timeline.
     - **Studio Preferences Dropdown**: Studio preferences must be consolidated inside the `[ ⚙️ Settings ▾ ]` dropdown, providing direct 4-theme selection (`Auto`, `Light`, `Warm`, `Dark`), Script Color presets access (with `<kbd>Shift+C</kbd>` badge), Timing Settings access (with `<kbd>Shift+T</kbd>` badge), and a live customized layout reset indicator (with `<kbd>Shift+R</kbd>` badge). Keyboard shortcuts in `useKeyboardShortcuts.ts` are guarded with `!e.ctrlKey && !e.metaKey && !e.altKey` and input/modal checks to prevent any clash with browser or playback keys.
+    - **Preset Lookup & Scroll Math Centralization (`constants/script.ts`, `hooks/useAutoScroll.ts`)**:
+      - Reading column width and auto-scroll focus presets must be resolved through typed lookup helpers (`getScriptWidthPreset(id)` and `getScrollFocusPreset(id)`) with guaranteed default fallbacks (`DEFAULT_SCRIPT_WIDTH_PRESET`, `DEFAULT_SCROLL_FOCUS_PRESET`), preventing repetitive and fragile `.find() || [0]` ladders across components.
+      - Viewport auto-scroll offsets are computed strictly through the pure helper `calculateTargetScrollTop(relativeTop, containerHeight, elementHeight, isDesktop, focusRatio)`, unifying manual preset adjustments (`applyScrollFocus`) and continuous playback auto-scrolling to eliminate formula drift.

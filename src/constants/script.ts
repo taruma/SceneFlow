@@ -1,7 +1,16 @@
-import type { TimingSettings, ScriptWidthPreset, ScrollFocusPreset } from '../types/script';
+import type { 
+  TimingSettings, 
+  ScriptWidthPreset, 
+  ScrollFocusPreset, 
+  ScriptWidthPresetId, 
+  ScrollFocusPresetId 
+} from '../types/script';
 import { COLORS } from '../styles/tokens/cues';
 
 export { COLORS };
+
+export const DEFAULT_SCRIPT_WIDTH_PRESET_ID: ScriptWidthPresetId = 'standard';
+export const DEFAULT_SCROLL_FOCUS_PRESET_ID: ScrollFocusPresetId = 'top';
 
 export const DEFAULT_SETTINGS: Record<string, TimingSettings> = {
   general: { before: 0, after: 0 },
@@ -24,3 +33,17 @@ export const SCROLL_FOCUS_PRESETS: readonly ScrollFocusPreset[] = [
   { id: 'center', label: 'Center (50%)', shortLabel: 'Center', ratio: 0.50, desc: '50% viewport • Balanced' },
   { id: 'bottom', label: 'Bottom (35%)', shortLabel: 'Bottom', ratio: 0.65, desc: '35% from bottom • Reflection' },
 ] as const;
+
+export const DEFAULT_SCRIPT_WIDTH_PRESET: ScriptWidthPreset = 
+  SCRIPT_WIDTH_PRESETS.find(p => p.id === DEFAULT_SCRIPT_WIDTH_PRESET_ID) || SCRIPT_WIDTH_PRESETS[2];
+
+export const DEFAULT_SCROLL_FOCUS_PRESET: ScrollFocusPreset = 
+  SCROLL_FOCUS_PRESETS.find(p => p.id === DEFAULT_SCROLL_FOCUS_PRESET_ID) || SCROLL_FOCUS_PRESETS[0];
+
+export function getScriptWidthPreset(id?: string): ScriptWidthPreset {
+  return SCRIPT_WIDTH_PRESETS.find(p => p.id === id) ?? DEFAULT_SCRIPT_WIDTH_PRESET;
+}
+
+export function getScrollFocusPreset(id?: string): ScrollFocusPreset {
+  return SCROLL_FOCUS_PRESETS.find(p => p.id === id) ?? DEFAULT_SCROLL_FOCUS_PRESET;
+}

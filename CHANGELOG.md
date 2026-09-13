@@ -48,6 +48,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - 5-segment Script Width row with progressive visual width bar glyphs and dynamic header text (`{label} ({width_px})`).
     - 3-segment Scroll Focus Line row with miniature viewport device icons (`Top`, `Center`, `Bottom`) and active amber indicators.
   - Decluttered the desktop Script Preview header down to an ultra-clean layout housing only `[FileText] Script Preview` and `[🎯 AUTO-SCROLL | ▾]` split button, reducing `ScriptHeaderControls.tsx` from 395 to 180 lines (~54% line reduction) while preserving quick tools on mobile.
+- **Preset Lookup Centralization & Type Safety (`src/constants/script.ts`, `src/components/header/SettingsMenuDropdown.tsx`)**:
+  - Exported `DEFAULT_SCRIPT_WIDTH_PRESET`, `DEFAULT_SCROLL_FOCUS_PRESET`, and typed lookup helpers `getScriptWidthPreset(id)` and `getScrollFocusPreset(id)` with guaranteed default fallbacks.
+  - Replaced repetitive and brittle `.find() || .find() || [0]` fallback ladders across `SettingsMenuDropdown.tsx` and `useAutoScroll.ts` with clean, self-guaranteeing helpers.
+- **DRY Target Scroll Offset Calculation (`src/hooks/useAutoScroll.ts`)**:
+  - Extracted and exported pure `calculateTargetScrollTop(relativeTop, containerHeight, elementHeight, isDesktop, focusRatio)`.
+  - Unified the duplicate viewport offset math between user clicks on the scroll focus line presets (`applyScrollFocus`) and the active cue playback scroll loop.
+- **Scoped `STORAGE_KEYS` Dictionary & Callback Simplification (`src/hooks/useScriptPreferences.ts`, `src/App.tsx`, `src/components/AppHeader.tsx`)**:
+  - Replaced 8 raw `sceneflow_*` string literals repeated across getters and setters with a centralized `SCRIPT_PREFERENCES_STORAGE_KEYS` object.
+  - Removed redundant inline `localStorage.setItem('sceneflow_script_theme', themeId)` wrappers in `ScriptColorModal` and `MobileColorModal`, simplifying callers to `onSelectTheme={setScriptThemeId}`.
+  - Removed vestigial `onCycleThemeMode` prop through `AppHeader` and `SettingsMenuDropdown` (superseded by the 4-theme segmented picker).
 
 ### Fixed
 - **Scroll Focus Dropdown Auto-Close (`src/components/ScriptHeaderControls.tsx`)**:

@@ -34,7 +34,6 @@ export interface AppHeaderProps {
   exportJson: () => void;
   themeMode?: AppThemeMode;
   effectiveThemeCategory?: AppThemeCategory;
-  onCycleThemeMode?: () => void;
   onSetThemeMode?: (mode: AppThemeMode) => void;
   isViewCustomized?: boolean;
   onResetView?: () => void;
@@ -63,7 +62,6 @@ export const AppHeader: React.FC<AppHeaderProps> = memo(({
   exportJson,
   themeMode = 'auto',
   effectiveThemeCategory = 'light',
-  onCycleThemeMode,
   onSetThemeMode,
   isViewCustomized = false,
   onResetView,
@@ -164,7 +162,6 @@ export const AppHeader: React.FC<AppHeaderProps> = memo(({
           themeMode={themeMode}
           effectiveThemeCategory={effectiveThemeCategory}
           onSetThemeMode={onSetThemeMode}
-          onCycleThemeMode={onCycleThemeMode}
           onOpenColors={() => setIsColorModalOpen(true)}
           onOpenTiming={() => setIsSettingsOpen(true)}
           isViewCustomized={isViewCustomized}
