@@ -20,6 +20,49 @@ export function calculateTargetScrollTop(
   return Math.max(0, target);
 }
 
+/**
+ * Smoothly animates container.scrollTop at native display refresh rate (144Hz/60Hz)
+ * using a cubic ease-out curve, avoiding Windows Chrome's 60Hz native smooth-scroll judder.
+ */
+function smoothScrollTo(
+  container: HTMLElement,
+  targetTop: number,
+  duration: number = 380,
+  activeAnimRef: React.MutableRefObject<number | null>
+) {
+  if (activeAnimRef.current !== null) {
+    cancelAnimationFrame(activeAnimRef.current);
+    activeAnimRef.current = null;
+  }
+
+  const startTop = container.scrollTop;
+  const distance = targetTop - startTop;
+
+  // Deadband: If already within 2px of target, snap directly
+  if (Math.abs(distance) <= 2) {
+    container.scrollTop = targetTop;
+    return;
+  }
+
+  const startTime = performance.now();
+
+  const step = (now: number) => {
+    const elapsed = now - startTime;
+    const progress = Math.min(1, elapsed / duration);
+    // Cubic ease-out curve: 1 - (1 - t)^3
+    const ease = 1 - Math.pow(1 - progress, 3);
+    container.scrollTop = startTop + distance * ease;
+
+    if (progress < 1) {
+      activeAnimRef.current = requestAnimationFrame(step);
+    } else {
+      activeAnimRef.current = null;
+    }
+  };
+
+  activeAnimRef.current = requestAnimationFrame(step);
+}
+
 interface UseAutoScrollOptions {
   scriptRef: React.RefObject<HTMLDivElement | null>;
   cues: Cue[];
@@ -77,15 +120,34 @@ export function useAutoScroll({
           isDesktop,
           preset.ratio
         );
-        container.scrollTo({
-          top: targetScrollTop,
-          behavior: 'smooth',
-        });
+        smoothScrollTo(container, targetScrollTop, 300, scrollAnimRef);
       }
     }
   }, [lastScrolledCueId, scriptRef, isDesktop, onScrollFocusChange]);
 
   const rafRef = React.useRef<number | null>(null);
+  const scrollAnimRef = React.useRef<number | null>(null);
+
+  // User manual scroll listener to cancel ongoing auto-scroll smoothly without fighting user
+  useEffect(() => {
+    const container = scriptRef.current;
+    if (!container) return;
+
+    const handleUserScroll = () => {
+      if (scrollAnimRef.current !== null) {
+        cancelAnimationFrame(scrollAnimRef.current);
+        scrollAnimRef.current = null;
+      }
+    };
+
+    container.addEventListener('wheel', handleUserScroll, { passive: true });
+    container.addEventListener('touchmove', handleUserScroll, { passive: true });
+
+    return () => {
+      container.removeEventListener('wheel', handleUserScroll);
+      container.removeEventListener('touchmove', handleUserScroll);
+    };
+  }, [scriptRef]);
 
   // Clean up pending animation frames on unmount
   useEffect(() => {
@@ -93,6 +155,10 @@ export function useAutoScroll({
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
+      }
+      if (scrollAnimRef.current !== null) {
+        cancelAnimationFrame(scrollAnimRef.current);
+        scrollAnimRef.current = null;
       }
     };
   }, []);
@@ -126,6 +192,7 @@ export function useAutoScroll({
         if (element && container) {
           if (rafRef.current !== null) {
             cancelAnimationFrame(rafRef.current);
+            rafRef.current = null;
           }
 
           rafRef.current = requestAnimationFrame(() => {
@@ -143,10 +210,7 @@ export function useAutoScroll({
             );
             // Deadband guard: avoid micro-scroll jitter when consecutive cues are on the same line
             if (Math.abs(container.scrollTop - finalTarget) > 10) {
-              container.scrollTo({
-                top: finalTarget,
-                behavior: 'smooth',
-              });
+              smoothScrollTo(container, finalTarget, 380, scrollAnimRef);
             }
             rafRef.current = null;
           });

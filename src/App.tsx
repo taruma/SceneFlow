@@ -463,26 +463,29 @@ export default function App() {
 
   // Rendering the screenplay with memoized ScriptLine components
   const renderedScript = useMemo(() => {
-    return processedLines.map((lineData) => (
-      <ScriptLine
-        key={lineData.lineIdx}
-        lineData={lineData}
-        cues={cuesByLineIndex.get(lineData.lineIdx) || EMPTY_CUES_ARRAY}
-        mode={mode}
-        currentTime={currentTime}
-        settings={state.settings}
-        hiddenCueTypes={hiddenCueTypes}
-        scriptThemeId={scriptThemeId}
-        cuePaletteProfile={cuePaletteProfile}
-        playerState={playerState}
-        isDesktop={isDesktop}
-        selection={selection}
-        editingCueId={newCue.id}
-        onSelectStaging={setActiveStaging}
-        onSelectCue={selectCueForEdit}
-        onOverlapPicker={handleOverlapPicker}
-      />
-    ));
+    return processedLines.map((lineData) => {
+      const lineCues = cuesByLineIndex.get(lineData.lineIdx) || EMPTY_CUES_ARRAY;
+      return (
+        <ScriptLine
+          key={lineData.lineIdx}
+          lineData={lineData}
+          cues={lineCues}
+          mode={mode}
+          currentTime={lineCues.length > 0 ? currentTime : 0}
+          settings={state.settings}
+          hiddenCueTypes={hiddenCueTypes}
+          scriptThemeId={scriptThemeId}
+          cuePaletteProfile={cuePaletteProfile}
+          playerState={playerState}
+          isDesktop={isDesktop}
+          selection={selection}
+          editingCueId={newCue.id}
+          onSelectStaging={setActiveStaging}
+          onSelectCue={selectCueForEdit}
+          onOverlapPicker={handleOverlapPicker}
+        />
+      );
+    });
   }, [
     processedLines,
     cuesByLineIndex,

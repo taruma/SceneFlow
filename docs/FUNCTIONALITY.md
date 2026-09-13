@@ -97,7 +97,7 @@ Inspired by professional Non-Linear Editors (NLEs), the timeline maps cues onto 
 - **Dynamic Density Scaling (`TimelineDensity`)**: Supports `'comfortable'` (32px track height) and `'compact'` (24px track height) modes, optimizing vertical space across varying screen sizes.
 - **Interactive Lane Header Toggles**: Track headers on `TimelineLane` (`[• CATEGORY]`) serve as interactive buttons to mute/unmute that category directly, showing pulsing active glow or dimmed strikethrough styling when hidden.
 - **Global Greedy Interval Scheduling**: Multiple overlapping cues within the same category automatically stack into stable sub-lanes (`subLaneIndex`), calculated globally across the script to prevent any row-jumping or vertical layout shifting during scrubbing.
-- **Zero Layout Shift & Micro-Performance**: Uses hardware-accelerated linear CSS transitions (`100ms linear`) and `will-change: left, width` in tight sync with the YouTube player clock.
+- **Zero Layout Shift & Continuous 144Hz Micro-Performance**: Replaced fixed 100ms linear CSS transitions with continuous display time extrapolation (`useSmoothTimelineTime`) running at native display refresh rates (144Hz, 120Hz, 60Hz). Stabilized cue block duration geometry (`useTimelineWindow`) by calculating fixed duration widths without boundary clamping, letting track container `overflow-hidden` handle edge clipping and eliminating continuous layout reflows.
 - **Seek Without Unwanted Playback**: Clicking any cue block seeks the player to that timestamp while preserving the paused state without triggering YouTube's unbuffered autoplay quirk.
 
 ### Docked Paused Cue Inspector (`PausedInspectorCard`)
@@ -220,13 +220,15 @@ Selectable directly within Studio Settings (`[ ⚙️ Settings ▾ ]`) via a 3-s
 - Mobile and tablet viewports use native viewport centering for screen economy.
 
 ### VSync Frame-Aligned Scheduling & Layout Reflow Elimination
-- **`requestAnimationFrame` Auto-Scroll Alignment**: Replaces uncoordinated asynchronous timeouts with `requestAnimationFrame` and a tracking ref (`rafRef`), synchronizing scroll calculations with the monitor's display refresh rate (60Hz–144Hz).
-- **Stale Frame Cancellation & Deadband Guard**: Rapid cue transitions cancel pending animation frames before scheduling a new target, while a 10px scroll distance deadband suppresses micro-scroll jitter when consecutive cues activate on the same line.
+- **144Hz Native Auto-Scroll Animator (`smoothScrollTo`)**: Replaces browser-native `behavior: 'smooth'` (which is capped at 60Hz in Windows Chromium, causing frame pacing judder on 144Hz/120Hz displays and 60fps screen captures) with a custom `requestAnimationFrame` cubic ease-out (`1 - (1 - t)^3`) animator.
+- **User Gesture Interruption**: Passive `wheel` and `touchmove` listeners on the scroll container cancel active auto-scroll animations immediately upon manual user interaction without scroll fighting.
+- **Stale Frame Cancellation & Deadband Guard**: Rapid cue transitions cancel pending animation frames before scheduling a new target, while a 10px scroll distance deadband (`Math.abs(container.scrollTop - targetScrollTop) > 10`) suppresses micro-scroll jitter when consecutive cues activate on the same line.
 
 ### Sub-Second Playback Render Isolation (`ScriptLine` Memoization)
 - **Decoupled Script Text Processing**: The regex and token parsing pipeline (`processScript`) runs exclusively when script text changes, eliminating redundant parsing cycles during video playback.
 - **$O(1)$ Cue Pre-Indexing**: Overlapping cues are indexed to line numbers on script load, removing nested $O(\text{lines} \times \text{cues})$ filter passes on every 100ms clock tick.
-- **Granular Line Updates**: Screenplay lines without cues (~95% of a manuscript) completely skip React re-renders during playback. Only lines whose cues are currently active, fading in/out, or transitioning state re-render, ensuring silky-smooth 60fps playback even on long screenplays with 100+ cues.
+- **Decoupled Non-Cue Line Diffing**: In `App.tsx`, lines with zero overlapping cues receive static `currentTime={0}`, allowing React to skip virtual DOM prop diffing and reconciliation across 85%+ of screenplay lines on every playback tick.
+- **Granular Line Updates**: Screenplay lines without cues completely skip React re-renders during playback. Only lines whose cues are currently active, fading in/out, or transitioning state re-render, ensuring silky-smooth 60fps playback even on long screenplays with 100+ cues.
 - **GPU CSS Highlight Transitions**: Screenplay highlight spans apply `100ms linear` transitions for background color and glow, allowing the GPU compositor to interpolate 100ms timer ticks into smooth, continuous analog light fades without CPU overhead.
 
 ---
