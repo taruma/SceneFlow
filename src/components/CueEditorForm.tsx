@@ -22,6 +22,7 @@ interface CueEditorFormProps {
   scriptThemeId: string;
   cuePaletteProfile?: CuePaletteProfile;
   player: any;
+  widthClass?: string;
 }
 
 export const CueEditorForm: React.FC<CueEditorFormProps> = ({
@@ -39,12 +40,13 @@ export const CueEditorForm: React.FC<CueEditorFormProps> = ({
   scriptThemeId,
   cuePaletteProfile = 'standard',
   player,
+  widthClass,
 }) => {
   const { resolveCueColor } = useScriptTheme(scriptThemeId as any, cuePaletteProfile);
 
   return (
     <div className="bg-surface border-b border-border-main text-text-main p-4 lg:p-6 shrink-0 z-10 shadow-sm animate-in slide-in-from-top duration-500">
-      <div className="max-w-xl mx-auto">
+      <div className={cn("mx-auto transition-all duration-300", widthClass || "max-w-xl")}>
         {!selection ? (
           <div className={UI_TOKENS.panel.emptyPlaceholder}>
             <p className="text-xs text-text-faint font-medium italic">Highlight text in the script below to create a sync cue.</p>

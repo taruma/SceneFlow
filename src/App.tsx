@@ -8,8 +8,6 @@ import { StagingModal } from './components/StagingModal';
 import { LibraryModal } from './components/LibraryModal';
 import { MobileLibraryModal } from './components/MobileLibraryModal';
 import { InitializingScreen } from './components/InitializingScreen';
-import { YoutubeSourceInput } from './components/YoutubeSourceInput';
-import { ScriptManagementBar } from './components/ScriptManagementBar';
 import { RawScriptModal } from './components/RawScriptModal';
 import { RawCuesModal } from './components/RawCuesModal';
 import { OverlapPicker } from './components/OverlapPicker';
@@ -21,9 +19,8 @@ import { MobileColorModal } from './components/MobileColorModal';
 import { AppInfoModal } from './components/AppInfoModal';
 import { AppHeader } from './components/AppHeader';
 import { PlaybackLeftPanel } from './components/playback/PlaybackLeftPanel';
+import { EditLeftPanel } from './components/edit/EditLeftPanel';
 import { SplitPaneDivider } from './components/common/SplitPaneDivider';
-import { ActiveHighlightsPanel } from './components/ActiveHighlightsPanel';
-import { TimelineCuesPanel } from './components/TimelineCuesPanel';
 import { ScriptHeaderControls } from './components/ScriptHeaderControls';
 import { CueEditorForm } from './components/CueEditorForm';
 import { cn, extractYoutubeId } from './lib/utils';
@@ -42,7 +39,8 @@ import {
   COLORS, 
   DEFAULT_SETTINGS, 
   SCRIPT_WIDTH_PRESETS,
-  DEFAULT_SCROLL_FOCUS_PRESET_ID 
+  DEFAULT_SCROLL_FOCUS_PRESET_ID,
+  getScriptWidthPreset 
 } from './constants/script';
 import {
   sanitizeCues,
@@ -60,10 +58,8 @@ export default function App() {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [rawCuesText, setRawCuesText] = useState("");
-  const [leftPanelScroll, setLeftPanelScroll] = useState(0);
 
   const scriptRef = useRef<HTMLDivElement>(null);
-  const leftPanelRef = useRef<HTMLDivElement>(null);
 
   const {
     state,
@@ -207,7 +203,7 @@ export default function App() {
     player,
     togglePlayPause,
     jumpBy,
-    onToggleVideo: mode === 'playback' ? toggleVideoCollapsed : undefined,
+    onToggleVideo: toggleVideoCollapsed,
     onOpenColors: () => setIsColorModalOpen(true),
     onOpenTiming: () => setIsSettingsOpen(true),
     onResetView: resetViewLayout,
@@ -573,87 +569,37 @@ export default function App() {
             style={isDesktop ? { width: `${splitRatio}%` } : undefined}
           />
         ) : (
-          <div 
-            ref={leftPanelRef}
-            onScroll={(e) => setLeftPanelScroll(e.currentTarget.scrollTop)}
+          <EditLeftPanel
+            youtubeId={state.youtubeId}
+            onChangeYoutubeId={(value) => setState(prev => ({ ...prev, youtubeId: value }))}
+            onClearYoutubeId={() => setState(prev => ({ ...prev, youtubeId: '' }))}
+            hasPlayer={!!player}
+            videoHeight={videoHeight}
+            setVideoHeight={setVideoHeight}
+            commitVideoHeight={commitVideoHeight}
+            isVideoCollapsed={isVideoCollapsed}
+            onToggleVideoCollapsed={toggleVideoCollapsed}
+            onTogglePlayPause={togglePlayPause}
+            onReplay={() => seekTo(0, true, true)}
+            isDesktop={isDesktop}
+            playerState={playerState}
+            onReady={onReady}
+            onStateChange={onStateChange}
+            cues={state.cues}
+            scriptThemeId={scriptThemeId}
+            cuePaletteProfile={cuePaletteProfile}
+            selectedCueId={newCue.id}
+            onSelectCue={selectCueForEdit}
+            onDeleteCue={deleteCue}
+            onOpenRawCuesModal={() => {
+              setRawCuesText(JSON.stringify(state.cues, null, 2));
+              setIsCuesModalOpen(true);
+            }}
+            onRealignCues={realignCues}
+            isAligning={isAligning}
+            alignSuccess={alignSuccess}
             style={isDesktop ? { width: `${splitRatio}%` } : undefined}
-            className={cn(
-              UI_TOKENS.layout.leftPanelBase,
-              "w-full border-r p-4 lg:p-10 overflow-y-auto scrollbar-hide transition-all duration-300"
-            )}
-          >
-            {/* YouTube Source Input - Not Sticky in Edit Mode */}
-            <YoutubeSourceInput
-              youtubeId={state.youtubeId}
-              onChange={(value) => setState(prev => ({ ...prev, youtubeId: value }))}
-              onClear={() => setState(prev => ({ ...prev, youtubeId: '' }))}
-              hasPlayer={!!player}
-            />
-
-            {/* Video Player Section - Sticky in Edit Mode */}
-            <section className={cn(
-              "transition-all duration-300 z-30 sticky top-0 -mx-4 lg:-mx-10 px-4 lg:px-10", 
-              leftPanelScroll <= 80 && "bg-surface border-b border-border-subtle pb-6 mb-8 space-y-4",
-              leftPanelScroll > 80 && "bg-transparent pointer-events-none space-y-0 pb-0 mb-0"
-            )}>
-              <div className={cn(
-                "flex items-center justify-between transition-all duration-300", 
-                leftPanelScroll > 80 && "opacity-0 h-0 overflow-hidden mb-0"
-              )}>
-                <h2 className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-text-faint flex items-center gap-2">
-                  <Video size={14} /> Media Preview
-                </h2>
-              </div>
-              
-              <div className={cn(
-                "aspect-video bg-black overflow-hidden shadow-2xl ring-1 ring-border-main relative group transition-all duration-500 origin-top-left pointer-events-auto rounded-3xl",
-                leftPanelScroll > 80 && "w-1/2 rounded-2xl shadow-2xl scale-90 -translate-y-2"
-              )}>
-                <YouTube
-                  key={extractYoutubeId(state.youtubeId)}
-                  videoId={extractYoutubeId(state.youtubeId)}
-                  opts={{
-                    width: '100%',
-                    height: '100%',
-                    playerVars: {
-                      autoplay: 0,
-                      modestbranding: 1,
-                      rel: 0,
-                      controls: 1,
-                      origin: typeof window !== 'undefined' ? window.location.origin : undefined,
-                    },
-                  }}
-                  onReady={onReady}
-                  onStateChange={onStateChange}
-                  className="w-full h-full bg-black"
-                  iframeClassName="w-full h-full block border-0 bg-black"
-                />
-              </div>
-            </section>
-
-            {/* Script Management Section - Only in Edit Mode */}
-            <ScriptManagementBar
-              lineCount={state.scriptText.split('\n').length}
-              onOpenRawScriptModal={() => setIsScriptModalOpen(true)}
-            />
-
-            {/* Edit Mode Controls */}
-            <TimelineCuesPanel
-              cues={state.cues}
-              scriptThemeId={scriptThemeId}
-              cuePaletteProfile={cuePaletteProfile}
-              selectedCueId={newCue.id}
-              onSelectCue={selectCueForEdit}
-              onDeleteCue={deleteCue}
-              onOpenRawCuesModal={() => {
-                setRawCuesText(JSON.stringify(state.cues, null, 2));
-                setIsCuesModalOpen(true);
-              }}
-              onRealignCues={realignCues}
-              isAligning={isAligning}
-              alignSuccess={alignSuccess}
-            />
-          </div>
+          />
         )}
 
         {/* Desktop Resizable Split Pane Divider */}
@@ -687,6 +633,8 @@ export default function App() {
             setIsColorModalOpen={setIsColorModalOpen}
             scriptThemeId={scriptThemeId}
             cuePaletteProfile={cuePaletteProfile}
+            lineCount={state.scriptText ? state.scriptText.split('\n').length : 0}
+            onOpenRawScriptModal={() => setIsScriptModalOpen(true)}
           />
 
           {/* Create / Edit Cue Form in Edit Mode */}
@@ -706,6 +654,7 @@ export default function App() {
               scriptThemeId={scriptThemeId}
               cuePaletteProfile={cuePaletteProfile}
               player={player}
+              widthClass={getScriptWidthPreset(scriptWidthPreset).widthClass}
             />
           )}
           
@@ -723,12 +672,8 @@ export default function App() {
               isScriptPureBlack ? "!bg-black !shadow-none" : cn(activeTheme.paperBg, activeTheme.paperShadow),
               activeTheme.paperBorder,
               activeTheme.textColor,
-              mode === 'edit' 
-                ? "max-w-xl p-6 md:p-8" 
-                : cn(
-                    SCRIPT_WIDTH_PRESETS.find(p => p.id === scriptWidthPreset)?.widthClass || "max-w-xl",
-                    "p-8 lg:p-12"
-                  )
+              getScriptWidthPreset(scriptWidthPreset).widthClass,
+              mode === 'edit' ? "p-6 md:p-8" : "p-8 lg:p-12"
             )}>
               {/* Page punch holes effect */}
               {!isScriptPureBlack && (

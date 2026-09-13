@@ -6,7 +6,8 @@ import {
   Check, 
   Book, 
   Coffee, 
-  Palette 
+  Palette,
+  Edit2
 } from 'lucide-react';
 import { COLORS } from '../constants/script';
 import { EXTERNAL_LINKS } from '../constants/links';
@@ -27,6 +28,8 @@ interface ScriptHeaderControlsProps {
   setIsColorModalOpen?: (open: boolean) => void;
   scriptThemeId?: string;
   cuePaletteProfile?: CuePaletteProfile;
+  lineCount?: number;
+  onOpenRawScriptModal?: () => void;
 }
 
 export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = memo(({
@@ -41,6 +44,8 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = memo(({
   setIsColorModalOpen,
   scriptThemeId,
   cuePaletteProfile = 'standard',
+  lineCount,
+  onOpenRawScriptModal,
 }) => {
   const autoScrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -53,10 +58,12 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = memo(({
     <div className={mode === 'playback' ? UI_TOKENS.layout.scriptHeaderPlayback : UI_TOKENS.layout.scriptHeader}>
       <div className="flex items-center gap-2 lg:gap-3">
         <FileText size={16} className="text-text-faint shrink-0" />
-        <span className={cn("hidden sm:inline", UI_TOKENS.layout.sectionTitleMini)}>Script Preview</span>
+        <span className={cn("hidden sm:inline", UI_TOKENS.layout.sectionTitleMini)}>
+          {mode === 'playback' ? 'Script Preview' : 'Script Editor'}
+        </span>
       </div>
       <div className="flex items-center gap-2 lg:gap-4">
-        {mode === 'playback' && (
+        {mode === 'playback' ? (
           <div className="flex items-center gap-2">
             <div ref={autoScrollContainerRef} className="relative flex items-stretch">
               <button
@@ -170,6 +177,24 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = memo(({
               <Coffee size={10} />
             </a>
           </div>
+        ) : (
+          onOpenRawScriptModal && (
+            <div className="flex items-center gap-2">
+              {lineCount !== undefined && (
+                <span className={cn(UI_TOKENS.badge.counterFaint, "hidden sm:inline")}>
+                  {lineCount} lines
+                </span>
+              )}
+              <button 
+                type="button"
+                onClick={onOpenRawScriptModal}
+                title="Edit raw screenplay text"
+                className="flex items-center gap-1.5 px-2.5 py-1 bg-surface-muted hover:bg-surface-hover border border-border-main text-text-muted hover:text-text-main rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-2xs"
+              >
+                <Edit2 size={10} /> Edit Raw
+              </button>
+            </div>
+          )
         )}
       </div>
     </div>

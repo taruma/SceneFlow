@@ -8,6 +8,7 @@ interface YoutubeSourceInputProps {
   onChange: (value: string) => void;
   onClear: () => void;
   hasPlayer: boolean;
+  className?: string;
 }
 
 export function YoutubeSourceInput({
@@ -15,11 +16,12 @@ export function YoutubeSourceInput({
   onChange,
   onClear,
   hasPlayer,
+  className,
 }: YoutubeSourceInputProps) {
   const extractedId = extractYoutubeId(youtubeId);
 
   return (
-    <div className="space-y-3 mb-8 animate-in fade-in slide-in-from-top-2 duration-500">
+    <div className={cn("space-y-3 mb-8 animate-in fade-in slide-in-from-top-2 duration-500", className)}>
       <div className="flex items-center justify-between px-1">
         <label className="text-[10px] uppercase tracking-[0.2em] text-text-faint font-black flex items-center gap-2">
           <Video size={12} /> YouTube Source
