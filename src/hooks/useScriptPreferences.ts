@@ -1,6 +1,11 @@
 import { useState, useCallback } from 'react';
 import type { ScriptWidthPresetId, ScrollFocusPresetId } from '../types/script';
-import { SCRIPT_WIDTH_PRESETS, SCROLL_FOCUS_PRESETS } from '../constants/script';
+import { 
+  SCRIPT_WIDTH_PRESETS, 
+  SCROLL_FOCUS_PRESETS,
+  DEFAULT_SCRIPT_WIDTH_PRESET_ID,
+  DEFAULT_SCROLL_FOCUS_PRESET_ID 
+} from '../constants/script';
 import { DEFAULT_SCRIPT_THEME_ID, type ScriptThemeId, type CuePaletteProfile } from '../lib/scriptStyles';
 
 export const DEFAULT_SPLIT_RATIO = 65;
@@ -12,10 +17,21 @@ export const DEFAULT_VIDEO_HEIGHT = 220;
 export const MIN_VIDEO_HEIGHT = 160;
 export const MAX_VIDEO_HEIGHT = 480;
 
+export const SCRIPT_PREFERENCES_STORAGE_KEYS = {
+  VIDEO_HEIGHT: 'sceneflow_video_height',
+  SPLIT_RATIO: 'sceneflow_split_ratio',
+  VIDEO_COLLAPSED: 'sceneflow_playback_video_collapsed',
+  SCRIPT_WIDTH_PRESET: 'sceneflow_script_width_preset',
+  SCROLL_FOCUS_PRESET: 'sceneflow_scroll_focus_preset',
+  SCRIPT_THEME: 'sceneflow_script_theme',
+  CUE_PALETTE_PROFILE: 'sceneflow_cue_palette_profile',
+  PURE_BLACK_BG: 'sceneflow_pure_black_bg',
+} as const;
+
 export function useScriptPreferences() {
   const [videoHeight, setVideoHeightState] = useState<number>(() => {
     if (typeof localStorage !== 'undefined') {
-      const saved = localStorage.getItem('sceneflow_video_height');
+      const saved = localStorage.getItem(SCRIPT_PREFERENCES_STORAGE_KEYS.VIDEO_HEIGHT);
       if (saved) {
         const parsed = parseInt(saved, 10);
         if (!isNaN(parsed) && parsed >= MIN_VIDEO_HEIGHT && parsed <= MAX_VIDEO_HEIGHT) {
@@ -36,7 +52,7 @@ export function useScriptPreferences() {
       const target = typeof height === 'number' ? height : prev;
       const clamped = Math.min(MAX_VIDEO_HEIGHT, Math.max(MIN_VIDEO_HEIGHT, Math.round(target)));
       if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('sceneflow_video_height', clamped.toString());
+        localStorage.setItem(SCRIPT_PREFERENCES_STORAGE_KEYS.VIDEO_HEIGHT, clamped.toString());
       }
       return clamped;
     });
@@ -44,7 +60,7 @@ export function useScriptPreferences() {
 
   const [splitRatio, setSplitRatioState] = useState<number>(() => {
     if (typeof localStorage !== 'undefined') {
-      const saved = localStorage.getItem('sceneflow_split_ratio');
+      const saved = localStorage.getItem(SCRIPT_PREFERENCES_STORAGE_KEYS.SPLIT_RATIO);
       if (saved) {
         const parsed = parseFloat(saved);
         if (!isNaN(parsed) && parsed >= MIN_SPLIT_RATIO && parsed <= MAX_SPLIT_RATIO) {
@@ -65,7 +81,7 @@ export function useScriptPreferences() {
       const target = typeof ratio === 'number' ? ratio : prev;
       const clamped = Math.min(MAX_SPLIT_RATIO, Math.max(MIN_SPLIT_RATIO, Math.round(target * 10) / 10));
       if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('sceneflow_split_ratio', clamped.toString());
+        localStorage.setItem(SCRIPT_PREFERENCES_STORAGE_KEYS.SPLIT_RATIO, clamped.toString());
       }
       return clamped;
     });
@@ -73,7 +89,7 @@ export function useScriptPreferences() {
 
   const [isVideoCollapsed, setIsVideoCollapsedState] = useState<boolean>(() => {
     if (typeof localStorage !== 'undefined') {
-      const saved = localStorage.getItem('sceneflow_playback_video_collapsed');
+      const saved = localStorage.getItem(SCRIPT_PREFERENCES_STORAGE_KEYS.VIDEO_COLLAPSED);
       if (saved !== null) {
         return saved === 'true';
       }
@@ -84,7 +100,7 @@ export function useScriptPreferences() {
   const setIsVideoCollapsed = useCallback((collapsed: boolean) => {
     setIsVideoCollapsedState(collapsed);
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('sceneflow_playback_video_collapsed', String(collapsed));
+      localStorage.setItem(SCRIPT_PREFERENCES_STORAGE_KEYS.VIDEO_COLLAPSED, String(collapsed));
     }
   }, []);
 
@@ -92,7 +108,7 @@ export function useScriptPreferences() {
     setIsVideoCollapsedState(prev => {
       const next = !prev;
       if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('sceneflow_playback_video_collapsed', String(next));
+        localStorage.setItem(SCRIPT_PREFERENCES_STORAGE_KEYS.VIDEO_COLLAPSED, String(next));
       }
       return next;
     });
@@ -113,29 +129,42 @@ export function useScriptPreferences() {
 
   const [scriptWidthPreset, setScriptWidthPresetState] = useState<ScriptWidthPresetId>(() => {
     if (typeof localStorage !== 'undefined') {
-      const saved = localStorage.getItem('sceneflow_script_width_preset');
+      const saved = localStorage.getItem(SCRIPT_PREFERENCES_STORAGE_KEYS.SCRIPT_WIDTH_PRESET);
       if (saved && SCRIPT_WIDTH_PRESETS.some(p => p.id === saved)) {
         return saved as ScriptWidthPresetId;
       }
     }
-    return 'standard';
+    return DEFAULT_SCRIPT_WIDTH_PRESET_ID;
   });
-  const [isWidthDropdownOpen, setIsWidthDropdownOpen] = useState(false);
 
   const [scrollFocusPreset, setScrollFocusPresetState] = useState<ScrollFocusPresetId>(() => {
     if (typeof localStorage !== 'undefined') {
-      const saved = localStorage.getItem('sceneflow_scroll_focus_preset');
+      const saved = localStorage.getItem(SCRIPT_PREFERENCES_STORAGE_KEYS.SCROLL_FOCUS_PRESET);
       if (saved && SCROLL_FOCUS_PRESETS.some(p => p.id === saved)) {
         return saved as ScrollFocusPresetId;
       }
     }
-    return 'top';
+    return DEFAULT_SCROLL_FOCUS_PRESET_ID;
   });
-  const [isScrollFocusDropdownOpen, setIsScrollFocusDropdownOpen] = useState(false);
+
+  const isScriptPreferencesCustomized = 
+    scriptWidthPreset !== DEFAULT_SCRIPT_WIDTH_PRESET_ID || 
+    scrollFocusPreset !== DEFAULT_SCROLL_FOCUS_PRESET_ID;
+
+  const resetScriptPreferences = useCallback(() => {
+    setScriptWidthPresetState(DEFAULT_SCRIPT_WIDTH_PRESET_ID);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(SCRIPT_PREFERENCES_STORAGE_KEYS.SCRIPT_WIDTH_PRESET, DEFAULT_SCRIPT_WIDTH_PRESET_ID);
+    }
+    setScrollFocusPresetState(DEFAULT_SCROLL_FOCUS_PRESET_ID);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(SCRIPT_PREFERENCES_STORAGE_KEYS.SCROLL_FOCUS_PRESET, DEFAULT_SCROLL_FOCUS_PRESET_ID);
+    }
+  }, []);
 
   const [scriptThemeId, setScriptThemeIdState] = useState<ScriptThemeId>(() => {
     if (typeof localStorage !== 'undefined') {
-      const saved = localStorage.getItem('sceneflow_script_theme');
+      const saved = localStorage.getItem(SCRIPT_PREFERENCES_STORAGE_KEYS.SCRIPT_THEME);
       if (saved) {
         return saved as ScriptThemeId;
       }
@@ -149,27 +178,27 @@ export function useScriptPreferences() {
   const setScriptThemeId = useCallback((themeId: ScriptThemeId) => {
     setScriptThemeIdState(themeId);
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('sceneflow_script_theme', themeId);
+      localStorage.setItem(SCRIPT_PREFERENCES_STORAGE_KEYS.SCRIPT_THEME, themeId);
     }
   }, []);
 
   const setScriptWidthPreset = useCallback((presetId: ScriptWidthPresetId) => {
     setScriptWidthPresetState(presetId);
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('sceneflow_script_width_preset', presetId);
+      localStorage.setItem(SCRIPT_PREFERENCES_STORAGE_KEYS.SCRIPT_WIDTH_PRESET, presetId);
     }
   }, []);
 
   const setScrollFocusPreset = useCallback((presetId: ScrollFocusPresetId) => {
     setScrollFocusPresetState(presetId);
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('sceneflow_scroll_focus_preset', presetId);
+      localStorage.setItem(SCRIPT_PREFERENCES_STORAGE_KEYS.SCROLL_FOCUS_PRESET, presetId);
     }
   }, []);
 
   const [cuePaletteProfile, setCuePaletteProfileState] = useState<CuePaletteProfile>(() => {
     if (typeof localStorage !== 'undefined') {
-      const saved = localStorage.getItem('sceneflow_cue_palette_profile');
+      const saved = localStorage.getItem(SCRIPT_PREFERENCES_STORAGE_KEYS.CUE_PALETTE_PROFILE);
       if (saved === 'protanopia' || saved === 'standard') {
         return saved as CuePaletteProfile;
       }
@@ -180,13 +209,13 @@ export function useScriptPreferences() {
   const setCuePaletteProfile = useCallback((profile: CuePaletteProfile) => {
     setCuePaletteProfileState(profile);
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('sceneflow_cue_palette_profile', profile);
+      localStorage.setItem(SCRIPT_PREFERENCES_STORAGE_KEYS.CUE_PALETTE_PROFILE, profile);
     }
   }, []);
 
   const [pureBlackMode, setPureBlackModeState] = useState<boolean>(() => {
     if (typeof localStorage !== 'undefined') {
-      const saved = localStorage.getItem('sceneflow_pure_black_bg');
+      const saved = localStorage.getItem(SCRIPT_PREFERENCES_STORAGE_KEYS.PURE_BLACK_BG);
       if (saved !== null) {
         return saved === 'true';
       }
@@ -197,7 +226,7 @@ export function useScriptPreferences() {
   const setPureBlackMode = useCallback((enabled: boolean) => {
     setPureBlackModeState(enabled);
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('sceneflow_pure_black_bg', String(enabled));
+      localStorage.setItem(SCRIPT_PREFERENCES_STORAGE_KEYS.PURE_BLACK_BG, String(enabled));
     }
   }, []);
 
@@ -219,12 +248,10 @@ export function useScriptPreferences() {
     commitVideoHeight,
     scriptWidthPreset,
     setScriptWidthPreset,
-    isWidthDropdownOpen,
-    setIsWidthDropdownOpen,
     scrollFocusPreset,
     setScrollFocusPreset,
-    isScrollFocusDropdownOpen,
-    setIsScrollFocusDropdownOpen,
+    isScriptPreferencesCustomized,
+    resetScriptPreferences,
     scriptThemeId,
     setScriptThemeId,
     cuePaletteProfile,

@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added visual `<kbd>` shortcut badges (`UI_TOKENS.badge.shortcut`) positioned on the right side of each settings row in `[ ⚙️ Settings ▾ ]`.
   - Expanded `menuSettings` dropdown width to `w-72` (288px) for comfortable padding and zero label wrapping.
   - Added auto-close effect on `AppHeader` when modal dialogs mount, and registered new shortcuts in `AppInfoModal`.
+- **Studio Preferences "Reset All" Action (`src/components/header/SettingsMenuDropdown.tsx`, `src/components/AppHeader.tsx`, `src/App.tsx`)**:
+  - Added a discrete `[↺ Reset All]` action in the header of the Studio Preferences dropdown (`SettingsMenuDropdown.tsx`), appearing dynamically whenever any preference or layout option is non-default.
+  - Instantly restores App Theme (`auto`), Script Width (`standard` / 576px), Scroll Focus (`top` / 35%), and View Layout (50% split, 240px video height, uncollapsed) to factory defaults in a single click.
+  - Harmoniously complements the focused `Reset View Layout (Shift+R)` action, which enables resetting window pan geometry without affecting chosen color themes or reading widths.
 
 ### Refactored
 - **Modular Studio Header Architecture & Decoupled Subcomponents (`src/components/AppHeader.tsx`, `src/components/header/*`, `src/hooks/useClickOutside.ts`, `src/hooks/index.ts`)**:
@@ -34,13 +38,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Memoized callback props (`exportJson`, `importJson`, `handleNewProject`, `handleOpenGuide`) in `App.tsx` using `useCallback`.
   - Wrapped `AppHeader` and all child header subcomponents in `React.memo`, keeping the header 100% idle during media playback.
 
+- **Script Preview Header Decoupling & 0 Hz Playback Re-Render (`src/App.tsx`, `src/components/ScriptHeaderControls.tsx`, `src/styles/tokens/ui.ts`)**:
+  - Removed `currentTime` prop from `ScriptHeaderControlsProps` and `App.tsx`, completely decoupling the script preview header from continuous video playback clock ticks.
+  - Wrapped `ScriptHeaderControls` with `React.memo`, eliminating high-frequency Virtual DOM diffing during media playback.
+  - Pruned manual `localStorage.setItem` call on width preset selection, delegating persistence entirely to `useScriptPreferences`.
+- **Relocation of Script Width & Focus Line Controls to Studio Settings (`src/components/header/SettingsMenuDropdown.tsx`, `src/components/ScriptHeaderControls.tsx`, `src/components/AppHeader.tsx`, `src/App.tsx`)**:
+  - Relocated the bulky **Script Width** (5 presets) and **Scroll Focus Line** (3 presets) dropdown menus out of `ScriptHeaderControls.tsx` and into the global Studio Settings menu (`SettingsMenuDropdown.tsx`).
+  - Added a dedicated "Reading Canvas & Viewport" section to Studio Settings featuring compact, studio-grade segmented controls:
+    - 5-segment Script Width row with progressive visual width bar glyphs and dynamic header text (`{label} ({width_px})`).
+    - 3-segment Scroll Focus Line row with miniature viewport device icons (`Top`, `Center`, `Bottom`) and active amber indicators.
+  - Decluttered the desktop Script Preview header down to an ultra-clean layout housing only `[FileText] Script Preview` and `[🎯 AUTO-SCROLL | ▾]` split button, reducing `ScriptHeaderControls.tsx` from 395 to 180 lines (~54% line reduction) while preserving quick tools on mobile.
+- **Preset Lookup Centralization & Type Safety (`src/constants/script.ts`, `src/components/header/SettingsMenuDropdown.tsx`)**:
+  - Exported `DEFAULT_SCRIPT_WIDTH_PRESET`, `DEFAULT_SCROLL_FOCUS_PRESET`, and typed lookup helpers `getScriptWidthPreset(id)` and `getScrollFocusPreset(id)` with guaranteed default fallbacks.
+  - Replaced repetitive and brittle `.find() || .find() || [0]` fallback ladders across `SettingsMenuDropdown.tsx` and `useAutoScroll.ts` with clean, self-guaranteeing helpers.
+- **DRY Target Scroll Offset Calculation (`src/hooks/useAutoScroll.ts`)**:
+  - Extracted and exported pure `calculateTargetScrollTop(relativeTop, containerHeight, elementHeight, isDesktop, focusRatio)`.
+  - Unified the duplicate viewport offset math between user clicks on the scroll focus line presets (`applyScrollFocus`) and the active cue playback scroll loop.
+- **Scoped `STORAGE_KEYS` Dictionary & Callback Simplification (`src/hooks/useScriptPreferences.ts`, `src/App.tsx`, `src/components/AppHeader.tsx`)**:
+  - Replaced 8 raw `sceneflow_*` string literals repeated across getters and setters with a centralized `SCRIPT_PREFERENCES_STORAGE_KEYS` object.
+  - Removed redundant inline `localStorage.setItem('sceneflow_script_theme', themeId)` wrappers in `ScriptColorModal` and `MobileColorModal`, simplifying callers to `onSelectTheme={setScriptThemeId}`.
+  - Removed vestigial `onCycleThemeMode` prop through `AppHeader` and `SettingsMenuDropdown` (superseded by the 4-theme segmented picker).
+
 ### Fixed
-- **Double-Click Menu Dismissal & Adjacent Button Swallowing (`src/hooks/useClickOutside.ts`, `src/components/header/*`)**:
-  - Eliminated transparent full-screen backdrops (`fixed inset-0 z-40`) that previously swallowed clicks on adjacent buttons when closing menus, enabling instant 1-click menu switching and button activation.
+- **Desktop Auto-Scroll Dropdown Viewport Cutoff (`src/components/ScriptHeaderControls.tsx`)**:
+  - Fixed an offscreen cutoff bug where the Auto-Scroll "Focus Mode" dropdown used static left-anchoring (`left-0`), causing its 176px container to extend 36px+ past the right edge of the window frame / right panel on desktop. Applied responsive anchoring (`left-0 lg:left-auto lg:right-0`), anchoring cleanly to the right edge of the toolbar button on desktop while preserving left-anchoring on mobile.
+- **Scroll Focus Dropdown Auto-Close (`src/components/ScriptHeaderControls.tsx`)**:
+  - Fixed an omission where selecting a viewport scroll focus line preset failed to dismiss the dropdown menu, ensuring consistent auto-close behavior identical to the width preset dropdown.
+- **Dead Ternary Description Fallbacks (`src/components/ScriptHeaderControls.tsx`)**:
+  - Resolved dead ternary logic in width and scroll focus preset description labels (`isSelected ? "text-text-faint" : "text-text-faint"`), applying distinct high-legibility styling (`text-btn-primary-text/80`) when selected.
+- **Double-Click Menu Dismissal & Adjacent Button Swallowing (`src/hooks/useClickOutside.ts`, `src/components/header/*`, `src/components/ScriptHeaderControls.tsx`)**:
+  - Eliminated transparent full-screen backdrops (`fixed inset-0 z-40`) that previously swallowed clicks on adjacent buttons when closing menus, enabling instant 1-click menu switching and button activation across both `AppHeader` and `ScriptHeaderControls`.
+  - Upgraded `ScriptHeaderControls` dropdowns (Auto-Scroll Focus, Width Presets, Scroll Focus Line) to use `useClickOutside` and `useEscapeKey`, removing click interception on adjacent controls.
 - **Mobile Viewport Edit-Mode Header Leak (`src/components/AppHeader.tsx`)**:
   - Resolved an issue where edit mode allowed the desktop header to render on mobile viewports by enforcing unconditional `hidden lg:flex` on `AppHeader`.
 
 ### Changed
+- **Script Preview Header Streamlining & Decluttering (`src/components/ScriptHeaderControls.tsx`, `src/styles/tokens/ui.ts`)**:
+  - Removed the redundant, non-clickable `[PLAYBACK]` / `[EDIT]` mode badge, eliminating toolbar crowding on tablets/wide mobile (`sm:block`) and restoring clean visual clustering of reading controls on desktop.
+  - Removed the redundant mobile `TIME 0.0s` pill (`UI_TOKENS.badge.currentTimePillSm`), maximizing reading canvas breathing room and relying on the sticky video player and timeline playhead for timecode feedback.
+  - Pruned unused `currentTimePill` and `currentTimePillSm` badge design tokens from `src/styles/tokens/ui.ts`.
 - **3-Zone Studio Header Architecture & Decluttering (`src/components/AppHeader.tsx`, `src/styles/tokens/ui.ts`)**:
   - Replaced the cluttered 14-button header with a balanced, studio-grade 3-zone layout (Left: Brand & File System, Center: Workflow Mode, Right: Content, Community & Studio Tools).
   - **Left Wing (`[ File ▾ ]` Tiered Dropdown Menu)**: Replaced the raw document icon pair with a dedicated desktop `[ File ▾ ]` dropdown pill (`UI_TOKENS.button.filePill`), organized into three functional tiers separated by hairline dividers:

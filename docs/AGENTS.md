@@ -30,7 +30,7 @@ If you need to add a new script line type (e.g., `lyrics`, `transition`, or a sp
 **DO NOT** write hardcoded Tailwind color classes directly into `src/App.tsx` or components for screenplay text, cue highlights, or modal containers.
 
 - **Modular Design Tokens (`src/styles/tokens/`)**:
-  - `ui.ts`: Centralized `UI_TOKENS` for layout shells (`layout`), modals & overlays (`modal`), dropdown menus (`dropdown`), buttons & action pills (`button`), form controls (`input`), badges & time tags (`badge`, including desktop `currentTimePill` and mobile `currentTimePillSm`), panel cards (`panel`), swatches (`swatch`), and alert containers (`alert`).
+  - `ui.ts`: Centralized `UI_TOKENS` for layout shells (`layout`), modals & overlays (`modal`), dropdown menus (`dropdown`), buttons & action pills (`button`), form controls (`input`), badges & time tags (`badge`, including `counter`, `timeCompact`, and `shortcut`), panel cards (`panel`), swatches (`swatch`), and alert containers (`alert`).
   - `src/index.css`: Semantic CSS custom properties defined in `:root` (`--app-bg`, `--surface`, `--border-main`, `--text-main`, `--overlay-bg`, `--color-support`) and mapped into Tailwind CSS v4's `@theme` directive.
   - `themes.ts`: Six visual themes configured in `SCRIPT_THEMES` (`light`, `warm`, `dark`).
   - `cues.ts`: Theme-calibrated RGB strings (`lightRgb`, `warmRgb`, `darkRgb`) defined across two curated palette profiles: `CUE_COLOR_DEFINITIONS_STANDARD` (360° balanced cinema spectrum) and `CUE_COLOR_DEFINITIONS_PROTANOPIA` (Red-Green Color Vision Deficiency safe mode with Deep Wine Shot). Resolved via `getCueColorForTheme(typeOrClass, themeId, paletteProfile)` with fallback normalization in `LEGACY_CLASS_MAP`.
@@ -38,10 +38,10 @@ If you need to add a new script line type (e.g., `lyrics`, `transition`, or a sp
   - `helpers.ts`: Color manipulation and dynamic badge style generators (`hexToRgba`, `createCueBadgeStyle`, `createInlineCueStyle`).
 - **Hook Integration (`useScriptTheme`)**: Use the `useScriptTheme(scriptThemeId, cuePaletteProfile)` hook in components to access active `themeStyles`, `themeMetadata`, `isDark`, and `resolveCueColor` helpers dynamically synchronized with the active accessibility profile.
 - **Dynamic Category Indicator Invariant**: Category dot indicators across playback headers, dropdowns, and configuration modals (`ScriptHeaderControls`, `TimingSettingsModal`, `HighlightFilterBar`, `TimelineCuesPanel`) must never use static Tailwind classes (`color.class`). They must resolve dynamically via `getCueColorForTheme(type, scriptThemeId, cuePaletteProfile)` to ensure accurate theme and CVD-safe palette rendering without contrast loss on active selection surfaces.
-- **Dropdown Viewport Alignment Invariant**: Dropdown menus embedded within compact or left-aligned toolbars (`ScriptHeaderControls`) must use left-anchoring (`left-0`, e.g. `UI_TOKENS.dropdown.menu` / `menuLeft`) so that menus drop down into the viewport rather than expanding to the left and overflowing offscreen on mobile viewports.
+- **Dropdown Viewport Alignment Invariant**: Floating menus must anchor dynamically relative to viewport boundaries to eliminate offscreen clipping: menus on compact or left-aligned toolbars (mobile `ScriptHeaderControls`, `FileMenuDropdown`) must use left-anchoring (`left-0`, e.g. `UI_TOKENS.dropdown.menuLeft`); menus positioned at the far right on desktop (desktop `ScriptHeaderControls`, `SettingsMenuDropdown`) must anchor to the right (`lg:right-0 lg:left-auto` or `right-0`, e.g. `UI_TOKENS.dropdown.menuRight`) so they drop down cleanly into the reading canvas rather than overflowing past the right window frame.
 - **Screenplay Cue Nomenclature & Typography Invariant**: Category and cue selectors (such as the Auto-Scroll "Focus Mode" dropdown) must render category names in uppercase with letter tracking (`uppercase tracking-wider`) to match standard screenplay industry formatting conventions (ALL CAPS sluglines and cues) and prevent title-casing acronym artifacts (e.g., ensuring VFX never renders as "Vfx").
 - **Theming & Video Overlay Invariants (`.agents/rules/theming-and-overlay-invariants.md`)**: Strictly maintain two-tier independence between the App Shell (`themeMode` $\to$ `effectiveCategory`) and the Script Paper (`scriptThemeId` $\to$ `activeTheme.category`). When `pureBlackMode` is active on dark themes, DOM attributes (`data-pure-black-script` and `data-pure-black-shell`) ensure `#000000` backgrounds, stripped drop shadows, and hidden punch holes, while preserving `activeTheme.paperBorder`. Light and warm themes must remain completely untouched.
-- **Token Context & Surface Contrast Invariant**: `--btn-primary-text` is specifically paired with `--btn-primary-bg`. In dark mode, primary action buttons invert to light backgrounds, causing `--btn-primary-text` to become dark (`#1c1917`). Never use `text-btn-primary-text` inside permanently dark surfaces such as `bg-surface-dark` (e.g. `currentTimePill`, `currentTimePillSm`), as this creates near-black on black contrast failure (~1.1:1). Always use explicit `text-white` or tokens coupled with the appropriate surface background.
+- **Token Context & Surface Contrast Invariant**: `--btn-primary-text` is specifically paired with `--btn-primary-bg`. In dark mode, primary action buttons invert to light backgrounds, causing `--btn-primary-text` to become dark (`#1c1917`). Never use `text-btn-primary-text` inside permanently dark surfaces such as `bg-surface-dark` (e.g., permanently dark indicators or overlays), as this creates near-black on black contrast failure (~1.1:1). Always use explicit `text-white` or tokens coupled with the appropriate surface background.
 - **Translucent Accent Surfaces Invariant**: Container panels designed with chromatic emphasis or callouts (such as the General Master Offset card in `TimingSettingsModal`) must strictly utilize alpha-translucent tokens (`bg-blue-500/10`, `border-blue-500/20`) rather than opaque static light-mode fills (`bg-blue-50`, `border-blue-100`). This ensures callout cards produce an ambient accent wash on light surfaces while naturally illuminating as a sleek, low-glare dark navy container in dark and pure black modes without inverting nested input contrast.
 - **Base Typography**: Maintain the `baseStyle` constant (`"whitespace-pre-wrap min-h-[1em] leading-snug"`) to preserve consistent line height and wrapping behavior.
 
@@ -79,21 +79,22 @@ When modifying application state, storage keys, or external fetching:
   - `loadBlank()`: Fetches `/examples/blank.json`, returning an empty canvas (`scriptText: ""`, `cues: []`, zeroed default settings) for clean project authoring.
   - `loadGuide()`: Fetches `/examples/guide.json`, loading the comprehensive 1,200+ line interactive tutorial project in Playback mode.
   - `resetConfirmation.type`: Supports `'settings' | 'data' | 'blank' | 'new' | 'guide' | 'example' | 'remote'`.
-- **LocalStorage Keys**:
-  - `'screenplay_sync_state'`: Core project data (video ID, script text, cues, timing settings).
-  - `'sceneflow_app_theme_mode'`: Active application shell theme mode (`AppThemeMode`: `'auto' | 'light' | 'warm' | 'dark'`).
-  - `'sceneflow_script_theme'`: Active script viewer theme ID (`ScriptThemeId`).
-  - `'sceneflow_cue_palette_profile'`: Active cue palette accessibility profile (`CuePaletteProfile`: `'standard' | 'protanopia'`).
-  - `'sceneflow_script_width_preset'`: Active desktop script width preset (`ScriptWidthPresetId`).
-  - `'sceneflow_scroll_focus_preset'`: Active desktop auto-scroll focus anchor (`ScrollFocusPresetId`).
-  - `'sceneflow_highlight_view_mode'`: Active highlights presentation mode (`HighlightViewMode`: `'timeline' | 'cards'`).
-  - `'sceneflow_highlight_filter_expanded'`: Collapsed/expanded state of playback category filters (`boolean`).
-  - `'sceneflow_timeline_zoom_preset'`: Active timeline visible window zoom preset (`TimelineZoomPreset`: `'4s' | '8s' | '16s'`).
-  - `'sceneflow_timeline_height_mode'`: Active timeline track height mode (`TimelineHeightMode`: `'flexible' | 'fixed'`).
-  - `'sceneflow_split_ratio'`: Active desktop split pane ratio (`number`).
-  - `'sceneflow_video_height'`: Active playback video player height in pixels (`number`).
-  - `'sceneflow_playback_video_collapsed'`: Video player collapsed/hidden state in Playback mode (`boolean`).
-  - `'sceneflow_pure_black_bg'`: Pure Black Canvas / Video Overlay mode toggle state (`boolean`).
+- **LocalStorage Keys & Centralized Dictionary (`SCRIPT_PREFERENCES_STORAGE_KEYS`)**:
+  - Centralized in `src/hooks/useScriptPreferences.ts` under `SCRIPT_PREFERENCES_STORAGE_KEYS` to eliminate raw string literal duplication and typo risks across getters and setters:
+    - `'screenplay_sync_state'`: Core project data (video ID, script text, cues, timing settings).
+    - `'sceneflow_app_theme_mode'`: Active application shell theme mode (`AppThemeMode`: `'auto' | 'light' | 'warm' | 'dark'`).
+    - `'sceneflow_script_theme'`: Active script viewer theme ID (`ScriptThemeId`).
+    - `'sceneflow_cue_palette_profile'`: Active cue palette accessibility profile (`CuePaletteProfile`: `'standard' | 'protanopia'`).
+    - `'sceneflow_script_width_preset'`: Active desktop script width preset (`ScriptWidthPresetId`).
+    - `'sceneflow_scroll_focus_preset'`: Active desktop auto-scroll focus anchor (`ScrollFocusPresetId`).
+    - `'sceneflow_highlight_view_mode'`: Active highlights presentation mode (`HighlightViewMode`: `'timeline' | 'cards'`).
+    - `'sceneflow_highlight_filter_expanded'`: Collapsed/expanded state of playback category filters (`boolean`).
+    - `'sceneflow_timeline_zoom_preset'`: Active timeline visible window zoom preset (`TimelineZoomPreset`: `'4s' | '8s' | '16s'`).
+    - `'sceneflow_timeline_height_mode'`: Active timeline track height mode (`TimelineHeightMode`: `'flexible' | 'fixed'`).
+    - `'sceneflow_split_ratio'`: Active desktop split pane ratio (`number`).
+    - `'sceneflow_video_height'`: Active playback video player height in pixels (`number`).
+    - `'sceneflow_playback_video_collapsed'`: Video player collapsed/hidden state in Playback mode (`boolean`).
+    - `'sceneflow_pure_black_bg'`: Pure Black Canvas / Video Overlay mode toggle state (`boolean`).
 - **Query Parameters**: On application mount, inspect `window.location.search`:
   - `?example=ID`: Matches an example `id` from `EXAMPLE_SECTIONS` in `src/examples.ts`.
   - `?project=URL`: Loads a remote CORS-enabled JSON project.
@@ -216,11 +217,11 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
     - The top application header strictly follows a 3-zone spatial composition: Left Wing (Logo + `[ File ▾ ]` desktop dropdown menu), Center Stage (Centered `[ ▶ Playback | ✏️ Edit ]` segmented mode switcher), and Right Wing (`[ 📚 LIBRARY ]` standalone gateway, `[ ☕ Support ]` Ko-fi pill, `[ ⚙️ Settings ▾ ]` dropdown pill, and `[ ℹ ]` Info trigger).
     - **Modular Subcomponent Decomposition (`src/components/header/`)**:
       - `FileMenuDropdown.tsx`: Dedicated 3-tier project I/O, canvas creation, and guide/library menu.
-      - `SettingsMenuDropdown.tsx`: Consolidated Studio Preferences dropdown housing the 4-theme picker, shortcut badge rows (`Shift+C`, `Shift+T`, `Shift+R`), and dynamic `Custom` layout badge.
+      - `SettingsMenuDropdown.tsx`: Consolidated Studio Preferences dropdown housing the header `[↺ Reset All]` action, 4-theme picker, Reading Canvas & Viewport controls (Script Width and Focus Line segmented rows), shortcut badge rows (`Shift+C`, `Shift+T`, `Shift+R`), and dynamic `Custom` layout badge.
       - `ModeSegmentedControl.tsx`: Centered mode switcher with mode-specific active accents and ARIA group attributes.
-    - **0 Hz Playback Re-Render Invariant**:
-      - `AppHeader` and its subcomponents must **never** receive `currentTime` or subscribe to the high-frequency (~10Hz) video playback clock.
-      - All header subcomponents must be wrapped in `React.memo`, and all callbacks passed from `App.tsx` (`exportJson`, `importJson`, `handleNewProject`, `handleOpenGuide`) must be stabilized with `useCallback`. During video playback, `AppHeader` virtual DOM diffing remains 100% idle.
+    - **0 Hz Header Re-Render Invariant (`AppHeader`, `ScriptHeaderControls`)**:
+      - Neither `AppHeader` nor `ScriptHeaderControls` receive `currentTime` or subscribe to high-frequency video playback clock ticks.
+      - Both header components and their subcomponents are wrapped in `React.memo`, with callbacks stabilized via `useCallback`. During video playback, header virtual DOM diffing remains 100% idle across both panels.
     - **Single-Click Outside Dismissal Invariant (`useClickOutside`)**:
       - Floating menus must close via outside-click detection (`useClickOutside` listening on `mousedown`/`touchstart`) bound to the container element rather than full-screen transparent backdrops (`fixed inset-0 z-40`). This ensures clicking an adjacent header button immediately closes the current menu and triggers the target action in a single gesture without double-clicking.
     - **Unified Menu State Invariant (`activeMenu: HeaderMenuId | null`)**:
@@ -234,3 +235,6 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
       3. *Reference & Discovery*: `Starter Guide` (`guide.json`) and `Browse Library...` (bottom tier).
     - **Top Header Chrome Constraints**: Top header chrome must **never** render raw floating timecode; playback timing belongs exclusively to the media player and Active Highlights timeline.
     - **Studio Preferences Dropdown**: Studio preferences must be consolidated inside the `[ ⚙️ Settings ▾ ]` dropdown, providing direct 4-theme selection (`Auto`, `Light`, `Warm`, `Dark`), Script Color presets access (with `<kbd>Shift+C</kbd>` badge), Timing Settings access (with `<kbd>Shift+T</kbd>` badge), and a live customized layout reset indicator (with `<kbd>Shift+R</kbd>` badge). Keyboard shortcuts in `useKeyboardShortcuts.ts` are guarded with `!e.ctrlKey && !e.metaKey && !e.altKey` and input/modal checks to prevent any clash with browser or playback keys.
+    - **Preset Lookup & Scroll Math Centralization (`constants/script.ts`, `hooks/useAutoScroll.ts`)**:
+      - Reading column width and auto-scroll focus presets must be resolved through typed lookup helpers (`getScriptWidthPreset(id)` and `getScrollFocusPreset(id)`) with guaranteed default fallbacks (`DEFAULT_SCRIPT_WIDTH_PRESET`, `DEFAULT_SCROLL_FOCUS_PRESET`), preventing repetitive and fragile `.find() || [0]` ladders across components.
+      - Viewport auto-scroll offsets are computed strictly through the pure helper `calculateTargetScrollTop(relativeTop, containerHeight, elementHeight, isDesktop, focusRatio)`, unifying manual preset adjustments (`applyScrollFocus`) and continuous playback auto-scrolling to eliminate formula drift.

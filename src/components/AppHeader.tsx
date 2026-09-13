@@ -8,6 +8,7 @@ import { cn } from '../lib/utils';
 import { UI_TOKENS } from '../styles/tokens/ui';
 import { EXTERNAL_LINKS } from '../constants/links';
 import type { AppThemeMode, AppThemeCategory } from '../hooks/useAppShellTheme';
+import type { ScriptWidthPresetId, ScrollFocusPresetId } from '../types/script';
 import { 
   FileMenuDropdown, 
   SettingsMenuDropdown, 
@@ -33,10 +34,15 @@ export interface AppHeaderProps {
   exportJson: () => void;
   themeMode?: AppThemeMode;
   effectiveThemeCategory?: AppThemeCategory;
-  onCycleThemeMode?: () => void;
   onSetThemeMode?: (mode: AppThemeMode) => void;
   isViewCustomized?: boolean;
   onResetView?: () => void;
+  scriptWidthPreset?: ScriptWidthPresetId;
+  setScriptWidthPreset?: (preset: ScriptWidthPresetId) => void;
+  scrollFocusPreset?: ScrollFocusPresetId;
+  applyScrollFocus?: (preset: ScrollFocusPresetId) => void;
+  isPreferencesCustomized?: boolean;
+  onResetAll?: () => void;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = memo(({
@@ -56,10 +62,15 @@ export const AppHeader: React.FC<AppHeaderProps> = memo(({
   exportJson,
   themeMode = 'auto',
   effectiveThemeCategory = 'light',
-  onCycleThemeMode,
   onSetThemeMode,
   isViewCustomized = false,
   onResetView,
+  scriptWidthPreset,
+  setScriptWidthPreset,
+  scrollFocusPreset,
+  applyScrollFocus,
+  isPreferencesCustomized = false,
+  onResetAll,
 }) => {
   const [activeMenu, setActiveMenu] = useState<HeaderMenuId | null>(null);
 
@@ -151,11 +162,16 @@ export const AppHeader: React.FC<AppHeaderProps> = memo(({
           themeMode={themeMode}
           effectiveThemeCategory={effectiveThemeCategory}
           onSetThemeMode={onSetThemeMode}
-          onCycleThemeMode={onCycleThemeMode}
           onOpenColors={() => setIsColorModalOpen(true)}
           onOpenTiming={() => setIsSettingsOpen(true)}
           isViewCustomized={isViewCustomized}
           onResetView={onResetView}
+          scriptWidthPreset={scriptWidthPreset}
+          setScriptWidthPreset={setScriptWidthPreset}
+          scrollFocusPreset={scrollFocusPreset}
+          applyScrollFocus={applyScrollFocus}
+          isPreferencesCustomized={isPreferencesCustomized}
+          onResetAll={onResetAll}
         />
 
         {/* Standalone Info Button */}

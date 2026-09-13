@@ -182,12 +182,11 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
   - **Right Wing (Content, Support & Studio Tools)**:
     - **Standalone Library Gateway (`[ 📚 LIBRARY ]`)**: Featured prominently on a neutral surface pill (`UI_TOKENS.button.libraryPop`) with an amber book icon and uppercase tracked typography as the primary content discovery hub for screenplay examples and templates.
     - **Support on Ko-fi (`[ ☕ Support ]`)**: Vibrant warm red/coral button positioned directly adjacent to the Library.
-    - **Studio Preferences Dropdown (`[ ⚙️ Settings ▾ ]`)**: Houses a direct 4-theme quick-selector grid (`Auto`, `Light`, `Warm`, `Dark`), Script Paper & Colors modal trigger (with <kbd>Shift+C</kbd> badge), Timing & Durations modal trigger (with <kbd>Shift+T</kbd> badge), and Reset View Layout trigger (with <kbd>Shift+R</kbd> badge, live pulse dot indicator, and dynamic `Custom` badge when layout is customized).
+    - **Studio Preferences Dropdown (`[ ⚙️ Settings ▾ ]`)**: Houses a discrete `[↺ Reset All]` header action (appearing when any preference or layout is non-default to restore theme, width, focus, and layout to defaults), a direct 4-theme quick-selector grid (`Auto`, `Light`, `Warm`, `Dark`), dedicated "Reading Canvas & Viewport" section with 5-segment Script Width row (progressive width bar glyphs) and 3-segment Focus Line row (miniature viewport devices with active amber indicators), Script Paper & Colors modal trigger (with <kbd>Shift+C</kbd> badge), Timing & Durations modal trigger (with <kbd>Shift+T</kbd> badge), and Reset View Layout trigger (with <kbd>Shift+R</kbd> badge, live pulse dot indicator, and dynamic `Custom` badge when layout is customized).
     - **Dedicated Info Trigger (`[ ℹ ]`)**: 1-click access to keyboard shortcuts directory, about details, and the deep-dive Substack overview card.
-- **Fluid Single-Click Outside Dismissal**: Floating menus use `useClickOutside` to detect outside clicks on `mousedown`, eliminating full-screen blocking backdrops. Users can switch directly between *File*, *Settings*, and *Library* in a single fluid click without needing an intermediate dismissal click.
+- **Fluid Single-Click Outside Dismissal**: Floating menus across both top header chrome and the screenplay preview toolbar (`ScriptHeaderControls`) use `useClickOutside` to detect outside clicks on `mousedown`, eliminating full-screen blocking backdrops. Users can switch directly between *File*, *Settings*, and *Auto-Scroll Focus* in a single fluid click without needing an intermediate dismissal click.
 - **Truthful Shortcuts & Streamlined Badges**: All menus strictly display truthful functionality without non-existing keyboard shortcut annotations (<kbd>Ctrl+O</kbd>, <kbd>Ctrl+S</kbd>, <kbd>?</kbd>) or decorative pseudo-badges, ensuring clean, focused typography.
-- **Resource Integration**: The official Substack introductory article is linked cleanly within `LibraryModal` (`[ Introduction ]`), `MobileLibraryModal` (`[ Intro ]`), and `AppInfoModal`, freeing the main editing view and mobile header controls from redundant article buttons.
-- **Decoupled Playback Performance (0 Hz Header Re-Render)**: Global header chrome is completely decoupled from playback time updates, eliminating high-frequency virtual DOM diffing during media playback. Mobile preserves its compact timecode pill in `ScriptHeaderControls`.
+- **Decoupled Playback Performance (0 Hz Header Re-Render)**: Both global header chrome (`AppHeader`) and screenplay preview controls (`ScriptHeaderControls`) are completely decoupled from playback time updates, eliminating high-frequency virtual DOM diffing across the application shell during media playback. Timecode feedback is delegated exclusively to the video player transport and Timeline ruler.
 - **Strict Mobile Exclusion**: Declared with unconditional `hidden lg:flex` to ensure desktop-only cue editing controls never leak into mobile playback viewports.
 
 
@@ -213,7 +212,7 @@ When multiple cues are active simultaneously:
 2. If start times match, prioritizes the cue situated **furthest down** in the screenplay text.
 
 ### Viewport Scroll Focus Alignment Presets (Desktop)
-Controls where the active cue line settles vertically within the reading container:
+Selectable directly within Studio Settings (`[ ⚙️ Settings ▾ ]`) via a 3-segment miniature viewport control, determining where the active cue line settles vertically within the reading container:
 - **Top (35%)**: Positions the active line 35% from the top of the container, leaving upcoming lines visible for anticipation reading (Default).
 - **Center (50%)**: Positions the active line at the balanced midpoint.
 - **Bottom (35%)**: Positions the active line 35% from the bottom (65% ratio) for reflection reading.
@@ -278,7 +277,7 @@ Accessible directly inside both `ScriptColorModal` and `MobileColorModal`:
 - **Session Persistence**: User preference is preserved in `localStorage` (`sceneflow_pure_black_bg`).
 
 ### Configurable Screenplay Width Presets (Desktop Playback)
-Selectable via a dropdown in the script preview header:
+Selectable directly within Studio Settings (`[ ⚙️ Settings ▾ ]`) via a 5-segment progressive width bar control under Reading Canvas & Viewport:
 - *Narrow*: 384px (`max-w-sm`) — Focused reading column.
 - *Compact*: 448px (`max-w-md`) — Snug reading view.
 - *Standard*: 576px (`max-w-xl`) — Default classic screenplay width.

@@ -41,7 +41,8 @@ import type { Cue, AppMode } from './types/script';
 import { 
   COLORS, 
   DEFAULT_SETTINGS, 
-  SCRIPT_WIDTH_PRESETS 
+  SCRIPT_WIDTH_PRESETS,
+  DEFAULT_SCROLL_FOCUS_PRESET_ID 
 } from './constants/script';
 import {
   sanitizeCues,
@@ -97,12 +98,10 @@ export default function App() {
     commitVideoHeight,
     scriptWidthPreset,
     setScriptWidthPreset,
-    isWidthDropdownOpen,
-    setIsWidthDropdownOpen,
     scrollFocusPreset,
     setScrollFocusPreset,
-    isScrollFocusDropdownOpen,
-    setIsScrollFocusDropdownOpen,
+    isScriptPreferencesCustomized,
+    resetScriptPreferences,
     scriptThemeId,
     setScriptThemeId,
     cuePaletteProfile,
@@ -233,6 +232,18 @@ export default function App() {
     scrollFocusPreset,
     onScrollFocusChange: setScrollFocusPreset,
   });
+
+  const isPreferencesCustomized = 
+    themeMode !== 'auto' ||
+    isScriptPreferencesCustomized ||
+    isViewCustomized;
+
+  const handleResetAllPreferences = useCallback(() => {
+    setThemeMode('auto');
+    resetScriptPreferences();
+    applyScrollFocus(DEFAULT_SCROLL_FOCUS_PRESET_ID);
+    resetViewLayout();
+  }, [setThemeMode, resetScriptPreferences, applyScrollFocus, resetViewLayout]);
 
 
   const prevActiveCueTypesRef = useRef<Set<string>>(new Set());
@@ -516,10 +527,15 @@ export default function App() {
         exportJson={exportJson}
         themeMode={themeMode}
         effectiveThemeCategory={effectiveCategory}
-        onCycleThemeMode={cycleThemeMode}
         onSetThemeMode={setThemeMode}
         isViewCustomized={isViewCustomized}
         onResetView={resetViewLayout}
+        scriptWidthPreset={scriptWidthPreset}
+        setScriptWidthPreset={setScriptWidthPreset}
+        scrollFocusPreset={scrollFocusPreset}
+        applyScrollFocus={applyScrollFocus}
+        isPreferencesCustomized={isPreferencesCustomized}
+        onResetAll={handleResetAllPreferences}
       />
 
       <main className={cn(
@@ -666,15 +682,6 @@ export default function App() {
             setAutoScrollTargets={setAutoScrollTargets}
             setIsLibraryOpen={setIsLibraryOpen}
             setIsColorModalOpen={setIsColorModalOpen}
-            scriptWidthPreset={scriptWidthPreset}
-            setScriptWidthPreset={setScriptWidthPreset}
-            isWidthDropdownOpen={isWidthDropdownOpen}
-            setIsWidthDropdownOpen={setIsWidthDropdownOpen}
-            scrollFocusPreset={scrollFocusPreset}
-            applyScrollFocus={applyScrollFocus}
-            isScrollFocusDropdownOpen={isScrollFocusDropdownOpen}
-            setIsScrollFocusDropdownOpen={setIsScrollFocusDropdownOpen}
-            currentTime={currentTime}
             scriptThemeId={scriptThemeId}
             cuePaletteProfile={cuePaletteProfile}
           />
@@ -863,12 +870,7 @@ export default function App() {
         isOpen={isColorModalOpen}
         onClose={() => setIsColorModalOpen(false)}
         currentThemeId={scriptThemeId}
-        onSelectTheme={(themeId) => {
-          setScriptThemeId(themeId);
-          if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('sceneflow_script_theme', themeId);
-          }
-        }}
+        onSelectTheme={setScriptThemeId}
         themeMode={themeMode}
         setThemeMode={setThemeMode}
         effectiveThemeCategory={effectiveCategory}
@@ -883,12 +885,7 @@ export default function App() {
         isOpen={isColorModalOpen}
         onClose={() => setIsColorModalOpen(false)}
         currentThemeId={scriptThemeId}
-        onSelectTheme={(themeId) => {
-          setScriptThemeId(themeId);
-          if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('sceneflow_script_theme', themeId);
-          }
-        }}
+        onSelectTheme={setScriptThemeId}
         themeMode={themeMode}
         setThemeMode={setThemeMode}
         effectiveThemeCategory={effectiveCategory}

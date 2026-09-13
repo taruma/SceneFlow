@@ -98,6 +98,7 @@ Centralized application constants and configuration:
 - **`DEFAULT_SETTINGS`**: Default per-category and general timing buffers (all zeroed).
 - **`SCRIPT_WIDTH_PRESETS`**: Five reading-column width presets (`narrow` 384px, `compact` 448px, `standard` 576px, `wide` 768px, `full` 1024px).
 - **`SCROLL_FOCUS_PRESETS`**: Three auto-scroll anchor presets (`top` 35%, `center` 50%, `bottom` 65%).
+- **Preset Lookups & Defaults**: Exports default IDs (`DEFAULT_SCRIPT_WIDTH_PRESET_ID`, `DEFAULT_SCROLL_FOCUS_PRESET_ID`), default preset objects (`DEFAULT_SCRIPT_WIDTH_PRESET`, `DEFAULT_SCROLL_FOCUS_PRESET`), and typed lookup helpers `getScriptWidthPreset(id)` and `getScrollFocusPreset(id)` with guaranteed default fallbacks.
 
 ### `src/constants/links.ts`
 Centralized repository, guide, publication, and author links:
@@ -116,7 +117,7 @@ The visuals layer encapsulates all styling tokens, color schemes, UI chrome toke
   - `dropdown`: Focus mode, width preset, and scroll focus preset dropdown menus, headers, and interactive items.
   - `button`: Primary, secondary, danger, header icon action buttons, mode switchers, sort toggles, action pills, support pills, and close buttons.
   - `input`: Search inputs, multiline textareas, code boxes, standard/accented number boxes (`numberBox`, `numberBoxLg`), and label typography.
-  - `badge`: Counter tags, timestamp pills, and desktop/mobile current time pill badges (`currentTimePill`, `currentTimePillSm`).
+  - `badge`: Counter tags, timestamp pills, and keyboard shortcut tags (`counter`, `timeCompact`, `shortcut`).
   - `panel`: Banners, interactive cards, empty placeholders, legend containers, and alpha-accent callout cards (`accentCardBlue`).
   - `swatch` & `alert`: Theme preview swatches and notification banners.
 - **`src/index.css`**: Semantic CSS custom properties defined in `:root` (`--app-bg`, `--surface`, `--surface-subtle`, `--border-main`, `--text-main`, `--overlay-bg`, `--color-support`, etc.) and mapped directly into Tailwind CSS v4's `@theme` directive.
@@ -177,8 +178,9 @@ YouTube IFrame Player API wrapper:
 
 ### `useScriptPreferences`
 Persistent visual customization and layout management:
-- Stored in `localStorage`: reading column width preset (`sceneflow_script_width_preset`), auto-scroll focus preset (`sceneflow_scroll_focus_preset`), active theme ID (`sceneflow_script_theme`), cue palette accessibility profile (`sceneflow_cue_palette_profile`), asymmetric split ratio (`sceneflow_split_ratio`, default 65%), video player height (`sceneflow_video_height`, default 220px), and video collapse state (`sceneflow_playback_video_collapsed`).
+- Stored in `localStorage` via centralized `SCRIPT_PREFERENCES_STORAGE_KEYS`: reading column width preset (`sceneflow_script_width_preset`), auto-scroll focus preset (`sceneflow_scroll_focus_preset`), active theme ID (`sceneflow_script_theme`), cue palette accessibility profile (`sceneflow_cue_palette_profile`), asymmetric split ratio (`sceneflow_split_ratio`, default 65%), video player height (`sceneflow_video_height`, default 220px), and video collapse state (`sceneflow_playback_video_collapsed`).
 - Provides `resetViewLayout()` to instantly restore default 65:35 panel split, 220px video height, and expand the video player if collapsed.
+- Exposes `isScriptPreferencesCustomized` and `resetScriptPreferences()` for centralized factory preference resetting.
 - Exposes `isVideoCollapsed`, `setIsVideoCollapsed`, and `toggleVideoCollapsed` helpers.
 - Exposes `isViewCustomized` flag to drive the active status dot on the header "Reset View" button.
 - Manages dropdown visibility toggles, cue type category filter sets, cue palette accessibility profile (`cuePaletteProfile`, `setCuePaletteProfile`), and color picker modal state.
@@ -187,7 +189,7 @@ Persistent visual customization and layout management:
 Real-time playback auto-scroll engine:
 - Filters active cues by multi-select focus types (`autoScrollTargets`).
 - Prioritizes the most recently started cue at the farthest script position.
-- Computes viewport scroll position using the active `ScrollFocusPreset.ratio` on desktop and center alignment on mobile.
+- Computes viewport scroll position using the pure `calculateTargetScrollTop(relativeTop, containerHeight, elementHeight, isDesktop, focusRatio)` helper, referencing active `ScrollFocusPreset.ratio` on desktop and center alignment on mobile.
 - Uses `requestAnimationFrame` and a lifecycle-guarded cancellation ref (`rafRef`) with a 10px deadband threshold to synchronize smooth scrolling with the browser's display refresh rate (VSync), canceling pending frames on rapid cue transitions and eliminating layout thrashing.
 
 ### `useCueEditor`
@@ -243,7 +245,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 1. **`AppHeader` Sub-Package (`src/components/AppHeader.tsx`, `src/components/header/`)**:
    - **`AppHeader.tsx`**: Top-level 3-zone desktop studio navigation orchestrator unconditionally hidden on mobile (`hidden lg:flex`). Fully decoupled from the ~10Hz video playback loop (zero `currentTime` prop) and wrapped in `React.memo` to ensure 0 Hz re-render overhead during media playback. Manages unified `activeMenu: HeaderMenuId | null` state.
    - **`FileMenuDropdown.tsx`**: 3-tier hierarchical file dropdown (`[ File ▾ ]`) separating Project I/O (`Open Project...`, `Save Project`), Blank Canvas (`New Project`), and Resource Discovery (`Starter Guide`, `Browse Library...`) with `useClickOutside` and full WAI-ARIA menu roles.
-   - **`SettingsMenuDropdown.tsx`**: Consolidated Studio Preferences menu (`[ ⚙️ Settings ▾ ]`) featuring 4-theme radio grid (`Auto`, `Light`, `Warm`, `Dark`), action rows with `<kbd>` shortcut badges (`Shift+C`, `Shift+T`, `Shift+R`), and dynamic `Custom` layout badge.
+   - **`SettingsMenuDropdown.tsx`**: Consolidated Studio Preferences menu (`[ ⚙️ Settings ▾ ]`) featuring header `[↺ Reset All]` action (for 1-click restoration of theme, width, focus, and layout), 4-theme radio grid (`Auto`, `Light`, `Warm`, `Dark`), dedicated "Reading Canvas & Viewport" section housing 5-segment Script Width row (progressive width bar glyphs) and 3-segment Focus Line row (miniature viewport devices with active indicators), action rows with `<kbd>` shortcut badges (`Shift+C`, `Shift+T`, `Shift+R`), and dynamic `Custom` layout badge.
    - **`ModeSegmentedControl.tsx`**: Centered segmented mode switcher (`[ ▶ Playback | ✏️ Edit ]`) with mode-specific active accents, responsive icon collapsing, and ARIA group attributes.
 2. **`InitializingScreen.tsx`**: Branded initial load screen displaying the SceneFlow logo with subtle animation.
 3. **`YoutubeSourceInput.tsx`**: YouTube URL/ID input with live player connection indicator and automatic ID extraction using `UI_TOKENS.input`.
@@ -257,7 +259,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 11. **`ResetConfirmationModal.tsx`**: Multi-purpose confirmation dialog for resetting settings, starting a clean blank project (`new`), loading the interactive starter guide (`guide`), loading examples, or fetching remote projects, featuring integrated CORS error reporting and styled via `UI_TOKENS`.
 12. **`TimingSettingsModal.tsx`**: Full-screen configuration modal for per-category timing buffers (before/after offsets) and General Master Offset, displaying dynamic theme- and accessibility-profile-calibrated category dots via `getCueColorForTheme` and styled using `UI_TOKENS`.
 13. **`ScriptColorModal.tsx`**: Theme and color management dialog featuring a compact zero-scroll "Theme Presets" tab with 2-column widescreen paper preview cards, top-tier dual controls (Cue Palette Accessibility Profile and Pure Black Video Overlay toggle), collision-free selection indicators, and an "Element Inspector" tab displaying token details and the 8-category highlight spectrum using `UI_TOKENS.swatch`.
-14. **`ScriptHeaderControls.tsx`**: Playback-mode control bar with auto-scroll toggle, viewport-safe left-aligned target-type multi-select Focus Mode dropdown (`UI_TOKENS.dropdown.menu` with dynamic `getCueColorForTheme` category dots synchronized to active script theme and CVD profile), reading width preset selector, scroll focus preset selector, and compact mobile icon-only Theme Palette button.
+14. **`ScriptHeaderControls.tsx`**: Streamlined playback-mode control bar cleanly housing only `[FileText] Script Preview` and the auto-scroll split button on desktop (with left-aligned target-type multi-select Focus Mode dropdown and dynamic `getCueColorForTheme` dots), non-blocking 1-click outside dismissal via `useClickOutside` and `useEscapeKey`, compact mobile quick-access tools (Theme Palette, Library, and Support), and 0 Hz playback re-render decoupling via `React.memo` (with reading width and focus line relocated to Studio Settings).
 15. **`ActiveHighlightsPanel` (`src/components/active-highlights/`)**: Modular playback visualization sub-package featuring:
     - **`ActiveHighlightsPanel.tsx`**: Main orchestrator featuring an **Adaptive Header** layout via `ResizeObserver` (560px threshold): consolidates into a single unified row when wide ($\ge 560\text{px}$) to save vertical headroom, and automatically splits into a Two-Tier Header when narrow ($< 560\text{px}$) where Tier 1 houses `Highlights` + Studio VU Meter + View Switcher, and Tier 2 houses Track Height + Zoom presets + Filters toggle button.
     - **`HighlightTimelineView.tsx`**: Multi-Track Sync Timeline view with dynamic density scaling (`TimelineDensity`: `'comfortable'` 32px vs. `'compact'` 24px), timeline zoom preset integration (`zoomPreset`), height mode integration (`heightMode`: `'flexible' | 'fixed'`), stationary 35% anticipation playhead, and docked inspector card.

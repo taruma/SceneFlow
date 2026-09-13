@@ -1,7 +1,24 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import type { Cue, TimingSettings, ScrollFocusPresetId, AppMode } from '../types/script';
-import { SCROLL_FOCUS_PRESETS } from '../constants/script';
+import { getScrollFocusPreset } from '../constants/script';
 import { isCueActive } from '../lib/cueUtils';
+
+/**
+ * Calculates the target scrollTop offset within a script container
+ * given cue geometry, container dimensions, device profile, and target focus line ratio.
+ */
+export function calculateTargetScrollTop(
+  relativeTop: number,
+  containerHeight: number,
+  elementHeight: number,
+  isDesktop: boolean,
+  focusRatio: number
+): number {
+  const target = isDesktop
+    ? relativeTop - (containerHeight * focusRatio) + (elementHeight / 2)
+    : relativeTop - (containerHeight / 2) + (elementHeight / 2);
+  return Math.max(0, target);
+}
 
 interface UseAutoScrollOptions {
   scriptRef: React.RefObject<HTMLDivElement | null>;
@@ -52,12 +69,16 @@ export function useAutoScroll({
         const containerRect = container.getBoundingClientRect();
         const elementRect = element.getBoundingClientRect();
         const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
-        const preset = SCROLL_FOCUS_PRESETS.find(p => p.id === presetId) || SCROLL_FOCUS_PRESETS[0];
-        const targetScrollTop = isDesktop
-          ? relativeTop - (containerRect.height * preset.ratio) + (elementRect.height / 2)
-          : relativeTop - (containerRect.height / 2) + (elementRect.height / 2);
+        const preset = getScrollFocusPreset(presetId);
+        const targetScrollTop = calculateTargetScrollTop(
+          relativeTop,
+          containerRect.height,
+          elementRect.height,
+          isDesktop,
+          preset.ratio
+        );
         container.scrollTo({
-          top: Math.max(0, targetScrollTop),
+          top: targetScrollTop,
           behavior: 'smooth',
         });
       }
@@ -112,17 +133,14 @@ export function useAutoScroll({
             const elementRect = element.getBoundingClientRect();
             const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
             
-            const focusPreset = SCROLL_FOCUS_PRESETS.find(p => p.id === scrollFocusPreset) || SCROLL_FOCUS_PRESETS[0];
-            let targetScrollTop;
-            if (isDesktop) {
-              // Position active cue based on user-selected focus line preset (default 35% from top)
-              targetScrollTop = relativeTop - (containerRect.height * focusPreset.ratio) + (elementRect.height / 2);
-            } else {
-              // Position active cue exactly in the center for mobile/tablet screens
-              targetScrollTop = relativeTop - (containerRect.height / 2) + (elementRect.height / 2);
-            }
-            
-            const finalTarget = Math.max(0, targetScrollTop);
+            const focusPreset = getScrollFocusPreset(scrollFocusPreset);
+            const finalTarget = calculateTargetScrollTop(
+              relativeTop,
+              containerRect.height,
+              elementRect.height,
+              isDesktop,
+              focusPreset.ratio
+            );
             // Deadband guard: avoid micro-scroll jitter when consecutive cues are on the same line
             if (Math.abs(container.scrollTop - finalTarget) > 10) {
               container.scrollTo({
