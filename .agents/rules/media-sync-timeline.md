@@ -83,3 +83,18 @@ YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds
 - **VSync-Aligned Auto-Scrolling & Deadband Guard**: In `useAutoScroll`, always schedule layout queries and smooth scrolling via `requestAnimationFrame` with a cancellation cleanup ref (`rafRef`). Never use arbitrary `setTimeout` delays, and enforce a 10px deadband threshold (`Math.abs(container.scrollTop - targetScrollTop) > 10`) before calling `scrollTo` to eliminate micro-jitter when consecutive cues reside on the same line.
 - **Dormant Calculations**: In `HighlightTimelineView`, short-circuit `activeCuesUnderPlayhead` during playback when `selectedCue === null` to eliminate redundant cue array filtering while `PausedInspectorCard` is unmounted.
 - **Reference-Stable Category Sets**: In `App.tsx`, preserve `activeCueTypes` `Set` reference equality across 100ms timer ticks when active category members have not changed, preventing spurious re-renders across the left playback panel tree.
+
+## 14. High-Frequency Playback Loop Decoupling & 0 Hz App Chrome Invariants
+- **Zombie Prop Guard**: Components that do not directly display active timecode or cue illumination markers must **never** receive `currentTime` or subscribe to the ~10Hz playback clock loop.
+- **Reference-Stable Callbacks**: All action callbacks passed from `App.tsx` into static chrome (headers, modals, drawer triggers) must be stabilized via `useCallback`.
+- **0 Hz Chrome Invariant**: Wrap static application chrome in `React.memo` to guarantee zero virtual DOM diffing and 100% idle execution during media playback.
+
+## 15. Mobile Viewport Exclusivity & Edit Mode Boundary
+- **Playback/Review Only**: SceneFlow on mobile viewports (< 1024px) is strictly an immersive script reading and media playback experience.
+- **Desktop-Only Cue Authoring**: Cue authoring forms (`CueEditorForm`), timeline cue management (`TimelineCuesPanel`), split-pane dividers (`SplitPaneDivider`, `VideoSplitDivider`), and top studio chrome (`AppHeader`) are strictly desktop-only and must declare unconditional `hidden lg:flex` / `hidden lg:block`.
+- **No Mobile Authoring Creep**: Never attempt to adapt desktop cue creation tools or multi-zone studio toolbars onto mobile viewports; mobile devices are reserved exclusively for distraction-free reading, playback sync, and review.
+
+## 16. Non-Blocking Overlay & Outside Click Invariants
+- **No Swallowing Backdrops**: Floating dropdowns and popovers must never use full-screen transparent backdrop `div` elements (`fixed inset-0 z-40`) that swallow clicks on adjacent controls.
+- **Single-Click Switching**: Always implement container-level outside-click detection (`useClickOutside` on `mousedown`/`touchstart`). Clicking an adjacent header button or tool must simultaneously close the active menu and trigger the target action in a single gesture.
+- **Unified Menu State**: Header dropdown visibility must be managed through a single union state (`activeMenu: HeaderMenuId | null`) rather than isolated boolean flags to prevent state collision.
