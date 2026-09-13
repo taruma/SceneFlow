@@ -23,8 +23,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added a discrete `[↺ Reset All]` action in the header of the Studio Preferences dropdown (`SettingsMenuDropdown.tsx`), appearing dynamically whenever any preference or layout option is non-default.
   - Instantly restores App Theme (`auto`), Script Width (`standard` / 576px), Scroll Focus (`top` / 35%), and View Layout (50% split, 240px video height, uncollapsed) to factory defaults in a single click.
   - Harmoniously complements the focused `Reset View Layout (Shift+R)` action, which enables resetting window pan geometry without affecting chosen color themes or reading widths.
+- **144Hz Smooth Timeline Clock Extrapolator (`src/components/active-highlights/timeline/useSmoothTimelineTime.ts`, `src/components/active-highlights/index.ts`)**:
+  - Implemented high-precision `useSmoothTimelineTime` hook leveraging `requestAnimationFrame` and `performance.now()` to advance timeline time continuously at native display refresh rates (144Hz, 120Hz, 60Hz).
+  - Integrated soft-sync drift compensation against 100ms YouTube timecode ticks with instant snapping on seeking (>0.35s) and zero idle overhead when paused.
 
 ### Refactored
+- **High-Refresh Auto-Scroll Engine & Gesture Interruption (`src/hooks/useAutoScroll.ts`)**:
+  - Replaced browser-native `behavior: 'smooth'` with a high-refresh `requestAnimationFrame` cubic ease-out (`1 - (1 - t)^3`) animator (`smoothScrollTo`), eliminating 60Hz scroll pacing judder and frame rate mismatch on high-refresh displays and during 60fps screen recordings.
+  - Added passive wheel and touch listeners to cancel ongoing auto-scroll animations immediately upon user manual input without scroll fighting.
+  - Declared `smoothScrollTo` at module scope to eliminate function re-allocation on hook evaluation.
+- **Decoupled Screenplay Line Diffing During Playback (`src/App.tsx`)**:
+  - Optimized `renderedScript` to pass static `currentTime={0}` to lines with zero overlapping cues, skipping prop comparisons and reconciliation across 85%+ of screenplay lines on every 100ms tick.
+- **Stabilized Timeline Cue Block Geometry & 0 Hz Layout Reflow (`src/components/active-highlights/timeline/useTimelineWindow.ts`, `src/components/active-highlights/timeline/TimelineCueBlock.tsx`, `src/components/active-highlights/timeline/TimelinePlayheadRuler.tsx`, `src/components/active-highlights/views/HighlightTimelineView.tsx`)**:
+  - Stabilized cue block geometry in `useTimelineWindow` by computing fixed duration widths directly from `(cue.endTime - cue.startTime)`, removing artificial window boundary clamping that previously caused cue blocks to accordion/compress and trigger continuous layout reflows as they traversed window edges.
+  - Removed fixed `100ms linear` CSS transitions on `TimelineCueBlock` and `TimelinePlayheadRuler` in favor of sub-frame continuous `displayTime` rendering, eliminating stop-and-go timer freezes when YouTube ticks arrive late.
 - **Modular Studio Header Architecture & Decoupled Subcomponents (`src/components/AppHeader.tsx`, `src/components/header/*`, `src/hooks/useClickOutside.ts`, `src/hooks/index.ts`)**:
   - Decomposed the 451-line monolithic `AppHeader.tsx` into a lean ~170-line orchestrator and three dedicated subcomponents under `src/components/header/`:
     - `FileMenuDropdown.tsx`: 3-tier hierarchical project I/O, blank canvas creation, and resource discovery dropdown.
