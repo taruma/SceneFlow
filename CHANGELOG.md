@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.3-dev] - Unreleased
+
+### Changed
+- **3-Zone Studio Header Layout & Decluttering (`src/components/AppHeader.tsx`, `src/styles/tokens/ui.ts`)**:
+  - Replaced the cluttered 14-button header with a balanced, studio-grade 3-zone layout (Left: Brand & Local Documents, Center: Workflow Mode, Right: Content, Community & Studio Tools).
+  - **Left Wing**: Grouped the SceneFlow logo with compact desktop-only `<FolderOpen />` (Open) and `<Download />` (Save) document icons in a low-profile container (`[ 📂 | 💾 ]`), moving JSON sync operations out of the primary workspace stream.
+  - **Center Stage**: Introduced a centered segmented control (`[ ▶ Playback | ✏️ Edit ]`) with mode-specific active accents (soft blue for Playback, soft amber for Edit) and responsive icon collapse, providing immediate discoverability of the application's dual-mode architecture.
+  - **Right Wing**: Gave the Library a prominent, standalone content gateway button (`[ 📚 Library ]`), positioned the Ko-fi support pill directly adjacent, and added a dedicated `[ ⚙️ Settings ▾ ]` dropdown pill.
+  - **Studio Preferences Dropdown**: Consolidated 4 loose floating utility icons into a single settings dropdown featuring a direct 4-theme quick-selector grid (`Auto`, `Light`, `Warm`, `Dark`), Script Paper & Colors modal trigger, Timing & Durations modal trigger, Reset View Layout trigger (with a live customized layout pulse dot and active split ratio indicator), and contextual shortcut hints.
+  - **Timecode Removal from Global Header**: Removed floating timecode from the top app chrome, cleanly delegating playback timing to the Video Player transport bar and Timeline window underneath.
+- **Library Modal Onboarding & Resources Integration (`src/components/LibraryModal.tsx`, `src/components/MobileLibraryModal.tsx`, `src/App.tsx`)**:
+  - Integrated the official `[ Starter Guide ]` project launcher directly into the Library modal headers (`LibraryModal` and `MobileLibraryModal`), freeing up top-level header space while keeping beginner onboarding easily accessible.
+  - Added a direct `[ Article ]` link to the official Substack introduction inside the `LibraryModal` header toolbar alongside the featured article card in `AppInfoModal`.
+
 ## [2.3.2] - 2026-09-12
 
 ### Added

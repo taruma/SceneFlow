@@ -205,5 +205,10 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
 
 14. **Centralized External Links & Navigation Architecture**:
     - Centralize all external publication, documentation, repository, and support URLs in `src/constants/links.ts` (`EXTERNAL_LINKS`) rather than hardcoding raw string literals across UI components.
-    - Desktop header action pills (`AppHeader.tsx`) must strictly consume `UI_TOKENS.button.actionPill` with responsive text collapsing (`hidden xl:inline`) and zero ad-hoc color overrides to ensure seamless visual harmony across Light, Warm, and Dark app shell themes.
+    - Outbound resources (official Substack introductory deep dive, official starter guide project) are embedded directly within modal headers (`LibraryModal`, `MobileLibraryModal`, `AppInfoModal`) to keep the primary workspace header clean and focused.
     - Mobile counterparts in `ScriptHeaderControls.tsx` must remain icon-only (`size={12}`) with accessible `title` and `aria-label` attributes, preserving horizontal toolbar space.
+
+15. **Global 3-Zone Studio Header Architecture (`AppHeader.tsx`)**:
+    - The top application header strictly follows a 3-zone spatial composition: Left Wing (Logo + `[ 📂 | 💾 ]` desktop document sync pair), Center Stage (Centered `[ ▶ Playback | ✏️ Edit ]` segmented mode switcher), and Right Wing (`[ 📚 Library ]` standalone gateway, `[ ☕ Support ]` Ko-fi pill, `[ ⚙️ Settings ▾ ]` dropdown pill, and `[ ℹ ]` Info trigger).
+    - Top header chrome must **never** render raw floating timecode; playback timing belongs exclusively to the media player and Active Highlights timeline.
+    - Studio preferences must be consolidated inside the `[ ⚙️ Settings ▾ ]` dropdown, providing direct 4-theme selection (`Auto`, `Light`, `Warm`, `Dark`), Script Color presets access, Timing Settings access, and a live customized layout reset indicator.

@@ -494,6 +494,7 @@ export default function App() {
         themeMode={themeMode}
         effectiveThemeCategory={effectiveCategory}
         onCycleThemeMode={cycleThemeMode}
+        onSetThemeMode={setThemeMode}
         isViewCustomized={isViewCustomized}
         onResetView={resetViewLayout}
       />
@@ -723,6 +724,7 @@ export default function App() {
       <LibraryModal
         isOpen={isLibraryOpen}
         onClose={() => setIsLibraryOpen(false)}
+        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'blank', error: null })}
         onSelectExample={(path, title) => {
           setResetConfirmation({ 
             isOpen: true, 
@@ -737,6 +739,7 @@ export default function App() {
       <MobileLibraryModal
         isOpen={isLibraryOpen}
         onClose={() => setIsLibraryOpen(false)}
+        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'blank', error: null })}
         onSelectExample={(path, title) => {
           setResetConfirmation({ 
             isOpen: true, 

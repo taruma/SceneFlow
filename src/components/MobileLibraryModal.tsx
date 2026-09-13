@@ -19,9 +19,10 @@ interface MobileLibraryModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectExample: (path: string, title: string) => void;
+  onOpenGuide?: () => void;
 }
 
-export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileLibraryModalProps) {
+export function MobileLibraryModal({ isOpen, onClose, onSelectExample, onOpenGuide }: MobileLibraryModalProps) {
   useEscapeKey(onClose, isOpen);
 
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -119,13 +120,28 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
                   </p>
                 </div>
               </div>
-              <button
-                onClick={onClose}
-                className="p-1.5 text-text-faint hover:text-text-main rounded-full bg-surface-muted hover:bg-surface-hover active:scale-95 transition-all"
-                aria-label="Close modal"
-              >
-                <X size={16} />
-              </button>
+              <div className="flex items-center gap-1.5">
+                {onOpenGuide && (
+                  <button
+                    onClick={() => {
+                      onClose();
+                      onOpenGuide();
+                    }}
+                    title="Load Official Starter Guide project"
+                    className="flex items-center gap-1 px-2 py-1 bg-surface-muted hover:bg-surface-hover rounded-lg text-[9px] font-black uppercase tracking-wider text-text-body border border-border-main transition-all active:scale-95"
+                  >
+                    <Sparkles size={10} className="text-amber-500" />
+                    <span>Guide</span>
+                  </button>
+                )}
+                <button
+                  onClick={onClose}
+                  className="p-1.5 text-text-faint hover:text-text-main rounded-full bg-surface-muted hover:bg-surface-hover active:scale-95 transition-all"
+                  aria-label="Close modal"
+                >
+                  <X size={16} />
+                </button>
+              </div>
             </div>
 
             {/* Search Input */}

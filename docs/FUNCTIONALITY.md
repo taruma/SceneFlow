@@ -172,13 +172,17 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 - **Continuous Operation While Video Is Collapsed**: Even when the video viewport is hidden via the `Hide Video` toggle or <kbd>V</kbd> key, the transport controls remain pinned in the header, allowing users to control playback and audio during timeline screen recording.
 - **Fluid Viewport Responsiveness**: Button labels automatically collapse to compact icon buttons on mobile/tablet viewports (`hidden sm:inline`), ensuring zero header wrapping.
 
-### Global Header Navigation & External Resources (`AppHeader`, `ScriptHeaderControls`)
-- **Desktop Navigation Action Pills**: The top global header toolbar provides quick-access action pills (`[Article]`, `[Guide]`, `[Library]`, `[Support]`):
-  - **`Article`**: Direct link to the official introductory deep dive (*Introducing SceneFlow: Script-to-Screen Synchronization* on Substack), styled via `UI_TOKENS.button.actionPill` with responsive text collapsing (`hidden xl:inline`) on compact viewports.
-  - **`Guide`**: Loads the official starter guide screenplay project into the active workspace.
-  - **`Library`**: Opens the curated modal catalogue of screenplay examples and templates.
-  - **`Support`**: Direct external link to Ko-fi creator support.
-- **Mobile Header Density**: In mobile viewports (`ScriptHeaderControls`), the Article button is rendered as a compact icon-only control (`<Newspaper size={12} />`) with accessible `title` and `aria-label` tags to preserve toolbar space alongside the Theme palette, Library, and Support controls.
+### Global 3-Zone Studio Header Layout (`AppHeader`, `ScriptHeaderControls`)
+- **Balanced 3-Zone Composition**: Replaced the previous single-row cluster with a studio-grade 3-zone layout separating brand utilities, workflow state, and content/preferences:
+  - **Left Wing (Brand & Local Documents)**: Houses the SceneFlow logo alongside a compact desktop-only `<FolderOpen />` (Open Sync) and `<Download />` (Save Sync) document container (`[ 📂 | 💾 ]`). This isolates local JSON operations from primary viewport workflows while keeping mobile free of unnecessary file buttons.
+  - **Center Stage (Workflow Mode Switcher)**: Features a centered segmented control (`[ ▶ Playback | ✏️ Edit ]`) with mode-specific active accents (soft blue for Playback, soft amber for Edit) and responsive icon collapsing. Both modes remain visible side-by-side, providing instant discoverability of the application's dual-mode architecture.
+  - **Right Wing (Content, Support & Studio Tools)**:
+    - **Standalone Library Gateway (`[ 📚 Library ]`)**: Featured prominently with distinct visual styling as the primary content discovery hub for screenplay examples and templates.
+    - **Support on Ko-fi (`[ ☕ Support ]`)**: Vibrant warm red/coral button positioned directly adjacent to the Library.
+    - **Studio Preferences Dropdown (`[ ⚙️ Settings ▾ ]`)**: Houses a direct 4-theme quick-selector grid (`Auto`, `Light`, `Warm`, `Dark`), Script Paper & Colors modal trigger, Timing & Durations modal trigger, and Reset View Layout trigger with live pulse dot indicator when layout is customized.
+    - **Dedicated Info Trigger (`[ ℹ ]`)**: 1-click access to keyboard shortcuts, about details, and the deep-dive Substack article card.
+- **Resource Integration**: The official `[ Starter Guide ]` project launcher and `[ Article ]` deep-dive link are integrated directly into the `LibraryModal` and `MobileLibraryModal` headers, eliminating header clutter while enhancing contextual onboarding.
+- **Playback Timing Ownership**: Global header timecode was completely removed, cleanly delegating playback time to the Video Player transport controls and Multi-Track Highlights timeline. Mobile preserves its compact timecode pill in `ScriptHeaderControls`.
 
 
 ---
