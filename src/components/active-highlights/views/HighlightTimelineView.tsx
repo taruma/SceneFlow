@@ -4,6 +4,7 @@ import { CueThemeResolvedColor } from '../../../styles';
 import { isCueActive } from '../../../lib/cueUtils';
 import { TimelineDensity, TimelineZoomPreset, TIMELINE_ZOOM_PRESETS, TimelineHeightMode } from '../types';
 import { useTimelineWindow } from '../timeline/useTimelineWindow';
+import { useSmoothTimelineTime } from '../timeline/useSmoothTimelineTime';
 import { TimelineLane } from '../timeline/TimelineLane';
 import { TimelinePlayheadRuler } from '../timeline/TimelinePlayheadRuler';
 import { PausedInspectorCard } from '../inspector/PausedInspectorCard';
@@ -47,6 +48,11 @@ export const HighlightTimelineView: React.FC<HighlightTimelineViewProps> = ({
 
   const spanSeconds = TIMELINE_ZOOM_PRESETS[zoomPreset]?.spanSeconds ?? 8.0;
 
+  const displayTime = useSmoothTimelineTime({
+    currentTime,
+    isPlaying,
+  });
+
   const {
     playheadPercent,
     existingCategories,
@@ -54,7 +60,7 @@ export const HighlightTimelineView: React.FC<HighlightTimelineViewProps> = ({
     subLanesByCategory,
     rulerTicks,
   } = useTimelineWindow({
-    currentTime,
+    currentTime: displayTime,
     cues,
     settings,
     hiddenCueTypes,

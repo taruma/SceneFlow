@@ -12,6 +12,7 @@ export { TimelineLane } from './timeline/TimelineLane';
 export { TimelineCueBlock } from './timeline/TimelineCueBlock';
 export { TimelinePlayheadRuler } from './timeline/TimelinePlayheadRuler';
 export { useTimelineWindow, formatTimelineTimecode } from './timeline/useTimelineWindow';
+export { useSmoothTimelineTime } from './timeline/useSmoothTimelineTime';
 
 // Inspector Primitives (for reuse)
 export { PausedInspectorCard } from './inspector/PausedInspectorCard';
