@@ -352,9 +352,12 @@ Available on desktop across both Playback and Edit modes with automatic input/te
 - `←` / `→` (ArrowLeft / ArrowRight): Seek -5s / +5s.
 - `J` / `L`: Seek -5s / +5s (YouTube standard navigation hotkeys).
 - `V`: Toggle video player visibility / collapse (Playback mode).
+- `Shift + C`: Open Script Paper & Colors modal.
+- `Shift + T`: Open Timing & Durations modal.
+- `Shift + R`: Reset View Layout & Video Size to defaults.
 - `Esc`: Close any active modal or popover (`ScriptColorModal`, `TimingSettingsModal`, `LibraryModal`, `MobileLibraryModal`, `RawScriptModal`, `RawCuesModal`, `DeleteConfirmationModal`, `ResetConfirmationModal`, `StagingModal`, `AppInfoModal`, `OverlapPicker`).
 - **Backdrop Dismissal**: Clicking outside modal content on the backdrop overlay dismisses the active modal.
-- **Shortcuts Safeguard**: All playback hotkeys are automatically gated and disabled whenever any modal or confirmation prompt is open.
+- **Shortcuts Safeguard**: All playback and studio hotkeys are automatically gated and disabled whenever any modal or confirmation prompt is open, or when typing inside inputs, textareas, or contentEditable elements.
 
 
 

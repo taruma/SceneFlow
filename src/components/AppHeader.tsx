@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Book, 
   Coffee, 
@@ -77,6 +77,12 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
     setIsFileDropdownOpen(false);
     setIsSettingsDropdownOpen(false);
   }, isFileDropdownOpen || isSettingsDropdownOpen);
+
+  useEffect(() => {
+    if (isColorModalOpen || isSettingsOpen) {
+      setIsSettingsDropdownOpen(false);
+    }
+  }, [isColorModalOpen, isSettingsOpen]);
 
   return (
     <header
@@ -369,12 +375,13 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                       setIsColorModalOpen(true);
                     }}
                     className={UI_TOKENS.dropdown.item}
-                    title="Script Paper & Color Theme Presets"
+                    title="Script Paper & Color Theme Presets (Shift+C)"
                   >
                     <div className="flex items-center gap-2">
                       <Palette size={14} className="text-text-muted" />
                       <span>Script Paper & Colors</span>
                     </div>
+                    <kbd className={UI_TOKENS.badge.shortcut}>Shift+C</kbd>
                   </button>
 
                   <button
@@ -383,12 +390,13 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                       setIsSettingsOpen(true);
                     }}
                     className={UI_TOKENS.dropdown.item}
-                    title="Timing, Auto-Scroll Speed & Durations"
+                    title="Timing, Auto-Scroll Speed & Durations (Shift+T)"
                   >
                     <div className="flex items-center gap-2">
                       <Clock size={14} className="text-text-muted" />
                       <span>Timing & Durations</span>
                     </div>
+                    <kbd className={UI_TOKENS.badge.shortcut}>Shift+T</kbd>
                   </button>
 
                   {onResetView && (
@@ -400,19 +408,22 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                       className={UI_TOKENS.dropdown.item}
                       title={
                         isViewCustomized
-                          ? "Reset View Layout & Video Size (Customized)"
-                          : "Reset View Layout & Video Size to Default"
+                          ? "Reset View Layout & Video Size (Customized, Shift+R)"
+                          : "Reset View Layout & Video Size to Default (Shift+R)"
                       }
                     >
                       <div className="flex items-center gap-2">
                         <RotateCcw size={14} className={cn("text-text-muted", isViewCustomized && "text-blue-500")} />
                         <span>Reset View Layout</span>
                       </div>
-                      {isViewCustomized && (
-                        <span className="text-[8px] font-bold text-blue-500 bg-blue-500/10 px-1.5 py-0.5 rounded uppercase">
-                          Custom
-                        </span>
-                      )}
+                      <div className="flex items-center gap-1.5">
+                        {isViewCustomized && (
+                          <span className="text-[8px] font-bold text-blue-500 bg-blue-500/10 px-1.5 py-0.5 rounded uppercase">
+                            Custom
+                          </span>
+                        )}
+                        <kbd className={UI_TOKENS.badge.shortcut}>Shift+R</kbd>
+                      </div>
                     </button>
                   )}
                 </div>

@@ -203,8 +203,9 @@ Automated cue realignment orchestration:
 
 ### `useKeyboardShortcuts`
 Global keyboard shortcut handler:
-- `Space` / `KeyK` = play/pause toggle, `ArrowLeft` / `KeyJ` = -5s seek, `ArrowRight` / `KeyL` = +5s seek, `KeyV` = toggle video player collapse in Playback mode.
-- Gates execution when input/textarea elements are focused or any modal is open.
+- **Playback hotkeys** (requires active player): `Space` / `KeyK` = play/pause toggle, `ArrowLeft` / `KeyJ` = -5s seek, `ArrowRight` / `KeyL` = +5s seek, `KeyV` = toggle video player collapse in Playback mode.
+- **Studio Preferences hotkeys**: `Shift+C` = open Script Paper & Colors modal, `Shift+T` = open Timing & Durations modal, `Shift+R` = reset view layout to defaults.
+- Gates execution when input/textarea/contentEditable elements are focused or any modal is open, and validates `!e.ctrlKey && !e.metaKey && !e.altKey` to prevent conflicts with browser hotkeys.
 - Also tracks `isDesktop` via `window.innerWidth >= 1024` resize listener.
 
 ### `useScriptTheme`
@@ -235,7 +236,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 - **Cue Sanitization Pipeline**: All data ingress paths (localStorage restore, default load, blank, example, remote fetch) route through `sanitizeCues()` in `useScriptStorage`, guaranteeing deterministic IDs and `type`/`colorClass` normalization.
 
 ### Modular Sub-components (`src/components/`)
-1. **`AppHeader.tsx`**: Global 3-zone studio navigation header featuring brand identity and a dedicated desktop `[ File ▾ ]` dropdown menu organized into three functional tiers (Top: `Open Project...` and `Save Project`; Middle: `New Project`; Bottom: `Starter Guide` and `Browse Library...`) on the left, a centered segmented mode switcher (`[ ▶ Playback | ✏️ Edit ]`) with mode-specific active accents, and a right-wing studio cluster housing the standalone Library gateway (`[ 📚 LIBRARY ]` on neutral surface pill with amber book icon), Ko-fi support pill, unified Studio Preferences dropdown (`[ ⚙️ Settings ▾ ]` with 4-theme quick selector, script palette, timing, and layout reset), and dedicated Info modal trigger.
+1. **`AppHeader.tsx`**: Global 3-zone studio navigation header featuring brand identity and a dedicated desktop `[ File ▾ ]` dropdown menu organized into three functional tiers (Top: `Open Project...` and `Save Project`; Middle: `New Project`; Bottom: `Starter Guide` and `Browse Library...`) on the left, a centered segmented mode switcher (`[ ▶ Playback | ✏️ Edit ]`) with mode-specific active accents, and a right-wing studio cluster housing the standalone Library gateway (`[ 📚 LIBRARY ]` on neutral surface pill with amber book icon), Ko-fi support pill, unified Studio Preferences dropdown (`[ ⚙️ Settings ▾ ]` with 4-theme quick selector, script palette, timing, layout reset with `UI_TOKENS.badge.shortcut` badges for `Shift+C`, `Shift+T`, `Shift+R`), and dedicated Info modal trigger.
 2. **`InitializingScreen.tsx`**: Branded initial load screen displaying the SceneFlow logo with subtle animation.
 3. **`YoutubeSourceInput.tsx`**: YouTube URL/ID input with live player connection indicator and automatic ID extraction using `UI_TOKENS.input`.
 4. **`ScriptManagementBar.tsx`**: Screenplay status banner showing loaded line count with an "Edit Raw" action button styled with `UI_TOKENS`.

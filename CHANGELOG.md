@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Reset `public/examples/blank.json` into an authentic empty project template (empty script text, zero cues, zeroed timing buffers) for starting new screenplays from scratch without manual deletion.
   - Added dedicated `loadGuide()` hook handler in `useScriptStorage` alongside `loadBlank()`.
   - Extended `ResetConfirmationState` and `ResetConfirmationModal` to cleanly distinguish between `'new'` ("Create New Project?" with automatic transition to Edit mode) and `'guide'` ("Load Starter Guide?" with transition to Playback mode).
+- **Studio Preferences Keyboard Shortcuts & UI Badges (`src/hooks/useKeyboardShortcuts.ts`, `src/App.tsx`, `src/components/AppHeader.tsx`, `src/styles/tokens/ui.ts`, `src/components/AppInfoModal.tsx`)**:
+  - Implemented clash-free global keyboard shortcuts for primary studio preference actions: <kbd>Shift+C</kbd> (Script Paper & Colors modal), <kbd>Shift+T</kbd> (Timing & Durations modal), and <kbd>Shift+R</kbd> (Reset View Layout).
+  - Integrated `!e.ctrlKey && !e.metaKey && !e.altKey` and `contentEditable`/input/modal guards to guarantee zero conflict with browser hotkeys or text editing.
+  - Added visual `<kbd>` shortcut badges (`UI_TOKENS.badge.shortcut`) positioned on the right side of each settings row in `[ ⚙️ Settings ▾ ]`.
+  - Expanded `menuSettings` dropdown width to `w-72` (288px) for comfortable padding and zero label wrapping.
+  - Added auto-close effect on `AppHeader` when modal dialogs mount, and registered new shortcuts in `AppInfoModal`.
 
 ### Changed
 - **3-Zone Studio Header Architecture & Decluttering (`src/components/AppHeader.tsx`, `src/styles/tokens/ui.ts`)**:

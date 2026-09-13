@@ -209,6 +209,9 @@ export default function App() {
     togglePlayPause,
     jumpBy,
     onToggleVideo: mode === 'playback' ? toggleVideoCollapsed : undefined,
+    onOpenColors: () => setIsColorModalOpen(true),
+    onOpenTiming: () => setIsSettingsOpen(true),
+    onResetView: resetViewLayout,
     disabled: isAnyModalOpen,
   });
 

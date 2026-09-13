@@ -43,7 +43,7 @@ export const UI_TOKENS = {
     menuLeft: "absolute top-full left-0 mt-2 w-44 bg-surface rounded-xl shadow-xl border border-border-main overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 text-text-main",
     menuRight: "absolute top-full right-0 mt-2 w-44 bg-surface rounded-xl shadow-xl border border-border-main overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 text-text-main",
     menuWide: "absolute top-full right-0 mt-2 w-52 bg-surface rounded-xl shadow-xl border border-border-main overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 text-text-main",
-    menuSettings: "absolute top-full right-0 mt-2 w-64 bg-surface rounded-2xl shadow-2xl border border-border-main overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 text-text-main divide-y divide-border-subtle",
+    menuSettings: "absolute top-full right-0 mt-2 w-72 bg-surface rounded-2xl shadow-2xl border border-border-main overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 text-text-main divide-y divide-border-subtle",
     header: "p-2 bg-surface-subtle border-b border-border-subtle flex items-center justify-between",
     headerText: "text-[9px] font-black text-text-faint uppercase tracking-widest",
     item: "w-full text-left px-3 py-2 text-xs font-semibold hover:bg-surface-subtle flex items-center justify-between transition-colors text-text-body hover:text-text-main",
@@ -114,6 +114,7 @@ export const UI_TOKENS = {
     timeCompact: "flex items-center gap-1.5 px-2.5 py-1.5 bg-surface-muted/80 border border-border-main rounded-xl font-mono text-xs font-bold text-text-muted shadow-2xs",
     currentTimePill: "hidden lg:flex items-center gap-2 px-3 xl:px-4 py-2 bg-surface-dark rounded-xl shadow-inner animate-in fade-in zoom-in duration-500 text-white",
     currentTimePillSm: "lg:hidden flex items-center gap-1 px-2 py-1 bg-surface-dark rounded-lg shadow-inner text-white",
+    shortcut: "text-[9px] font-mono font-medium px-1.5 py-0.5 rounded bg-surface-muted text-text-faint border border-border-subtle tracking-tighter shrink-0",
   },
 
   // Panel & banner containers

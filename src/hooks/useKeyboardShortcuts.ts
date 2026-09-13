@@ -5,6 +5,9 @@ interface UseKeyboardShortcutsOptions {
   togglePlayPause: () => void;
   jumpBy: (seconds: number) => void;
   onToggleVideo?: () => void;
+  onOpenColors?: () => void;
+  onOpenTiming?: () => void;
+  onResetView?: () => void;
   disabled?: boolean;
 }
 
@@ -13,6 +16,9 @@ export function useKeyboardShortcuts({
   togglePlayPause,
   jumpBy,
   onToggleVideo,
+  onOpenColors,
+  onOpenTiming,
+  onResetView,
   disabled = false,
 }: UseKeyboardShortcutsOptions) {
   const [isDesktop, setIsDesktop] = useState(
@@ -26,18 +32,41 @@ export function useKeyboardShortcuts({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Playback shortcuts: Space (play/pause), ArrowLeft (-5s), ArrowRight (+5s), V (toggle video)
+  // Global shortcuts:
+  // - Studio Preferences: Shift+C (Colors), Shift+T (Timing), Shift+R (Reset Layout)
+  // - Playback (requires player): Space/K (play/pause), ArrowLeft/J (-5s), ArrowRight/L (+5s), V (toggle video)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't trigger shortcuts if user is typing in an input or if modal is open
+      // Don't trigger shortcuts if user is typing in an input, textarea, or contentEditable element, or if modal is open
       if (
         disabled ||
         document.activeElement?.tagName === 'INPUT' ||
-        document.activeElement?.tagName === 'TEXTAREA'
+        document.activeElement?.tagName === 'TEXTAREA' ||
+        (document.activeElement as HTMLElement)?.isContentEditable
       ) {
         return;
       }
 
+      // Studio Preferences shortcuts (Shift + Key) — functional regardless of player instance
+      if (e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        if ((e.code === 'KeyC' || e.key.toLowerCase() === 'c') && onOpenColors) {
+          e.preventDefault();
+          onOpenColors();
+          return;
+        }
+        if ((e.code === 'KeyT' || e.key.toLowerCase() === 't') && onOpenTiming) {
+          e.preventDefault();
+          onOpenTiming();
+          return;
+        }
+        if ((e.code === 'KeyR' || e.key.toLowerCase() === 'r') && onResetView) {
+          e.preventDefault();
+          onResetView();
+          return;
+        }
+      }
+
+      // Playback shortcuts require an active video player instance
       if (!player) return;
 
       switch (e.code) {
@@ -67,7 +96,7 @@ export function useKeyboardShortcuts({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [player, togglePlayPause, jumpBy, disabled, onToggleVideo]);
+  }, [player, togglePlayPause, jumpBy, disabled, onToggleVideo, onOpenColors, onOpenTiming, onResetView]);
 
   return { isDesktop };
 }
