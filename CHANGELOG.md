@@ -38,6 +38,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Removed `currentTime` prop from `ScriptHeaderControlsProps` and `App.tsx`, completely decoupling the script preview header from continuous video playback clock ticks.
   - Wrapped `ScriptHeaderControls` with `React.memo`, eliminating high-frequency Virtual DOM diffing during media playback.
   - Pruned manual `localStorage.setItem` call on width preset selection, delegating persistence entirely to `useScriptPreferences`.
+- **Relocation of Script Width & Focus Line Controls to Studio Settings (`src/components/header/SettingsMenuDropdown.tsx`, `src/components/ScriptHeaderControls.tsx`, `src/components/AppHeader.tsx`, `src/App.tsx`)**:
+  - Relocated the bulky **Script Width** (5 presets) and **Scroll Focus Line** (3 presets) dropdown menus out of `ScriptHeaderControls.tsx` and into the global Studio Settings menu (`SettingsMenuDropdown.tsx`).
+  - Added a dedicated "Reading Canvas & Viewport" section to Studio Settings featuring compact, studio-grade segmented controls:
+    - 5-segment Script Width row with progressive visual width bar glyphs and dynamic header text (`{label} ({width_px})`).
+    - 3-segment Scroll Focus Line row with miniature viewport device icons (`Top`, `Center`, `Bottom`) and active amber indicators.
+  - Decluttered the desktop Script Preview header down to an ultra-clean layout housing only `[FileText] Script Preview` and `[🎯 AUTO-SCROLL | ▾]` split button, reducing `ScriptHeaderControls.tsx` from 395 to 180 lines (~54% line reduction) while preserving quick tools on mobile.
 
 ### Fixed
 - **Scroll Focus Dropdown Auto-Close (`src/components/ScriptHeaderControls.tsx`)**:

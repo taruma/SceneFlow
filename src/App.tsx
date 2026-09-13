@@ -97,12 +97,8 @@ export default function App() {
     commitVideoHeight,
     scriptWidthPreset,
     setScriptWidthPreset,
-    isWidthDropdownOpen,
-    setIsWidthDropdownOpen,
     scrollFocusPreset,
     setScrollFocusPreset,
-    isScrollFocusDropdownOpen,
-    setIsScrollFocusDropdownOpen,
     scriptThemeId,
     setScriptThemeId,
     cuePaletteProfile,
@@ -520,6 +516,10 @@ export default function App() {
         onSetThemeMode={setThemeMode}
         isViewCustomized={isViewCustomized}
         onResetView={resetViewLayout}
+        scriptWidthPreset={scriptWidthPreset}
+        setScriptWidthPreset={setScriptWidthPreset}
+        scrollFocusPreset={scrollFocusPreset}
+        applyScrollFocus={applyScrollFocus}
       />
 
       <main className={cn(
@@ -666,14 +666,6 @@ export default function App() {
             setAutoScrollTargets={setAutoScrollTargets}
             setIsLibraryOpen={setIsLibraryOpen}
             setIsColorModalOpen={setIsColorModalOpen}
-            scriptWidthPreset={scriptWidthPreset}
-            setScriptWidthPreset={setScriptWidthPreset}
-            isWidthDropdownOpen={isWidthDropdownOpen}
-            setIsWidthDropdownOpen={setIsWidthDropdownOpen}
-            scrollFocusPreset={scrollFocusPreset}
-            applyScrollFocus={applyScrollFocus}
-            isScrollFocusDropdownOpen={isScrollFocusDropdownOpen}
-            setIsScrollFocusDropdownOpen={setIsScrollFocusDropdownOpen}
             scriptThemeId={scriptThemeId}
             cuePaletteProfile={cuePaletteProfile}
           />

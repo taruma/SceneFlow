@@ -15,6 +15,8 @@ import { cn } from '../../lib/utils';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
 import type { AppThemeMode, AppThemeCategory } from '../../hooks/useAppShellTheme';
+import { SCRIPT_WIDTH_PRESETS, SCROLL_FOCUS_PRESETS } from '../../constants/script';
+import type { ScriptWidthPresetId, ScrollFocusPresetId } from '../../types/script';
 
 export interface SettingsMenuDropdownProps {
   isOpen: boolean;
@@ -28,6 +30,10 @@ export interface SettingsMenuDropdownProps {
   onOpenTiming: () => void;
   isViewCustomized?: boolean;
   onResetView?: () => void;
+  scriptWidthPreset?: ScriptWidthPresetId;
+  setScriptWidthPreset?: (preset: ScriptWidthPresetId) => void;
+  scrollFocusPreset?: ScrollFocusPresetId;
+  applyScrollFocus?: (preset: ScrollFocusPresetId) => void;
 }
 
 export const SettingsMenuDropdown: React.FC<SettingsMenuDropdownProps> = memo(({
@@ -42,8 +48,15 @@ export const SettingsMenuDropdown: React.FC<SettingsMenuDropdownProps> = memo(({
   onOpenTiming,
   isViewCustomized = false,
   onResetView,
+  scriptWidthPreset = 'standard',
+  setScriptWidthPreset,
+  scrollFocusPreset = 'top',
+  applyScrollFocus,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const currentWidth = SCRIPT_WIDTH_PRESETS.find(p => p.id === scriptWidthPreset) || SCRIPT_WIDTH_PRESETS[2];
+  const currentFocus = SCROLL_FOCUS_PRESETS.find(p => p.id === scrollFocusPreset) || SCROLL_FOCUS_PRESETS[0];
 
   useClickOutside(containerRef, onClose, isOpen);
   useEscapeKey(onClose, isOpen);
@@ -137,6 +150,107 @@ export const SettingsMenuDropdown: React.FC<SettingsMenuDropdownProps> = memo(({
                   </button>
                 );
               })}
+            </div>
+          </div>
+
+          {/* Reading Canvas & Viewport */}
+          <div className="p-2.5 space-y-2.5 bg-surface-subtle">
+            {/* Script Width */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5 px-1">
+                <span className="text-[9px] font-black uppercase tracking-widest text-text-faint">Script Width</span>
+                <span className="text-[9px] font-mono font-bold text-text-muted">
+                  {currentWidth.label} ({currentWidth.desc.split('•')[0].trim()})
+                </span>
+              </div>
+              <div className="grid grid-cols-5 gap-1 p-1 bg-surface-muted rounded-xl border border-border-main" role="radiogroup" aria-label="Script Width">
+                {SCRIPT_WIDTH_PRESETS.map((preset, index) => {
+                  const isSelected = scriptWidthPreset === preset.id;
+                  return (
+                    <button
+                      key={preset.id}
+                      role="radio"
+                      aria-checked={isSelected}
+                      onClick={() => setScriptWidthPreset?.(preset.id)}
+                      className={cn(
+                        "flex flex-col items-center justify-center py-1.5 px-0.5 rounded-lg text-[8px] font-mono font-bold tracking-tight uppercase transition-all active:scale-95 group",
+                        isSelected
+                          ? "bg-surface text-text-main shadow-xs ring-1 ring-border-main"
+                          : "text-text-muted hover:text-text-main hover:bg-surface/50"
+                      )}
+                      title={`${preset.label}: ${preset.desc}`}
+                      aria-label={`${preset.label} width preset`}
+                    >
+                      <div className="w-full flex items-center justify-center h-2 mb-0.5">
+                        <div 
+                          className={cn(
+                            "h-1 rounded-full transition-all",
+                            isSelected ? "bg-blue-500" : "bg-border-main group-hover:bg-text-muted"
+                          )}
+                          style={{ width: `${32 + index * 15}%` }}
+                        />
+                      </div>
+                      <span>{preset.id === 'full' ? 'Full' : preset.label.slice(0, 3)}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Scroll Focus Line */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5 px-1">
+                <span className="text-[9px] font-black uppercase tracking-widest text-text-faint">Focus Line</span>
+                <span className="text-[9px] font-mono font-bold text-text-muted">
+                  {currentFocus.label}
+                </span>
+              </div>
+              <div className="grid grid-cols-3 gap-1 p-1 bg-surface-muted rounded-xl border border-border-main" role="radiogroup" aria-label="Scroll Focus Line">
+                {SCROLL_FOCUS_PRESETS.map((preset) => {
+                  const isSelected = scrollFocusPreset === preset.id;
+                  return (
+                    <button
+                      key={preset.id}
+                      role="radio"
+                      aria-checked={isSelected}
+                      onClick={() => applyScrollFocus?.(preset.id)}
+                      className={cn(
+                        "flex items-center justify-center gap-1.5 py-1.5 px-1.5 rounded-lg text-[9px] font-bold capitalize transition-all active:scale-95 group",
+                        isSelected
+                          ? "bg-surface text-text-main shadow-xs ring-1 ring-border-main"
+                          : "text-text-muted hover:text-text-main hover:bg-surface/50"
+                      )}
+                      title={`${preset.label} - ${preset.desc}`}
+                      aria-label={`${preset.label} scroll focus`}
+                    >
+                      <div className={cn(
+                        "w-3.5 h-4.5 rounded border flex flex-col justify-between p-0.5 transition-all shrink-0",
+                        isSelected ? "border-text-muted bg-surface-muted" : "border-border-main bg-surface/50 group-hover:border-text-muted"
+                      )}>
+                        <div 
+                          className={cn(
+                            "w-full h-0.5 rounded-2xs transition-all",
+                            preset.id === 'top' ? (isSelected ? "bg-amber-500" : "bg-blue-500") : "opacity-0"
+                          )} 
+                        />
+                        <div 
+                          className={cn(
+                            "w-full h-0.5 rounded-2xs transition-all",
+                            preset.id === 'center' ? (isSelected ? "bg-amber-500" : "bg-blue-500") : "opacity-0"
+                          )} 
+                        />
+                        <div 
+                          className={cn(
+                            "w-full h-0.5 rounded-2xs transition-all",
+                            preset.id === 'bottom' ? (isSelected ? "bg-amber-500" : "bg-blue-500") : "opacity-0"
+                          )} 
+                        />
+                      </div>
+                      <span>{preset.shortLabel}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
