@@ -75,6 +75,10 @@ The `renderedScript` rendering pipeline in `src/App.tsx` runs frequently as YouT
 When modifying application state, storage keys, or external fetching:
 
 - **State Schema**: Maintain the `AppState` interface in `src/types/script.ts` (`youtubeId`, `scriptText`, `cues: Cue[]`, `settings?: Record<string, TimingSettings>`).
+- **Storage Hook Handlers (`useScriptStorage`)**:
+  - `loadBlank()`: Fetches `/examples/blank.json`, returning an empty canvas (`scriptText: ""`, `cues: []`, zeroed default settings) for clean project authoring.
+  - `loadGuide()`: Fetches `/examples/guide.json`, loading the comprehensive 1,200+ line interactive tutorial project in Playback mode.
+  - `resetConfirmation.type`: Supports `'settings' | 'data' | 'blank' | 'new' | 'guide' | 'example' | 'remote'`.
 - **LocalStorage Keys**:
   - `'screenplay_sync_state'`: Core project data (video ID, script text, cues, timing settings).
   - `'sceneflow_app_theme_mode'`: Active application shell theme mode (`AppThemeMode`: `'auto' | 'light' | 'warm' | 'dark'`).
@@ -211,6 +215,9 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
 15. **Global 3-Zone Studio Header Architecture (`AppHeader.tsx`)**:
     - The top application header strictly follows a 3-zone spatial composition: Left Wing (Logo + `[ File ▾ ]` desktop dropdown menu), Center Stage (Centered `[ ▶ Playback | ✏️ Edit ]` segmented mode switcher), and Right Wing (`[ 📚 LIBRARY ]` standalone gateway, `[ ☕ Support ]` Ko-fi pill, `[ ⚙️ Settings ▾ ]` dropdown pill, and `[ ℹ ]` Info trigger).
     - **Truthful Shortcuts & Badging Discipline**: Never add visual shortcut badges (<kbd>Ctrl+O</kbd>, <kbd>Ctrl+S</kbd>, <kbd>?</kbd>) or tooltip annotations for actions lacking active event listeners in `useKeyboardShortcuts.ts` or `useEscapeKey.ts`.
-    - **File Dropdown Menu**: Local JSON import/export actions and starter guide links belong inside the desktop `[ File ▾ ]` dropdown (`UI_TOKENS.button.filePill`), keeping mobile headers clean.
+    - **File Dropdown Menu (`[ File ▾ ]`)**: Local JSON import/export actions, new project creation, and guide/library access belong inside the desktop `[ File ▾ ]` dropdown (`UI_TOKENS.button.filePill`), keeping mobile headers clean. The menu is organized into three tiered functional groups separated by hairline borders:
+      1. *Project I/O*: `Open Project...` and `Save Project` (top tier for instant inspection and synchronization of existing projects).
+      2. *Blank Canvas*: `New Project` (middle tier to clear the workspace and open Edit mode).
+      3. *Reference & Discovery*: `Starter Guide` (`guide.json`) and `Browse Library...` (bottom tier).
     - **Top Header Chrome Constraints**: Top header chrome must **never** render raw floating timecode; playback timing belongs exclusively to the media player and Active Highlights timeline.
     - **Studio Preferences Dropdown**: Studio preferences must be consolidated inside the `[ ⚙️ Settings ▾ ]` dropdown, providing direct 4-theme selection (`Auto`, `Light`, `Warm`, `Dark`), Script Color presets access, Timing Settings access, and a live customized layout reset indicator.

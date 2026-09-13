@@ -71,6 +71,7 @@ export default function App() {
     isRemoteLoading,
     resetToDefault,
     loadBlank: loadBlankStorage,
+    loadGuide: loadGuideStorage,
     loadExample: loadExampleStorage,
     loadRemoteProject: loadRemoteProjectStorage,
   } = useScriptStorage();
@@ -325,15 +326,26 @@ export default function App() {
     }
   };
 
-  const loadBlank = async () => {
+  const createNewProject = async () => {
     try {
-      const finalData = await loadBlankStorage();
+      await loadBlankStorage();
+      setMode('edit');
+      setCurrentTime(0);
+      setResetConfirmation({ isOpen: false, type: null, error: null });
+    } catch (err) {
+      console.error("Failed to create new project", err);
+    }
+  };
+
+  const loadGuide = async () => {
+    try {
+      const finalData = await loadGuideStorage();
       setMode('playback');
       setCurrentTime(0);
       setResetConfirmation({ isOpen: false, type: null, error: null });
       realignCues(finalData);
     } catch (err) {
-      alert("Failed to load blank script.");
+      alert("Failed to load starter guide.");
     }
   };
 
@@ -482,7 +494,8 @@ export default function App() {
         currentTime={currentTime}
         isLibraryOpen={isLibraryOpen}
         setIsLibraryOpen={setIsLibraryOpen}
-        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'blank', error: null })}
+        onNewProject={() => setResetConfirmation({ isOpen: true, type: 'new', error: null })}
+        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'guide', error: null })}
         isColorModalOpen={isColorModalOpen}
         setIsColorModalOpen={setIsColorModalOpen}
         isSettingsOpen={isSettingsOpen}
@@ -724,7 +737,7 @@ export default function App() {
       <LibraryModal
         isOpen={isLibraryOpen}
         onClose={() => setIsLibraryOpen(false)}
-        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'blank', error: null })}
+        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'guide', error: null })}
         onSelectExample={(path, title) => {
           setResetConfirmation({ 
             isOpen: true, 
@@ -739,7 +752,7 @@ export default function App() {
       <MobileLibraryModal
         isOpen={isLibraryOpen}
         onClose={() => setIsLibraryOpen(false)}
-        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'blank', error: null })}
+        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'guide', error: null })}
         onSelectExample={(path, title) => {
           setResetConfirmation({ 
             isOpen: true, 
@@ -799,8 +812,10 @@ export default function App() {
           if (resetConfirmation.type === 'settings') {
             setState(prev => ({ ...prev, settings: DEFAULT_SETTINGS }));
             setResetConfirmation({ isOpen: false, type: null, error: null });
-          } else if (resetConfirmation.type === 'blank') {
-            loadBlank();
+          } else if (resetConfirmation.type === 'new') {
+            createNewProject();
+          } else if (resetConfirmation.type === 'guide' || resetConfirmation.type === 'blank') {
+            loadGuide();
           } else if (resetConfirmation.type === 'data') {
             resetState();
           } else if (resetConfirmation.type === 'example' && resetConfirmation.examplePath) {

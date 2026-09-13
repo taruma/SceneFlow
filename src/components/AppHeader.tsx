@@ -30,6 +30,7 @@ interface AppHeaderProps {
   currentTime?: number;
   isLibraryOpen: boolean;
   setIsLibraryOpen: (open: boolean) => void;
+  onNewProject?: () => void;
   onOpenGuide?: () => void;
   isColorModalOpen: boolean;
   setIsColorModalOpen: (open: boolean) => void;
@@ -52,6 +53,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   setMode,
   isLibraryOpen,
   setIsLibraryOpen,
+  onNewProject,
   onOpenGuide,
   isColorModalOpen,
   setIsColorModalOpen,
@@ -126,22 +128,8 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                 onClick={() => setIsFileDropdownOpen(false)} 
               />
               <div className="absolute top-full left-0 mt-2 w-56 bg-surface rounded-2xl shadow-2xl border border-border-main overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 text-text-main divide-y divide-border-subtle">
+                {/* Section 1: Project I/O (Open & Save) */}
                 <div className="p-1.5 space-y-0.5">
-                  {onOpenGuide && (
-                    <button
-                      onClick={() => {
-                        setIsFileDropdownOpen(false);
-                        onOpenGuide();
-                      }}
-                      className={UI_TOKENS.dropdown.item}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Plus size={14} className="text-text-muted" />
-                        <span>New / Starter Guide</span>
-                      </div>
-                    </button>
-                  )}
-
                   <label
                     title="Open Project JSON"
                     className={cn("cursor-pointer", UI_TOKENS.dropdown.item)}
@@ -176,7 +164,43 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                   </button>
                 </div>
 
-                <div className="p-1.5">
+                {/* Section 2: Create Blank Slate */}
+                {onNewProject && (
+                  <div className="p-1.5 space-y-0.5">
+                    <button
+                      onClick={() => {
+                        setIsFileDropdownOpen(false);
+                        onNewProject();
+                      }}
+                      className={UI_TOKENS.dropdown.item}
+                      title="Create a new blank screenplay project"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Plus size={14} className="text-text-muted" />
+                        <span>New Project</span>
+                      </div>
+                    </button>
+                  </div>
+                )}
+
+                {/* Section 3: Reference & Exploration (Starter Guide & Library Catalog) */}
+                <div className="p-1.5 space-y-0.5">
+                  {onOpenGuide && (
+                    <button
+                      onClick={() => {
+                        setIsFileDropdownOpen(false);
+                        onOpenGuide();
+                      }}
+                      className={UI_TOKENS.dropdown.item}
+                      title="Load official interactive starter guide"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Sparkles size={14} className="text-amber-500" />
+                        <span>Starter Guide</span>
+                      </div>
+                    </button>
+                  )}
+
                   <button
                     onClick={() => {
                       setIsFileDropdownOpen(false);

@@ -305,13 +305,16 @@ Fine-tunes highlight visibility timing before and after actual cue timestamps:
 ### Local Persistence
 All project states (`screenplay_sync_state`), theme preferences (`sceneflow_script_theme`), cue palette accessibility profile (`sceneflow_cue_palette_profile`), width presets (`sceneflow_script_width_preset`), scroll focus settings (`sceneflow_scroll_focus_preset`), timeline view mode (`sceneflow_highlight_view_mode`), and filter drawer state (`sceneflow_highlight_filter_expanded`) persist in `localStorage`.
 
-### Default Project & Quick Start Guide
-- Fresh visits default to loading the **Scene Frequency** (`scene_frequency.json`) guide script.
-- Clicking the header **Guide** button loads the official instructional tutorial (`blank.json`) in playback mode.
+### Default Project, New Projects, & Starter Guide
+- **Default Load**: Fresh visits default to loading the **Scene Frequency** (`scene_frequency.json`) demo script.
+- **`[ File ▾ ]` Desktop Dropdown Menu**: Accessible from the desktop header with a 3-tier organized structure:
+  1. *Project I/O*: `Open Project...` (local `.json` file upload) and `Save Project` (export active state).
+  2. *Blank Canvas*: `New Project` prompts confirmation to clear the workspace with a fresh empty template (`blank.json`) and automatically transitions into Edit mode.
+  3. *Reference & Discovery*: `Starter Guide` loads the official 1,200+ line interactive instructional guide (`guide.json`) in Playback mode; `Browse Library...` opens the curated example catalog modal.
 
 ### Export & Import
-- **Export**: Downloads current project as a JSON bundle containing `youtubeId`, `scriptText`, `cues`, and `settings`.
-- **Import**: Uploads any valid SceneFlow JSON file and triggers automatic cue realignment.
+- **Export (`Save Project`)**: Downloads current project as a JSON bundle containing `youtubeId`, `scriptText`, `cues`, and `settings`.
+- **Import (`Open Project...`)**: Uploads any valid SceneFlow JSON file and triggers automatic cue realignment.
 
 ### Query Parameters
 - `?example=ID`: Loads any built-in example from the catalogue (e.g., `?example=mosaic`, `?example=twm_vol1`, `?example=scene_frequency`).

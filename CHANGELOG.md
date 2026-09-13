@@ -7,10 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.3.3-dev] - Unreleased
 
+### Added
+- **Separated Blank Project Creation & Official Starter Guide (`public/examples/guide.json`, `public/examples/blank.json`, `src/App.tsx`, `src/hooks/useScriptStorage.ts`)**:
+  - Extracted the 1,200+ line interactive tutorial script and 100+ cues into a dedicated `public/examples/guide.json` asset.
+  - Reset `public/examples/blank.json` into an authentic empty project template (empty script text, zero cues, zeroed timing buffers) for starting new screenplays from scratch without manual deletion.
+  - Added dedicated `loadGuide()` hook handler in `useScriptStorage` alongside `loadBlank()`.
+  - Extended `ResetConfirmationState` and `ResetConfirmationModal` to cleanly distinguish between `'new'` ("Create New Project?" with automatic transition to Edit mode) and `'guide'` ("Load Starter Guide?" with transition to Playback mode).
+
 ### Changed
 - **3-Zone Studio Header Architecture & Decluttering (`src/components/AppHeader.tsx`, `src/styles/tokens/ui.ts`)**:
   - Replaced the cluttered 14-button header with a balanced, studio-grade 3-zone layout (Left: Brand & File System, Center: Workflow Mode, Right: Content, Community & Studio Tools).
-  - **Left Wing (`[ File ▾ ]` Dropdown Menu)**: Replaced the raw document icon pair with a dedicated desktop `[ File ▾ ]` dropdown pill (`UI_TOKENS.button.filePill`), organizing New / Starter Guide, Open Project..., Save Project, and Browse Library... into a clean, desktop-only menu.
+  - **Left Wing (`[ File ▾ ]` Tiered Dropdown Menu)**: Replaced the raw document icon pair with a dedicated desktop `[ File ▾ ]` dropdown pill (`UI_TOKENS.button.filePill`), organized into three functional tiers separated by hairline dividers:
+    1. *Project I/O (Top Section)*: Immediate cursor access to `Open Project...` and `Save Project` for the primary inspect-and-sync workflow.
+    2. *Blank Canvas (Middle Section)*: `New Project` to clear the workspace for writing or pasting a new script.
+    3. *Resources & Discovery (Bottom Section)*: `Starter Guide` (amber sparkles) and `Browse Library...` (amber book).
   - **Zero Non-Existing Shortcuts & Noise Reduction**: Completely audited and removed non-existing keyboard shortcut annotations (`Ctrl+O`, `Ctrl+S`) and tooltip shortcuts (`(?)` on Info button), while dropping visual noise badges (`Catalog`, `Presets`, `Overlaps`, `65:35`) across menus to keep typography focused and truthful.
   - **Center Stage**: Introduced a centered segmented control (`[ ▶ Playback | ✏️ Edit ]`) with mode-specific active accents (soft blue for Playback, soft amber for Edit) and responsive icon collapse, providing immediate discoverability of the application's dual-mode architecture.
   - **Right Wing**: Standardized the standalone Library gateway (`[ 📚 LIBRARY ]`) on a clean neutral surface pill (`UI_TOKENS.button.libraryPop`) featuring the amber book icon and uppercase tracking typography, alongside the Ko-fi support pill, unified Studio Preferences dropdown (`[ ⚙️ Settings ▾ ]`), and dedicated Info modal trigger.
