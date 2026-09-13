@@ -174,13 +174,14 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 
 ### Global 3-Zone Studio Header Layout (`AppHeader`, `ScriptHeaderControls`)
 - **Balanced 3-Zone Composition**: Replaced the previous single-row cluster with a studio-grade 3-zone layout separating brand utilities, workflow state, and content/preferences:
-  - **Left Wing (Brand & Local Documents)**: Houses the SceneFlow logo alongside a compact desktop-only `<FolderOpen />` (Open Sync) and `<Download />` (Save Sync) document container (`[ 📂 | 💾 ]`). This isolates local JSON operations from primary viewport workflows while keeping mobile free of unnecessary file buttons.
+  - **Left Wing (Brand & File Management)**: Houses the SceneFlow logo alongside a dedicated desktop `[ File ▾ ]` dropdown menu (`UI_TOKENS.button.filePill`). The menu consolidates project management utilities (`New / Starter Guide`, `Open Project...`, `Save Project`, and `Browse Library...`) away from primary editing space while keeping mobile clean.
   - **Center Stage (Workflow Mode Switcher)**: Features a centered segmented control (`[ ▶ Playback | ✏️ Edit ]`) with mode-specific active accents (soft blue for Playback, soft amber for Edit) and responsive icon collapsing. Both modes remain visible side-by-side, providing instant discoverability of the application's dual-mode architecture.
   - **Right Wing (Content, Support & Studio Tools)**:
-    - **Standalone Library Gateway (`[ 📚 Library ]`)**: Featured prominently with distinct visual styling as the primary content discovery hub for screenplay examples and templates.
+    - **Standalone Library Gateway (`[ 📚 LIBRARY ]`)**: Featured prominently on a neutral surface pill (`UI_TOKENS.button.libraryPop`) with an amber book icon and uppercase tracked typography as the primary content discovery hub for screenplay examples and templates.
     - **Support on Ko-fi (`[ ☕ Support ]`)**: Vibrant warm red/coral button positioned directly adjacent to the Library.
-    - **Studio Preferences Dropdown (`[ ⚙️ Settings ▾ ]`)**: Houses a direct 4-theme quick-selector grid (`Auto`, `Light`, `Warm`, `Dark`), Script Paper & Colors modal trigger, Timing & Durations modal trigger, and Reset View Layout trigger with live pulse dot indicator when layout is customized.
+    - **Studio Preferences Dropdown (`[ ⚙️ Settings ▾ ]`)**: Houses a direct 4-theme quick-selector grid (`Auto`, `Light`, `Warm`, `Dark`), Script Paper & Colors modal trigger, Timing & Durations modal trigger, and Reset View Layout trigger with live pulse dot indicator and dynamic `Custom` badge when layout is customized.
     - **Dedicated Info Trigger (`[ ℹ ]`)**: 1-click access to keyboard shortcuts, about details, and the deep-dive Substack article card.
+- **Truthful Shortcuts & Streamlined Badges**: All menus strictly display truthful functionality without non-existing keyboard shortcut annotations (<kbd>Ctrl+O</kbd>, <kbd>Ctrl+S</kbd>, <kbd>?</kbd>) or decorative pseudo-badges, ensuring clean, focused typography.
 - **Resource Integration**: The official `[ Starter Guide ]` project launcher and `[ Article ]` deep-dive link are integrated directly into the `LibraryModal` and `MobileLibraryModal` headers, eliminating header clutter while enhancing contextual onboarding.
 - **Playback Timing Ownership**: Global header timecode was completely removed, cleanly delegating playback time to the Video Player transport controls and Multi-Track Highlights timeline. Mobile preserves its compact timecode pill in `ScriptHeaderControls`.
 

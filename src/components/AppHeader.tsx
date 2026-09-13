@@ -13,8 +13,9 @@ import {
   Moon, 
   Sparkles, 
   RotateCcw, 
-  Settings,
-  ChevronDown
+  Settings, 
+  ChevronDown,
+  Plus
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { UI_TOKENS } from '../styles/tokens/ui';
@@ -51,6 +52,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   setMode,
   isLibraryOpen,
   setIsLibraryOpen,
+  onOpenGuide,
   isColorModalOpen,
   setIsColorModalOpen,
   isSettingsOpen,
@@ -66,8 +68,13 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   isViewCustomized = false,
   onResetView,
 }) => {
+  const [isFileDropdownOpen, setIsFileDropdownOpen] = useState(false);
   const [isSettingsDropdownOpen, setIsSettingsDropdownOpen] = useState(false);
-  useEscapeKey(() => setIsSettingsDropdownOpen(false), isSettingsDropdownOpen);
+
+  useEscapeKey(() => {
+    setIsFileDropdownOpen(false);
+    setIsSettingsDropdownOpen(false);
+  }, isFileDropdownOpen || isSettingsDropdownOpen);
 
   return (
     <header
@@ -76,7 +83,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
         mode === 'playback' && "hidden lg:flex"
       )}
     >
-      {/* Left Wing: Logo & Compact Document Actions */}
+      {/* Left Wing: Logo & File Dropdown Menu */}
       <div className="flex items-center gap-2 lg:gap-3 shrink-0">
         <div className="flex items-center gap-2 lg:gap-3">
           <img
@@ -93,22 +100,100 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           />
         </div>
 
-        {/* Subtle Document Pair: Open & Save (Desktop only) */}
-        <div className="hidden lg:flex items-center gap-1 pl-2 border-l border-border-main">
-          <label
-            title="Open Project JSON (Ctrl+O)"
-            className="p-1.5 rounded-lg border border-border-main hover:bg-surface-hover text-text-muted hover:text-text-main transition-all cursor-pointer active:scale-95 shadow-2xs"
-          >
-            <FolderOpen size={14} />
-            <input type="file" accept=".json" onChange={importJson} className="hidden" />
-          </label>
+        {/* File Dropdown Menu (Desktop only) */}
+        <div className="hidden lg:block relative pl-1">
           <button
-            onClick={exportJson}
-            title="Save Project JSON (Ctrl+S)"
-            className="p-1.5 rounded-lg border border-border-main hover:bg-surface-hover text-text-muted hover:text-text-main transition-all active:scale-95 shadow-2xs"
+            id="app-file-menu-button"
+            onClick={() => {
+              setIsFileDropdownOpen(prev => !prev);
+              setIsSettingsDropdownOpen(false);
+            }}
+            className={cn(
+              UI_TOKENS.button.filePill,
+              isFileDropdownOpen && UI_TOKENS.button.filePillActive
+            )}
+            title="Project & File Actions"
+            aria-expanded={isFileDropdownOpen}
           >
-            <Download size={14} />
+            <span>File</span>
+            <ChevronDown size={11} className={cn("text-text-faint transition-transform duration-200", isFileDropdownOpen && "rotate-180")} />
           </button>
+
+          {isFileDropdownOpen && (
+            <>
+              <div 
+                className="fixed inset-0 z-40" 
+                onClick={() => setIsFileDropdownOpen(false)} 
+              />
+              <div className="absolute top-full left-0 mt-2 w-56 bg-surface rounded-2xl shadow-2xl border border-border-main overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 text-text-main divide-y divide-border-subtle">
+                <div className="p-1.5 space-y-0.5">
+                  {onOpenGuide && (
+                    <button
+                      onClick={() => {
+                        setIsFileDropdownOpen(false);
+                        onOpenGuide();
+                      }}
+                      className={UI_TOKENS.dropdown.item}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Plus size={14} className="text-text-muted" />
+                        <span>New / Starter Guide</span>
+                      </div>
+                    </button>
+                  )}
+
+                  <label
+                    title="Open Project JSON"
+                    className={cn("cursor-pointer", UI_TOKENS.dropdown.item)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <FolderOpen size={14} className="text-text-muted" />
+                      <span>Open Project...</span>
+                    </div>
+                    <input 
+                      type="file" 
+                      accept=".json" 
+                      onChange={(e) => {
+                        setIsFileDropdownOpen(false);
+                        importJson(e);
+                      }} 
+                      className="hidden" 
+                    />
+                  </label>
+
+                  <button
+                    onClick={() => {
+                      setIsFileDropdownOpen(false);
+                      exportJson();
+                    }}
+                    title="Save Project JSON"
+                    className={UI_TOKENS.dropdown.item}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Download size={14} className="text-text-muted" />
+                      <span>Save Project</span>
+                    </div>
+                  </button>
+                </div>
+
+                <div className="p-1.5">
+                  <button
+                    onClick={() => {
+                      setIsFileDropdownOpen(false);
+                      setIsLibraryOpen(true);
+                    }}
+                    title="Explore Screenplay Library"
+                    className={UI_TOKENS.dropdown.item}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Book size={14} className="text-amber-500" />
+                      <span>Browse Library...</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -123,7 +208,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                 ? "bg-surface text-blue-600 dark:text-blue-400 shadow-sm ring-1 ring-blue-500/20"
                 : "text-text-muted hover:text-text-main"
             )}
-            title="Playback Mode — Screenplay sync & video player (Space to Play/Pause)"
+            title="Playback Mode — Screenplay sync & video player"
           >
             <Play size={12} className={mode === 'playback' ? "fill-current" : ""} />
             <span className="hidden sm:inline">Playback</span>
@@ -151,10 +236,8 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           onClick={() => setIsLibraryOpen(true)}
           title="Explore Screenplay Library & Examples"
           className={cn(
-            "flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all active:scale-95 border shadow-xs",
-            isLibraryOpen
-              ? "bg-btn-primary-bg text-btn-primary-text border-btn-primary-bg shadow-md"
-              : "bg-surface hover:bg-surface-hover text-text-main border-border-main hover:border-border-hover"
+            UI_TOKENS.button.libraryPop,
+            isLibraryOpen && UI_TOKENS.button.libraryPopActive
           )}
         >
           <Book size={14} className="text-amber-500 shrink-0" />
@@ -177,7 +260,10 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
         <div className="relative">
           <button
             id="app-settings-menu-button"
-            onClick={() => setIsSettingsDropdownOpen(prev => !prev)}
+            onClick={() => {
+              setIsSettingsDropdownOpen(prev => !prev);
+              setIsFileDropdownOpen(false);
+            }}
             className={cn(
               UI_TOKENS.button.settingsPill,
               isSettingsDropdownOpen && UI_TOKENS.button.settingsPillActive
@@ -259,14 +345,12 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                       setIsColorModalOpen(true);
                     }}
                     className={UI_TOKENS.dropdown.item}
+                    title="Script Paper & Color Theme Presets"
                   >
                     <div className="flex items-center gap-2">
                       <Palette size={14} className="text-text-muted" />
                       <span>Script Paper & Colors</span>
                     </div>
-                    <span className="text-[9px] font-mono text-text-faint bg-surface-muted px-1.5 py-0.5 rounded">
-                      Presets
-                    </span>
                   </button>
 
                   <button
@@ -275,14 +359,12 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                       setIsSettingsOpen(true);
                     }}
                     className={UI_TOKENS.dropdown.item}
+                    title="Timing, Auto-Scroll Speed & Durations"
                   >
                     <div className="flex items-center gap-2">
                       <Clock size={14} className="text-text-muted" />
                       <span>Timing & Durations</span>
                     </div>
-                    <span className="text-[9px] font-mono text-text-faint bg-surface-muted px-1.5 py-0.5 rounded">
-                      Overlaps
-                    </span>
                   </button>
 
                   {onResetView && (
@@ -295,20 +377,16 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                       title={
                         isViewCustomized
                           ? "Reset View Layout & Video Size (Customized)"
-                          : `Reset View Layout & Video Size (Default ${DEFAULT_SPLIT_RATIO}:${100 - DEFAULT_SPLIT_RATIO})`
+                          : "Reset View Layout & Video Size to Default"
                       }
                     >
                       <div className="flex items-center gap-2">
                         <RotateCcw size={14} className={cn("text-text-muted", isViewCustomized && "text-blue-500")} />
                         <span>Reset View Layout</span>
                       </div>
-                      {isViewCustomized ? (
+                      {isViewCustomized && (
                         <span className="text-[8px] font-bold text-blue-500 bg-blue-500/10 px-1.5 py-0.5 rounded uppercase">
                           Custom
-                        </span>
-                      ) : (
-                        <span className="text-[9px] font-mono text-text-faint bg-surface-muted px-1.5 py-0.5 rounded">
-                          {DEFAULT_SPLIT_RATIO}:{100 - DEFAULT_SPLIT_RATIO}
                         </span>
                       )}
                     </button>
@@ -326,8 +404,8 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             UI_TOKENS.button.headerIconButton,
             isInfoModalOpen && UI_TOKENS.button.headerIconButtonActive
           )}
-          title="About SceneFlow, Article & Keyboard Shortcuts (?)"
-          aria-label="About SceneFlow, Article & Keyboard Shortcuts"
+          title="About SceneFlow, Article & Documentation"
+          aria-label="About SceneFlow, Article & Documentation"
         >
           <Info size={16} />
         </button>

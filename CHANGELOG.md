@@ -8,12 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.3.3-dev] - Unreleased
 
 ### Changed
-- **3-Zone Studio Header Layout & Decluttering (`src/components/AppHeader.tsx`, `src/styles/tokens/ui.ts`)**:
-  - Replaced the cluttered 14-button header with a balanced, studio-grade 3-zone layout (Left: Brand & Local Documents, Center: Workflow Mode, Right: Content, Community & Studio Tools).
-  - **Left Wing**: Grouped the SceneFlow logo with compact desktop-only `<FolderOpen />` (Open) and `<Download />` (Save) document icons in a low-profile container (`[ 📂 | 💾 ]`), moving JSON sync operations out of the primary workspace stream.
+- **3-Zone Studio Header Architecture & Decluttering (`src/components/AppHeader.tsx`, `src/styles/tokens/ui.ts`)**:
+  - Replaced the cluttered 14-button header with a balanced, studio-grade 3-zone layout (Left: Brand & File System, Center: Workflow Mode, Right: Content, Community & Studio Tools).
+  - **Left Wing (`[ File ▾ ]` Dropdown Menu)**: Replaced the raw document icon pair with a dedicated desktop `[ File ▾ ]` dropdown pill (`UI_TOKENS.button.filePill`), organizing New / Starter Guide, Open Project..., Save Project, and Browse Library... into a clean, desktop-only menu.
+  - **Zero Non-Existing Shortcuts & Noise Reduction**: Completely audited and removed non-existing keyboard shortcut annotations (`Ctrl+O`, `Ctrl+S`) and tooltip shortcuts (`(?)` on Info button), while dropping visual noise badges (`Catalog`, `Presets`, `Overlaps`, `65:35`) across menus to keep typography focused and truthful.
   - **Center Stage**: Introduced a centered segmented control (`[ ▶ Playback | ✏️ Edit ]`) with mode-specific active accents (soft blue for Playback, soft amber for Edit) and responsive icon collapse, providing immediate discoverability of the application's dual-mode architecture.
-  - **Right Wing**: Gave the Library a prominent, standalone content gateway button (`[ 📚 Library ]`), positioned the Ko-fi support pill directly adjacent, and added a dedicated `[ ⚙️ Settings ▾ ]` dropdown pill.
-  - **Studio Preferences Dropdown**: Consolidated 4 loose floating utility icons into a single settings dropdown featuring a direct 4-theme quick-selector grid (`Auto`, `Light`, `Warm`, `Dark`), Script Paper & Colors modal trigger, Timing & Durations modal trigger, Reset View Layout trigger (with a live customized layout pulse dot and active split ratio indicator), and contextual shortcut hints.
+  - **Right Wing**: Standardized the standalone Library gateway (`[ 📚 LIBRARY ]`) on a clean neutral surface pill (`UI_TOKENS.button.libraryPop`) featuring the amber book icon and uppercase tracking typography, alongside the Ko-fi support pill, unified Studio Preferences dropdown (`[ ⚙️ Settings ▾ ]`), and dedicated Info modal trigger.
+  - **Studio Preferences Dropdown**: Consolidated loose floating utility icons into a single settings dropdown featuring a direct 4-theme quick-selector grid (`Auto`, `Light`, `Warm`, `Dark`), Script Paper & Colors modal trigger, Timing & Durations modal trigger, and Reset View Layout trigger (with a live customized layout pulse dot and dynamic `Custom` state badge).
   - **Timecode Removal from Global Header**: Removed floating timecode from the top app chrome, cleanly delegating playback timing to the Video Player transport bar and Timeline window underneath.
 - **Library Modal Onboarding & Resources Integration (`src/components/LibraryModal.tsx`, `src/components/MobileLibraryModal.tsx`, `src/App.tsx`)**:
   - Integrated the official `[ Starter Guide ]` project launcher directly into the Library modal headers (`LibraryModal` and `MobileLibraryModal`), freeing up top-level header space while keeping beginner onboarding easily accessible.
