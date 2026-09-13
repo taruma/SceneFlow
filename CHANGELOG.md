@@ -34,13 +34,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Memoized callback props (`exportJson`, `importJson`, `handleNewProject`, `handleOpenGuide`) in `App.tsx` using `useCallback`.
   - Wrapped `AppHeader` and all child header subcomponents in `React.memo`, keeping the header 100% idle during media playback.
 
+- **Script Preview Header Decoupling & 0 Hz Playback Re-Render (`src/App.tsx`, `src/components/ScriptHeaderControls.tsx`, `src/styles/tokens/ui.ts`)**:
+  - Removed `currentTime` prop from `ScriptHeaderControlsProps` and `App.tsx`, completely decoupling the script preview header from continuous video playback clock ticks.
+  - Wrapped `ScriptHeaderControls` with `React.memo`, eliminating high-frequency Virtual DOM diffing during media playback.
+  - Pruned manual `localStorage.setItem` call on width preset selection, delegating persistence entirely to `useScriptPreferences`.
+
 ### Fixed
+- **Scroll Focus Dropdown Auto-Close (`src/components/ScriptHeaderControls.tsx`)**:
+  - Fixed an omission where selecting a viewport scroll focus line preset failed to dismiss the dropdown menu, ensuring consistent auto-close behavior identical to the width preset dropdown.
+- **Dead Ternary Description Fallbacks (`src/components/ScriptHeaderControls.tsx`)**:
+  - Resolved dead ternary logic in width and scroll focus preset description labels (`isSelected ? "text-text-faint" : "text-text-faint"`), applying distinct high-legibility styling (`text-btn-primary-text/80`) when selected.
 - **Double-Click Menu Dismissal & Adjacent Button Swallowing (`src/hooks/useClickOutside.ts`, `src/components/header/*`)**:
   - Eliminated transparent full-screen backdrops (`fixed inset-0 z-40`) that previously swallowed clicks on adjacent buttons when closing menus, enabling instant 1-click menu switching and button activation.
 - **Mobile Viewport Edit-Mode Header Leak (`src/components/AppHeader.tsx`)**:
   - Resolved an issue where edit mode allowed the desktop header to render on mobile viewports by enforcing unconditional `hidden lg:flex` on `AppHeader`.
 
 ### Changed
+- **Script Preview Header Streamlining & Decluttering (`src/components/ScriptHeaderControls.tsx`, `src/styles/tokens/ui.ts`)**:
+  - Removed the redundant, non-clickable `[PLAYBACK]` / `[EDIT]` mode badge, eliminating toolbar crowding on tablets/wide mobile (`sm:block`) and restoring clean visual clustering of reading controls on desktop.
+  - Removed the redundant mobile `TIME 0.0s` pill (`UI_TOKENS.badge.currentTimePillSm`), maximizing reading canvas breathing room and relying on the sticky video player and timeline playhead for timecode feedback.
+  - Pruned unused `currentTimePill` and `currentTimePillSm` badge design tokens from `src/styles/tokens/ui.ts`.
 - **3-Zone Studio Header Architecture & Decluttering (`src/components/AppHeader.tsx`, `src/styles/tokens/ui.ts`)**:
   - Replaced the cluttered 14-button header with a balanced, studio-grade 3-zone layout (Left: Brand & File System, Center: Workflow Mode, Right: Content, Community & Studio Tools).
   - **Left Wing (`[ File ▾ ]` Tiered Dropdown Menu)**: Replaced the raw document icon pair with a dedicated desktop `[ File ▾ ]` dropdown pill (`UI_TOKENS.button.filePill`), organized into three functional tiers separated by hairline dividers:

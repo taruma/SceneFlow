@@ -112,8 +112,6 @@ export const UI_TOKENS = {
     counterFaint: "text-[10px] font-bold text-text-placeholder bg-surface-muted px-2 py-0.5 rounded uppercase",
     timeTag: "text-[10px] font-mono font-bold text-text-faint bg-surface-muted px-1.5 py-0.5 rounded",
     timeCompact: "flex items-center gap-1.5 px-2.5 py-1.5 bg-surface-muted/80 border border-border-main rounded-xl font-mono text-xs font-bold text-text-muted shadow-2xs",
-    currentTimePill: "hidden lg:flex items-center gap-2 px-3 xl:px-4 py-2 bg-surface-dark rounded-xl shadow-inner animate-in fade-in zoom-in duration-500 text-white",
-    currentTimePillSm: "lg:hidden flex items-center gap-1 px-2 py-1 bg-surface-dark rounded-lg shadow-inner text-white",
     shortcut: "text-[9px] font-mono font-medium px-1.5 py-0.5 rounded bg-surface-muted text-text-faint border border-border-subtle tracking-tighter shrink-0",
   },
 

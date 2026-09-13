@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { 
   FileText, 
   Target, 
@@ -35,12 +35,11 @@ interface ScriptHeaderControlsProps {
   applyScrollFocus: (preset: ScrollFocusPresetId) => void;
   isScrollFocusDropdownOpen: boolean;
   setIsScrollFocusDropdownOpen: (open: boolean) => void;
-  currentTime: number;
   scriptThemeId?: string;
   cuePaletteProfile?: CuePaletteProfile;
 }
 
-export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
+export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = memo(({
   mode,
   isAutoScrollEnabled,
   setIsAutoScrollEnabled,
@@ -58,7 +57,6 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
   applyScrollFocus,
   isScrollFocusDropdownOpen,
   setIsScrollFocusDropdownOpen,
-  currentTime,
   scriptThemeId,
   cuePaletteProfile = 'standard',
 }) => {
@@ -190,16 +188,9 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
             </a>
           </div>
         )}
-        <div className="flex items-center gap-1.5">
-          <div className={cn(
-            "hidden sm:block px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest",
-            mode === 'edit' ? "bg-amber-100 text-amber-600" : "bg-blue-100 text-blue-600"
-          )}>
-            {mode === 'edit' ? 'Edit' : 'Playback'}
-          </div>
-
-          {/* Page Width Preset Selector (Playback mode on Desktop only) */}
-          {mode === 'playback' && (
+        {mode === 'playback' && (
+          <div className="flex items-center gap-1.5">
+            {/* Page Width Preset Selector (Playback mode on Desktop only) */}
             <div className="relative hidden lg:flex items-center">
               <button
                 id="script-preview-width-control"
@@ -240,9 +231,6 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                             id={`script-width-preset-${preset.id}`}
                             onClick={() => {
                               setScriptWidthPreset(preset.id);
-                              if (typeof localStorage !== 'undefined') {
-                                localStorage.setItem('sceneflow_script_width_preset', preset.id);
-                              }
                               setIsWidthDropdownOpen(false);
                             }}
                             className={cn(
@@ -276,7 +264,7 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                                 </div>
                                 <span className={cn(
                                   "text-[9px] font-mono leading-tight mt-0.5",
-                                  isSelected ? "text-text-faint" : "text-text-faint"
+                                  isSelected ? "text-btn-primary-text/80" : "text-text-faint"
                                 )}>
                                   {preset.desc}
                                 </span>
@@ -291,10 +279,8 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                 </>
               )}
             </div>
-          )}
 
-          {/* Scroll Focus Line Selector (Playback mode on Desktop only) */}
-          {mode === 'playback' && (
+            {/* Scroll Focus Line Selector (Playback mode on Desktop only) */}
             <div className="relative hidden lg:flex items-center">
               <button
                 id="script-preview-scroll-focus-control"
@@ -333,7 +319,10 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                           <button
                             key={preset.id}
                             id={`script-scroll-focus-${preset.id}`}
-                            onClick={() => applyScrollFocus(preset.id)}
+                            onClick={() => {
+                              applyScrollFocus(preset.id);
+                              setIsScrollFocusDropdownOpen(false);
+                            }}
                             className={cn(
                               "w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left transition-colors group",
                               isSelected 
@@ -379,7 +368,7 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                                 </div>
                                 <span className={cn(
                                   "text-[9px] font-mono leading-tight mt-0.5",
-                                  isSelected ? "text-text-faint" : "text-text-faint"
+                                  isSelected ? "text-btn-primary-text/80" : "text-text-faint"
                                 )}>
                                   {preset.desc}
                                 </span>
@@ -394,13 +383,12 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = ({
                 </>
               )}
             </div>
-          )}
-        </div>
-        <div className={UI_TOKENS.badge.currentTimePillSm}>
-          <span className="text-[8px] font-black text-text-faint uppercase">Time</span>
-          <span className="text-xs font-mono font-bold text-white w-10 text-right">{currentTime.toFixed(1)}s</span>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
-};
+});
+
+ScriptHeaderControls.displayName = 'ScriptHeaderControls';
+

@@ -674,7 +674,6 @@ export default function App() {
             applyScrollFocus={applyScrollFocus}
             isScrollFocusDropdownOpen={isScrollFocusDropdownOpen}
             setIsScrollFocusDropdownOpen={setIsScrollFocusDropdownOpen}
-            currentTime={currentTime}
             scriptThemeId={scriptThemeId}
             cuePaletteProfile={cuePaletteProfile}
           />

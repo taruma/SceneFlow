@@ -186,8 +186,7 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
     - **Dedicated Info Trigger (`[ ℹ ]`)**: 1-click access to keyboard shortcuts directory, about details, and the deep-dive Substack overview card.
 - **Fluid Single-Click Outside Dismissal**: Floating menus use `useClickOutside` to detect outside clicks on `mousedown`, eliminating full-screen blocking backdrops. Users can switch directly between *File*, *Settings*, and *Library* in a single fluid click without needing an intermediate dismissal click.
 - **Truthful Shortcuts & Streamlined Badges**: All menus strictly display truthful functionality without non-existing keyboard shortcut annotations (<kbd>Ctrl+O</kbd>, <kbd>Ctrl+S</kbd>, <kbd>?</kbd>) or decorative pseudo-badges, ensuring clean, focused typography.
-- **Resource Integration**: The official Substack introductory article is linked cleanly within `LibraryModal` (`[ Introduction ]`), `MobileLibraryModal` (`[ Intro ]`), and `AppInfoModal`, freeing the main editing view and mobile header controls from redundant article buttons.
-- **Decoupled Playback Performance (0 Hz Header Re-Render)**: Global header chrome is completely decoupled from playback time updates, eliminating high-frequency virtual DOM diffing during media playback. Mobile preserves its compact timecode pill in `ScriptHeaderControls`.
+- **Decoupled Playback Performance (0 Hz Header Re-Render)**: Both global header chrome (`AppHeader`) and screenplay preview controls (`ScriptHeaderControls`) are completely decoupled from playback time updates, eliminating high-frequency virtual DOM diffing across the application shell during media playback. Timecode feedback is delegated exclusively to the video player transport and Timeline ruler.
 - **Strict Mobile Exclusion**: Declared with unconditional `hidden lg:flex` to ensure desktop-only cue editing controls never leak into mobile playback viewports.
 
 
