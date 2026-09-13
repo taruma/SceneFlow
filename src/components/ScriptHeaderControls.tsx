@@ -87,7 +87,7 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = memo(({
               </button>
 
               {isAutoScrollDropdownOpen && (
-                <div className={UI_TOKENS.dropdown.menu}>
+                <div className={cn(UI_TOKENS.dropdown.menu, "left-0 lg:left-auto lg:right-0")}>
                   <div className={UI_TOKENS.dropdown.header}>
                     <p className={UI_TOKENS.dropdown.headerText}>Focus Mode</p>
                     <button 

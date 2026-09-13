@@ -60,6 +60,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Removed vestigial `onCycleThemeMode` prop through `AppHeader` and `SettingsMenuDropdown` (superseded by the 4-theme segmented picker).
 
 ### Fixed
+- **Desktop Auto-Scroll Dropdown Viewport Cutoff (`src/components/ScriptHeaderControls.tsx`)**:
+  - Fixed an offscreen cutoff bug where the Auto-Scroll "Focus Mode" dropdown used static left-anchoring (`left-0`), causing its 176px container to extend 36px+ past the right edge of the window frame / right panel on desktop. Applied responsive anchoring (`left-0 lg:left-auto lg:right-0`), anchoring cleanly to the right edge of the toolbar button on desktop while preserving left-anchoring on mobile.
 - **Scroll Focus Dropdown Auto-Close (`src/components/ScriptHeaderControls.tsx`)**:
   - Fixed an omission where selecting a viewport scroll focus line preset failed to dismiss the dropdown menu, ensuring consistent auto-close behavior identical to the width preset dropdown.
 - **Dead Ternary Description Fallbacks (`src/components/ScriptHeaderControls.tsx`)**:
