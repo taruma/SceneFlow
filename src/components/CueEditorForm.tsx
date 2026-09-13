@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Edit2, Plus, Search, Check, Clock, Trash2 } from 'lucide-react';
 import { Cue } from '../types/script';
 import { COLORS } from '../constants/script';
@@ -25,7 +25,7 @@ interface CueEditorFormProps {
   widthClass?: string;
 }
 
-export const CueEditorForm: React.FC<CueEditorFormProps> = ({
+export const CueEditorForm: React.FC<CueEditorFormProps> = memo(({
   newCue,
   setNewCue,
   selection,
@@ -261,4 +261,6 @@ export const CueEditorForm: React.FC<CueEditorFormProps> = ({
       </div>
     </div>
   );
-};
+});
+
+CueEditorForm.displayName = 'CueEditorForm';

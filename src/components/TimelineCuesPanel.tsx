@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Edit2, RefreshCw, Check, Loader2, Trash2 } from 'lucide-react';
 import { Cue } from '../types/script';
 import { COLORS } from '../constants/script';
@@ -20,7 +20,7 @@ interface TimelineCuesPanelProps {
   alignSuccess: boolean;
 }
 
-export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
+export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = memo(({
   cues,
   scriptThemeId,
   cuePaletteProfile = 'standard',
@@ -153,4 +153,6 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = ({
       </div>
     </section>
   );
-};
+});
+
+TimelineCuesPanel.displayName = 'TimelineCuesPanel';

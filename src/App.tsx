@@ -430,6 +430,27 @@ export default function App() {
     return processScript(state.scriptText || "");
   }, [state.scriptText]);
 
+  const handleOpenRawScriptModal = useCallback(() => {
+    setIsScriptModalOpen(true);
+  }, []);
+
+  const handleOpenRawCuesModal = useCallback(() => {
+    setRawCuesText(JSON.stringify(state.cues, null, 2));
+    setIsCuesModalOpen(true);
+  }, [state.cues]);
+
+  const handleChangeYoutubeId = useCallback((value: string) => {
+    setState(prev => ({ ...prev, youtubeId: value }));
+  }, [setState]);
+
+  const handleClearYoutubeId = useCallback(() => {
+    setState(prev => ({ ...prev, youtubeId: '' }));
+  }, [setState]);
+
+  const handleReplay = useCallback(() => {
+    seekTo(0, true, true);
+  }, [seekTo]);
+
   // Pre-index cues by overlapping line index to avoid O(N * M) filtering on every render tick
   const cuesByLineIndex = useMemo(() => {
     const map = new Map<number, Cue[]>();
@@ -551,7 +572,7 @@ export default function App() {
             isVideoCollapsed={isVideoCollapsed}
             onToggleVideoCollapsed={toggleVideoCollapsed}
             onTogglePlayPause={togglePlayPause}
-            onReplay={() => seekTo(0, true, true)}
+            onReplay={handleReplay}
             isDesktop={isDesktop}
             playerState={playerState}
             currentTime={currentTime}
@@ -571,8 +592,8 @@ export default function App() {
         ) : (
           <EditLeftPanel
             youtubeId={state.youtubeId}
-            onChangeYoutubeId={(value) => setState(prev => ({ ...prev, youtubeId: value }))}
-            onClearYoutubeId={() => setState(prev => ({ ...prev, youtubeId: '' }))}
+            onChangeYoutubeId={handleChangeYoutubeId}
+            onClearYoutubeId={handleClearYoutubeId}
             hasPlayer={!!player}
             videoHeight={videoHeight}
             setVideoHeight={setVideoHeight}
@@ -580,7 +601,7 @@ export default function App() {
             isVideoCollapsed={isVideoCollapsed}
             onToggleVideoCollapsed={toggleVideoCollapsed}
             onTogglePlayPause={togglePlayPause}
-            onReplay={() => seekTo(0, true, true)}
+            onReplay={handleReplay}
             isDesktop={isDesktop}
             playerState={playerState}
             onReady={onReady}
@@ -591,10 +612,7 @@ export default function App() {
             selectedCueId={newCue.id}
             onSelectCue={selectCueForEdit}
             onDeleteCue={deleteCue}
-            onOpenRawCuesModal={() => {
-              setRawCuesText(JSON.stringify(state.cues, null, 2));
-              setIsCuesModalOpen(true);
-            }}
+            onOpenRawCuesModal={handleOpenRawCuesModal}
             onRealignCues={realignCues}
             isAligning={isAligning}
             alignSuccess={alignSuccess}
@@ -633,8 +651,8 @@ export default function App() {
             setIsColorModalOpen={setIsColorModalOpen}
             scriptThemeId={scriptThemeId}
             cuePaletteProfile={cuePaletteProfile}
-            lineCount={state.scriptText ? state.scriptText.split('\n').length : 0}
-            onOpenRawScriptModal={() => setIsScriptModalOpen(true)}
+            lineCount={processedLines.length}
+            onOpenRawScriptModal={handleOpenRawScriptModal}
           />
 
           {/* Create / Edit Cue Form in Edit Mode */}
