@@ -188,25 +188,12 @@ export function LibraryModal({ isOpen, onClose, onSelectExample, onOpenGuide }: 
                   href={EXTERNAL_LINKS.article}
                   target="_blank"
                   rel="noopener noreferrer"
-                  title="Read Deep-Dive Introduction Article on Substack"
+                  title="Read Introduction & Overview on Substack"
                   className={cn(UI_TOKENS.button.actionPill, "hidden sm:flex px-2.5 py-1 text-[9px]")}
                 >
                   <Newspaper size={11} className="text-text-muted" />
-                  <span>Article</span>
+                  <span>Introduction</span>
                 </a>
-                {onOpenGuide && (
-                  <button
-                    onClick={() => {
-                      onClose();
-                      onOpenGuide();
-                    }}
-                    title="Load Official Starter Guide project"
-                    className={cn(UI_TOKENS.button.actionPill, "px-2.5 py-1 text-[9px]")}
-                  >
-                    <Sparkles size={11} className="text-amber-500" />
-                    <span>Starter Guide</span>
-                  </button>
-                )}
                 <button
                   onClick={onClose}
                   className={UI_TOKENS.button.iconCloseSm}

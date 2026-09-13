@@ -1,7 +1,8 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Search, BookOpen, Film, ArrowUpRight, Sparkles } from "lucide-react";
+import { X, Search, BookOpen, Film, ArrowUpRight, Newspaper, Sparkles } from "lucide-react";
 import { EXAMPLE_SECTIONS, Example } from "../examples";
+import { EXTERNAL_LINKS } from "../constants/links";
 import { useEscapeKey } from "../hooks/useEscapeKey";
 import { cn } from "../lib/utils";
 
@@ -121,19 +122,16 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample, onOpenGui
                 </div>
               </div>
               <div className="flex items-center gap-1.5">
-                {onOpenGuide && (
-                  <button
-                    onClick={() => {
-                      onClose();
-                      onOpenGuide();
-                    }}
-                    title="Load Official Starter Guide project"
-                    className="flex items-center gap-1 px-2 py-1 bg-surface-muted hover:bg-surface-hover rounded-lg text-[9px] font-black uppercase tracking-wider text-text-body border border-border-main transition-all active:scale-95"
-                  >
-                    <Sparkles size={10} className="text-amber-500" />
-                    <span>Guide</span>
-                  </button>
-                )}
+                <a
+                  href={EXTERNAL_LINKS.article}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Read Introduction & Overview on Substack"
+                  className="flex items-center gap-1 px-2 py-1 bg-surface-muted hover:bg-surface-hover rounded-lg text-[9px] font-black uppercase tracking-wider text-text-body border border-border-main transition-all active:scale-95"
+                >
+                  <Newspaper size={10} className="text-text-muted" />
+                  <span>Intro</span>
+                </a>
                 <button
                   onClick={onClose}
                   className="p-1.5 text-text-faint hover:text-text-main rounded-full bg-surface-muted hover:bg-surface-hover active:scale-95 transition-all"

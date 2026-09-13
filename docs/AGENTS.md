@@ -209,8 +209,8 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
 
 14. **Centralized External Links & Navigation Architecture**:
     - Centralize all external publication, documentation, repository, and support URLs in `src/constants/links.ts` (`EXTERNAL_LINKS`) rather than hardcoding raw string literals across UI components.
-    - Outbound resources (official Substack introductory deep dive, official starter guide project) are embedded directly within modal headers (`LibraryModal`, `MobileLibraryModal`, `AppInfoModal`) to keep the primary workspace header clean and focused.
-    - Mobile counterparts in `ScriptHeaderControls.tsx` must remain icon-only (`size={12}`) with accessible `title` and `aria-label` attributes, preserving horizontal toolbar space.
+    - Outbound resources (official Substack introductory publication) are embedded cleanly within modal headers (`[ Introduction ]` in `LibraryModal`, `[ Intro ]` in `MobileLibraryModal`, and hero card in `AppInfoModal`) rather than cluttering primary workspaces.
+    - Mobile counterparts in `ScriptHeaderControls.tsx` strictly prioritize essential controls (theme palette, library, and support) and omit redundant article links, preserving horizontal space on phones.
 
 15. **Global 3-Zone Studio Header Architecture (`AppHeader.tsx`)**:
     - The top application header strictly follows a 3-zone spatial composition: Left Wing (Logo + `[ File ▾ ]` desktop dropdown menu), Center Stage (Centered `[ ▶ Playback | ✏️ Edit ]` segmented mode switcher), and Right Wing (`[ 📚 LIBRARY ]` standalone gateway, `[ ☕ Support ]` Ko-fi pill, `[ ⚙️ Settings ▾ ]` dropdown pill, and `[ ℹ ]` Info trigger).

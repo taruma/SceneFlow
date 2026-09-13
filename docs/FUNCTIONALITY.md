@@ -331,6 +331,7 @@ For a complete and up-to-date list of all available sceneflow projects, release 
 - **Contextual Section Badges**: Displays source category badges on cards in aggregated views ("All Works", "Featured Works") and suppresses them within category-specific views.
 - **Sorting Controls**: Toggle lists by "Latest" (newest release date), "Oldest", or "A-Z" alphabetical order. Inactive/draft scripts are automatically placed at the bottom.
 - **Dual Modal Architecture**: Full modal dialog on desktop viewports (`LibraryModal`), touch-friendly bottom-sheet drawer on mobile viewports (`MobileLibraryModal`).
+- **Foundational Introduction Link**: Direct link to the official introductory publication on Substack accessible in modal headers (`[ Introduction ]` on desktop, `[ Intro ]` on mobile).
 - **Community Support**: Direct Ko-fi donation link (`https://ko-fi.com/tarumainfo`) integrated into desktop and mobile headers.
 
 ---

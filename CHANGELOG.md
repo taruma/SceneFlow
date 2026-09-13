@@ -26,9 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Right Wing**: Standardized the standalone Library gateway (`[ 📚 LIBRARY ]`) on a clean neutral surface pill (`UI_TOKENS.button.libraryPop`) featuring the amber book icon and uppercase tracking typography, alongside the Ko-fi support pill, unified Studio Preferences dropdown (`[ ⚙️ Settings ▾ ]`), and dedicated Info modal trigger.
   - **Studio Preferences Dropdown**: Consolidated loose floating utility icons into a single settings dropdown featuring a direct 4-theme quick-selector grid (`Auto`, `Light`, `Warm`, `Dark`), Script Paper & Colors modal trigger, Timing & Durations modal trigger, and Reset View Layout trigger (with a live customized layout pulse dot and dynamic `Custom` state badge).
   - **Timecode Removal from Global Header**: Removed floating timecode from the top app chrome, cleanly delegating playback timing to the Video Player transport bar and Timeline window underneath.
-- **Library Modal Onboarding & Resources Integration (`src/components/LibraryModal.tsx`, `src/components/MobileLibraryModal.tsx`, `src/App.tsx`)**:
-  - Integrated the official `[ Starter Guide ]` project launcher directly into the Library modal headers (`LibraryModal` and `MobileLibraryModal`), freeing up top-level header space while keeping beginner onboarding easily accessible.
-  - Added a direct `[ Article ]` link to the official Substack introduction inside the `LibraryModal` header toolbar alongside the featured article card in `AppInfoModal`.
+- **Library Modal Onboarding & External Links Decluttering (`src/components/LibraryModal.tsx`, `src/components/MobileLibraryModal.tsx`, `src/components/ScriptHeaderControls.tsx`)**:
+  - Renamed the Substack publication link from `"Article"` to **`"Introduction"`** (`[ Introduction ]` on desktop `LibraryModal`, `[ Intro ]` on `MobileLibraryModal`), clarifying its purpose as a foundational overview of SceneFlow and script-to-screen synchronization.
+  - Removed the redundant `Starter Guide` button from the modal headers across desktop and mobile, centralizing starter guide loading inside the desktop `[ File ▾ ]` dropdown menu.
+  - Removed the redundant standalone article icon button (`<Newspaper />`) from the mobile screenplay header controls (`ScriptHeaderControls.tsx`), maximizing horizontal breathing room for theme colors, library, and support controls on phones.
 
 ## [2.3.2] - 2026-09-12
 
