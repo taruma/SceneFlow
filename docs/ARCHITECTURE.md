@@ -218,7 +218,11 @@ Theme metadata and color resolution hook:
 Modal and dialog `Escape` key dismissal hook:
 - Attaches a lightweight `keydown` listener to `window` specifically for the `Escape` key.
 - Lifecycle-guarded: only active when `isOpen === true`, automatically unbinding immediately on modal close or unmount.
-- Eliminates duplicated keyboard event handling across modal components and popovers.
+### `useClickOutside`
+Outside-click detection hook for floating menus and dropdown panels:
+- Attaches lightweight `mousedown` and `touchstart` event listeners to `document`.
+- Accepts target `ref` and callback, executing only when interactions occur strictly outside the target node tree.
+- Eliminates the need for full-screen fixed transparent backdrop `div` overlays (`fixed inset-0 z-40`), allowing direct single-click switching between adjacent header controls.
 
 ---
 
@@ -236,7 +240,11 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 - **Cue Sanitization Pipeline**: All data ingress paths (localStorage restore, default load, blank, example, remote fetch) route through `sanitizeCues()` in `useScriptStorage`, guaranteeing deterministic IDs and `type`/`colorClass` normalization.
 
 ### Modular Sub-components (`src/components/`)
-1. **`AppHeader.tsx`**: Global 3-zone studio navigation header featuring brand identity and a dedicated desktop `[ File ▾ ]` dropdown menu organized into three functional tiers (Top: `Open Project...` and `Save Project`; Middle: `New Project`; Bottom: `Starter Guide` and `Browse Library...`) on the left, a centered segmented mode switcher (`[ ▶ Playback | ✏️ Edit ]`) with mode-specific active accents, and a right-wing studio cluster housing the standalone Library gateway (`[ 📚 LIBRARY ]` on neutral surface pill with amber book icon), Ko-fi support pill, unified Studio Preferences dropdown (`[ ⚙️ Settings ▾ ]` with 4-theme quick selector, script palette, timing, layout reset with `UI_TOKENS.badge.shortcut` badges for `Shift+C`, `Shift+T`, `Shift+R`), and dedicated Info modal trigger.
+1. **`AppHeader` Sub-Package (`src/components/AppHeader.tsx`, `src/components/header/`)**:
+   - **`AppHeader.tsx`**: Top-level 3-zone desktop studio navigation orchestrator unconditionally hidden on mobile (`hidden lg:flex`). Fully decoupled from the ~10Hz video playback loop (zero `currentTime` prop) and wrapped in `React.memo` to ensure 0 Hz re-render overhead during media playback. Manages unified `activeMenu: HeaderMenuId | null` state.
+   - **`FileMenuDropdown.tsx`**: 3-tier hierarchical file dropdown (`[ File ▾ ]`) separating Project I/O (`Open Project...`, `Save Project`), Blank Canvas (`New Project`), and Resource Discovery (`Starter Guide`, `Browse Library...`) with `useClickOutside` and full WAI-ARIA menu roles.
+   - **`SettingsMenuDropdown.tsx`**: Consolidated Studio Preferences menu (`[ ⚙️ Settings ▾ ]`) featuring 4-theme radio grid (`Auto`, `Light`, `Warm`, `Dark`), action rows with `<kbd>` shortcut badges (`Shift+C`, `Shift+T`, `Shift+R`), and dynamic `Custom` layout badge.
+   - **`ModeSegmentedControl.tsx`**: Centered segmented mode switcher (`[ ▶ Playback | ✏️ Edit ]`) with mode-specific active accents, responsive icon collapsing, and ARIA group attributes.
 2. **`InitializingScreen.tsx`**: Branded initial load screen displaying the SceneFlow logo with subtle animation.
 3. **`YoutubeSourceInput.tsx`**: YouTube URL/ID input with live player connection indicator and automatic ID extraction using `UI_TOKENS.input`.
 4. **`ScriptManagementBar.tsx`**: Screenplay status banner showing loaded line count with an "Edit Raw" action button styled with `UI_TOKENS`.

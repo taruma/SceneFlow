@@ -387,11 +387,11 @@ export default function App() {
     return isCueActive(c, currentTime, state.settings);
   };
 
-  const exportJson = () => {
+  const exportJson = useCallback(() => {
     exportStateToJsonFile(state);
-  };
+  }, [state]);
 
-  const importJson = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const importJson = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
@@ -408,7 +408,15 @@ export default function App() {
       }
     };
     reader.readAsText(file);
-  };
+  }, [realignCues, setState]);
+
+  const handleNewProject = useCallback(() => {
+    setResetConfirmation({ isOpen: true, type: 'new', error: null });
+  }, [setResetConfirmation]);
+
+  const handleOpenGuide = useCallback(() => {
+    setResetConfirmation({ isOpen: true, type: 'guide', error: null });
+  }, [setResetConfirmation]);
 
   // Memoize script parsing independently of currentTime
   const processedLines = useMemo(() => {
@@ -494,11 +502,10 @@ export default function App() {
       <AppHeader
         mode={mode}
         setMode={setMode}
-        currentTime={currentTime}
         isLibraryOpen={isLibraryOpen}
         setIsLibraryOpen={setIsLibraryOpen}
-        onNewProject={() => setResetConfirmation({ isOpen: true, type: 'new', error: null })}
-        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'guide', error: null })}
+        onNewProject={handleNewProject}
+        onOpenGuide={handleOpenGuide}
         isColorModalOpen={isColorModalOpen}
         setIsColorModalOpen={setIsColorModalOpen}
         isSettingsOpen={isSettingsOpen}

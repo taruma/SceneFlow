@@ -20,6 +20,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Expanded `menuSettings` dropdown width to `w-72` (288px) for comfortable padding and zero label wrapping.
   - Added auto-close effect on `AppHeader` when modal dialogs mount, and registered new shortcuts in `AppInfoModal`.
 
+### Refactored
+- **Modular Studio Header Architecture & Decoupled Subcomponents (`src/components/AppHeader.tsx`, `src/components/header/*`, `src/hooks/useClickOutside.ts`, `src/hooks/index.ts`)**:
+  - Decomposed the 451-line monolithic `AppHeader.tsx` into a lean ~170-line orchestrator and three dedicated subcomponents under `src/components/header/`:
+    - `FileMenuDropdown.tsx`: 3-tier hierarchical project I/O, blank canvas creation, and resource discovery dropdown.
+    - `SettingsMenuDropdown.tsx`: Studio preferences, quick 4-theme picker, shortcut badge rows (`Shift+C`, `Shift+T`, `Shift+R`), and dynamic `Custom` layout badge.
+    - `ModeSegmentedControl.tsx`: Centered playback vs. edit mode segmented toggle with responsive icon collapsing and ARIA group attributes.
+  - Implemented reusable `useClickOutside` hook utilizing `mousedown`/`touchstart` listeners, replacing blocking full-screen backdrop `div` elements and enabling fluid, single-click transitions between adjacent header dropdowns.
+  - Replaced multiple boolean flags (`isFileDropdownOpen`, `isSettingsDropdownOpen`) with a unified, conflict-free `activeMenu: HeaderMenuId | null` state, allowing effortless scaling for future header tools without $O(N^2)$ state synchronization.
+  - Enforced WAI-ARIA roles (`role="menu"`, `role="menuitem"`, `role="radiogroup"`, `role="radio"`, `role="group"`, `aria-haspopup="menu"`, `aria-expanded`) across all floating menus and triggers.
+- **Playback Loop Decoupling & 0 Hz Header Re-Render Optimization (`src/App.tsx`, `src/components/AppHeader.tsx`)**:
+  - Removed the zombie `currentTime` prop passed to `<AppHeader>`, decoupling the entire top header component tree from the ~10Hz video playback clock loop.
+  - Memoized callback props (`exportJson`, `importJson`, `handleNewProject`, `handleOpenGuide`) in `App.tsx` using `useCallback`.
+  - Wrapped `AppHeader` and all child header subcomponents in `React.memo`, keeping the header 100% idle during media playback.
+
+### Fixed
+- **Double-Click Menu Dismissal & Adjacent Button Swallowing (`src/hooks/useClickOutside.ts`, `src/components/header/*`)**:
+  - Eliminated transparent full-screen backdrops (`fixed inset-0 z-40`) that previously swallowed clicks on adjacent buttons when closing menus, enabling instant 1-click menu switching and button activation.
+- **Mobile Viewport Edit-Mode Header Leak (`src/components/AppHeader.tsx`)**:
+  - Resolved an issue where edit mode allowed the desktop header to render on mobile viewports by enforcing unconditional `hidden lg:flex` on `AppHeader`.
+
 ### Changed
 - **3-Zone Studio Header Architecture & Decluttering (`src/components/AppHeader.tsx`, `src/styles/tokens/ui.ts`)**:
   - Replaced the cluttered 14-button header with a balanced, studio-grade 3-zone layout (Left: Brand & File System, Center: Workflow Mode, Right: Content, Community & Studio Tools).

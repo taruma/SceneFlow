@@ -8,4 +8,4 @@ export * from './useScriptPreferences';
 export * from './useScriptStorage';
 export * from './useScriptTheme';
 export * from './useYouTubePlayer';
-
+export * from './useClickOutside';

@@ -212,8 +212,21 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
     - Outbound resources (official Substack introductory publication) are embedded cleanly within modal headers (`[ Introduction ]` in `LibraryModal`, `[ Intro ]` in `MobileLibraryModal`, and hero card in `AppInfoModal`) rather than cluttering primary workspaces.
     - Mobile counterparts in `ScriptHeaderControls.tsx` strictly prioritize essential controls (theme palette, library, and support) and omit redundant article links, preserving horizontal space on phones.
 
-15. **Global 3-Zone Studio Header Architecture (`AppHeader.tsx`)**:
+15. **Global 3-Zone Studio Header Architecture (`AppHeader.tsx`, `src/components/header/*`)**:
     - The top application header strictly follows a 3-zone spatial composition: Left Wing (Logo + `[ File ▾ ]` desktop dropdown menu), Center Stage (Centered `[ ▶ Playback | ✏️ Edit ]` segmented mode switcher), and Right Wing (`[ 📚 LIBRARY ]` standalone gateway, `[ ☕ Support ]` Ko-fi pill, `[ ⚙️ Settings ▾ ]` dropdown pill, and `[ ℹ ]` Info trigger).
+    - **Modular Subcomponent Decomposition (`src/components/header/`)**:
+      - `FileMenuDropdown.tsx`: Dedicated 3-tier project I/O, canvas creation, and guide/library menu.
+      - `SettingsMenuDropdown.tsx`: Consolidated Studio Preferences dropdown housing the 4-theme picker, shortcut badge rows (`Shift+C`, `Shift+T`, `Shift+R`), and dynamic `Custom` layout badge.
+      - `ModeSegmentedControl.tsx`: Centered mode switcher with mode-specific active accents and ARIA group attributes.
+    - **0 Hz Playback Re-Render Invariant**:
+      - `AppHeader` and its subcomponents must **never** receive `currentTime` or subscribe to the high-frequency (~10Hz) video playback clock.
+      - All header subcomponents must be wrapped in `React.memo`, and all callbacks passed from `App.tsx` (`exportJson`, `importJson`, `handleNewProject`, `handleOpenGuide`) must be stabilized with `useCallback`. During video playback, `AppHeader` virtual DOM diffing remains 100% idle.
+    - **Single-Click Outside Dismissal Invariant (`useClickOutside`)**:
+      - Floating menus must close via outside-click detection (`useClickOutside` listening on `mousedown`/`touchstart`) bound to the container element rather than full-screen transparent backdrops (`fixed inset-0 z-40`). This ensures clicking an adjacent header button immediately closes the current menu and triggers the target action in a single gesture without double-clicking.
+    - **Unified Menu State Invariant (`activeMenu: HeaderMenuId | null`)**:
+      - Dropdown visibility must be managed through a single union state (`export type HeaderMenuId = 'file' | 'settings'`) rather than isolated boolean flags, preventing state collision and enabling frictionless scalability for new header tools.
+    - **Mobile Viewport Exclusion Invariant (`hidden lg:flex`)**:
+      - SceneFlow mobile viewports are strictly playback/review experiences; edit mode and desktop cue authoring are desktop-only (`hidden lg:flex`). `AppHeader` must be declared unconditionally with `hidden lg:flex` so desktop controls never leak onto mobile screens during window resizing.
     - **Truthful Shortcuts & Badging Discipline**: Never add visual shortcut badges (<kbd>Ctrl+O</kbd>, <kbd>Ctrl+S</kbd>, <kbd>?</kbd>) or tooltip annotations for actions lacking active event listeners in `useKeyboardShortcuts.ts` or `useEscapeKey.ts`.
     - **File Dropdown Menu (`[ File ▾ ]`)**: Local JSON import/export actions, new project creation, and guide/library access belong inside the desktop `[ File ▾ ]` dropdown (`UI_TOKENS.button.filePill`), keeping mobile headers clean. The menu is organized into three tiered functional groups separated by hairline borders:
       1. *Project I/O*: `Open Project...` and `Save Project` (top tier for instant inspection and synchronization of existing projects).
