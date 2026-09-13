@@ -98,3 +98,8 @@ YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds
 - **No Swallowing Backdrops**: Floating dropdowns and popovers must never use full-screen transparent backdrop `div` elements (`fixed inset-0 z-40`) that swallow clicks on adjacent controls.
 - **Single-Click Switching**: Always implement container-level outside-click detection (`useClickOutside` on `mousedown`/`touchstart`). Clicking an adjacent header button or tool must simultaneously close the active menu and trigger the target action in a single gesture.
 - **Unified Menu State**: Header dropdown visibility must be managed through a single union state (`activeMenu: HeaderMenuId | null`) rather than isolated boolean flags to prevent state collision.
+
+## 17. Floating Dropdown Viewport Boundary Anchoring Invariant
+- **Toolbar Refactoring Audit**: Whenever controls are removed, relocated, or rearranged within a toolbar or panel header, always audit the spatial orientation of any remaining dropdown menus.
+- **Right-Edge Alignment (`lg:right-0 lg:left-auto`)**: Dropdown menus located at or near the far right of a toolbar, panel, or screen (such as desktop `ScriptHeaderControls` and `SettingsMenuDropdown`) must anchor to the right (`right-0` or responsive `lg:right-0 lg:left-auto`), expanding inward/leftward into the panel canvas to mathematically eliminate offscreen boundary clipping against parent `overflow-hidden` containers.
+- **Left-Edge Alignment (`left-0`)**: Menus located on the left or in compact mobile layouts where controls sit adjacent to the left border (such as `FileMenuDropdown` or mobile `ScriptHeaderControls`) must anchor to the left (`left-0`).
