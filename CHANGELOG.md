@@ -44,8 +44,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fixed an omission where selecting a viewport scroll focus line preset failed to dismiss the dropdown menu, ensuring consistent auto-close behavior identical to the width preset dropdown.
 - **Dead Ternary Description Fallbacks (`src/components/ScriptHeaderControls.tsx`)**:
   - Resolved dead ternary logic in width and scroll focus preset description labels (`isSelected ? "text-text-faint" : "text-text-faint"`), applying distinct high-legibility styling (`text-btn-primary-text/80`) when selected.
-- **Double-Click Menu Dismissal & Adjacent Button Swallowing (`src/hooks/useClickOutside.ts`, `src/components/header/*`)**:
-  - Eliminated transparent full-screen backdrops (`fixed inset-0 z-40`) that previously swallowed clicks on adjacent buttons when closing menus, enabling instant 1-click menu switching and button activation.
+- **Double-Click Menu Dismissal & Adjacent Button Swallowing (`src/hooks/useClickOutside.ts`, `src/components/header/*`, `src/components/ScriptHeaderControls.tsx`)**:
+  - Eliminated transparent full-screen backdrops (`fixed inset-0 z-40`) that previously swallowed clicks on adjacent buttons when closing menus, enabling instant 1-click menu switching and button activation across both `AppHeader` and `ScriptHeaderControls`.
+  - Upgraded `ScriptHeaderControls` dropdowns (Auto-Scroll Focus, Width Presets, Scroll Focus Line) to use `useClickOutside` and `useEscapeKey`, removing click interception on adjacent controls.
 - **Mobile Viewport Edit-Mode Header Leak (`src/components/AppHeader.tsx`)**:
   - Resolved an issue where edit mode allowed the desktop header to render on mobile viewports by enforcing unconditional `hidden lg:flex` on `AppHeader`.
 
