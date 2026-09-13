@@ -8,7 +8,7 @@ import { CuePaletteProfile } from '../../styles';
 import { DEFAULT_VIDEO_HEIGHT } from '../../hooks/useScriptPreferences';
 import { VideoSplitDivider } from '../playback/VideoSplitDivider';
 import { YoutubeSourceInput } from '../YoutubeSourceInput';
-import { TimelineCuesPanel } from '../TimelineCuesPanel';
+import { TimelineCuesPanel } from './TimelineCuesPanel';
 
 export interface EditLeftPanelProps {
   youtubeId: string;
