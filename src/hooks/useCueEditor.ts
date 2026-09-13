@@ -93,9 +93,19 @@ export function useCueEditor({
     }
   }, [mode, scriptText, overlapPicker.isOpen]);
 
+  const canSave = Boolean(
+    newCue.selectedText?.trim() &&
+    newCue.startTime !== undefined &&
+    newCue.endTime !== undefined &&
+    newCue.endTime >= newCue.startTime &&
+    newCue.startIndex !== undefined &&
+    newCue.endIndex !== undefined &&
+    newCue.endIndex >= newCue.startIndex
+  );
+
   const saveCue = useCallback(() => {
-    if (!newCue.selectedText || newCue.startTime === undefined || newCue.endTime === undefined) {
-      console.error("Cannot save cue: missing data", newCue);
+    if (!canSave) {
+      console.error("Cannot save cue: validation failed or missing data", newCue);
       return;
     }
 
@@ -126,7 +136,7 @@ export function useCueEditor({
     
     cancelEdit();
     console.log("Cue saved successfully:", cue);
-  }, [newCue, setState, cancelEdit]);
+  }, [canSave, newCue, setState, cancelEdit]);
 
   const findAltLocations = useCallback(() => {
     if (!selection?.text) return;
@@ -189,5 +199,6 @@ export function useCueEditor({
     deleteCue,
     confirmDelete,
     selectCueForEdit,
+    canSave,
   };
 }

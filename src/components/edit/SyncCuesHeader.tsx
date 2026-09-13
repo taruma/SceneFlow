@@ -3,7 +3,7 @@ import { Edit2, RefreshCw, Check, Loader2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { UI_TOKENS } from '../../styles/tokens/ui';
 
-export interface TimelineCuesHeaderProps {
+export interface SyncCuesHeaderProps {
   cueCount: number;
   onOpenRawCuesModal: () => void;
   onRealignCues: () => void;
@@ -11,7 +11,7 @@ export interface TimelineCuesHeaderProps {
   alignSuccess: boolean;
 }
 
-export const TimelineCuesHeader: React.FC<TimelineCuesHeaderProps> = memo(({
+export const SyncCuesHeader: React.FC<SyncCuesHeaderProps> = memo(({
   cueCount,
   onOpenRawCuesModal,
   onRealignCues,
@@ -20,7 +20,7 @@ export const TimelineCuesHeader: React.FC<TimelineCuesHeaderProps> = memo(({
 }) => {
   return (
     <div className="flex items-center justify-between">
-      <h3 className={UI_TOKENS.layout.sectionTitle}>Timeline Cues</h3>
+      <h3 className={UI_TOKENS.layout.sectionTitle}>Sync Cues</h3>
       <div className="flex items-center gap-2">
         <button
           type="button"
@@ -63,4 +63,4 @@ export const TimelineCuesHeader: React.FC<TimelineCuesHeaderProps> = memo(({
   );
 });
 
-TimelineCuesHeader.displayName = 'TimelineCuesHeader';
+SyncCuesHeader.displayName = 'SyncCuesHeader';

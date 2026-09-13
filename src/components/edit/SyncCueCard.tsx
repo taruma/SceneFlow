@@ -6,7 +6,7 @@ import { LEGACY_CLASS_MAP, type CuePaletteProfile } from '../../styles/tokens/cu
 import { useScriptTheme } from '../../hooks/useScriptTheme';
 import { UI_TOKENS } from '../../styles/tokens/ui';
 
-export interface TimelineCueCardProps {
+export interface SyncCueCardProps {
   cue: Cue;
   isSelected: boolean;
   onSelectCue: (cue: Cue) => void;
@@ -15,7 +15,7 @@ export interface TimelineCueCardProps {
   cuePaletteProfile?: CuePaletteProfile;
 }
 
-export const TimelineCueCard: React.FC<TimelineCueCardProps> = memo(({
+export const SyncCueCard: React.FC<SyncCueCardProps> = memo(({
   cue,
   isSelected,
   onSelectCue,
@@ -26,6 +26,9 @@ export const TimelineCueCard: React.FC<TimelineCueCardProps> = memo(({
   const { resolveCueColor } = useScriptTheme(scriptThemeId as any, cuePaletteProfile);
   const cueType = cue.type || (cue.colorClass ? (LEGACY_CLASS_MAP[cue.colorClass] || COLORS.find(c => c.class === cue.colorClass)?.type) : 'dialogue') || 'dialogue';
   const themed = resolveCueColor(cueType);
+
+  const startTimeStr = (cue.startTime ?? 0).toFixed(1);
+  const endTimeStr = (cue.endTime ?? 0).toFixed(1);
 
   return (
     <div 
@@ -54,9 +57,9 @@ export const TimelineCueCard: React.FC<TimelineCueCardProps> = memo(({
             "{cue.selectedText}"
           </span>
           <div className="flex items-center gap-2 mt-1">
-            <span className={UI_TOKENS.badge.timeTag}>{cue.startTime.toFixed(1)}s</span>
+            <span className={UI_TOKENS.badge.timeTag}>{startTimeStr}s</span>
             <div className="w-2 h-px bg-border-main" />
-            <span className={UI_TOKENS.badge.timeTag}>{cue.endTime.toFixed(1)}s</span>
+            <span className={UI_TOKENS.badge.timeTag}>{endTimeStr}s</span>
           </div>
         </div>
       </div>
@@ -78,4 +81,4 @@ export const TimelineCueCard: React.FC<TimelineCueCardProps> = memo(({
   );
 });
 
-TimelineCueCard.displayName = 'TimelineCueCard';
+SyncCueCard.displayName = 'SyncCueCard';

@@ -1,12 +1,12 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { Cue } from '../../types/script';
 import { CuePaletteProfile } from '../../styles';
 import { UI_TOKENS } from '../../styles/tokens/ui';
-import { TimelineCuesHeader } from './TimelineCuesHeader';
-import { TimelineCueLegend } from './TimelineCueLegend';
-import { TimelineCueCard } from './TimelineCueCard';
+import { SyncCuesHeader } from './SyncCuesHeader';
+import { CueLegend } from './CueLegend';
+import { SyncCueCard } from './SyncCueCard';
 
-export interface TimelineCuesPanelProps {
+export interface SyncCuesPanelProps {
   cues: Cue[];
   scriptThemeId: string;
   cuePaletteProfile?: CuePaletteProfile;
@@ -20,10 +20,11 @@ export interface TimelineCuesPanelProps {
 }
 
 /**
- * Orchestrator panel for Timeline Cues in Edit Mode.
- * Composes TimelineCuesHeader, TimelineCueLegend, and memoized TimelineCueCard elements.
+ * Orchestrator panel for Sync Cues in Edit Mode.
+ * Composes SyncCuesHeader, CueLegend, and memoized SyncCueCard elements.
+ * Displays cues in a memoized chronologically sorted order.
  */
-export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = memo(({
+export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
   cues,
   scriptThemeId,
   cuePaletteProfile = 'standard',
@@ -35,30 +36,35 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = memo(({
   isAligning,
   alignSuccess,
 }) => {
-  const cueList = cues || [];
+  const sortedCues = useMemo(() => {
+    return [...(cues || [])].sort((a, b) => 
+      (a.startTime ?? 0) - (b.startTime ?? 0) || 
+      (a.startIndex ?? 0) - (b.startIndex ?? 0)
+    );
+  }, [cues]);
 
   return (
     <section className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 mt-4">
       <div className="space-y-4">
         <div className="flex flex-col gap-4">
-          <TimelineCuesHeader
-            cueCount={cueList.length}
+          <SyncCuesHeader
+            cueCount={sortedCues.length}
             onOpenRawCuesModal={onOpenRawCuesModal}
             onRealignCues={onRealignCues}
             isAligning={isAligning}
             alignSuccess={alignSuccess}
           />
 
-          <TimelineCueLegend
+          <CueLegend
             scriptThemeId={scriptThemeId}
             cuePaletteProfile={cuePaletteProfile}
           />
         </div>
 
         <div className="grid gap-3">
-          {cueList.map((cue, idx) => (
-            <TimelineCueCard
-              key={cue.id ? `timeline-${cue.id}-${idx}` : `timeline-idx-${idx}`}
+          {sortedCues.map((cue, idx) => (
+            <SyncCueCard
+              key={cue.id ? `sync-cue-${cue.id}-${idx}` : `sync-cue-idx-${idx}`}
               cue={cue}
               isSelected={selectedCueId === cue.id}
               onSelectCue={onSelectCue}
@@ -68,7 +74,7 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = memo(({
             />
           ))}
 
-          {cueList.length === 0 && (
+          {sortedCues.length === 0 && (
             <div className={UI_TOKENS.panel.emptyPlaceholder}>
               <p className="text-sm text-text-faint font-medium italic">No cues created yet.</p>
             </div>
@@ -79,4 +85,4 @@ export const TimelineCuesPanel: React.FC<TimelineCuesPanelProps> = memo(({
   );
 });
 
-TimelineCuesPanel.displayName = 'TimelineCuesPanel';
+SyncCuesPanel.displayName = 'SyncCuesPanel';

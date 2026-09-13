@@ -1,17 +1,27 @@
 export { EditLeftPanel } from './EditLeftPanel';
 export type { EditLeftPanelProps } from './EditLeftPanel';
 
-export { TimelineCuesPanel } from './TimelineCuesPanel';
-export type { TimelineCuesPanelProps } from './TimelineCuesPanel';
+export { SyncCuesPanel } from './SyncCuesPanel';
+export type { SyncCuesPanelProps } from './SyncCuesPanel';
 
-export { TimelineCueCard } from './TimelineCueCard';
-export type { TimelineCueCardProps } from './TimelineCueCard';
+export { SyncCueCard } from './SyncCueCard';
+export type { SyncCueCardProps } from './SyncCueCard';
 
-export { TimelineCueLegend } from './TimelineCueLegend';
-export type { TimelineCueLegendProps } from './TimelineCueLegend';
+export { CueLegend } from './CueLegend';
+export type { CueLegendProps } from './CueLegend';
 
-export { TimelineCuesHeader } from './TimelineCuesHeader';
-export type { TimelineCuesHeaderProps } from './TimelineCuesHeader';
+export { SyncCuesHeader } from './SyncCuesHeader';
+export type { SyncCuesHeaderProps } from './SyncCuesHeader';
+
+// Backward-compatibility aliases for earlier nomenclature
+export { SyncCuesPanel as TimelineCuesPanel } from './SyncCuesPanel';
+export type { SyncCuesPanelProps as TimelineCuesPanelProps } from './SyncCuesPanel';
+export { SyncCueCard as TimelineCueCard } from './SyncCueCard';
+export type { SyncCueCardProps as TimelineCueCardProps } from './SyncCueCard';
+export { CueLegend as TimelineCueLegend } from './CueLegend';
+export type { CueLegendProps as TimelineCueLegendProps } from './CueLegend';
+export { SyncCuesHeader as TimelineCuesHeader } from './SyncCuesHeader';
+export type { SyncCuesHeaderProps as TimelineCuesHeaderProps } from './SyncCuesHeader';
 
 export { CueEditorForm } from './CueEditorForm';
 export type { CueEditorFormProps } from './CueEditorForm';

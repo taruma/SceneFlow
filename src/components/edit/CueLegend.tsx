@@ -4,12 +4,12 @@ import { useScriptTheme } from '../../hooks/useScriptTheme';
 import { CuePaletteProfile } from '../../styles';
 import { UI_TOKENS } from '../../styles/tokens/ui';
 
-export interface TimelineCueLegendProps {
+export interface CueLegendProps {
   scriptThemeId: string;
   cuePaletteProfile?: CuePaletteProfile;
 }
 
-export const TimelineCueLegend: React.FC<TimelineCueLegendProps> = memo(({
+export const CueLegend: React.FC<CueLegendProps> = memo(({
   scriptThemeId,
   cuePaletteProfile = 'standard',
 }) => {
@@ -35,4 +35,4 @@ export const TimelineCueLegend: React.FC<TimelineCueLegendProps> = memo(({
   );
 });
 
-TimelineCueLegend.displayName = 'TimelineCueLegend';
+CueLegend.displayName = 'CueLegend';

@@ -254,7 +254,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 3. **`YoutubeSourceInput.tsx`**: YouTube URL/ID input with live player connection indicator and automatic ID extraction using `UI_TOKENS.input`.
 4. **`ScriptManagementBar.tsx`**: Screenplay status banner showing loaded line count with an "Edit Raw" action button styled with `UI_TOKENS`.
 5. **`CueEditorForm.tsx`**: Cue authoring/editing form with editable text area, cue type selector, start/end time inputs with clock buttons, index editors, and "Find Alternative" button, consuming `useScriptTheme` for cue colors.
-6. **`TimelineCuesPanel.tsx`**: Chronological cue list in edit mode showing color-dotted cards, per-type color legend, "Raw JSON" editor access, and "Align" realignment button, styled with `useScriptTheme`.
+6. **`SyncCuesPanel.tsx`**: Chronological sync cue list in edit mode showing color-dotted cards, per-type color legend, "Raw JSON" editor access, and "Align" realignment button, styled with `useScriptTheme`.
 7. **`RawScriptModal.tsx`**: Modal dialog for bulk editing raw screenplay text using `UI_TOKENS.modal` and `UI_TOKENS.input`.
 8. **`RawCuesModal.tsx`**: Modal dialog for viewing and editing raw cue data in JSON format, with `sanitizeCues()` applied on save and styled via `UI_TOKENS`.
 9. **`OverlapPicker.tsx`**: Floating context popup for selecting which overlapping cue to edit at a shared position.

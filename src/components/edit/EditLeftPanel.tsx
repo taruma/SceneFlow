@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import YouTube from 'react-youtube';
 import { Video, VideoOff, Play, Pause, RotateCcw } from 'lucide-react';
 import { Cue } from '../../types/script';
@@ -8,7 +8,7 @@ import { CuePaletteProfile } from '../../styles';
 import { DEFAULT_VIDEO_HEIGHT } from '../../hooks/useScriptPreferences';
 import { VideoSplitDivider } from '../playback/VideoSplitDivider';
 import { YoutubeSourceInput } from '../YoutubeSourceInput';
-import { TimelineCuesPanel } from './TimelineCuesPanel';
+import { SyncCuesPanel } from './SyncCuesPanel';
 
 export interface EditLeftPanelProps {
   youtubeId: string;
@@ -44,9 +44,9 @@ export interface EditLeftPanelProps {
 /**
  * Dedicated Left Panel container for Edit mode.
  * Encapsulates the media preview, YouTube source input, transport controls,
- * resizable/collapsible video viewport, and Timeline Cues panel.
+ * resizable/collapsible video viewport, and Sync Cues panel.
  */
-export const EditLeftPanel: React.FC<EditLeftPanelProps> = ({
+export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
   youtubeId,
   onChangeYoutubeId,
   onClearYoutubeId,
@@ -271,8 +271,8 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = ({
           )}
         </div>
 
-        {/* Scrollable Timeline Cues Section */}
-        <TimelineCuesPanel
+        {/* Scrollable Sync Cues Section */}
+        <SyncCuesPanel
           cues={cues}
           scriptThemeId={scriptThemeId}
           cuePaletteProfile={cuePaletteProfile}
@@ -287,4 +287,6 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = ({
       </div>
     </div>
   );
-};
+});
+
+EditLeftPanel.displayName = 'EditLeftPanel';

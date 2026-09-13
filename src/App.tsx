@@ -167,6 +167,7 @@ export default function App() {
     deleteCue,
     confirmDelete,
     selectCueForEdit,
+    canSave,
   } = useCueEditor({
     scriptText: state.scriptText,
     cues: state.cues,
@@ -519,8 +520,6 @@ export default function App() {
     selectCueForEdit,
     handleOverlapPicker,
   ]);
-
-  const canSave = newCue.selectedText && newCue.startTime !== undefined && newCue.endTime !== undefined && newCue.startIndex !== undefined && newCue.endIndex !== undefined;
 
   if (!isInitialized) {
     return <InitializingScreen />;
