@@ -20,42 +20,6 @@ export function calculateTargetScrollTop(
   return Math.max(0, target);
 }
 
-interface UseAutoScrollOptions {
-  scriptRef: React.RefObject<HTMLDivElement | null>;
-  cues: Cue[];
-  settings?: Record<string, TimingSettings>;
-  currentTime: number;
-  mode: AppMode;
-  isDesktop: boolean;
-  scrollFocusPreset: ScrollFocusPresetId;
-  onScrollFocusChange?: (presetId: ScrollFocusPresetId) => void;
-}
-
-export function useAutoScroll({
-  scriptRef,
-  cues,
-  settings,
-  currentTime,
-  mode,
-  isDesktop,
-  scrollFocusPreset,
-  onScrollFocusChange,
-}: UseAutoScrollOptions) {
-  const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
-  const [autoScrollTargets, setAutoScrollTargets] = useState<string[]>(['dialogue']);
-  const [isAutoScrollDropdownOpen, setIsAutoScrollDropdownOpen] = useState(false);
-  const [lastScrolledCueId, setLastScrolledCueId] = useState<string | null>(null);
-
-  const toggleAutoScrollTarget = useCallback((targetType: string) => {
-    setAutoScrollTargets(prev => {
-      if (prev.includes(targetType)) {
-        if (prev.length === 1) return prev; // Keep at least one
-        return prev.filter(t => t !== targetType);
-      }
-      return [...prev, targetType];
-    });
-  }, []);
-
 /**
  * Smoothly animates container.scrollTop at native display refresh rate (144Hz/60Hz)
  * using a cubic ease-out curve, avoiding Windows Chrome's 60Hz native smooth-scroll judder.
@@ -98,6 +62,42 @@ function smoothScrollTo(
 
   activeAnimRef.current = requestAnimationFrame(step);
 }
+
+interface UseAutoScrollOptions {
+  scriptRef: React.RefObject<HTMLDivElement | null>;
+  cues: Cue[];
+  settings?: Record<string, TimingSettings>;
+  currentTime: number;
+  mode: AppMode;
+  isDesktop: boolean;
+  scrollFocusPreset: ScrollFocusPresetId;
+  onScrollFocusChange?: (presetId: ScrollFocusPresetId) => void;
+}
+
+export function useAutoScroll({
+  scriptRef,
+  cues,
+  settings,
+  currentTime,
+  mode,
+  isDesktop,
+  scrollFocusPreset,
+  onScrollFocusChange,
+}: UseAutoScrollOptions) {
+  const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
+  const [autoScrollTargets, setAutoScrollTargets] = useState<string[]>(['dialogue']);
+  const [isAutoScrollDropdownOpen, setIsAutoScrollDropdownOpen] = useState(false);
+  const [lastScrolledCueId, setLastScrolledCueId] = useState<string | null>(null);
+
+  const toggleAutoScrollTarget = useCallback((targetType: string) => {
+    setAutoScrollTargets(prev => {
+      if (prev.includes(targetType)) {
+        if (prev.length === 1) return prev; // Keep at least one
+        return prev.filter(t => t !== targetType);
+      }
+      return [...prev, targetType];
+    });
+  }, []);
 
   const applyScrollFocus = useCallback((presetId: ScrollFocusPresetId) => {
     if (onScrollFocusChange) {
