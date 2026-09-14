@@ -30,3 +30,8 @@ This skill inspects current git status and diffs to produce a production-ready c
 3. **Output Discipline**:
    - Output **ONLY** the commit message formatted inside a single plain text code block.
    - Do **NOT** wrap with conversational filler, preambles, or explanations unless explicitly requested by the user.
+
+4. **Documentation Freshness Check**:
+   - If the commit type is `feat`, `fix`, `refactor`, or `perf`, and **no** documentation files (`CHANGELOG.md`, `docs/*`, `.agents/rules/*`) are staged or modified in the working tree:
+   - Append a lightweight, non-intrusive reminder below the commit code block:
+     > 💡 **Doc-Sync Tip**: Architectural or feature changes detected without documentation updates. Consider running `/doc-sync` before releasing or switching tasks.

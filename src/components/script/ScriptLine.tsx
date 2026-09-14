@@ -95,7 +95,8 @@ function ScriptLineComponent({
       {stagingMarker.blocks.map((block, bIdx) => (
         <button
           key={bIdx}
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             if (playerState !== 1) {
               onSelectStaging(block);
             }
@@ -161,10 +162,10 @@ function ScriptLineComponent({
     if (mode === 'playback') {
       opacity = calculateCuePlaybackOpacity(cue, currentTime, settings);
     } else {
-      // In edit mode, non-active cues are faded but visible
+      // In edit mode, non-active cues are subtly visible with clear distinction, active cues rise smoothly
       const isActive = currentTime >= cue.startTime && currentTime <= cue.endTime;
       const isEditing = editingCueId === cue.id;
-      opacity = isEditing ? 1 : (isActive ? 0.8 : 0.4);
+      opacity = isEditing ? 1 : (isActive ? 0.85 : 0.18);
     }
 
     return {
@@ -238,6 +239,7 @@ function ScriptLineComponent({
     const isTemp = segmentCues.some(c => c.id === 'temp-selection');
     const editingCue = segmentCues.find(c => c.id === editingCueId);
     const primaryCue = editingCue || segmentCues[0];
+    const isSegmentActive = segmentCues.some(c => currentTime >= c.startTime && currentTime <= c.endTime);
 
     const activeTheme = getScriptTheme(scriptThemeId);
     const themedColor = getCueColorForTheme(primaryCue.type || primaryCue.colorClass || '', scriptThemeId, cuePaletteProfile);
@@ -250,6 +252,25 @@ function ScriptLineComponent({
 
     const scrollCue = segmentCues.find(c => c.type === 'dialogue' && c.startIndex === lineStart + start);
     const idToUse = scrollCue ? `cue-${scrollCue.id}` : (primaryCue.id ? `cue-${primaryCue.id}` : undefined);
+
+    // Dynamic box-shadow & text-shadow for Edit mode & Playback mode
+    let boxShadowStyle: string | undefined = undefined;
+    let textShadowStyle: string | undefined = undefined;
+
+    if (mode === 'edit' && !isTemp) {
+      if (isSegmentActive) {
+        // Active cue in edit mode: punchy text shadow (bolder effect with 0 layout shift) + subtle accent glow
+        textShadowStyle = '0 0 0.5px currentColor';
+        boxShadowStyle = `0 0 0 1px rgba(${rgb}, 0.5), 0 0 4px rgba(${rgb}, 0.2)`;
+      } else if (!editingCue) {
+        // Resting cue in edit mode: calm lower opacity + subtle 1.5px bottom accent line for boundary distinction
+        boxShadowStyle = `inset 0 -1.5px 0 0 rgba(${rgb}, 0.35)`;
+      }
+    } else if (activeTheme.isDark && finalOpacity > 0.08) {
+      boxShadowStyle = primaryCue.type === 'dialogue'
+        ? `0 0 0 1px rgba(253, 224, 71, 0.45), 0 0 6px rgba(253, 224, 71, 0.18)`
+        : `0 0 1px rgba(${rgb}, 0.6)`;
+    }
 
     segments.push(
       <span
@@ -278,12 +299,9 @@ function ScriptLineComponent({
         )}
         style={{
           backgroundColor: `rgba(${rgb}, ${finalOpacity})`,
-          transition: mode === 'playback' && !isTemp ? 'background-color 100ms linear, box-shadow 100ms linear' : 'none',
-          ...(activeTheme.isDark && finalOpacity > 0.08 ? {
-            boxShadow: primaryCue.type === 'dialogue'
-              ? `0 0 0 1px rgba(253, 224, 71, 0.45), 0 0 6px rgba(253, 224, 71, 0.18)`
-              : `0 0 1px rgba(${rgb}, 0.6)`
-          } : {})
+          transition: !isTemp ? 'background-color 160ms ease-out, box-shadow 160ms ease-out, text-shadow 160ms ease-out' : 'none',
+          ...(boxShadowStyle ? { boxShadow: boxShadowStyle } : {}),
+          ...(textShadowStyle ? { textShadow: textShadowStyle } : {})
         }}
       >
         {finalDisplayValue}
@@ -315,13 +333,8 @@ function ScriptLineComponent({
 function areScriptLinePropsEqual(prev: ScriptLineProps, next: ScriptLineProps): boolean {
   if (
     prev.lineData !== next.lineData ||
-    prev.cues !== next.cues ||
-    prev.mode !== next.mode ||
-    prev.hiddenCueTypes !== next.hiddenCueTypes ||
     prev.scriptThemeId !== next.scriptThemeId ||
-    prev.cuePaletteProfile !== next.cuePaletteProfile ||
-    prev.isDesktop !== next.isDesktop ||
-    prev.settings !== next.settings
+    prev.isDesktop !== next.isDesktop
   ) {
     return false;
   }
@@ -331,14 +344,31 @@ function areScriptLinePropsEqual(prev: ScriptLineProps, next: ScriptLineProps): 
     return false;
   }
 
+  const { lineStart, lineEnd } = next.lineData;
+  const prevOverlaps = Boolean(prev.selection && prev.selection.start < lineEnd && prev.selection.end > lineStart);
+  const nextOverlaps = Boolean(next.selection && next.selection.start < lineEnd && next.selection.end > lineStart);
+
+  // If this line has NO cues and no text selection in either render, mode and cue properties have zero visual impact
+  if (prev.cues.length === 0 && next.cues.length === 0 && !prevOverlaps && !nextOverlaps) {
+    return true;
+  }
+
+  // From here, the line has cues or active text selection, so mode and cue props matter
+  if (
+    prev.cues !== next.cues ||
+    prev.mode !== next.mode ||
+    prev.hiddenCueTypes !== next.hiddenCueTypes ||
+    prev.cuePaletteProfile !== next.cuePaletteProfile ||
+    prev.settings !== next.settings
+  ) {
+    return false;
+  }
+
   // Edit mode checks
   if (next.mode === 'edit') {
     if (prev.playerState !== next.playerState) return false;
     if (prev.editingCueId !== next.editingCueId) return false;
 
-    const { lineStart, lineEnd } = next.lineData;
-    const prevOverlaps = Boolean(prev.selection && prev.selection.start < lineEnd && prev.selection.end > lineStart);
-    const nextOverlaps = Boolean(next.selection && next.selection.start < lineEnd && next.selection.end > lineStart);
     if (prevOverlaps !== nextOverlaps) return false;
     if (nextOverlaps) {
       if (

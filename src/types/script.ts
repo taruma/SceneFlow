@@ -2,12 +2,15 @@
 export interface Cue {
   id: string;
   selectedText: string;
-  startIndex: number;
-  endIndex: number;
+  startIndex?: number;
+  endIndex?: number;
   startTime: number;
   endTime: number;
   colorClass?: string;
   type?: string;
+  speaker?: string | null;
+  matchStatus?: string;
+  [key: string]: any;
 }
 
 export interface TimingSettings {

@@ -56,3 +56,24 @@ SceneFlow supports selectable cue palette profiles (`CuePaletteProfile`: `'stand
 - **Surface Isolation Guard**: Never use `text-btn-primary-text` inside permanently dark surfaces such as `bg-surface-dark` (e.g., permanently dark indicators or overlays), as this creates near-black on black contrast failure (~1.1:1). Always use explicit `text-white` or tokens coupled with the appropriate surface background.
 - **Translucent Accent Surfaces Invariant**: Container panels designed with chromatic emphasis or callouts (such as the General Master Offset card in `TimingSettingsModal`) must strictly utilize alpha-translucent tokens (`bg-blue-500/10`, `border-blue-500/20`) rather than opaque static light-mode fills (`bg-blue-50`, `border-blue-100`). This ensures callout cards produce an ambient accent wash on light surfaces while naturally illuminating as a sleek, low-glare dark navy container in dark and pure black modes without inverting nested input contrast.
 
+## 6. Translucent Ambient Gradient Opacity Calibration Invariants
+When rendering directional translucent gradient washes or ambient color overlays across variable theme surfaces (Studio Crisp white, Parchment warm sepia, Midnight Slate, and OLED pure black):
+1. **Perceptual Invisibility Floor (`< 8%`)**:
+   - Alpha opacities under 8% on the leading edge are virtually imperceptible in standard desktop and laptop display conditions against neutral surfaces.
+   - Never use opacity multipliers that scale effective gradient colors below 8% unless the intended effect is complete transparency.
+2. **Secondary Ambient Wash (`14%–16% → 4%–5%`)**:
+   - For secondary, co-active, or non-focused items (such as secondary active cues in multi-cue playback), calibrate the leading edge to `14%–16%` falling off to `4%–5%` on the trailing edge.
+   - This provides an immediate, unmistakable category tint that communicates active status without edge borders, outer glow shadows, or text legibility penalties.
+3. **Primary Focus Wash (`22%–25% → 6%–7%`)**:
+   - For primary focus items (such as the primary active cue driving auto-scroll), calibrate the leading edge to `22%–25%` falling off to `6%–7%`.
+   - Pair with an active category border (`rgba(rgb, 0.65)`), outer glow halo (`0 0 10px rgba(rgb, 0.3)`), and expanded theme stripe (`w-1.5`) to establish definitive visual primacy over secondary items.
+
+## 7. Category-Harmonized Interactive States Invariant
+When rendering selectable, clickable, or active items that possess a category color (cues, cards, timeline blocks, tags):
+1. **No Static Accent Rings**: Never hardcode generic blue borders (`border-blue-500`, `ring-blue-500`) for active or selected states on categorized domain entities.
+2. **Dynamic RGB Derivation**:
+   - Selected Border: `borderColor: rgba(${themed.rgb}, 0.7)` with `boxShadow: 0 0 0 1px rgba(${themed.rgb}, 0.5)`.
+   - Active Playback Border/Glow: `borderColor: rgba(${themed.rgb}, 0.55)` with `boxShadow: 0 0 8px rgba(${themed.rgb}, 0.25), 0 0 0 1px rgba(${themed.rgb}, 0.3)`.
+3. **Theme & CVD Profile Compatibility**: Deriving from `themed.rgb` guarantees that interactive selection states remain visually harmonious across Light, Warm, Dark, and Protanopia-safe palettes without secondary color collisions.
+
+

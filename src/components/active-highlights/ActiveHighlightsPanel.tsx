@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { Video, Activity, Layers, Filter } from 'lucide-react';
+import { Sparkles, Activity, Layers, Filter, UnfoldVertical, FoldVertical } from 'lucide-react';
 import { COLORS } from '../../constants/script';
 import { useScriptTheme } from '../../hooks/useScriptTheme';
 import { cn } from '../../lib/utils';
@@ -19,7 +19,7 @@ const HEIGHT_STORAGE_KEY = 'sceneflow_timeline_height_mode';
  *
  * Features:
  * - Segmented view mode switcher: [ 📊 Timeline | 🗂 Cards (Legacy) ] with persistent localStorage memory.
- * - Timeline track height mode switcher [ Flex | Fixed ] with persistent localStorage memory.
+ * - Timeline track height mode toggle [ ↕ Fixed | ↕ Flex ] with persistent localStorage memory.
  * - Timeline window zoom presets [ 4s | 8s | 16s ] to the left of filters (in Timeline mode).
  * - Live category filter bar with theme-resolved color pips and active pulse effects.
  * - Zero-layout-shift Multi-Track Sync Timeline (default modern view).
@@ -124,7 +124,8 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
   };
 
   const panelRef = useRef<HTMLDivElement>(null);
-  const [isNarrow, setIsNarrow] = useState<boolean>(false);
+  const [isCompactTitle, setIsCompactTitle] = useState<boolean>(false);
+  const [isCompactControls, setIsCompactControls] = useState<boolean>(false);
 
   useEffect(() => {
     const el = panelRef.current;
@@ -132,7 +133,9 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
 
     const observer = new ResizeObserver(entries => {
       for (const entry of entries) {
-        setIsNarrow(entry.contentRect.width < 560);
+        const width = entry.contentRect.width;
+        setIsCompactTitle(width < 610);
+        setIsCompactControls(width < 490);
       }
     });
 
@@ -210,35 +213,36 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
   );
 
   const trackHeightControl = (
-    <div 
-      className="flex items-center p-0.5 bg-surface-subtle border border-border-subtle rounded-lg shadow-xs"
-      title="Track height mode: Flex (dynamic height) or Fixed (pre-allocated height)"
+    <button
+      type="button"
+      onClick={() => handleHeightModeChange(activeHeightMode === 'fixed' ? 'flexible' : 'fixed')}
+      title={
+        activeHeightMode === 'fixed'
+          ? "Track Height: Fixed (locking tracks to max overlaps for zero layout shift). Click for flexible."
+          : "Track Height: Flexible (dynamic expansion based on visible cues). Click for fixed."
+      }
+      aria-label={`Toggle track height mode: currently ${activeHeightMode}`}
+      className={cn(
+        "flex items-center gap-1 px-1.5 py-1 rounded-lg text-[9px] font-mono font-black uppercase tracking-wider transition-all select-none border shadow-xs active:scale-95 shrink-0",
+        activeHeightMode === 'fixed'
+          ? "bg-surface text-text-main border-border-main"
+          : "bg-surface-subtle hover:bg-surface text-text-muted hover:text-text-main border-border-subtle hover:border-border-main"
+      )}
     >
-      {(['flexible', 'fixed'] as const).map(mode => (
-        <button
-          key={mode}
-          type="button"
-          onClick={() => handleHeightModeChange(mode)}
-          title={mode === 'fixed' 
-            ? "Fixed height: Lock tracks to maximum possible cue overlaps (zero layout shift)" 
-            : "Flexible height: Expand tracks dynamically only when overlapping cues are visible"
-          }
-          className={cn(
-            "px-1.5 py-0.5 text-[9px] font-mono font-black uppercase tracking-wider rounded transition-all select-none border",
-            activeHeightMode === mode
-              ? "bg-surface text-text-main border-border-main shadow-xs"
-              : "text-text-muted hover:text-text-main border-transparent"
-          )}
-        >
-          {mode === 'flexible' ? 'Flex' : 'Fixed'}
-        </button>
-      ))}
-    </div>
+      {activeHeightMode === 'fixed' ? (
+        <UnfoldVertical size={11} className="shrink-0 text-blue-500" />
+      ) : (
+        <FoldVertical size={11} className="shrink-0 text-text-muted" />
+      )}
+      {!isCompactTitle && (
+        <span className="leading-none">{activeHeightMode === 'fixed' ? 'Fixed' : 'Flex'}</span>
+      )}
+    </button>
   );
 
   const zoomControl = (
     <div 
-      className="flex items-center p-0.5 bg-surface-subtle border border-border-subtle rounded-lg shadow-xs"
+      className="flex items-center p-0.5 bg-surface-subtle border border-border-subtle rounded-lg shadow-xs shrink-0"
       title="Timeline visible window duration"
     >
       {(['4s', '8s', '16s'] as const).map(preset => (
@@ -267,14 +271,16 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
       title={isFilterExpanded ? "Hide category filters" : "Show category filters"}
       aria-expanded={isFilterExpanded}
       className={cn(
-        "flex items-center gap-1 px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all select-none border shadow-xs",
+        "flex items-center gap-1 px-1.5 sm:px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all select-none border shadow-xs shrink-0 active:scale-95",
         isFilterExpanded
           ? "bg-surface text-text-main border-border-main"
           : "bg-surface-subtle hover:bg-surface text-text-muted hover:text-text-main border-border-subtle hover:border-border-main"
       )}
     >
       <Filter size={10} className={hiddenCueTypes.size > 0 ? "text-blue-500" : ""} />
-      <span className="leading-none hidden sm:inline">Filters</span>
+      {!isCompactControls && (
+        <span className="leading-none">Filters</span>
+      )}
       {hiddenCueTypes.size > 0 && (
         <span
           className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse shrink-0"
@@ -291,93 +297,64 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
         onClick={() => handleModeSwitch('timeline')}
         title="Multi-Track Sync Timeline"
         className={cn(
-          "flex items-center gap-1 px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all select-none border",
+          "flex items-center gap-1 px-1.5 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all select-none border",
           activeMode === 'timeline'
             ? "bg-surface text-text-main border-border-main shadow-xs"
             : "text-text-muted hover:text-text-main border-transparent"
         )}
       >
         <Activity size={10} className="shrink-0" />
-        <span className="leading-none hidden sm:inline">Timeline</span>
+        {!isCompactControls && (
+          <span className="leading-none">Timeline</span>
+        )}
       </button>
       <button
         type="button"
         onClick={() => handleModeSwitch('cards')}
         title="Classic Cards (Legacy)"
         className={cn(
-          "flex items-center gap-1 px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all select-none border",
+          "flex items-center gap-1 px-1.5 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all select-none border",
           activeMode === 'cards'
             ? "bg-surface text-text-main border-border-main shadow-xs"
             : "text-text-muted hover:text-text-main border-transparent"
         )}
       >
         <Layers size={10} className="shrink-0" />
-        <span className="leading-none hidden sm:inline">Cards</span>
+        {!isCompactControls && (
+          <span className="leading-none">Cards</span>
+        )}
       </button>
     </div>
   );
 
   return (
-    <div ref={panelRef} className="hidden lg:flex flex-col flex-1 mt-1 animate-in fade-in slide-in-from-left-4 duration-500 min-h-0">
-      {/* Adaptive Header: Single unified row when wide (>= 560px), Two-tier when narrow (< 560px) */}
-      {!isNarrow ? (
-        /* Wide Mode: Single unified row */
-        <div className="flex items-center justify-between mb-2.5 gap-2 animate-in fade-in duration-200">
-          {/* Left: Section Title + Live Active Count & Colored Cue Dots */}
-          <div className="flex items-center gap-2 min-w-0">
-            <h3 className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-1.5 shrink-0")}>
-              <Video size={14} className="text-text-muted shrink-0" />
+    <div ref={panelRef} className="hidden lg:flex flex-col flex-1 mt-1 min-h-0">
+      {/* Highlights Header: Always a single unified row (Stepped adaptive labels) */}
+      <div className="flex items-center justify-between mb-2.5 gap-1.5 sm:gap-2 animate-in fade-in duration-200 min-w-0">
+        {/* Left: Section Title (Icon + optional label) + Preserved Live Active Count & Colored Cue Dots */}
+        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 shrink-0">
+          <div 
+            className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-1.5 shrink-0")}
+            title="Highlights & Cue Timeline"
+          >
+            <Sparkles size={13} className="text-text-muted shrink-0" />
+            {!isCompactTitle && (
               <span className="truncate">Highlights</span>
-            </h3>
-
-            {/* Active Count Badge with Studio VU Meter */}
-            {activeCountBadge}
+            )}
           </div>
 
-          {/* Right: Height Mode (Timeline) + Zoom Presets (Timeline) + Filter Toggle + Segmented View Switcher */}
-          <div className="flex items-center gap-1.5 shrink-0">
-            {activeMode === 'timeline' && trackHeightControl}
-            {activeMode === 'timeline' && zoomControl}
-            {filterToggleControl}
-            {viewModeControl}
-          </div>
+          {/* Active Count Badge with Studio VU Meter (Preserved) */}
+          {activeCountBadge}
         </div>
-      ) : (
-        /* Narrow Mode (< 560px): Two-Tier Layout */
-        <div className="space-y-2 mb-2 animate-in fade-in duration-200">
-          {/* Tier 1: Section Title + Active Count + View Mode Switcher */}
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 min-w-0">
-              <h3 className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-1.5 shrink-0")}>
-                <Video size={14} className="text-text-muted shrink-0" />
-                <span className="truncate">Highlights</span>
-              </h3>
-              {activeCountBadge}
-            </div>
 
-            <div className="flex items-center gap-1.5 shrink-0">
-              {activeMode === 'cards' && filterToggleControl}
-              {viewModeControl}
-            </div>
-          </div>
-
-          {/* Tier 2: Timeline Sub-Toolbar (Zoom on left, Height Mode & Filters on right) */}
-          {activeMode === 'timeline' && (
-            <div className="flex items-center justify-between px-0.5 gap-2 animate-in fade-in duration-200">
-              <div className="flex items-center gap-1.5 min-w-0">
-                <span className="text-[9px] font-black uppercase tracking-wider text-text-faint select-none shrink-0">
-                  Zoom:
-                </span>
-                {zoomControl}
-              </div>
-              <div className="flex items-center gap-1.5 shrink-0">
-                {trackHeightControl}
-                {filterToggleControl}
-              </div>
-            </div>
-          )}
+        {/* Right: Height Mode (Timeline) + Zoom Presets (Timeline) + Filter Toggle + Segmented View Switcher */}
+        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+          {activeMode === 'timeline' && trackHeightControl}
+          {activeMode === 'timeline' && zoomControl}
+          {filterToggleControl}
+          {viewModeControl}
         </div>
-      )}
+      </div>
 
       {/* Collapsible Category Legend & Filter Controls */}
       <div

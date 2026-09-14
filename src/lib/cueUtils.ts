@@ -411,6 +411,80 @@ export function isCueActive(
 }
 
 /**
+ * Finds the most relevant active cue for a given playback timestamp.
+ * Prioritizes the cue with the latest start time (or furthest down the script if tied).
+ */
+export function findActiveCue(
+  cues: Cue[],
+  currentTime: number,
+  settings?: Record<string, TimingSettings>
+): Cue | null {
+  if (!cues || cues.length === 0) return null;
+
+  let best: Cue | null = null;
+  for (let i = 0; i < cues.length; i++) {
+    const cue = cues[i];
+    if (isCueActive(cue, currentTime, settings)) {
+      if (!best) {
+        best = cue;
+      } else if (cue.startTime > best.startTime) {
+        best = cue;
+      } else if (cue.startTime === best.startTime && (cue.startIndex || 0) > (best.startIndex || 0)) {
+        best = cue;
+      }
+    }
+  }
+  return best;
+}
+
+/**
+ * Finds all active cues for a given playback timestamp.
+ */
+export function findActiveCues(
+  cues: Cue[],
+  currentTime: number,
+  settings?: Record<string, TimingSettings>
+): Cue[] {
+  if (!cues || cues.length === 0) return [];
+  return cues.filter(cue => isCueActive(cue, currentTime, settings));
+}
+
+/**
+ * Filters cues by multi-select category types and/or text search query.
+ */
+export function filterCues(
+  cues: Cue[],
+  selectedCategories?: Set<string>,
+  searchQuery?: string
+): Cue[] {
+  if (!cues || cues.length === 0) return [];
+  const q = searchQuery?.trim().toLowerCase() || '';
+  const hasCategories = Boolean(selectedCategories && selectedCategories.size > 0);
+
+  if (!q && !hasCategories) return cues;
+
+  return cues.filter(cue => {
+    const cueType = cue.type || (cue.colorClass ? (LEGACY_CLASS_MAP[cue.colorClass] || COLORS.find(c => c.class === cue.colorClass)?.type) : 'dialogue') || 'dialogue';
+
+    if (hasCategories && !selectedCategories!.has(cueType)) {
+      return false;
+    }
+
+    if (q) {
+      const textMatch = cue.selectedText?.toLowerCase().includes(q);
+      const typeMatch = cueType.toLowerCase().includes(q);
+      const startStr = (cue.startTime ?? 0).toFixed(1);
+      const endStr = (cue.endTime ?? 0).toFixed(1);
+      const timeMatch = startStr.includes(q) || endStr.includes(q);
+
+      return Boolean(textMatch || typeMatch || timeMatch);
+    }
+
+    return true;
+  });
+}
+
+/**
  * Calculates the opacity of a cue during playback with fade-in / fade-out offsets.
  */
 export function calculateCuePlaybackOpacity(
@@ -451,3 +525,66 @@ export function validateImportedScriptJson(json: any): AppState {
     settings: json.settings || DEFAULT_SETTINGS,
   };
 }
+
+export interface CueCluster {
+  id: string;
+  startTime: number;
+  endTime: number;
+  cues: Array<{ cue: Cue; index: number }>;
+}
+
+/**
+ * Groups chronological cues into temporal clusters. Cues that overlap or are separated
+ * by less than maxGapSeconds are grouped under the same cluster window.
+ * Enforces maxClusterSpanSeconds (default 10s) and maxCuesPerCluster (default 8) to
+ * ensure clusters remain bite-sized even during continuous audio/video playback.
+ */
+export function clusterCuesByTime(
+  cues: Cue[], 
+  maxGapSeconds = 2.5,
+  maxClusterSpanSeconds = 10.0,
+  maxCuesPerCluster = 8
+): CueCluster[] {
+  if (cues.length === 0) return [];
+  const clusters: CueCluster[] = [];
+  let currentCluster: CueCluster | null = null;
+
+  cues.forEach((cue, index) => {
+    const start = cue.startTime ?? 0;
+    const end = Math.max(start, cue.endTime ?? start);
+
+    if (!currentCluster) {
+      currentCluster = {
+        id: `cluster-${start.toFixed(1)}-0`,
+        startTime: start,
+        endTime: end,
+        cues: [{ cue, index }],
+      };
+    } else {
+      const clusterHorizon = Math.max(currentCluster.endTime, currentCluster.startTime);
+      const isWithinGap = start <= clusterHorizon + maxGapSeconds;
+      const exceedsMaxSpan = (Math.max(currentCluster.endTime, end) - currentCluster.startTime) > maxClusterSpanSeconds;
+      const exceedsMaxCues = currentCluster.cues.length >= maxCuesPerCluster;
+
+      if (isWithinGap && !exceedsMaxSpan && !exceedsMaxCues) {
+        currentCluster.cues.push({ cue, index });
+        currentCluster.endTime = Math.max(currentCluster.endTime, end);
+      } else {
+        clusters.push(currentCluster);
+        currentCluster = {
+          id: `cluster-${start.toFixed(1)}-${clusters.length}`,
+          startTime: start,
+          endTime: end,
+          cues: [{ cue, index }],
+        };
+      }
+    }
+  });
+
+  if (currentCluster) {
+    clusters.push(currentCluster);
+  }
+
+  return clusters;
+}
+

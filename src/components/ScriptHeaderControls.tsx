@@ -6,7 +6,9 @@ import {
   Check, 
   Book, 
   Coffee, 
-  Palette 
+  Palette,
+  Edit2,
+  PanelRight
 } from 'lucide-react';
 import { COLORS } from '../constants/script';
 import { EXTERNAL_LINKS } from '../constants/links';
@@ -17,30 +19,40 @@ import { UI_TOKENS } from '../styles/tokens/ui';
 
 interface ScriptHeaderControlsProps {
   mode: 'playback' | 'edit';
-  isAutoScrollEnabled: boolean;
-  setIsAutoScrollEnabled: (enabled: boolean) => void;
-  isAutoScrollDropdownOpen: boolean;
-  setIsAutoScrollDropdownOpen: (open: boolean) => void;
-  autoScrollTargets: string[];
-  setAutoScrollTargets: React.Dispatch<React.SetStateAction<string[]>>;
-  setIsLibraryOpen: (open: boolean) => void;
+  isAutoScrollEnabled?: boolean;
+  setIsAutoScrollEnabled?: (enabled: boolean) => void;
+  isAutoScrollDropdownOpen?: boolean;
+  setIsAutoScrollDropdownOpen?: (open: boolean) => void;
+  autoScrollTargets?: string[];
+  setAutoScrollTargets?: React.Dispatch<React.SetStateAction<string[]>>;
+  setIsLibraryOpen?: (open: boolean) => void;
   setIsColorModalOpen?: (open: boolean) => void;
   scriptThemeId?: string;
   cuePaletteProfile?: CuePaletteProfile;
+  lineCount?: number;
+  onOpenRawScriptModal?: () => void;
+  activeCueStatus?: 'drafting' | 'editing' | 'idle';
+  isInspectorOpen?: boolean;
+  onToggleInspector?: () => void;
 }
 
 export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = memo(({
   mode,
-  isAutoScrollEnabled,
-  setIsAutoScrollEnabled,
-  isAutoScrollDropdownOpen,
-  setIsAutoScrollDropdownOpen,
-  autoScrollTargets,
-  setAutoScrollTargets,
-  setIsLibraryOpen,
+  isAutoScrollEnabled = false,
+  setIsAutoScrollEnabled = (_: boolean) => {},
+  isAutoScrollDropdownOpen = false,
+  setIsAutoScrollDropdownOpen = (_: boolean) => {},
+  autoScrollTargets = [],
+  setAutoScrollTargets = (_: any) => {},
+  setIsLibraryOpen = (_: boolean) => {},
   setIsColorModalOpen,
   scriptThemeId,
   cuePaletteProfile = 'standard',
+  lineCount,
+  onOpenRawScriptModal,
+  activeCueStatus,
+  isInspectorOpen = true,
+  onToggleInspector,
 }) => {
   const autoScrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -50,13 +62,47 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = memo(({
   useEscapeKey(closeAutoScroll, isAutoScrollDropdownOpen);
 
   return (
-    <div className={mode === 'playback' ? UI_TOKENS.layout.scriptHeaderPlayback : UI_TOKENS.layout.scriptHeader}>
-      <div className="flex items-center gap-2 lg:gap-3">
+    <div className={cn(
+      mode === 'playback' ? UI_TOKENS.layout.scriptHeaderPlayback : UI_TOKENS.layout.scriptHeader,
+      "panel-container-query @container min-w-0"
+    )}>
+      <div className="flex items-center gap-2 lg:gap-2.5 shrink-0 min-w-0">
         <FileText size={16} className="text-text-faint shrink-0" />
-        <span className={cn("hidden sm:inline", UI_TOKENS.layout.sectionTitleMini)}>Script Preview</span>
+        <span className={cn(UI_TOKENS.layout.sectionTitleMini, "script-header-title truncate")}>
+          {mode === 'playback' ? 'Script Preview' : 'Script Editor'}
+        </span>
+
+        {/* Active Cue Status & Line Count Badges (In Edit Mode) */}
+        {mode === 'edit' && (
+          <div className="flex items-center gap-1.5 shrink-0">
+            {activeCueStatus === 'editing' && (
+              <span 
+                className="flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 shadow-2xs shrink-0 select-none"
+                title="Active Cue Status: Editing Cue"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse shrink-0" />
+                <span className="cue-status-text">Editing Cue</span>
+              </span>
+            )}
+            {activeCueStatus === 'drafting' && (
+              <span 
+                className="flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shadow-2xs shrink-0 select-none"
+                title="Active Cue Status: Drafting Cue"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse shrink-0" />
+                <span className="cue-status-text">Drafting Cue</span>
+              </span>
+            )}
+            {lineCount !== undefined && (
+              <span className={cn(UI_TOKENS.badge.counterFaint, "script-line-count shrink-0 select-none")}>
+                {lineCount} lines
+              </span>
+            )}
+          </div>
+        )}
       </div>
       <div className="flex items-center gap-2 lg:gap-4">
-        {mode === 'playback' && (
+        {mode === 'playback' ? (
           <div className="flex items-center gap-2">
             <div ref={autoScrollContainerRef} className="relative flex items-stretch">
               <button
@@ -70,7 +116,7 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = memo(({
                 title={isAutoScrollEnabled ? "Auto-scroll enabled" : "Auto-scroll disabled"}
               >
                 <Target size={10} className={cn(isAutoScrollEnabled && "animate-pulse")} />
-                <span className="hidden sm:inline">Auto-Scroll</span>
+                <span className="script-btn-label">Auto-Scroll</span>
               </button>
               <button
                 onClick={() => setIsAutoScrollDropdownOpen(!isAutoScrollDropdownOpen)}
@@ -169,6 +215,37 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = memo(({
             >
               <Coffee size={10} />
             </a>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {onOpenRawScriptModal && (
+              <button 
+                type="button"
+                onClick={onOpenRawScriptModal}
+                title="Edit source screenplay text"
+                className="flex items-center gap-1.5 px-2.5 py-1 bg-surface-muted hover:bg-surface-hover border border-border-main text-text-muted hover:text-text-main rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-2xs select-none shrink-0"
+              >
+                <Edit2 size={10} className="shrink-0" />
+                <span className="script-btn-label">Edit Source</span>
+              </button>
+            )}
+            {onToggleInspector && (
+              <button
+                type="button"
+                onClick={onToggleInspector}
+                title={isInspectorOpen ? "Collapse Inspector" : "Expand Inspector"}
+                aria-label={isInspectorOpen ? "Collapse Inspector" : "Expand Inspector"}
+                className={cn(
+                  "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border shadow-2xs select-none shrink-0",
+                  isInspectorOpen
+                    ? "bg-surface border-border-main text-text-main shadow-xs"
+                    : "bg-surface-muted hover:bg-surface-hover border-border-main text-text-muted hover:text-text-main"
+                )}
+              >
+                <PanelRight size={11} className={cn("shrink-0", isInspectorOpen && "text-blue-500")} />
+                <span className="script-btn-label">Inspector</span>
+              </button>
+            )}
           </div>
         )}
       </div>

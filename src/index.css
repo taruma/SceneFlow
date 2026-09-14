@@ -220,3 +220,86 @@ body.is-resizing-split * {
 body.is-resizing-split iframe {
   pointer-events: none !important;
 }
+
+/* Container Queries for Responsive Split Panel Headers (Edit & Playback Left Panels) */
+.panel-container-query {
+  container-type: inline-size;
+}
+
+/* Left Workstation Panel: Decoupled Container Queries (Independently calculated with container padding) */
+
+/* 1. Playback Mode Top Header: MediaHeader (High sensitivity: simplifies readily when split narrows) */
+@container (max-width: 640px) {
+  .media-header-playback .media-preview-title {
+    display: none !important;
+  }
+  .media-header-playback .media-btn-label {
+    display: none !important;
+  }
+}
+@container (max-width: 480px) {
+  .media-header-playback .timecode-duration {
+    display: none !important;
+  }
+}
+
+/* 2. Edit Mode Top Header: Media Preview (with YouTube pill) */
+@container (max-width: 580px) {
+  .media-header-edit .media-preview-title {
+    display: none !important;
+  }
+}
+@container (max-width: 510px) {
+  .media-header-edit .media-btn-label {
+    display: none !important;
+  }
+}
+@container (max-width: 430px) {
+  .media-header-edit .youtube-pill-text {
+    display: none !important;
+  }
+  .media-header-edit .timecode-duration {
+    display: none !important;
+  }
+}
+
+/* 3. Edit Mode Tier 2: Sync Cues Toolbar */
+@container (max-width: 510px) {
+  .sync-cues-title {
+    display: none !important;
+  }
+  .sync-btn-label-secondary {
+    display: none !important;
+  }
+  .sync-btn-label-scroll {
+    display: none !important;
+  }
+}
+@container (max-width: 420px) {
+  .sync-btn-label {
+    display: none !important;
+  }
+}
+
+/* Center Script Panel Header Container Queries (Script Header Controls) */
+@container (max-width: 480px) {
+  .cue-status-text {
+    display: none !important;
+  }
+}
+
+@container (max-width: 420px) {
+  .script-btn-label {
+    display: none !important;
+  }
+  .script-line-count {
+    display: none !important;
+  }
+}
+
+@container (max-width: 320px) {
+  .script-header-title {
+    display: none !important;
+  }
+}
+

@@ -11,34 +11,57 @@ export function useYouTubePlayer({ youtubeId, onPlay, onPause }: UseYouTubePlaye
   const [player, setPlayer] = useState<any>(null);
   const [playerState, setPlayerState] = useState<number>(-1);
   const [currentTime, setCurrentTime] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(0);
   const timerRef = useRef<number | null>(null);
   const isSeekingWhilePausedRef = useRef<boolean>(false);
   const seekPauseTimeoutRef = useRef<number | null>(null);
-
-  // Reset player instance when video ID changes
-  useEffect(() => {
-    setPlayer(null);
-    isSeekingWhilePausedRef.current = false;
-    if (seekPauseTimeoutRef.current) {
-      clearTimeout(seekPauseTimeoutRef.current);
-      seekPauseTimeoutRef.current = null;
-    }
-  }, [youtubeId]);
-
-  const startTimer = useCallback(() => {
-    if (timerRef.current) return;
-    timerRef.current = window.setInterval(() => {
-      if (player) {
-        setCurrentTime(player.getCurrentTime());
-      }
-    }, 100);
-  }, [player]);
+  const playerRef = useRef<any>(null);
+  playerRef.current = player;
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
+  }, []);
+
+  const resetPlayback = useCallback(() => {
+    stopTimer();
+    setCurrentTime(0);
+    setPlayerState(-1);
+    isSeekingWhilePausedRef.current = false;
+    if (seekPauseTimeoutRef.current) {
+      clearTimeout(seekPauseTimeoutRef.current);
+      seekPauseTimeoutRef.current = null;
+    }
+    if (playerRef.current) {
+      try {
+        if (typeof playerRef.current.pauseVideo === 'function') {
+          playerRef.current.pauseVideo();
+        }
+        if (typeof playerRef.current.seekTo === 'function') {
+          playerRef.current.seekTo(0, true);
+        }
+      } catch {
+        // Player may be unmounting or in an error state
+      }
+    }
+  }, [stopTimer]);
+
+  // Reset player instance and timing when video ID changes
+  useEffect(() => {
+    resetPlayback();
+    setPlayer(null);
+    setDuration(0);
+  }, [youtubeId, resetPlayback]);
+
+  const startTimer = useCallback(() => {
+    if (timerRef.current) return;
+    timerRef.current = window.setInterval(() => {
+      if (playerRef.current && typeof playerRef.current.getCurrentTime === 'function') {
+        setCurrentTime(playerRef.current.getCurrentTime());
+      }
+    }, 100);
   }, []);
 
   useEffect(() => {
@@ -53,11 +76,19 @@ export function useYouTubePlayer({ youtubeId, onPlay, onPause }: UseYouTubePlaye
   const onReady: YouTubeProps['onReady'] = useCallback((event) => {
     setPlayer(event.target);
     setPlayerState(event.target.getPlayerState());
+    const dur = event.target.getDuration?.();
+    if (dur && typeof dur === 'number') {
+      setDuration(dur);
+    }
   }, []);
 
   const onStateChange: YouTubeProps['onStateChange'] = useCallback((event) => {
     setPlayerState(event.data);
     if (event.data === 1) { // Playing
+      const dur = event.target?.getDuration?.();
+      if (dur && typeof dur === 'number') {
+        setDuration(dur);
+      }
       if (isSeekingWhilePausedRef.current) {
         isSeekingWhilePausedRef.current = false;
         if (seekPauseTimeoutRef.current) {
@@ -105,9 +136,7 @@ export function useYouTubePlayer({ youtubeId, onPlay, onPause }: UseYouTubePlaye
           seekPauseTimeoutRef.current = null;
         }, 600);
 
-        player.pauseVideo();
         player.seekTo(seconds, allowSeekAhead);
-        player.pauseVideo();
       } else {
         isSeekingWhilePausedRef.current = false;
         if (seekPauseTimeoutRef.current) {
@@ -169,6 +198,7 @@ export function useYouTubePlayer({ youtubeId, onPlay, onPause }: UseYouTubePlaye
     playerState,
     currentTime,
     setCurrentTime,
+    duration,
     onReady,
     onStateChange,
     seekTo,
@@ -176,5 +206,6 @@ export function useYouTubePlayer({ youtubeId, onPlay, onPause }: UseYouTubePlaye
     pauseVideo,
     togglePlayPause,
     jumpBy,
+    resetPlayback,
   };
 }

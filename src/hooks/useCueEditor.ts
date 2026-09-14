@@ -1,10 +1,9 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import type { 
   Cue, 
   AppState, 
   TextSelection, 
   DeleteConfirmationState, 
-  ResetConfirmationState, 
   OverlapPickerState, 
   AlternativeLocation, 
   AppMode 
@@ -34,15 +33,11 @@ export function useCueEditor({
     type: 'dialogue',
     colorClass: COLORS[0].class,
   });
+  const [originalCue, setOriginalCue] = useState<Cue | null>(null);
   const [altLocations, setAltLocations] = useState<AlternativeLocation[] | null>(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState<DeleteConfirmationState>({
     isOpen: false,
     cue: null,
-  });
-  const [resetConfirmation, setResetConfirmation] = useState<ResetConfirmationState>({
-    isOpen: false,
-    type: null,
-    error: null,
   });
   const [overlapPicker, setOverlapPicker] = useState<OverlapPickerState>({
     isOpen: false,
@@ -62,7 +57,13 @@ export function useCueEditor({
   const cancelEdit = useCallback(() => {
     setSelection(null);
     setNewCue({ type: 'dialogue', colorClass: COLORS[0].class });
+    setOriginalCue(null);
     setAltLocations(null);
+    try {
+      window.getSelection()?.removeAllRanges();
+    } catch {
+      // Ignore in non-browser environments
+    }
   }, []);
 
   const handleSelection = useCallback(() => {
@@ -77,25 +78,72 @@ export function useCueEditor({
     const res = getSelectionIndicesFromDOM(sel, scriptText);
     if (res && res.text.trim()) {
       console.log("DOM Selection captured at index range:", res.start, res.end, res.text);
+      setOriginalCue(null);
       setSelection({
         text: res.text,
         start: res.start,
         end: res.end,
       });
-      setNewCue(prev => ({
-        ...prev,
+      setNewCue({
+        type: 'dialogue',
+        colorClass: COLORS[0].class,
         selectedText: res.text,
         startIndex: res.start,
         endIndex: res.end,
-      }));
+      });
     } else {
       console.warn("Text not found in raw scriptText. Selection might span across complex formatting or have different whitespace.");
     }
   }, [mode, scriptText, overlapPicker.isOpen]);
 
+  const canSave = Boolean(
+    newCue.selectedText?.trim() &&
+    newCue.startTime !== undefined &&
+    newCue.endTime !== undefined &&
+    newCue.endTime >= newCue.startTime &&
+    newCue.startIndex !== undefined &&
+    newCue.endIndex !== undefined &&
+    newCue.endIndex >= newCue.startIndex
+  );
+
+  const isDirty = useMemo(() => {
+    if (!selection) return false;
+
+    // Editing an existing cue
+    if (newCue.id) {
+      if (!originalCue) return true;
+      return Boolean(
+        newCue.startTime !== originalCue.startTime ||
+        newCue.endTime !== originalCue.endTime ||
+        newCue.selectedText !== originalCue.selectedText ||
+        newCue.type !== originalCue.type ||
+        newCue.colorClass !== originalCue.colorClass ||
+        (newCue.startIndex ?? 0) !== (originalCue.startIndex ?? 0) ||
+        (newCue.endIndex ?? 0) !== (originalCue.endIndex ?? 0)
+      );
+    }
+
+    // Drafting a new cue: dirty if timings have been set or draft text/type customized
+    return Boolean(
+      newCue.startTime !== undefined ||
+      newCue.endTime !== undefined ||
+      (newCue.selectedText !== undefined && newCue.selectedText !== selection.text) ||
+      (newCue.type !== undefined && newCue.type !== 'dialogue')
+    );
+  }, [selection, newCue, originalCue]);
+
+  const dismissIfClean = useCallback(() => {
+    if (!selection) return false;
+    if (!isDirty) {
+      cancelEdit();
+      return true;
+    }
+    return false;
+  }, [selection, isDirty, cancelEdit]);
+
   const saveCue = useCallback(() => {
-    if (!newCue.selectedText || newCue.startTime === undefined || newCue.endTime === undefined) {
-      console.error("Cannot save cue: missing data", newCue);
+    if (!canSave) {
+      console.error("Cannot save cue: validation failed or missing data", newCue);
       return;
     }
 
@@ -126,7 +174,7 @@ export function useCueEditor({
     
     cancelEdit();
     console.log("Cue saved successfully:", cue);
-  }, [newCue, setState, cancelEdit]);
+  }, [canSave, newCue, setState, cancelEdit]);
 
   const findAltLocations = useCallback(() => {
     if (!selection?.text) return;
@@ -158,14 +206,18 @@ export function useCueEditor({
   const selectCueForEdit = useCallback((cue: Cue) => {
     const cueType = cue.type || (cue.colorClass ? (LEGACY_CLASS_MAP[cue.colorClass] || COLORS.find(c => c.class === cue.colorClass)?.type) : 'dialogue') || 'dialogue';
     const colorClass = COLORS.find(c => c.type === cueType)?.class || cue.colorClass || COLORS[0].class;
-    setNewCue({ ...cue, type: cueType, colorClass });
-    setSelection({ text: cue.selectedText, start: cue.startIndex, end: cue.endIndex });
+    const normalizedCue: Cue = {
+      ...cue,
+      type: cueType,
+      colorClass,
+      startIndex: cue.startIndex ?? 0,
+      endIndex: cue.endIndex ?? 0,
+    };
+    setOriginalCue(normalizedCue);
+    setNewCue(normalizedCue);
+    setSelection({ text: cue.selectedText, start: normalizedCue.startIndex, end: normalizedCue.endIndex });
     if (player) {
-      const isPlaying = player.getPlayerState?.() === 1;
       player.seekTo(cue.startTime, true);
-      if (!isPlaying) {
-        player.pauseVideo();
-      }
     }
   }, [player]);
 
@@ -174,12 +226,13 @@ export function useCueEditor({
     setSelection,
     newCue,
     setNewCue,
+    originalCue,
+    isDirty,
+    dismissIfClean,
     altLocations,
     setAltLocations,
     deleteConfirmation,
     setDeleteConfirmation,
-    resetConfirmation,
-    setResetConfirmation,
     overlapPicker,
     setOverlapPicker,
     handleSelection,
@@ -189,5 +242,6 @@ export function useCueEditor({
     deleteCue,
     confirmDelete,
     selectCueForEdit,
+    canSave,
   };
 }

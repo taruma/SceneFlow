@@ -8,10 +8,10 @@ export const UI_TOKENS = {
   // Application layout frames & headers
   layout: {
     appHeader: "h-16 border-b border-border-main bg-surface flex items-center justify-between px-3 lg:px-6 shrink-0 z-40 shadow-sm transition-all text-text-main",
-    scriptHeader: "h-16 border-b border-border-main flex items-center justify-between px-4 lg:px-8 bg-surface shrink-0 z-20 text-text-main",
+    scriptHeader: "h-12 border-b border-border-main flex items-center justify-between px-4 lg:px-8 bg-surface shrink-0 z-20 sticky top-0 shadow-sm text-text-main",
     scriptHeaderPlayback: "h-12 border-b border-border-main flex items-center justify-between px-4 lg:px-8 bg-surface shrink-0 z-20 sticky top-0 shadow-sm text-text-main",
     leftPanelBase: "flex flex-col bg-surface border-border-main z-10 text-text-main",
-    rightPanelBase: "bg-app flex flex-col overflow-hidden relative transition-all duration-500",
+    rightPanelBase: "bg-app flex flex-col overflow-hidden relative transition-[border-color,background-color] duration-200",
     sectionTitle: "text-xs font-black uppercase tracking-[0.2em] text-text-faint",
     sectionTitleMini: "text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-text-faint",
   },
