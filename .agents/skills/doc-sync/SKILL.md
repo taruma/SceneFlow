@@ -12,7 +12,10 @@ This skill automates the synchronized updating of SceneFlow's documentation suit
 
 ## 1. Inspect Recent Changes
 1. Run `git status -s` and `git diff` to inspect pending or staged modifications.
-2. If working directory is clean, run `git log -n 1 --stat` and `git diff HEAD~1 HEAD` to inspect the most recent commit.
+2. If working directory is clean, determine the un-synced commit range:
+   - Check recent commit history with `git log -n 10 --oneline`.
+   - Identify all commits since the last `docs(...)` or documentation sync commit (e.g. `git diff <last-docs-commit>..HEAD` or `git diff origin/main..HEAD`).
+   - Inspect the collective changes across all un-synced commits rather than solely `HEAD~1 HEAD`.
 3. Identify:
    - **Architectural / Component changes**: New components, extracted sub-components, or decoupled containers.
    - **State / Hook changes**: State schema updates, new props, hook return signatures.

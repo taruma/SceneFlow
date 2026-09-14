@@ -74,6 +74,8 @@ Supports eight color-coded cue categories, each calibrated with theme-specific R
 ### Cue Creation & In-Place Text Editing
 - **Creation**: In Edit Mode, highlight text in the script preview to populate the "New Sync Cue" panel with calculated start and end character offsets.
 - **Compound Context Architecture (`CueEditorContext`, `CueEditorForm`)**: Cue draft state, timing offsets, DOM text selection ranges, alternative locations, and persistence actions are encapsulated within `<CueEditorProvider>`, enabling zero-prop invocation with automatic fallback resolution across layout panels.
+- **Dynamic Dirty Tracking & Reactive Status Badges**: The Cue Inspector (`EditRightPanel`) tracks an `originalCue` baseline snapshot. When editing an existing cue, it dynamically indicates `Saved` (green checkmark) vs `Unsaved` (pulsing amber dot) based on changes to start/end times, quote text, category type, or character offsets. For new drafts, it displays `Draft` or `Draft (Unsaved)`.
+- **Clean Script Click Dismissal (`dismissIfClean`)**: Clicking anywhere on the clean screenplay canvas while in Edit mode safely dismisses the cue inspector back to the idle workstation overview when no unsaved changes exist (`!isDirty`), while strictly ignoring clicks on interactive buttons, input fields, staging markers, and active DOM text drag selections.
 - **Timestamp Capture & Live Precision Timecodes (`CueTimingInputs`)**: Start and End inputs display live formatted precision timecodes (`MM:SS.s`) above each field alongside `Clock` buttons to capture the player's current video time, or input manual values.
 - **Manual Monospace Textarea (`CueTextSection`)**: Users can directly edit a cue's selected text in-place within the Edit Sync Cue panel. This allows safe text corrections without manual JSON editing while preserving character synchronization.
 - **ID Sanitization**: All cues loaded from any source (localStorage, built-in examples, remote projects, or pasted JSON) are automatically run through `sanitizeCues()`, which deduplicates IDs, normalizes `type`/`colorClass` fields bidirectionally, and injects fallback UUIDs for malformed entries.
@@ -90,12 +92,12 @@ Desktop Edit Mode features a dedicated Two-Tier studio workspace in the Left Pan
 
 - **Two-Tier Flex Architecture**:
   - **Tier 1 (Media Preview)**:
-    - Persistent media transport controls (`[Replay]`, `[Play/Pause]`, `[Hide/Show Video]`).
-    - **Live Timecode HUD Badge (`LiveTimecodeBadge.tsx`)**: Real-time `MM:SS.s` timecode display, video duration tracking, and live pulsing activity indicator.
+    - Persistent media transport controls in a unified pill (`[ ↺ Replay | ▶ Play/Pause ]` with hairline divider) and `[Hide/Show Video]` toggle.
+    - **Live Timecode HUD Badge (`LiveTimecodeBadge.tsx`)**: Real-time `MM:SS.s` timecode display, video duration tracking, and live pulsing activity indicator, active in both Playback and Edit modes.
     - **Collapsible YouTube Source Header Pill (`[ 🟢 {videoId} ✏️ ]`)**: Replaces bulky persistent input boxes, saving ~50px vertical height while keeping video ID editing 1 click away.
     - Resizable 16:9 video player and horizontal `VideoSplitDivider` with balanced vertical spacing.
   - **Tier 2 (Sync Cues Studio)**:
-    - Permanently docked `SyncCuesToolbar` that never scrolls away.
+    - Permanently docked `SyncCuesToolbar` that never scrolls away, featuring `ListChecks` icon in the title for visual parity.
     - Dedicated internal scrollable viewport supporting both the **Time-Clustered Fluid Grid** (Cards view) and high-density tabular list (`SyncCueRow` in Compact view) with `content-visibility: auto` rendering optimization.
 - **Time-Clustered Fluid Grid (Cards View)**:
   - **Temporal Cue Clustering (`clusterCuesByTime`)**: Intelligently groups cues by temporal proximity ($\le 2.5$s gaps) with strict ceiling boundaries (maximum 10.0s window span and maximum 8 cues per cluster) to prevent continuous dialogue/action scenes from coalescing into an unmanageable monolithic block.
@@ -113,8 +115,8 @@ Desktop Edit Mode features a dedicated Two-Tier studio workspace in the Left Pan
   - **One-Click Filter Reset**: Counter badge (`{filteredCount}/{totalCount}`) converts into an interactive reset button with an `X` when filtering is active, clearing all filters and auto-collapsing the bar in a single click.
   - **Action Tools**: Standardized on `[ { } JSON ]` for modal cue inspection and `[ ↺ Resync ]` for proximity realignment with animated `[ ✓ Synced ]` feedback.
   - **Dual Density Modes**: `[ ⊞ Cards | ≡ Compact ]` density switcher with responsive text labels collapsing to icons via container queries.
-- **Adaptive Container Queries (`@container (max-width: 580px)`)**:
-  - Left panels declare native CSS container queries. Action button labels (`.header-btn-label`) and YouTube source pill text (`.youtube-pill-text`) automatically collapse to compact icon buttons when the left panel is dragged narrow, preventing horizontal overflow or text wrapping without JavaScript resize listeners.
+- **Decoupled Container Queries (`src/index.css`)**:
+  - Workstation headers declare container queries with calibrated thresholds accounting for container padding: Playback MediaHeader (640px/480px), Edit MediaHeader (580px/510px/430px), Sync Cues Toolbar (510px/420px), and Center Script Panel (480px/420px/320px). Button labels and text automatically collapse to compact icon buttons on narrow panels, eliminating horizontal overflow or text wrapping.
 - **Black-Screen-Free Cue Seeking**:
   - Clicking any cue in the list seeks the YouTube player directly to the cue's start time without premature `pauseVideo()` calls, ensuring the video decoding pipeline smoothly paints the target frame buffer on first load or paused scrub.
 - **Left Panel Performance-Shielded Auto-Scroll & Forward Monotonicity**:
@@ -172,11 +174,7 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
   - **`Flex` (Default)**: Tracks expand dynamically from a single 32px row to multi-row stacked layouts only when overlapping cues in the same category enter the visible window, contracting back when they exit to conserve vertical space.
   - **`Fixed`**: Each category pre-calculates its maximum potential overlapping sub-lanes across the entire script (`globalMaxSubLane + 1`) and locks its track height permanently from `00:00`. For instance, if dialogue overlaps anywhere in the scene, the dialogue lane renders as 2 rows with a persistent horizontal sub-lane divider from the very start.
 - **Zero Vertical Layout Shift**: In `Fixed` mode, tracks never jump or change height during playback or scrubbing, ensuring rock-solid visual stability.
-- **Adaptive Header Hierarchy**: Automatically adapts to panel width via `ResizeObserver` (560px threshold):
-  - **Wide Viewports ($\ge 560\text{px}$)**: Consolidates all controls into a single unified row (`Highlights` + `Active: X` Studio VU Meter $\to$ `[ Flex | Fixed ]` $\to$ `[ 4s | 8s | 16s ]` $\to$ `[ Filters ]` $\to$ `[ Timeline | Cards ]`), saving vertical space and maximizing timeline track height.
-  - **Narrow Viewports ($< 560\text{px}$)**: Splits into an ergonomic Two-Tier Header:
-    - **Tier 1 (Main Header)**: `Highlights` title $\to$ `Active: X` Studio VU Meter $\to$ `[ Timeline | Cards ]`
-    - **Tier 2 (Timeline Sub-Toolbar)**: `Zoom: [ 4s | 8s | 16s ]` $\to$ `[ Flex | Fixed ]` $\to$ `[ Filters ]`
+- **Adaptive Single-Row Header Hierarchy**: Consolidates all controls into an adaptive single row across all widths with progressive stepped label collapsing (`Sparkles` icon with collapsible `Highlights` title), strictly preserving the live active cue count and 8-slot category LED VU meter strip, with a space-saving single toggle button `[ ↕ Fixed ]` / `[ ↕ Flex ]` featuring dedicated icons and tooltips.
 - **Session Persistence**: User preference is stored in `localStorage` (`sceneflow_timeline_height_mode`).
 
 ### Collapsible Filter Drawer & Toolbar (`HighlightFilterBar`)
@@ -215,7 +213,8 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
   - *Surrounding Scene Context Window*: Renders dimmed preceding (`PREV`) and following (`NEXT`) screenplay lines directly around the editable quote, providing instant narrative orientation.
   - *Audio-Visual Timing Deck*: Symmetrical Start and End boundary cards featuring precision timecodes (`00:00.2`), single-click micro-nudge steppers (`-0.5s`, `-0.1s`, `+0.1s`, `+0.5s`), clock capture buttons, a live calculated duration badge (`⏱ 1.6s`), and an integrated `Play Cue [▶]` preview button with a `Loop [🔁]` toggle for repetitive sound/speech auditing that dynamically adapts to nudged timestamps in real time without restarting playback.
   - *Script Anchoring Card*: Dedicated card retaining fully editable `Start Index` and `End Index` inputs (for manual cue drafting and pasting raw text), live character span counter (`54 chars`), and cue ID badge.
-  - *Pinned Sticky Bottom Action Bar*: Anchors `Update Cue` (<kbd>Ctrl+Enter</kbd>), `Cancel` (<kbd>Esc</kbd>), and `Delete` (trash can) permanently to the bottom of the inspector viewport, ensuring critical actions are always accessible without crowding the top header.
+  - *Pinned Sticky Bottom Action Bar*: Anchors `Update Cue` (<kbd>Ctrl+Enter</kbd>), `Cancel` (with explicit design-system `<kbd>Esc</kbd>` badge), and `Delete` (with resting destructive red styling) permanently to the bottom of the inspector viewport, ensuring critical actions are always accessible without crowding the top header.
+  - *Script Header Controls Symmetrical Docking*: Screenplay header docks active cue status badges (`Editing Cue` with pulsing amber dot / `Drafting Cue` with pulsing blue dot) and loaded line count on the left beside the title (`Script Editor`), leaving `[Edit Source]` (renamed from `[Edit Raw]`) modal trigger and inspector toggle focused on the right.
 
 ### Collapsible Video Player (Screen Recording Mode)
 - **Unobstructed Timeline Viewport**: Playback mode features an interactive collapse toggle button in the `PLAYBACK` section header (`[ Hide Video ]` ⇋ `[ Show Video ]`) and a global keyboard shortcut (<kbd>V</kbd>) to collapse/hide the YouTube video player.
@@ -369,10 +368,11 @@ Fine-tunes highlight visibility timing before and after actual cue timestamps:
 ## 8. Persistence, Sharing, & Library Catalogue
 
 ### Local Persistence
-All project states (`screenplay_sync_state`), theme preferences (`sceneflow_script_theme`), cue palette accessibility profile (`sceneflow_cue_palette_profile`), width presets (`sceneflow_script_width_preset`), scroll focus settings (`sceneflow_scroll_focus_preset`), timeline view mode (`sceneflow_highlight_view_mode`), and filter drawer state (`sceneflow_highlight_filter_expanded`) persist in `localStorage`.
+All project states (`screenplay_sync_state`), active workflow mode (`sceneflow_app_mode`), theme preferences (`sceneflow_script_theme`), cue palette accessibility profile (`sceneflow_cue_palette_profile`), width presets (`sceneflow_script_width_preset`), scroll focus settings (`sceneflow_scroll_focus_preset`), timeline view mode (`sceneflow_highlight_view_mode`), and filter drawer state (`sceneflow_highlight_filter_expanded`) persist in `localStorage`.
 
 ### Default Project, New Projects, & Starter Guide
 - **Default Load**: Fresh visits default to loading the **Scene Frequency** (`scene_frequency.json`) demo script.
+- **Synchronous Player Reset on Load**: Project loaders (`New Project`, `Starter Guide`, `Open Project...`, example scripts, and remote URLs) synchronously trigger `resetPlayback()` in `useYouTubePlayer`, clearing running timers, zeroing timecode to `00:00`, and pausing and seeking the player.
 - **`[ File ▾ ]` Desktop Dropdown Menu**: Accessible from the desktop header with a 3-tier organized structure:
   1. *Project I/O*: `Open Project...` (local `.json` file upload) and `Save Project` (export active state).
   2. *Blank Canvas*: `New Project` prompts confirmation to clear the workspace with a fresh empty template (`blank.json`) and automatically transitions into Edit mode.

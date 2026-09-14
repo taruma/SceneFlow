@@ -37,11 +37,11 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
 
 ## 4. Header Symmetrical Layout & Action Scoping
 - **Zero-Pixel Shift**: Both Playback and Edit headers must strictly share the `h-12` (48px) sticky top-0 layout token (`UI_TOKENS.layout.scriptHeader`). Switching modes must produce 0px vertical layout jump.
-- **Symmetrical Context Titles**:
+- **Symmetrical Context Titles & Left-Aligned Status**:
   - Playback Mode: `[FileText] Script Preview` + Auto-Scroll controls.
-  - Edit Mode: `[FileText] Script Editor` + line count badge.
-- **Action Scoping (Option B)**:
-  - Script text actions (`[Edit Raw]` script modal and line counter) must be docked directly in the Right Panel header (`ScriptHeaderControls`) above the script text it modifies, not in the Left Media panel.
+  - Edit Mode: `[FileText] Script Editor` title flanked on the left by active cue status badge (`Editing Cue` with pulsing amber dot or `Drafting Cue` with pulsing blue dot) and loaded line count badge (`{lineCount} lines`). Redundant `Idle` status placeholder is omitted.
+- **Action Scoping**:
+  - Script text actions (`[Edit Source]` modal trigger and line counter) must be docked directly in the center panel header (`ScriptHeaderControls`) above the script text it modifies, not in the Left Media panel.
 
 ## 5. Cue Data Integrity & Chronological Ordering
 - **Validation Encapsulation**:
@@ -58,15 +58,14 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
 - **Two-Tier Flex Container**:
   - The Edit Left Panel strictly avoids `sticky top-0` overlay hacks inside scrolling containers. It is structured as an unpinned, two-zone flex container (`h-full flex flex-col overflow-hidden`).
   - **Tier 1 (Media Preview)**:
-    - Persistent transport controls (`[Replay]`, `[Play/Pause]`, `[Hide/Show Video]`).
-    - **Live Timecode HUD Badge (`LiveTimecodeBadge.tsx`)**: Displays live pulsing playback indicator, current formatted timecode (`MM:SS.s`), and total video duration.
+    - Persistent transport controls in a unified pill (`[ ↺ Replay | ▶ Play/Pause ]` with hairline divider) and `[Hide/Show Video]` toggle.
+    - **Live Timecode HUD Badge (`LiveTimecodeBadge.tsx`)**: Displays live pulsing playback indicator, current formatted timecode (`MM:SS.s`), and total video duration (active across both Playback and Edit modes).
     - **Collapsible YouTube Source Pill (`[ 🟢 {videoId} ✏️ ]`)**: Reclaims ~50px of vertical space, revealing the full input on click or when cleared.
     - Proportional 16:9 video player and horizontal `VideoSplitDivider` (with tightened bottom margin `mt-2 mb-1`).
-    - **Adaptive Container Queries (`@container (max-width: 580px)`)**: Action button text labels (`.header-btn-label`) and pill text (`.youtube-pill-text`) automatically collapse to compact icon buttons when the left panel is dragged narrow.
   - **Tier 2 (Sync Cues Studio)**:
     - Occupies `flex-1 min-h-0 flex flex-col overflow-hidden` with `pt-0` to maintain balanced vertical spacing.
     - Features a permanently docked `SyncCuesToolbar`:
-      - Standardized symmetric padding (`py-2` collapsed, `pt-1.5 pb-2.5` expanded).
+      - Standardized symmetric padding (`py-2` collapsed, `pt-1.5 pb-2.5` expanded) and `ListChecks` icon in the title for visual parity with Playback Highlights.
       - **Action Nomenclature**: `[ { } JSON ]` for raw cue modal and `[ ↺ Resync ]` for proximity realignment with animated `[ ✓ Synced ]` feedback.
       - **Adaptive Density Toggle**: `[ ⊞ Cards | ≡ Compact ]` with responsive text labels collapsing cleanly to icons via container queries.
       - **Collapsible Search & Multi-Select Filters**: Rested in a slim single-row by default with a `[ 🔍 Filter ]` toggle button, keyboard shortcuts (<kbd>Escape</kbd> to clear/close), autofocus, and multi-select category pills (`Set<string>`) allowing concurrent filtering across categories (e.g. Dialogue + Action).
@@ -79,7 +78,11 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
 - **Container Queries Over Window Breakpoints**:
   - Resizable split panels change width independently of window resize events. Never use window media queries (`sm:`, `md:`, `lg:`) or JavaScript `ResizeObserver` listeners to adapt button labels inside resizable panels.
   - Declare `containerType: 'inline-size'` and class `@container` on panel roots.
-  - Use `@container (max-width: 580px)` to automatically collapse text labels (`.header-btn-label`, `.youtube-pill-text`) into compact icon buttons (`[ ↺ ]`, `[ ▶ ]`, `[ 👁/ ]`, `[ 🟢 ✏️ ]`, `[ ⊞ | ≡ ]`, `[ 🔍 ]`, `[ { } ]`, `[ ↺ ]`).
+  - Calibrated, padding-aware container query thresholds decouple each section header independently:
+    - **Playback MediaHeader**: `@container (max-width: 640px)` hides title and transport button labels (`.media-btn-label`); `@container (max-width: 480px)` hides timecode duration (`.timecode-duration`).
+    - **Edit MediaHeader**: `@container (max-width: 580px)` hides title; `@container (max-width: 510px)` hides transport labels; `@container (max-width: 430px)` hides YouTube pill text (`.youtube-pill-text`) and timecode duration.
+    - **Sync Cues Toolbar**: `@container (max-width: 510px)` hides title (`.sync-cues-title`), secondary action labels (`.sync-btn-label-secondary`), and scroll label (`.sync-btn-label-scroll`); `@container (max-width: 420px)` hides primary density and filter button labels (`.sync-btn-label`).
+    - **Center Script Panel**: `@container (max-width: 480px)` hides cue status text (`.cue-status-text`); `@container (max-width: 420px)` hides script action button labels (`.script-btn-label`) and line count badge (`.script-line-count`); `@container (max-width: 320px)` hides script title (`.script-header-title`).
   - Guarantees zero text wrapping, zero horizontal overflow, and 144Hz drag-smooth responsiveness with zero JavaScript overhead.
 
 ## 8. Vertical Boundary Hygiene & Flex Margin Anti-Accumulation
@@ -170,5 +173,12 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
 - **Pinned Sticky Bottom Action Bar**:
   - Anchors primary actions (`Update / Create Cue` via `Ctrl+Enter`, `Cancel` via `Esc`, and `Delete`) permanently to `bottom-0` (`bg-surface/95 backdrop-blur border-t`).
   - Guarantees width resilience when the inspector is dragged narrow (`280px`–`320px`), avoiding horizontal button collision in the top 48px header while ensuring the save button is never pushed below the vertical scroll fold.
+  - Delete button features resting destructive red styling (`text-red-500/80 bg-red-500/10 border-red-500/20`), and Cancel features an explicit design-system `<kbd>Esc</kbd>` shortcut badge.
+- **Dynamic Dirty Tracking & Status Badging (`useCueEditor.ts`, `EditRightPanel.tsx`)**:
+  - `useCueEditor` preserves an `originalCue` baseline snapshot when selecting a cue for editing, deriving `isDirty` by comparing start/end times, selected quote text, cue type, color class, and character offsets. New drafts are dirty if timings or text are customized.
+  - `EditRightPanel` header displays reactive status badges: `Saved` (green check) vs `Unsaved` (pulsing amber dot) for existing cues, and `Draft` vs `Draft (Unsaved)` for new drafts.
+- **Clean Script Click Dismissal (`dismissIfClean`, `handleScriptClick`)**:
+  - `dismissIfClean()` safely resets `useCueEditor` back to idle workstation overview if no edits have been made (`!isDirty`).
+  - In `App.tsx`, `handleScriptClick` is bound to the screenplay reading canvas, safely closing clean cue inspections on click while strictly ignoring clicks on interactive buttons, input fields, staging markers (`e.stopPropagation()`), or active DOM text selections.
 
 

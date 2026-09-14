@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.4.0-dev] - Unreleased
 
 ### Added
+- **Dynamic Dirty Tracking & Clean Script Click Dismissal (`src/hooks/useCueEditor.ts`, `src/App.tsx`, `src/components/edit/EditRightPanel.tsx`, `src/components/edit/CueEditorContext.tsx`, `src/components/script/ScriptLine.tsx`)**:
+  - **Snapshot Change Detection**: Tracked an `originalCue` baseline snapshot in `useCueEditor` and derived dynamic `isDirty` state, detecting changes to start/end times, text content, category types, and script character offsets for existing cues, as well as customized timings or edited quote text in new cue drafts.
+  - **Clean Script Click Dismissal (`dismissIfClean`)**: Provided safe dismissal back to idle workstation overview when clicking on clean screenplay canvas space while in Edit mode without unsaved changes, preventing accidental disruption while reading.
+  - **Click Event Guarding**: Attached `handleScriptClick` on the screenplay container, strictly ignoring clicks on interactive buttons, input elements, external links, staging markers (`e.stopPropagation()` in `ScriptLine`), and active DOM text drag selections.
+  - **Dynamic Status Badging**: Upgraded the Cue Inspector header in `EditRightPanel` with live reactive status badges: dynamic `Saved` (green check) vs `Unsaved` (pulsing amber dot) for existing cues, and `Draft` vs `Draft (Unsaved)` for new cue drafts.
+- **Redesigned Left Panel Headers with Decoupled Progressive Responsive Controls (`src/components/active-highlights/ActiveHighlightsPanel.tsx`, `src/components/left-panel/MediaHeader.tsx`, `src/components/edit/SyncCuesToolbar.tsx`, `src/index.css`)**:
+  - **Highlights Header Single-Row Stepped Layout**: Redesigned `ActiveHighlightsPanel` header into an adaptive single row with progressive stepped label collapsing, eliminating two-tier header wrapping while strictly preserving the live active cue count and 8-slot category LED VU meter strip.
+  - **Compact Track Height Toggle**: Replaced the dual-button track height switcher with a sleek, space-saving single toggle button (`[ ↕ Fixed ]` / `[ ↕ Flex ]`) with dedicated icons and contextual tooltips.
+  - **Playback MediaHeader Live Timecode & Unified Transport**: Extended `LiveTimecodeBadge` to Playback mode when the player is connected, and unified `Replay` and `Play/Pause` controls into a single cohesive pill with a hairline divider.
+  - **Workstation Header Parity**: Added `ListChecks` icon to the `SyncCuesToolbar` title, establishing aesthetic parity across all panel headers.
 - **Cross-Mode Playback Continuity & Unified Workstation Left Panel (`src/components/left-panel/WorkstationLeftPanel.tsx`, `src/components/left-panel/MediaViewport.tsx`, `src/components/left-panel/MediaHeader.tsx`, `src/App.tsx`, `src/components/script/ScriptLine.tsx`)**:
   - **Single Persistent Media Viewport**: Unified Playback and Edit left panels into `WorkstationLeftPanel`, hosting a permanent `MediaViewport` holding the `<YouTube>` player iframe across mode switches. Completely eliminates YouTube player destruction, abrupt audio cutoff, and video timestamp resets to 0:00 when toggling between Playback Mode and Edit Mode.
   - **Eliminated Mode-Switch Jitter & Lag**:
@@ -168,6 +178,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Removed vestigial `onCycleThemeMode` prop through `AppHeader` and `SettingsMenuDropdown` (superseded by the 4-theme segmented picker).
 
 ### Fixed
+- **Player Timing & State Reset on Project Load (`src/hooks/useYouTubePlayer.ts`, `src/App.tsx`)**:
+  - Implemented `resetPlayback` in `useYouTubePlayer` to clear running interval timers, zero `currentTime`, reset `playerState` to idle (-1), and pause and seek the active player to 0:00.
+  - Tracked active player instance via mutable `playerRef` to prevent stale interval closures from polling and restoring previous playback timestamps.
+  - Automatically triggered `resetPlayback` upon `youtubeId` change and synchronously across all project loaders (built-in examples, blank canvas, starter guide, remote links, and JSON file import), ensuring timeline ruler, playhead, and auto-scroll cleanly initialize to `00:00`.
+- **Split Header Container Query Calibration & Script Toolbar Streamlining (`src/index.css`, `src/components/ScriptHeaderControls.tsx`, `src/components/RawScriptModal.tsx`)**:
+  - Raised Left Panel button label collapse threshold from 580px to 680px in `index.css`, eliminating horizontal button overflow and `Hide Video` label clipping in Edit Mode.
+  - Decoupled all workstation section headers with independent container query thresholds accounting for container padding:
+    - Playback MediaHeader: 640px (title & button labels), 480px (duration).
+    - Edit MediaHeader: 580px (title), 510px (button labels), 430px (YouTube pill text & duration).
+    - Sync Cues Toolbar: 510px (title, secondary labels, scroll label), 420px (density & filter labels).
+    - Center Script Panel: 480px (cue status text), 420px (button labels & line count), 320px (script title).
+  - Relocated active cue status badge (`Editing Cue` / `Drafting Cue`) and line count to the left side beside the title in `ScriptHeaderControls`, leaving action controls cleanly focused on the right.
+  - Removed redundant `Idle` status placeholder badge from the script header.
+  - Renamed "Edit Raw" button and modal title to "Edit Source" and "Source Screenplay" for conceptual consistency with screenplay authoring.
 - **Desktop Auto-Scroll Dropdown Viewport Cutoff (`src/components/ScriptHeaderControls.tsx`)**:
   - Fixed an offscreen cutoff bug where the Auto-Scroll "Focus Mode" dropdown used static left-anchoring (`left-0`), causing its 176px container to extend 36px+ past the right edge of the window frame / right panel on desktop. Applied responsive anchoring (`left-0 lg:left-auto lg:right-0`), anchoring cleanly to the right edge of the toolbar button on desktop while preserving left-anchoring on mobile.
 - **Scroll Focus Dropdown Auto-Close (`src/components/ScriptHeaderControls.tsx`)**:
@@ -193,6 +217,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Removed duplicate static `Video Hidden` badge in `PlaybackLeftPanel` header that caused horizontal text squishing and overflow when the panel was dragged narrow.
 
 ### Changed
+- **Cue Inspector Action & Destructive Styling Refinements (`src/components/edit/CueEditorForm.tsx`)**:
+  - Removed loose "Esc" text beside the close button in `CueEditorForm` header to eliminate visual noise.
+  - Added resting destructive red styling (`text-red-500/80 bg-red-500/10 border-red-500/20`) to the Cue Delete button in the pinned sticky bottom action bar.
+  - Formatted the <kbd>Esc</kbd> shortcut badge on the Cancel button consistently with design system keyboard badges.
 - **Sync Cues Action Nomenclature & Density Badging (`src/components/edit/SyncCuesToolbar.tsx`)**:
   - Replaced ambiguous `"RAW"` and `"ALIGN"` button labels with self-describing `"JSON"` (with `{ }` braces icon and tooltip) and `"Resync"` (with `↺` refresh icon and animated `"Synced"` success state).
   - Added responsive `"Cards"` and `"Compact"` text labels to the view density switcher that automatically collapse to clean icon glyphs (`[ ⊞ | ≡ ]`) via container queries on narrow panels.

@@ -85,6 +85,7 @@ When modifying application state, storage keys, or external fetching:
 - **LocalStorage Keys & Centralized Dictionary (`SCRIPT_PREFERENCES_STORAGE_KEYS`)**:
   - Centralized in `src/hooks/useScriptPreferences.ts` under `SCRIPT_PREFERENCES_STORAGE_KEYS` to eliminate raw string literal duplication and typo risks across getters and setters:
     - `'screenplay_sync_state'`: Core project data (video ID, script text, cues, timing settings).
+    - `'sceneflow_app_mode'`: Active workflow mode (`AppMode`: `'playback' | 'edit'`).
     - `'sceneflow_app_theme_mode'`: Active application shell theme mode (`AppThemeMode`: `'auto' | 'light' | 'warm' | 'dark'`).
     - `'sceneflow_script_theme'`: Active script viewer theme ID (`ScriptThemeId`).
     - `'sceneflow_cue_palette_profile'`: Active cue palette accessibility profile (`CuePaletteProfile`: `'standard' | 'protanopia'`).
@@ -149,11 +150,12 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
    - **Physical Media Time (`[startTime, endTime]`)**: Strictly dictates timeline block geometry (`leftPercent`, `widthPercent`), timecode ruler ticks, duration badges, and sub-lane collision intervals. Blocks are never physically stretched or shifted by `before`/`after` buffers to avoid distorting audio timing.
    - **Perceptual Activation Buffers (`isCueActive(cue, currentTime, settings)`)**: Governs visual activation states: cue illumination outlines, pulsing lane indicator dots, inspector card docking, and screenplay text highlighting.
 
-2. **YouTube IFrame API `seekTo()` State Preservation**:
+2. **YouTube IFrame API `seekTo()` State Preservation & Player Reset**:
    - YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds, true)` is called while paused.
    - **Dual Pause**: Enforce `player.pauseVideo()` before and after `player.seekTo()`.
    - **Auto-Expiring Guard**: Intercept unwanted `BUFFERING (3) -> PLAYING (1)` transitions using an auto-expiring timer (600ms). Never leave a seek-pause flag armed indefinitely, or users will experience the "ghost pause" bug requiring two clicks to play.
    - **Explicit Playback Intent**: Clear the suppression flag immediately on all deliberate play triggers (`playVideo`, `togglePlayPause`, or explicit "Replay" actions).
+   - **Timing & State Reset on Project Load (`resetPlayback`)**: When switching projects (built-in examples, blank canvas, guide, remote links, and JSON import) or updating `youtubeId`, synchronously invoke `resetPlayback()` in `useYouTubePlayer`. This clears running interval timers, zeroes `currentTime`, resets `playerState` to idle (-1), and pauses and seeks the active player to 0:00 (tracked via `playerRef`), preventing stale timer closures from polling and restoring previous timestamps across project boundaries.
 
 3. **Deterministic Sub-Lane Allocation**:
    - Compute sub-lane indices **globally** across the entire script once using greedy interval scheduling (`useTimelineWindow.ts`).
@@ -185,8 +187,8 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
    - Directly resize video height using the horizontal divider (`VideoSplitDivider.tsx`) rather than arbitrary width percentages.
    - **Proportional 16:9 Scaling**: Container must couple `height: ${videoHeight}px` with `aspectRatio: '16 / 9'` and `maxWidth: '100%'`, preventing video distortion and eliminating empty lateral gutters.
    - **Performance, IFrame Guard & Deadband Elimination**: Leverage window-level pointer event subscriptions, explicit pointer capture fallbacks, and the body `.is-resizing-split` overlay to prevent YouTube iframe event absorption during vertical drags. Re-anchor the drag origin when reaching min (160px) or max (480px) constraints to eliminate boundary deadbands when reversing direction. Commit disk I/O only on pointer up (`commitVideoHeight`).
-9. **Header Layout Stability & Adaptive Two-Tier Toolbar Invariants**:
-   - **Adaptive Toolbar Architecture**: High-frequency headers must dynamically adapt to container width via `ResizeObserver` (560px threshold). When wide ($\ge 560\text{px}$), all controls are consolidated into a single unified row (`Highlights` + VU meter on left; Track Height + Zoom + Filters + View Switcher on right), reserving maximum vertical headroom for timeline tracks. When dragged narrow ($< 560\text{px}$), the header automatically transforms into a Two-Tier layout (Tier 1: Title + VU meter + View Switcher; Tier 2: Zoom + Track Height + Filters) to eliminate button collisions and text squishing.
+9. **Header Layout Stability & Adaptive Single-Row Toolbar Invariants**:
+   - **Highlights Adaptive Single-Row Architecture**: The `ActiveHighlightsPanel` header maintains a single unified row across all widths with progressive stepped label collapsing, eliminating two-tier layout reflows while strictly preserving the live active cue count and 8-slot category LED VU meter strip. Track height mode toggles dynamically via a compact single button `[ ↕ Fixed ]` / `[ ↕ Flex ]` with dedicated icons.
    - **Compact Track Header Geometry (`w-18` / 72px)**: Category headers on `TimelineLane` must use compact fixed widths (`w-18` with `text-[8.5px]`) to maximize the available horizontal timeline track canvas for cue blocks.
    - **Zero-Layout-Shift Indicator Strips**: Avoid rendering variable-length dynamic arrays of cue instance dots in high-frequency playback headers, as rapid cue count fluctuations (`4 → 11 → 5`) cause severe visual jitter and layout shifts. Use a fixed-slot category indicator strip (`COLORS` order) where slot positions are permanently anchored and illuminate dynamically via `resolveCueColor()`.
    - **Numeric Tabular Width Isolation**: When displaying numeric counters that oscillate between single and double digits during playback, always isolate the digit inside a dedicated fixed-width slot (`min-w-[14px] font-mono tabular-nums text-center`) to mathematically prevent horizontal jitter.
@@ -207,11 +209,13 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
     - **Dual Control & Quick Toggle**: Provide an interactive header toggle button (`[ Hide Video ]` ⇋ `[ Show Video ]`) alongside the global keyboard shortcut (`KeyV` / <kbd>V</kbd>) with animated status badge (`Video Hidden`).
     - **Unified View Reset**: `isViewCustomized` and `resetViewLayout` must track `isVideoCollapsed`, ensuring clicking "Reset View" restores the video player to default visibility.
 
-13. **Persistent Playback Header Transport Controls**:
-    - **Unobstructed Transport Access**: Transport controls (`Play`, `Pause`, `Replay from 0:00`) reside in the persistent `PlaybackLeftPanel` header, ensuring media playback is fully controllable even when the video player is collapsed or obstructed.
+13. **Persistent Media Header Transport Controls (`MediaHeader.tsx`)**:
+    - **Unified Transport Pill**: Transport controls (`Play`, `Pause`, `Replay from 0:00`) reside within a cohesive pill container with hairline divider in `MediaHeader.tsx`, available across both Playback and Edit modes.
+    - **Live Precision Timecode in Media Header**: `LiveTimecodeBadge` renders in `MediaHeader` in both Playback and Edit modes whenever the player is connected, giving editors and viewers consistent real-time `MM:SS.s` feedback.
+    - **Unobstructed Transport Access**: Transport controls remain fully functional even when the video player is collapsed or hidden.
     - **Immediate State Synchronization**: The Play/Pause button dynamically renders based on `playerState === 1`, showing stateful colors (vibrant accent when playing) and updating in lockstep with global keyboard shortcuts (<kbd>Space</kbd> / <kbd>K</kbd>).
     - **Explicit Replay Semantics**: Replay must invoke `seekTo(0, true, true)` to immediately jump to `0:00` and trigger playback without paused-seek suppression guards interfering.
-    - **Viewport Fluidity**: Button labels must gracefully collapse to compact icon buttons on narrow viewports (`hidden sm:inline`), ensuring zero header wrapping.
+    - **Viewport Fluidity**: Button labels must gracefully collapse to compact icon buttons on narrow viewports via container queries (`.media-btn-label`), ensuring zero header wrapping.
 
 14. **Centralized External Links & Navigation Architecture**:
     - Centralize all external publication, documentation, repository, and support URLs in `src/constants/links.ts` (`EXTERNAL_LINKS`) rather than hardcoding raw string literals across UI components.
@@ -248,16 +252,24 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
     - **Two-Tier Flex Container**: Edit mode avoids `sticky top-0` scroll container hacks by structuring the Left Panel as an unpinned, two-zone flex container (`h-full flex flex-col overflow-hidden`):
       - **Tier 1 (Media Preview)**: Contains persistent transport controls, `LiveTimecodeBadge` (real-time `MM:SS.s` timecode and duration), collapsible YouTube source pill (`[ 🟢 {videoId} ✏️ ]` reclaiming ~50px height), resizable 16:9 video player, and horizontal `VideoSplitDivider` (tightened with `className="mt-2 mb-1"`).
       - **Tier 2 (Sync Cues Studio)**: Occupies `flex-1 min-h-0 flex flex-col overflow-hidden` with `pt-0` to eliminate dead space. Houses permanently docked `SyncCuesToolbar` and internal scrollable cue list viewport.
-    - **Adaptive Container Queries (`@container (max-width: 580px)`)**:
+    - **Adaptive Container Queries (`src/index.css`)**:
       - Left panels declare `containerType: 'inline-size'` and class `@container`.
-      - When split panels are dragged narrow ($\le 580\text{px}$), text labels (`.header-btn-label`) and pill text (`.youtube-pill-text`) automatically collapse into clean icon-only buttons (`[ ↺ ]`, `[ ▶ ]`, `[ 👁/ ]`, `[ 🟢 ✏️ ]`, `[ ⊞ | ≡ ]`, `[ 🔍 ]`, `[ { } ]`, `[ ↺ ]`), guaranteeing single-row alignment with zero horizontal overflow or text wrapping.
+      - Calibrated, padding-aware container query thresholds decouple each section header:
+        - Playback MediaHeader: `@container (max-width: 640px)` hides title and button labels; `@container (max-width: 480px)` hides timecode duration.
+        - Edit MediaHeader: `@container (max-width: 580px)` hides title; `@container (max-width: 510px)` hides button labels; `@container (max-width: 430px)` hides YouTube pill text and timecode duration.
+        - Sync Cues Toolbar: `@container (max-width: 510px)` hides title, secondary labels, and scroll label; `@container (max-width: 420px)` hides density switcher and filter button labels.
+        - Center Script Panel: `@container (max-width: 480px)` hides cue status badge text; `@container (max-width: 420px)` hides button labels and line count badge; `@container (max-width: 320px)` hides script title.
     - **Sync Cues Toolbar Architecture (`SyncCuesToolbar.tsx`)**:
-      - **Symmetric Padding**: Standardized to `py-2` (8px top, 8px bottom) when collapsed, maintaining balanced breathing room between the video divider above and the cue list below.
+      - **Symmetric Padding & Header Parity**: Standardized to `py-2` (8px top, 8px bottom) when collapsed, maintaining balanced breathing room between the video divider above and the cue list below, featuring `ListChecks` icon in the title for visual parity with Playback Highlights.
       - **Action Nomenclature**: Standardized on `[ { } JSON ]` for modal cue inspection and `[ ↺ Resync ]` for proximity realignment with animated `[ ✓ Synced ]` feedback.
       - **Adaptive Density Toggle**: `[ ⊞ Cards | ≡ Compact ]` with responsive text labels collapsing cleanly to icons on narrow viewports.
       - **Collapsible Search & Filter Section**: Resting state is a compact single row with a `[ 🔍 Filter ]` toggle button, reclaiming ~64px of vertical height. Smoothly expands search input (with autofocus and <kbd>Escape</kbd> dismissal) and category pills when toggled or when active queries/filters are present.
       - **Multi-Select Category Filtering**: Category pills use a `Set<string>` to support concurrent multi-category filtering (e.g. `DIALOGUE` + `ACTION`).
       - **One-Click Counter Reset**: The cue count badge (`{filteredCount}/{totalCount}`) converts into an interactive reset button with an `X` when filtering is active, clearing all filters and auto-collapsing the bar in a single click.
+    - **Screenplay Header Controls Alignment (`ScriptHeaderControls.tsx`)**:
+      - Active cue status badges (`Editing Cue` with pulsing amber dot or `Drafting Cue` with pulsing blue dot) and screenplay line count badge (`{lineCount} lines`) are docked on the left next to the title (`Script Editor`), leaving actions focused on the right.
+      - Features `[Edit Source]` (renamed from `[Edit Raw]`) modal trigger and inspector toggle.
+      - Redundant `Idle` status placeholder badge is omitted to eliminate visual noise.
     - **Cue Selection Buffering Continuity**:
       - Selecting a cue in Edit mode must never invoke premature `player.pauseVideo()` immediately after `player.seekTo()`. Seeking directly updates the target timestamp, allowing the browser's video decoding pipeline to paint the target frame cleanly without black screen artifacts.
     - **Cue Authoring Compound Context Invariant (`CueEditorContext.tsx`)**:
@@ -303,6 +315,13 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
     - **Pinned Sticky Bottom Action Bar (`CueEditorForm.tsx`)**:
       - Primary actions (`Update / Create Cue` via <kbd>Ctrl+Enter</kbd>, `Cancel` via <kbd>Esc</kbd>, and `Delete`) must be pinned permanently to `bottom-0` (`bg-surface/95 backdrop-blur border-t`).
       - Guarantees width resilience when the inspector is dragged narrow (`280px`–`320px`), avoiding horizontal button collision in the top 48px header while ensuring the save button is never pushed below the vertical scroll fold.
+      - Delete button features resting destructive red styling (`text-red-500/80 bg-red-500/10 border-red-500/20`), and Cancel features a styled `<kbd>Esc</kbd>` badge.
+    - **Dynamic Dirty Tracking & Status Badging (`useCueEditor.ts`, `EditRightPanel.tsx`)**:
+      - `useCueEditor` preserves an `originalCue` baseline snapshot when selecting a cue for editing, deriving `isDirty` by comparing start/end times, selected quote text, cue type, color class, and character offsets. New drafts are dirty if timings or text are customized.
+      - `EditRightPanel` header displays reactive status badges: `Saved` (green check) vs `Unsaved` (pulsing amber dot) for existing cues, and `Draft` vs `Draft (Unsaved)` for new drafts.
+    - **Clean Script Click Dismissal (`dismissIfClean`, `handleScriptClick`)**:
+      - `dismissIfClean()` safely resets `useCueEditor` back to idle workstation overview if no edits have been made (`!isDirty`).
+      - In `App.tsx`, `handleScriptClick` is bound to the screenplay reading canvas, safely closing clean cue inspections on click while strictly ignoring clicks on interactive buttons, input fields, staging markers (`e.stopPropagation()` in `ScriptLine`), or active DOM text selections.
 
 
 
