@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import { Clock } from 'lucide-react';
+import { formatPrecisionTimecode } from '../../lib/utils';
 
 export interface CueTimingInputsProps {
   startTime?: number;
@@ -30,7 +31,12 @@ export const CueTimingInputs: React.FC<CueTimingInputsProps> = memo(({
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       {/* Start Time */}
       <div className="space-y-1">
-        <label className="text-[8px] uppercase tracking-widest text-text-faint font-black">Start Time</label>
+        <div className="flex items-center justify-between">
+          <label className="text-[8px] uppercase tracking-widest text-text-faint font-black">Start Time</label>
+          {startTime !== undefined && !isNaN(startTime) && (
+            <span className="text-[9px] font-mono font-bold text-blue-500">{formatPrecisionTimecode(startTime)}</span>
+          )}
+        </div>
         <div className="flex gap-1">
           <input 
             type="number"
@@ -53,7 +59,12 @@ export const CueTimingInputs: React.FC<CueTimingInputsProps> = memo(({
 
       {/* End Time */}
       <div className="space-y-1">
-        <label className="text-[8px] uppercase tracking-widest text-text-faint font-black">End Time</label>
+        <div className="flex items-center justify-between">
+          <label className="text-[8px] uppercase tracking-widest text-text-faint font-black">End Time</label>
+          {endTime !== undefined && !isNaN(endTime) && (
+            <span className="text-[9px] font-mono font-bold text-blue-500">{formatPrecisionTimecode(endTime)}</span>
+          )}
+        </div>
         <div className="flex gap-1">
           <input 
             type="number"

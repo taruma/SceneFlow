@@ -11,6 +11,7 @@ export function useYouTubePlayer({ youtubeId, onPlay, onPause }: UseYouTubePlaye
   const [player, setPlayer] = useState<any>(null);
   const [playerState, setPlayerState] = useState<number>(-1);
   const [currentTime, setCurrentTime] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(0);
   const timerRef = useRef<number | null>(null);
   const isSeekingWhilePausedRef = useRef<boolean>(false);
   const seekPauseTimeoutRef = useRef<number | null>(null);
@@ -18,6 +19,7 @@ export function useYouTubePlayer({ youtubeId, onPlay, onPause }: UseYouTubePlaye
   // Reset player instance when video ID changes
   useEffect(() => {
     setPlayer(null);
+    setDuration(0);
     isSeekingWhilePausedRef.current = false;
     if (seekPauseTimeoutRef.current) {
       clearTimeout(seekPauseTimeoutRef.current);
@@ -53,11 +55,19 @@ export function useYouTubePlayer({ youtubeId, onPlay, onPause }: UseYouTubePlaye
   const onReady: YouTubeProps['onReady'] = useCallback((event) => {
     setPlayer(event.target);
     setPlayerState(event.target.getPlayerState());
+    const dur = event.target.getDuration?.();
+    if (dur && typeof dur === 'number') {
+      setDuration(dur);
+    }
   }, []);
 
   const onStateChange: YouTubeProps['onStateChange'] = useCallback((event) => {
     setPlayerState(event.data);
     if (event.data === 1) { // Playing
+      const dur = event.target?.getDuration?.();
+      if (dur && typeof dur === 'number') {
+        setDuration(dur);
+      }
       if (isSeekingWhilePausedRef.current) {
         isSeekingWhilePausedRef.current = false;
         if (seekPauseTimeoutRef.current) {
@@ -167,6 +177,7 @@ export function useYouTubePlayer({ youtubeId, onPlay, onPause }: UseYouTubePlaye
     playerState,
     currentTime,
     setCurrentTime,
+    duration,
     onReady,
     onStateChange,
     seekTo,

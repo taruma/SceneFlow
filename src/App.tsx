@@ -77,6 +77,7 @@ export default function App() {
     playerState,
     currentTime,
     setCurrentTime,
+    duration,
     onReady,
     onStateChange,
     togglePlayPause,
@@ -640,6 +641,8 @@ export default function App() {
             onReplay={handleReplay}
             isDesktop={isDesktop}
             playerState={playerState}
+            currentTime={currentTime}
+            duration={duration}
             onReady={onReady}
             onStateChange={onStateChange}
             cues={state.cues}

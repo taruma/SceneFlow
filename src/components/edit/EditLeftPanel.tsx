@@ -9,6 +9,7 @@ import { DEFAULT_VIDEO_HEIGHT } from '../../hooks/useScriptPreferences';
 import { VideoSplitDivider } from '../playback/VideoSplitDivider';
 import { YoutubeSourceInput } from '../YoutubeSourceInput';
 import { SyncCuesPanel } from './SyncCuesPanel';
+import { LiveTimecodeBadge } from './LiveTimecodeBadge';
 
 export interface EditLeftPanelProps {
   youtubeId: string;
@@ -25,6 +26,8 @@ export interface EditLeftPanelProps {
   onReplay?: () => void;
   isDesktop: boolean;
   playerState: number;
+  currentTime?: number;
+  duration?: number;
   onReady: (event: any) => void;
   onStateChange: (event: any) => void;
   cues: Cue[];
@@ -61,6 +64,8 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
   onReplay,
   isDesktop,
   playerState,
+  currentTime = 0,
+  duration = 0,
   onReady,
   onStateChange,
   cues,
@@ -120,7 +125,16 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
             )}
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
+            {/* Live Precision Timecode Display */}
+            {hasPlayer && (
+              <LiveTimecodeBadge
+                currentTime={currentTime}
+                duration={duration}
+                isPlaying={isPlaying}
+              />
+            )}
+
             {/* Playback Transport Controls: Replay & Play/Pause */}
             <div className="flex items-center gap-1">
               {onReplay && (

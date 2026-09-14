@@ -5,7 +5,7 @@ import { COLORS } from '../../constants/script';
 import { LEGACY_CLASS_MAP, type CuePaletteProfile } from '../../styles/tokens/cues';
 import { useScriptTheme } from '../../hooks/useScriptTheme';
 import { type CueThemeResolvedColor } from '../../styles';
-import { cn } from '../../lib/utils';
+import { formatPrecisionTimecode, cn } from '../../lib/utils';
 import { UI_TOKENS } from '../../styles/tokens/ui';
 
 export interface SyncCueRowProps {
@@ -56,9 +56,9 @@ export const SyncCueRow: React.FC<SyncCueRowProps> = memo(({
       {/* Timecode Pill */}
       <span className={cn(
         UI_TOKENS.badge.timeTag,
-        "shrink-0 font-mono text-[9px] min-w-[42px] text-center"
+        "shrink-0 font-mono text-[9.5px] font-bold min-w-[50px] text-center"
       )}>
-        {startTimeStr}s
+        {formatPrecisionTimecode(cue.startTime)}
       </span>
 
       {/* Category Indicator Dot & Tag */}

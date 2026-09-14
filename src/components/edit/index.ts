@@ -1,6 +1,9 @@
 export { EditLeftPanel } from './EditLeftPanel';
 export type { EditLeftPanelProps } from './EditLeftPanel';
 
+export { LiveTimecodeBadge } from './LiveTimecodeBadge';
+export type { LiveTimecodeBadgeProps } from './LiveTimecodeBadge';
+
 export { SyncCuesPanel } from './SyncCuesPanel';
 export type { SyncCuesPanelProps } from './SyncCuesPanel';
 

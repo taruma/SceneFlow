@@ -26,3 +26,20 @@ export function formatTimecode(seconds: number): string {
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
+/**
+ * Formats seconds into precision timecode string (MM:SS.s or HH:MM:SS.s).
+ */
+export function formatPrecisionTimecode(seconds: number): string {
+  if (isNaN(seconds) || seconds < 0) return '00:00.0';
+  const safe = Math.max(0, seconds);
+  const hours = Math.floor(safe / 3600);
+  const mins = Math.floor((safe % 3600) / 60);
+  const secs = (safe % 60).toFixed(1);
+  const formattedSecs = secs.padStart(4, '0');
+
+  if (hours > 0) {
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${formattedSecs}`;
+  }
+  return `${mins.toString().padStart(2, '0')}:${formattedSecs}`;
+}
+

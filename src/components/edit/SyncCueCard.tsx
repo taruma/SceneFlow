@@ -5,7 +5,7 @@ import { COLORS } from '../../constants/script';
 import { LEGACY_CLASS_MAP, type CuePaletteProfile } from '../../styles/tokens/cues';
 import { useScriptTheme } from '../../hooks/useScriptTheme';
 import { type CueThemeResolvedColor } from '../../styles';
-import { cn } from '../../lib/utils';
+import { formatPrecisionTimecode, cn } from '../../lib/utils';
 import { UI_TOKENS } from '../../styles/tokens/ui';
 
 export interface SyncCueCardProps {
@@ -76,9 +76,16 @@ export const SyncCueCard: React.FC<SyncCueCardProps> = memo(({
             "{cue.selectedText}"
           </span>
           <div className="flex items-center gap-1.5 mt-1">
-            <span className={UI_TOKENS.badge.timeTag}>{startTimeStr}s</span>
+            <span className={cn(UI_TOKENS.badge.timeTag, "font-mono font-bold text-[9.5px]")}>
+              {formatPrecisionTimecode(cue.startTime)}
+            </span>
             <div className="w-1.5 h-px bg-border-main" />
-            <span className={UI_TOKENS.badge.timeTag}>{endTimeStr}s</span>
+            <span className={cn(UI_TOKENS.badge.timeTag, "font-mono font-bold text-[9.5px]")}>
+              {formatPrecisionTimecode(cue.endTime)}
+            </span>
+            <span className="text-[9px] font-mono text-text-faint ml-0.5">
+              ({((cue.endTime ?? 0) - (cue.startTime ?? 0)).toFixed(1)}s)
+            </span>
           </div>
         </div>
       </div>
