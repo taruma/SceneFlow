@@ -93,31 +93,24 @@ export const PlaybackLeftPanel: React.FC<PlaybackLeftPanelProps> = ({
 
   return (
     <div 
-      style={style}
+      style={{ ...style, containerType: 'inline-size' }}
       className={cn(
         UI_TOKENS.layout.leftPanelBase,
-        "w-full border-r p-0 lg:px-6 lg:py-3.5 gap-0 lg:overflow-y-auto scrollbar-hide sticky top-0 z-30 shadow-md lg:shadow-none transition-all duration-300",
+        "panel-container-query @container w-full border-r p-0 lg:px-6 lg:py-3.5 gap-0 lg:overflow-y-auto scrollbar-hide sticky top-0 z-30 shadow-md lg:shadow-none transition-all duration-300",
         className
       )}
     >
       <section className="space-y-2 lg:space-y-2.5 z-30 sticky top-0">
         {/* Playback Section Header with Transport & Collapsible Controls */}
-        <div className="flex items-center justify-between px-3 pt-2.5 pb-1 lg:px-0 lg:pt-0 lg:pb-0.5">
-          <div className="flex items-center gap-2">
-            <h2 className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-2")}>
-              <Video size={14} className="text-text-muted" /> Playback
+        <div className="flex items-center justify-between px-3 pt-2.5 pb-1 lg:px-0 lg:pt-0 lg:pb-0.5 gap-2 min-w-0">
+          <div className="flex items-center gap-2 min-w-0 shrink-0">
+            <h2 className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-2 shrink-0")}>
+              <Video size={14} className="text-text-muted shrink-0" />
+              <span className="media-preview-title">Playback</span>
             </h2>
-            {isVideoCollapsed && (
-              <span 
-                className="text-[9px] font-black uppercase tracking-wider text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md flex items-center gap-1 animate-in fade-in zoom-in-95 duration-200"
-                title="Video player is hidden. Timeline is unobstructed for screen recording."
-              >
-                <VideoOff size={10} /> Video Hidden
-              </span>
-            )}
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 shrink-0">
             {/* Playback Transport Controls: Replay & Play/Pause */}
             <div className="flex items-center gap-1">
               <button
@@ -128,7 +121,7 @@ export const PlaybackLeftPanel: React.FC<PlaybackLeftPanelProps> = ({
                 className="group flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-150 border border-border-subtle bg-surface hover:bg-surface-subtle text-text-muted hover:text-text-main shadow-xs active:scale-95 select-none"
               >
                 <RotateCcw size={11} className="shrink-0 transition-transform duration-200 group-hover:-rotate-45" />
-                <span className="hidden sm:inline">Replay</span>
+                <span className="header-btn-label">Replay</span>
               </button>
 
               {onTogglePlayPause && (
@@ -147,12 +140,12 @@ export const PlaybackLeftPanel: React.FC<PlaybackLeftPanelProps> = ({
                   {isPlaying ? (
                     <>
                       <Pause size={11} className="shrink-0 fill-current" />
-                      <span className="hidden sm:inline">Pause</span>
+                      <span className="header-btn-label">Pause</span>
                     </>
                   ) : (
                     <>
                       <Play size={11} className="shrink-0 fill-current ml-0.5" />
-                      <span className="hidden sm:inline">Play</span>
+                      <span className="header-btn-label">Play</span>
                     </>
                   )}
                 </button>
@@ -185,12 +178,12 @@ export const PlaybackLeftPanel: React.FC<PlaybackLeftPanelProps> = ({
                 {isVideoCollapsed ? (
                   <>
                     <Video size={12} className="text-blue-500 shrink-0" />
-                    <span className="hidden sm:inline">Show Video</span>
+                    <span className="header-btn-label">Show Video</span>
                   </>
                 ) : (
                   <>
                     <VideoOff size={12} className="text-text-faint shrink-0" />
-                    <span className="hidden sm:inline">Hide Video</span>
+                    <span className="header-btn-label">Hide Video</span>
                   </>
                 )}
               </button>

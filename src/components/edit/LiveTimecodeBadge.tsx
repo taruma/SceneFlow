@@ -56,7 +56,7 @@ export const LiveTimecodeBadge: React.FC<LiveTimecodeBadgeProps> = memo(({
 
       {/* Optional Total Duration */}
       {formattedDuration && (
-        <span className="text-text-faint font-normal tracking-tight text-[9.5px]">
+        <span className="timecode-duration text-text-faint font-normal tracking-tight text-[9.5px]">
           / {formattedDuration}
         </span>
       )}

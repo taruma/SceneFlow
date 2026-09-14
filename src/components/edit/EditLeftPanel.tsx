@@ -118,20 +118,21 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
 
   return (
     <div 
-      style={style}
+      style={{ ...style, containerType: 'inline-size' }}
       className={cn(
         UI_TOKENS.layout.leftPanelBase,
-        "w-full border-r p-0 lg:px-5 lg:py-3 gap-0 flex flex-col h-full overflow-hidden z-10 transition-all duration-300",
+        "panel-container-query @container w-full border-r p-0 lg:px-5 lg:py-3 gap-0 flex flex-col h-full overflow-hidden z-10 transition-all duration-300",
         className
       )}
     >
       {/* Tier 1: Media Preview, Compact Source Input & Video Viewport */}
       <div className="shrink-0 space-y-2 select-none">
         {/* Section Header with Transport & Collapse Controls */}
-        <div className="flex items-center justify-between px-3 pt-2 pb-1 lg:px-0 lg:pt-0 lg:pb-0.5">
-          <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+        <div className="flex items-center justify-between px-3 pt-2 pb-1 lg:px-0 lg:pt-0 lg:pb-0.5 gap-2 min-w-0">
+          <div className="flex items-center gap-1.5 min-w-0 shrink-0">
             <h2 className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-2 shrink-0")}>
-              <Video size={14} className="text-text-muted" /> Media Preview
+              <Video size={14} className="text-text-muted shrink-0" />
+              <span className="media-preview-title">Media Preview</span>
             </h2>
 
             {/* Collapsible YouTube Source Pill */}
@@ -146,7 +147,7 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
                   : (youtubeId ? `Video ID: ${extractedId || youtubeId} (Click to change URL)` : "Set YouTube video source URL")
               }
               className={cn(
-                "group flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono transition-all duration-150 border shadow-2xs select-none max-w-[140px] sm:max-w-[180px] active:scale-95",
+                "group flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono transition-all duration-150 border shadow-2xs select-none active:scale-95 shrink-0",
                 isSourceInputOpen
                   ? "bg-blue-500/15 border-blue-500/40 text-blue-600 dark:text-blue-400 font-semibold shadow-blue-500/10"
                   : "bg-surface-subtle hover:bg-surface border-border-subtle hover:border-border-main text-text-muted hover:text-text-main"
@@ -160,27 +161,19 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
               )} />
               {youtubeId ? (
                 <>
-                  <span className="truncate">{extractedId || youtubeId}</span>
+                  <span className="truncate max-w-[85px] youtube-pill-text">{extractedId || youtubeId}</span>
                   <Edit2 size={9} className="shrink-0 text-text-faint group-hover:text-text-main transition-colors opacity-70" />
                 </>
               ) : (
                 <span className="text-[9px] font-sans font-bold uppercase tracking-wider text-blue-500 flex items-center gap-0.5">
-                  <Plus size={10} className="shrink-0" /> Video
+                  <Plus size={10} className="shrink-0" />
+                  <span className="youtube-pill-text">Video</span>
                 </span>
               )}
             </button>
-
-            {isVideoCollapsed && (
-              <span 
-                className="text-[9px] font-black uppercase tracking-wider text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md flex items-center gap-1 animate-in fade-in zoom-in-95 duration-200 shrink-0"
-                title="Video player is hidden. Sync cues workspace is expanded."
-              >
-                <VideoOff size={10} /> Video Hidden
-              </span>
-            )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 shrink-0">
             {/* Live Precision Timecode Display */}
             {hasPlayer && (
               <LiveTimecodeBadge
@@ -201,7 +194,7 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
                   className="group flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-150 border border-border-subtle bg-surface hover:bg-surface-subtle text-text-muted hover:text-text-main shadow-xs active:scale-95 select-none"
                 >
                   <RotateCcw size={11} className="shrink-0 transition-transform duration-200 group-hover:-rotate-45" />
-                  <span className="hidden sm:inline">Replay</span>
+                  <span className="header-btn-label">Replay</span>
                 </button>
               )}
 
@@ -221,12 +214,12 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
                   {isPlaying ? (
                     <>
                       <Pause size={11} className="shrink-0 fill-current" />
-                      <span className="hidden sm:inline">Pause</span>
+                      <span className="header-btn-label">Pause</span>
                     </>
                   ) : (
                     <>
                       <Play size={11} className="shrink-0 fill-current ml-0.5" />
-                      <span className="hidden sm:inline">Play</span>
+                      <span className="header-btn-label">Play</span>
                     </>
                   )}
                 </button>
@@ -259,12 +252,12 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
                 {isVideoCollapsed ? (
                   <>
                     <Video size={12} className="text-blue-500 shrink-0" />
-                    <span className="hidden sm:inline">Show Video</span>
+                    <span className="header-btn-label">Show Video</span>
                   </>
                 ) : (
                   <>
                     <VideoOff size={12} className="text-text-faint shrink-0" />
-                    <span className="hidden sm:inline">Hide Video</span>
+                    <span className="header-btn-label">Hide Video</span>
                   </>
                 )}
               </button>
