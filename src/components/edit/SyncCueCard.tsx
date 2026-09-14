@@ -17,6 +17,7 @@ export interface SyncCueCardProps {
   scriptThemeId?: string;
   cuePaletteProfile?: CuePaletteProfile;
   resolveCueColor?: (typeOrClass?: string) => CueThemeResolvedColor;
+  className?: string;
 }
 
 const CORE_KEYS = new Set([
@@ -41,6 +42,7 @@ export const SyncCueCard: React.FC<SyncCueCardProps> = memo(({
   scriptThemeId = 'studio-light',
   cuePaletteProfile = 'standard',
   resolveCueColor: externalResolveCueColor,
+  className,
 }) => {
   const cueType = cue.type || (cue.colorClass ? (LEGACY_CLASS_MAP[cue.colorClass] || COLORS.find(c => c.class === cue.colorClass)?.type) : 'dialogue') || 'dialogue';
   const themed = externalResolveCueColor
@@ -57,6 +59,9 @@ export const SyncCueCard: React.FC<SyncCueCardProps> = memo(({
   const duration = Math.max(0, (cue.endTime ?? 0) - (cue.startTime ?? 0));
   const durationStr = duration.toFixed(1);
   const indexStr = typeof index === 'number' ? `#${String(index + 1).padStart(2, '0')}` : null;
+  const spanClass = duration > 5.0 && charCount > 60
+    ? "col-span-1 min-[420px]:col-span-2 min-[640px]:col-span-3"
+    : "col-span-1 min-[420px]:col-span-2";
 
   // Filter out any custom metadata attributes from JSON (e.g. shot, take, mood, matchStatus)
   const customTags = useMemo(() => {
@@ -74,7 +79,20 @@ export const SyncCueCard: React.FC<SyncCueCardProps> = memo(({
       onClick={() => onSelectCue(cue)}
       role="button"
       tabIndex={0}
-      style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 76px' }}
+      style={{ 
+        contentVisibility: 'auto', 
+        containIntrinsicSize: 'auto 76px',
+        borderColor: isSelected 
+          ? `rgba(${themed.rgb}, 0.7)` 
+          : isActive 
+            ? `rgba(${themed.rgb}, 0.55)` 
+            : undefined,
+        boxShadow: isSelected 
+          ? `0 0 0 1px rgba(${themed.rgb}, 0.5), 0 1px 3px rgba(0,0,0,0.06)` 
+          : isActive 
+            ? `0 0 8px rgba(${themed.rgb}, 0.25), 0 0 0 1px rgba(${themed.rgb}, 0.3)` 
+            : undefined,
+      }}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -82,21 +100,26 @@ export const SyncCueCard: React.FC<SyncCueCardProps> = memo(({
         }
       }}
       className={cn(
+        spanClass,
         "group flex items-stretch gap-2.5 p-2.5 rounded-xl border transition-all cursor-pointer relative overflow-hidden select-none",
         isSelected 
-          ? "bg-surface-subtle border-blue-500/60 shadow-sm ring-1 ring-blue-500/40 text-text-main" 
+          ? "bg-surface-subtle text-text-main shadow-xs" 
           : isActive
-            ? "bg-surface-subtle/80 border-blue-500/40 shadow-xs ring-1 ring-blue-500/25 text-text-main"
-            : "bg-surface hover:bg-surface-subtle border-border-subtle hover:border-border-main hover:shadow-xs text-text-body"
+            ? "bg-surface-subtle/90 text-text-main shadow-2xs"
+            : "bg-surface hover:bg-surface-subtle border-border-subtle hover:border-border-main hover:shadow-xs text-text-body",
+        className
       )}
     >
       {/* Vertical Theme Stripe */}
       <div 
         className={cn(
           "w-1 rounded-full shrink-0 transition-all duration-200 self-stretch my-0.5",
-          isActive && "w-1.5 shadow-[0_0_8px_rgba(59,130,246,0.6)]"
+          isActive && "w-1.5"
         )} 
-        style={{ backgroundColor: `rgb(${themed.rgb})` }} 
+        style={{ 
+          backgroundColor: `rgb(${themed.rgb})`,
+          boxShadow: isActive ? `0 0 8px rgba(${themed.rgb}, 0.7)` : undefined
+        }} 
       />
 
       {/* Main Content (3-Zone Flex) */}

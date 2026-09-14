@@ -96,13 +96,20 @@ Desktop Edit Mode features a dedicated Two-Tier studio workspace in the Left Pan
     - Resizable 16:9 video player and horizontal `VideoSplitDivider` with balanced vertical spacing.
   - **Tier 2 (Sync Cues Studio)**:
     - Permanently docked `SyncCuesToolbar` that never scrolls away.
-    - Dedicated internal scrollable viewport rendering cues in either `SyncCueCard` (Cards view) or high-density `SyncCueRow` (Compact view) with `content-visibility: auto` rendering optimization.
+    - Dedicated internal scrollable viewport supporting both the **Time-Clustered Fluid Grid** (Cards view) and high-density tabular list (`SyncCueRow` in Compact view) with `content-visibility: auto` rendering optimization.
+- **Time-Clustered Fluid Grid (Cards View)**:
+  - **Temporal Cue Clustering (`clusterCuesByTime`)**: Intelligently groups cues by temporal proximity ($\le 2.5$s gaps) with strict ceiling boundaries (maximum 10.0s window span and maximum 8 cues per cluster) to prevent continuous dialogue/action scenes from coalescing into an unmanageable monolithic block.
+  - **Pinned Sticky Timecode Rulers**: Frosted timecode strips (`⏱ 00:00.0 – 00:04.5 · N cues`) with backdrop blur stick to the top of the viewport during scrolling, serving as temporal anchors.
+  - **Dense Auto-Fill Grid**: Uses CSS Grid `grid-cols-[repeat(auto-fill,minmax(160px,1fr))] [grid-auto-flow:dense]` to dynamically pack cards into gap-free rows.
+  - **Adaptive Card Sizing & Dialogue Protection**: Short audio bursts, camera moves, and reaction cues ($\le 1.8$s, non-dialogue, $\le 40$ch) render as compact 1-column `MiniCueCard` items. Dialogue cues (`type === 'dialogue'`) and longer text cues are safeguarded to at least 2 columns via `SyncCueCard` (with extended cues spanning up to 3 columns: `col-span-1 min-[420px]:col-span-2 min-[640px]:col-span-3`), ensuring spoken dialogue is never truncated. Avoids `col-span-full` to eliminate wide empty dead zones on widescreen viewports.
+  - **Compact 3-Zone Micro-Card Hierarchy**: `SyncCueCard` features sequence number chip (`#01 · cue_01`), category badge, custom metadata tag tray, inline character speaker prefix (`MARK: "..."`), and script offset alignment diagnostics (`startIndex–endIndex · Nch`) or `⚠️ Needs Align` indicator.
+  - **Theme-Harmonized Interactive States**: Selected and active card borders and glowing box-shadows dynamically adapt to each cue's category theme color (`rgba(${themed.rgb}, ...)`), eliminating static blue border clashes.
 - **Sync Cues Toolbar Capabilities**:
   - **Collapsible Search & Filter Bar**: Rests in an ultra-slim single row by default with a `[ 🔍 Filter ]` toggle action, reclaiming ~64px of vertical height. Smoothly expands search input (with autofocus and <kbd>Escape</kbd> shortcut) and category pills when toggled or when active queries/filters are present.
   - **Multi-Select Category Filtering**: Category pills use a `Set<string>` to support concurrent multi-category filtering (e.g. `DIALOGUE` + `ACTION` simultaneously).
   - **One-Click Filter Reset**: Counter badge (`{filteredCount}/{totalCount}`) converts into an interactive reset button with an `X` when filtering is active, clearing all filters and auto-collapsing the bar in a single click.
   - **Action Tools**: Standardized on `[ { } JSON ]` for modal cue inspection and `[ ↺ Resync ]` for proximity realignment with animated `[ ✓ Synced ]` feedback.
-  - **Dual Density Modes**: `[ ⊞ Cards | ≡ Compact ]` density switcher with responsive text labels.
+  - **Dual Density Modes**: `[ ⊞ Cards | ≡ Compact ]` density switcher with responsive text labels collapsing to icons via container queries.
 - **Adaptive Container Queries (`@container (max-width: 580px)`)**:
   - Left panels declare native CSS container queries. Action button labels (`.header-btn-label`) and YouTube source pill text (`.youtube-pill-text`) automatically collapse to compact icon buttons when the left panel is dragged narrow, preventing horizontal overflow or text wrapping without JavaScript resize listeners.
 - **Black-Screen-Free Cue Seeking**:

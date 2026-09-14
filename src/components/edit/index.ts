@@ -10,6 +10,9 @@ export type { SyncCuesPanelProps } from './SyncCuesPanel';
 export { SyncCueCard } from './SyncCueCard';
 export type { SyncCueCardProps } from './SyncCueCard';
 
+export { MiniCueCard } from './MiniCueCard';
+export type { MiniCueCardProps } from './MiniCueCard';
+
 export { SyncCueRow } from './SyncCueRow';
 export type { SyncCueRowProps } from './SyncCueRow';
 

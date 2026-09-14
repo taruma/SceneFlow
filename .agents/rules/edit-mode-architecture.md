@@ -117,3 +117,18 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
   - Uses `smoothScrollTo` (`requestAnimationFrame` cubic ease-out `1 - (1 - t)^3`) for high-refresh display animation.
   - Viewport binds passive `wheel` and `touchmove` listeners that immediately abort any active auto-scroll animation, ensuring zero scroll fighting when the user manually scrolls the list.
 
+## 12. Time-Clustered Fluid Grid & Card Sizing Invariants
+- **Temporal Horizon Ceilings (`clusterCuesByTime`)**:
+  - Grouping cues by temporal proximity (`maxGapSeconds = 2.5`) must be bounded by hard ceiling parameters (`maxClusterSpanSeconds = 10.0` and `maxCuesPerCluster = 8`).
+  - Without these caps, continuous audio/action scenes without gaps $> 2.5$s will merge hundreds of cues into a single endless cluster.
+- **Fluid Grid Dense Packing & Span Limits**:
+  - The card viewport uses CSS Grid `repeat(auto-fill, minmax(160px, 1fr))` with `[grid-auto-flow:dense]`.
+  - Span bounds: short cards use 1 column; standard cards use 1 to 2 columns (`col-span-1 min-[420px]:col-span-2`); extended cards use up to 3 columns (`min-[640px]:col-span-3`).
+  - **Never use `col-span-full`** on cards, as it creates ~900px of empty dead space on desktop viewports.
+- **Dialogue Minimum Width Safeguard**:
+  - Spoken dialogue cues (`cue.type === 'dialogue'`) and text $> 40$ characters must never be rendered inside 1-column `MiniCueCard` components regardless of duration.
+  - They must always render with at least 2 columns via `SyncCueCard` to preserve readability and prevent clipped dialogue.
+- **Theme-Harmonized Interactive States**:
+  - Never hardcode static colors (e.g. `border-blue-500`) for active or selected states.
+  - Derive borders and box-shadow glows from `rgba(${themed.rgb}, ...)`, ensuring interactive visual feedback matches the cue category stripe.
+

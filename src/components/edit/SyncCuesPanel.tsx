@@ -1,13 +1,14 @@
 import React, { memo, useMemo, useState, useEffect, useRef, useCallback } from 'react';
-import { FilterX, Highlighter } from 'lucide-react';
+import { FilterX, Highlighter, Clock } from 'lucide-react';
 import { Cue } from '../../types/script';
 import { CuePaletteProfile } from '../../styles';
 import { useScriptTheme } from '../../hooks/useScriptTheme';
 import { smoothScrollTo } from '../../hooks/useAutoScroll';
-import { filterCues } from '../../lib/cueUtils';
-import { cn } from '../../lib/utils';
+import { filterCues, clusterCuesByTime } from '../../lib/cueUtils';
+import { formatPrecisionTimecode, cn } from '../../lib/utils';
 import { SyncCuesToolbar, CueDensityMode } from './SyncCuesToolbar';
 import { SyncCueCard } from './SyncCueCard';
+import { MiniCueCard } from './MiniCueCard';
 import { SyncCueRow } from './SyncCueRow';
 
 const DENSITY_STORAGE_KEY = 'sceneflow_edit_cue_density';
@@ -177,6 +178,11 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
     return filterCues(sortedCues, selectedCategories, searchQuery);
   }, [sortedCues, searchQuery, selectedCategories]);
 
+  // Temporal clusters for fluid grid in Cards mode
+  const cueClusters = useMemo(() => {
+    return clusterCuesByTime(filteredCues, 3.0);
+  }, [filteredCues]);
+
   const furthestScrollTopRef = useRef<number>(0);
 
   // Reset forward scroll guard when user seeks backwards, or changes density/filters
@@ -242,21 +248,68 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
 
       {/* Dedicated Scrollable Cue Viewport */}
       <div ref={viewportRef} className="flex-1 min-h-0 overflow-y-auto scrollbar-hide pt-2.5 pb-2 px-0.5">
-        {/* Render Cards Mode */}
+        {/* Render Cards Mode (Time-Clustered Fluid Grid) */}
         {densityMode === 'cards' && (
-          <div className="grid gap-2">
-            {filteredCues.map((cue, idx) => (
-              <SyncCueCard
-                key={cue.id ? `sync-cue-${cue.id}` : `sync-cue-idx-${idx}`}
-                cue={cue}
-                index={idx}
-                isSelected={selectedCueId === cue.id}
-                isActive={cue.id === activeCueId}
-                onSelectCue={onSelectCue}
-                onDeleteCue={onDeleteCue}
-                resolveCueColor={resolveCueColor}
-              />
-            ))}
+          <div className="space-y-4">
+            {cueClusters.map((cluster) => {
+              const clusterTimeStr = cluster.startTime === cluster.endTime
+                ? formatPrecisionTimecode(cluster.startTime)
+                : `${formatPrecisionTimecode(cluster.startTime)} – ${formatPrecisionTimecode(cluster.endTime)}`;
+
+              return (
+                <div key={cluster.id} className="space-y-1.5">
+                  {/* Sticky Timecode Ruler Strip */}
+                  <div className="sticky top-0 z-10 flex items-center gap-2 py-1 px-1 bg-surface/95 backdrop-blur-xs text-[9.5px] font-mono font-bold text-text-faint select-none">
+                    <span className="flex items-center gap-1.5 bg-surface-muted/90 border border-border-subtle/80 px-2 py-0.5 rounded-md text-text-muted shadow-2xs">
+                      <Clock size={10} className="opacity-70 text-text-faint" />
+                      <span>{clusterTimeStr}</span>
+                    </span>
+                    <span className="text-[8.5px] font-sans font-semibold text-text-faint/80">
+                      {cluster.cues.length} {cluster.cues.length === 1 ? 'cue' : 'cues'}
+                    </span>
+                    <div className="flex-1 h-px bg-border-subtle" />
+                  </div>
+
+                  {/* Auto-Fill Fluid Grid with dense packing */}
+                  <div className="grid gap-2 grid-cols-[repeat(auto-fill,minmax(160px,1fr))] [grid-auto-flow:dense]">
+                    {cluster.cues.map(({ cue, index }) => {
+                      const duration = Math.max(0, (cue.endTime ?? 0) - (cue.startTime ?? 0));
+                      const textLen = cue.selectedText?.length || 0;
+                      // Dialogue and longer text cues are guaranteed at least 2 columns to avoid truncation
+                      const isMini = duration <= 1.8 && cue.type !== 'dialogue' && textLen <= 40;
+
+                      if (isMini) {
+                        return (
+                          <MiniCueCard
+                            key={cue.id ? `sync-cue-${cue.id}` : `sync-cue-idx-${index}`}
+                            cue={cue}
+                            index={index}
+                            isSelected={selectedCueId === cue.id}
+                            isActive={cue.id === activeCueId}
+                            onSelectCue={onSelectCue}
+                            onDeleteCue={onDeleteCue}
+                            resolveCueColor={resolveCueColor}
+                          />
+                        );
+                      }
+
+                      return (
+                        <SyncCueCard
+                          key={cue.id ? `sync-cue-${cue.id}` : `sync-cue-idx-${index}`}
+                          cue={cue}
+                          index={index}
+                          isSelected={selectedCueId === cue.id}
+                          isActive={cue.id === activeCueId}
+                          onSelectCue={onSelectCue}
+                          onDeleteCue={onDeleteCue}
+                          resolveCueColor={resolveCueColor}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
 

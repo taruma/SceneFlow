@@ -513,3 +513,66 @@ export function validateImportedScriptJson(json: any): AppState {
     settings: json.settings || DEFAULT_SETTINGS,
   };
 }
+
+export interface CueCluster {
+  id: string;
+  startTime: number;
+  endTime: number;
+  cues: Array<{ cue: Cue; index: number }>;
+}
+
+/**
+ * Groups chronological cues into temporal clusters. Cues that overlap or are separated
+ * by less than maxGapSeconds are grouped under the same cluster window.
+ * Enforces maxClusterSpanSeconds (default 10s) and maxCuesPerCluster (default 8) to
+ * ensure clusters remain bite-sized even during continuous audio/video playback.
+ */
+export function clusterCuesByTime(
+  cues: Cue[], 
+  maxGapSeconds = 2.5,
+  maxClusterSpanSeconds = 10.0,
+  maxCuesPerCluster = 8
+): CueCluster[] {
+  if (cues.length === 0) return [];
+  const clusters: CueCluster[] = [];
+  let currentCluster: CueCluster | null = null;
+
+  cues.forEach((cue, index) => {
+    const start = cue.startTime ?? 0;
+    const end = Math.max(start, cue.endTime ?? start);
+
+    if (!currentCluster) {
+      currentCluster = {
+        id: `cluster-${start.toFixed(1)}-0`,
+        startTime: start,
+        endTime: end,
+        cues: [{ cue, index }],
+      };
+    } else {
+      const clusterHorizon = Math.max(currentCluster.endTime, currentCluster.startTime);
+      const isWithinGap = start <= clusterHorizon + maxGapSeconds;
+      const exceedsMaxSpan = (Math.max(currentCluster.endTime, end) - currentCluster.startTime) > maxClusterSpanSeconds;
+      const exceedsMaxCues = currentCluster.cues.length >= maxCuesPerCluster;
+
+      if (isWithinGap && !exceedsMaxSpan && !exceedsMaxCues) {
+        currentCluster.cues.push({ cue, index });
+        currentCluster.endTime = Math.max(currentCluster.endTime, end);
+      } else {
+        clusters.push(currentCluster);
+        currentCluster = {
+          id: `cluster-${start.toFixed(1)}-${clusters.length}`,
+          startTime: start,
+          endTime: end,
+          cues: [{ cue, index }],
+        };
+      }
+    }
+  });
+
+  if (currentCluster) {
+    clusters.push(currentCluster);
+  }
+
+  return clusters;
+}
+

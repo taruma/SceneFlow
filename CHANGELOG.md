@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.4.0-dev] - Unreleased
 
 ### Added
+- **Time-Clustered Fluid Grid & Adaptive Cue Layout (`src/components/edit/SyncCuesPanel.tsx`, `src/components/edit/SyncCueCard.tsx`, `src/components/edit/MiniCueCard.tsx`, `src/components/edit/index.ts`, `src/lib/cueUtils.ts`)**:
+  - Implemented temporal cue clustering via pure `clusterCuesByTime(cues, maxGapSeconds = 2.5, maxClusterSpanSeconds = 10.0, maxCuesPerCluster = 8)` with hard ceiling bounds (max 10s span, max 8 cues) preventing continuous cue sequences from merging into monolithic mega-clusters.
+  - Added sticky Timecode Ruler Strips (`⏱ 00:00.0 – 00:04.5 · N cues`) with backdrop blur, giving editors clear temporal landmarks when scanning through scenes.
+  - Replaced single-column stacked cards with a responsive auto-fill fluid grid (`grid-cols-[repeat(auto-fill,minmax(160px,1fr))] [grid-auto-flow:dense]`) that packs short and long cards into dense, gap-free rows.
+  - Introduced `MiniCueCard` component optimized for short audio, camera, and reaction bursts ($\le 1.8$s, non-dialogue, $\le 40$ characters) fitting cleanly within single 160px grid cells.
+  - Integrated dialogue protection rule: cues with `type === 'dialogue'` or text $> 40$ch are guaranteed at least 2 columns via `SyncCueCard`, ensuring spoken character dialogue is never cut off or cramped into mini cards.
+  - Added adaptive 1-to-3 column spans (`col-span-1 min-[420px]:col-span-2 min-[640px]:col-span-3`) avoiding `col-span-full` to prevent empty white space dead zones on wider viewports.
+  - Harmonized active and selected states using theme-calibrated `rgba(${themed.rgb}, ...)` borders and subtle glowing shadows, eliminating static `blue-500` color clashes with category accent stripes.
+- **Compact 3-Zone Sync Cue Card Redesign (`src/components/edit/SyncCueCard.tsx`, `src/types/script.ts`)**:
+  - Rebuilt `SyncCueCard` into a compact 3-zone micro-card featuring a unified sequence/ID chip (`[ #31 · cue_31 ]`), category badge, dynamic AI tag tray, clamped quote, and technical diagnostics footer.
+  - Supported inline character prefixes (`MARK: "..."`) for dialogue cues to present screenplay dialogue hierarchy while preserving vertical height (~74–76px).
+  - Added real-time alignment diagnostics displaying script offset spans (`startIndex–endIndex · Nch`) or a pulsing `⚠️ Needs Align` indicator for unanchored imports.
+  - Extended the `Cue` data model with optional `speaker`, `matchStatus`, optional indices, and an extensible index signature to preserve custom metadata.
 - **Separated Blank Project Creation & Official Starter Guide (`public/examples/guide.json`, `public/examples/blank.json`, `src/App.tsx`, `src/hooks/useScriptStorage.ts`)**:
   - Extracted the 1,200+ line interactive tutorial script and 100+ cues into a dedicated `public/examples/guide.json` asset.
   - Reset `public/examples/blank.json` into an authentic empty project template (empty script text, zero cues, zeroed timing buffers) for starting new screenplays from scratch without manual deletion.
