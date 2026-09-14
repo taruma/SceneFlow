@@ -15,11 +15,11 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
 ## 2. Domain Nomenclature: "Sync Cues" vs. "Timeline"
 - **Playback Timeline**: The term **"Timeline"** is reserved exclusively for the graphical, multi-track time-window visualization in Playback mode (`HighlightTimelineView`, `TimelineLane`, `TimelineCueBlock`).
 - **Edit Mode Sync Cues**: Edit mode does **not** feature a visual timeline track. It manages a vertical card-based cue list:
-  - Header: `"Sync Cues"` (`SyncCuesHeader.tsx`).
+  - Toolbar: `SyncCuesToolbar.tsx` (houses category filters, search, density toggles, and modal actions).
   - Container: `SyncCuesPanel.tsx` (not `TimelineCuesPanel`).
   - Card: `SyncCueCard.tsx` (not `TimelineCueCard`).
-  - Legend: `CueLegend.tsx`.
-  - Form: `CueEditorForm.tsx` (with `CueTextSection`, `CueTimingInputs`, `CueTypeSelector`, `CueEditorActions`).
+  - Row: `SyncCueRow.tsx` (compact density list item).
+  - Form: `CueEditorForm.tsx` (with `CueTextSection`, `CueTimingInputs`, `CueTypeSelector`, `CueEditorActions`, backed by `CueEditorContext`).
 - Maintain this distinction to prevent conceptual confusion and UI misdirection.
 
 ## 3. Drag & Playback Tick Performance Shields
@@ -30,9 +30,10 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
   - Because `EditLeftPanel`, `SyncCuesPanel`, `CueEditorForm`, and `ScriptHeaderControls` do not consume continuous `currentTime`, they must remain wrapped in `React.memo` to eliminate cascading re-renders.
   - **Memoized Style Objects**: Never pass inline style object literals (e.g. `style={{ width: `${splitRatio}%` }}`) to memoized panels in `App.tsx`; always memoize via `useMemo`.
   - **Theme Resolution Hoisting**: Never invoke `useScriptTheme` inside individual cue cards or row items. Hoist `resolveCueColor` to `SyncCuesPanel` and pass down the stable function reference to avoid thousands of redundant hook calls per second during playback.
+  - **Pure Fallback Discipline (No "Hook-as-Fallback")**: Never use a React hook as a fallback for an optional hoisted prop inside mapped children or list cards. If a fallback is needed, consume a pure utility function (`getCueColorForTheme`) to guarantee zero hook registrations per list item.
   - **Offscreen Paint Skipping**: The scrollable cue list must declare `content-visibility: auto` with `contain-intrinsic-size` to permit the browser engine to skip layout and paint calculations for offscreen cue cards.
-  - **Static Player Options**: Never pass inline `opts={{ ... }}` literals to `<YouTube>` inside panels. Consume static, module-level `YOUTUBE_PLAYER_OPTS`.
-  - **Playback Tick Shielding (`EditVideoViewport`)**: Encapsulate the `<YouTube>` player container in memoized `EditVideoViewport`, preventing 10Hz `LiveTimecodeBadge` tick updates from re-diffing the YouTube iframe or container.
+  - **Static Player Options (`YOUTUBE_PLAYER_OPTS`)**: Never pass inline `opts={{ ... }}` object literals to `<YouTube>` inside panels. Consume static, module-level `YOUTUBE_PLAYER_OPTS` to avoid player reconfiguration checks.
+  - **Tick Shield Boundary (`EditVideoViewport`)**: When a container hosts high-frequency display elements (`LiveTimecodeBadge` at 10Hz) alongside heavy iframe viewports, encapsulate the heavy viewport inside a dedicated `React.memo` subcomponent (`EditVideoViewport`). This confines DOM updates strictly to the timecode HUD badge.
 
 ## 4. Header Symmetrical Layout & Action Scoping
 - **Zero-Pixel Shift**: Both Playback and Edit headers must strictly share the `h-12` (48px) sticky top-0 layout token (`UI_TOKENS.layout.scriptHeader`). Switching modes must produce 0px vertical layout jump.
@@ -93,9 +94,7 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
   - Direct seeking updates the frame position cleanly without unwanted autoplay triggers.
 
 ## 10. Compound Cue Authoring Context (`CueEditorContext.tsx`)
-- **Zero-Prop Form Portability**:
-  - Cue draft values (`newCue`), timing inputs, text selection ranges, and saving actions are encapsulated within `<CueEditorProvider value={cueEditorContextValue}>`.
-  - `CueEditorForm` supports zero-prop invocation (`<CueEditorForm />`) via `useOptionalCueEditorContext()`, completely eliminating prop-drilling through `App.tsx` and enabling the form to be freely moved or co-located across Edit Mode panels (such as inside the Left Panel).
-
-
-
+- **Dual-Mode Compound Context Pattern**:
+  - Cue draft state (`newCue`), timing inputs, DOM selection ranges, alternative locations, and save/delete callbacks are consolidated into `<CueEditorProvider value={cueEditorContextValue}>`.
+  - `CueEditorForm` supports dual-mode operation: it accepts explicit props (for isolated testing or overrides) but falls back automatically to `useOptionalCueEditorContext()`.
+  - **Zero-Prop Portability**: `<CueEditorForm />` can be dropped anywhere inside the Edit Mode Provider tree (Right Panel header, Left Panel Studio, or popover modals) without prop-drilling through orchestrators.
