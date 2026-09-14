@@ -521,6 +521,33 @@ export default function App() {
     handleOverlapPicker,
   ]);
 
+  const handleSelectCueForEdit = useCallback((cue: Cue) => {
+    selectCueForEdit(cue);
+
+    // Cross-panel auto-center: smoothly scroll script container to the selected cue
+    if (scriptRef.current) {
+      const container = scriptRef.current;
+      const targetElement = document.getElementById(`cue-${cue.id}`) ||
+        Array.from(container.querySelectorAll<HTMLElement>('[data-line-start]')).find(el => {
+          const start = parseInt(el.getAttribute('data-line-start') || '-1', 10);
+          const end = parseInt(el.getAttribute('data-line-end') || '-1', 10);
+          return start <= cue.startIndex && end >= cue.startIndex;
+        });
+
+      if (targetElement) {
+        const containerRect = container.getBoundingClientRect();
+        const elementRect = targetElement.getBoundingClientRect();
+        const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
+        const targetScrollTop = Math.max(0, relativeTop - (containerRect.height / 2) + (elementRect.height / 2));
+        
+        container.scrollTo({
+          top: targetScrollTop,
+          behavior: 'smooth',
+        });
+      }
+    }
+  }, [selectCueForEdit, scriptRef]);
+
   if (!isInitialized) {
     return <InitializingScreen />;
   }
@@ -608,7 +635,7 @@ export default function App() {
             scriptThemeId={scriptThemeId}
             cuePaletteProfile={cuePaletteProfile}
             selectedCueId={newCue.id}
-            onSelectCue={selectCueForEdit}
+            onSelectCue={handleSelectCueForEdit}
             onDeleteCue={deleteCue}
             onOpenRawCuesModal={handleOpenRawCuesModal}
             onRealignCues={realignCues}

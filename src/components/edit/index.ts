@@ -7,6 +7,12 @@ export type { SyncCuesPanelProps } from './SyncCuesPanel';
 export { SyncCueCard } from './SyncCueCard';
 export type { SyncCueCardProps } from './SyncCueCard';
 
+export { SyncCueRow } from './SyncCueRow';
+export type { SyncCueRowProps } from './SyncCueRow';
+
+export { SyncCuesToolbar } from './SyncCuesToolbar';
+export type { SyncCuesToolbarProps, CueDensityMode } from './SyncCuesToolbar';
+
 export { CueLegend } from './CueLegend';
 export type { CueLegendProps } from './CueLegend';
 

@@ -44,3 +44,11 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
   - `SyncCuesPanel` renders cue cards in memoized chronological order (`startTime` ascending, secondary on `startIndex`), ensuring the card list remains organized and predictable regardless of JSON array insertion order.
 - **Defensive Rendering**:
   - Always guard numeric formatting against null/undefined timestamps using `(cue.startTime ?? 0).toFixed(1)`.
+
+## 6. Two-Tier Flex Architecture & Cross-Panel Sync Invariants
+- **Two-Tier Flex Container**:
+  - The Edit Left Panel strictly avoids `sticky top-0` overlay hacks inside scrolling containers. It is structured as an unpinned, two-zone flex container (`h-full flex flex-col overflow-hidden`).
+  - **Tier 1 (Media Preview)**: Contains transport controls, compact YouTube input (`compact={true}`), resizable video player, and horizontal `VideoSplitDivider`.
+  - **Tier 2 (Sync Cues Studio)**: Occupies `flex-1 min-h-0 flex flex-col overflow-hidden`. Features a permanently docked `SyncCuesToolbar` (with search, category filter pills, `[Raw]`, `[Align]`, and dual density toggle) and a dedicated internal scrollable viewport (`SyncCueCard` in Cards mode, `SyncCueRow` in Compact mode).
+- **Cross-Panel Full Sync Jump**:
+  - Selecting any cue in the Left Panel executes a synchronized triple-action: seeks the video player to `cue.startTime` (preserving pause state), populates `newCue` in `CueEditorForm`, and smoothly scrolls the script canvas to center the corresponding line in the viewport.

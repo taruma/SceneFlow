@@ -4,6 +4,7 @@ import { Cue } from '../../types/script';
 import { COLORS } from '../../constants/script';
 import { LEGACY_CLASS_MAP, type CuePaletteProfile } from '../../styles/tokens/cues';
 import { useScriptTheme } from '../../hooks/useScriptTheme';
+import { cn } from '../../lib/utils';
 import { UI_TOKENS } from '../../styles/tokens/ui';
 
 export interface SyncCueCardProps {
@@ -33,11 +34,24 @@ export const SyncCueCard: React.FC<SyncCueCardProps> = memo(({
   return (
     <div 
       onClick={() => onSelectCue(cue)}
-      className={isSelected ? UI_TOKENS.panel.cardInteractiveActive : UI_TOKENS.panel.cardInteractive}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onSelectCue(cue);
+        }
+      }}
+      className={cn(
+        "flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer relative overflow-hidden group select-none",
+        isSelected 
+          ? "bg-surface-subtle border-blue-500/60 shadow-sm ring-1 ring-blue-500/40 text-text-main" 
+          : "bg-surface hover:bg-surface-subtle border-border-subtle hover:border-border-main hover:shadow-xs text-text-body"
+      )}
     >
-      <div className="flex items-center gap-4 flex-1 min-w-0">
+      <div className="flex items-center gap-3.5 flex-1 min-w-0">
         <div 
-          className="w-1.5 h-10 rounded-full shrink-0" 
+          className="w-1.5 h-9 rounded-full shrink-0" 
           style={{ backgroundColor: `rgb(${themed.rgb})` }} 
         />
         <div className="flex flex-col flex-1 min-w-0">
@@ -53,17 +67,17 @@ export const SyncCueCard: React.FC<SyncCueCardProps> = memo(({
               {cueType}
             </span>
           )}
-          <span className="text-sm font-bold text-text-body italic leading-tight break-words">
+          <span className="text-xs font-bold text-text-main italic leading-snug break-words">
             "{cue.selectedText}"
           </span>
-          <div className="flex items-center gap-2 mt-1">
+          <div className="flex items-center gap-1.5 mt-1">
             <span className={UI_TOKENS.badge.timeTag}>{startTimeStr}s</span>
-            <div className="w-2 h-px bg-border-main" />
+            <div className="w-1.5 h-px bg-border-main" />
             <span className={UI_TOKENS.badge.timeTag}>{endTimeStr}s</span>
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-4 shrink-0 ml-4">
+      <div className="flex items-center gap-2 shrink-0 ml-3">
         <button
           type="button"
           onClick={(e) => {
@@ -72,9 +86,9 @@ export const SyncCueCard: React.FC<SyncCueCardProps> = memo(({
           }}
           aria-label="Delete cue"
           title="Delete cue"
-          className="p-2 text-text-faint hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 shrink-0"
+          className="p-1.5 text-text-faint hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 shrink-0 rounded active:scale-95"
         >
-          <Trash2 size={18} />
+          <Trash2 size={15} />
         </button>
       </div>
     </div>
