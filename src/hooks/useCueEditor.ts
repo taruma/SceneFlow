@@ -123,10 +123,12 @@ export function useCueEditor({
       );
     }
 
-    // Drafting a new cue: dirty if timings have been set
+    // Drafting a new cue: dirty if timings have been set or draft text/type customized
     return Boolean(
       newCue.startTime !== undefined ||
-      newCue.endTime !== undefined
+      newCue.endTime !== undefined ||
+      (newCue.selectedText !== undefined && newCue.selectedText !== selection.text) ||
+      (newCue.type !== undefined && newCue.type !== 'dialogue')
     );
   }, [selection, newCue, originalCue]);
 

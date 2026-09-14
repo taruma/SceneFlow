@@ -164,18 +164,15 @@ export const CueEditorForm: React.FC<Partial<CueEditorFormProps>> = memo((props)
             </h3>
           </div>
 
-          <div className="flex items-center gap-1.5">
-            <span className="text-[9px] font-mono text-text-faint hidden sm:inline">Esc</span>
-            <button 
-              type="button"
-              onClick={cancelEdit}
-              className="p-1 text-text-faint hover:text-text-main hover:bg-surface-hover rounded-md transition-colors"
-              title="Cancel (Esc)"
-              aria-label="Cancel editing"
-            >
-              <X size={14} />
-            </button>
-          </div>
+          <button 
+            type="button"
+            onClick={cancelEdit}
+            className="p-1 text-text-faint hover:text-text-main hover:bg-surface-hover rounded-md transition-colors"
+            title="Cancel (Esc)"
+            aria-label="Cancel editing"
+          >
+            <X size={14} />
+          </button>
         </div>
 
         {/* Card 1: Surrounding Scene Context & Editable Quote */}
@@ -231,24 +228,27 @@ export const CueEditorForm: React.FC<Partial<CueEditorFormProps>> = memo((props)
 
       {/* Pinned Sticky Bottom Action Bar */}
       <div className="sticky bottom-0 bg-surface/95 backdrop-blur border-t border-border-subtle p-3 flex items-center justify-between z-20 shadow-xs">
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           {isEditing && (
             <button
               type="button"
               onClick={handleDelete}
-              className="p-2 text-text-faint hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors active:scale-95"
+              className="p-2 text-red-500/80 bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/20 border border-red-500/20 rounded-lg transition-colors active:scale-95 shadow-2xs"
               title="Delete Cue"
               aria-label="Delete this cue"
             >
-              <Trash2 size={16} />
+              <Trash2 size={15} />
             </button>
           )}
           <button
             type="button"
             onClick={cancelEdit}
-            className="px-2.5 py-1.5 text-xs text-text-muted hover:text-text-main hover:bg-surface-hover rounded-lg transition-colors font-medium select-none"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-text-muted hover:text-text-main hover:bg-surface-hover rounded-lg transition-colors font-medium select-none"
           >
-            Cancel <span className="text-[9px] font-mono text-text-faint ml-0.5">Esc</span>
+            <span>Cancel</span>
+            <kbd className="text-[9px] font-mono font-normal opacity-60 px-1 py-0.5 rounded bg-surface-muted border border-border-subtle">
+              Esc
+            </kbd>
           </button>
         </div>
 

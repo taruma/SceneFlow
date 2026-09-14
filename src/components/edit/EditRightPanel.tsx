@@ -58,6 +58,8 @@ export const EditRightPanel: React.FC<EditRightPanelProps> = memo(({
     return null;
   }
 
+  const isDirty = context?.isDirty;
+
   const isEditing = Boolean(newCue?.id);
   const isDrafting = Boolean(selection && !newCue?.id);
 
@@ -83,15 +85,22 @@ export const EditRightPanel: React.FC<EditRightPanelProps> = memo(({
         <div className="flex items-center gap-2">
           {/* Active Status Badge */}
           {isEditing && (
-            <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 shadow-2xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-              Editing
-            </span>
+            isDirty ? (
+              <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                Unsaved
+              </span>
+            ) : (
+              <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-2xs">
+                <CheckCircle2 size={10} className="stroke-[2.5]" />
+                Saved
+              </span>
+            )
           )}
           {isDrafting && (
             <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shadow-2xs">
               <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-              Drafting
+              {isDirty ? 'Draft (Unsaved)' : 'Draft'}
             </span>
           )}
           {!selection && (
