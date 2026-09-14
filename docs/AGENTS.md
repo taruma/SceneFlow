@@ -284,4 +284,24 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
         - **Secondary Co-Active Cues (`isActive && !isPrimary`)**: Renders with a clearly visible ambient gradient wash (`~16.2% → 4.5%`, `opacity-65`), but explicitly omits colored borders (retains default subtle border) and outer glow shadows to keep visual noise low during dense multi-track playback.
         - **Selected Cue (`isSelected`)**: Maintains primary focus outline (`rgba(${themed.rgb}, 0.7)` with focus ring) for manual inspector editing.
 
+17. **Desktop 3-Panel Workstation & Cue Inspector Architecture (`EditRightPanel.tsx`, `InspectorSplitDivider.tsx`, `CueTimingCard.tsx`, `CueSceneContext.tsx`, `CueScriptAnchoring.tsx`)**:
+    - **Desktop 3-Panel Workstation**: Edit mode is structured into three dedicated vertical columns: Left Panel (`EditLeftPanel`), Center Panel (Screenplay Canvas with `flex-1 min-w-0`), and Right Panel (`EditRightPanel`).
+    - **Draggable Inspector Divider (`InspectorSplitDivider`)**:
+      - Measures width from the right viewport boundary (`window.innerWidth - clientX`), clamped between `280px` and `560px` (default `360px`).
+      - Enforces a minimum width floor for left + center panels (`window.innerWidth - 650px`) so dragging the inspector wide can never collapse the center screenplay.
+      - Uses pointer capture, `requestAnimationFrame` VSync throttling, and `.is-resizing-split` CSS transition suppression. Double-click resets to default `360px`; persists in `localStorage` (`sceneflow_inspector_width`).
+    - **Live Mutable Ref Synchronization for Media Loops & Interval Checks (`CueTimingCard.tsx`)**:
+      - Never evaluate raw props or state (`startTime`, `endTime`, `isLooping`) inside long-running intervals or animation frames. Always sync them to mutable `refs` (`startTimeRef`, `endTimeRef`, `isLoopingRef`).
+      - Polling ticks (40–50ms) must evaluate against `ref.current`. When an editor clicks micro-nudge steppers (`+0.1s`, `-0.5s`) or types new timestamps while video is actively playing, the loop must dynamically adapt immediately on the fly without requiring playback restart.
+      - Check external player state (`player.getPlayerState() === 2` for pause) to automatically reset UI play/pause toggles when the user pauses media externally.
+    - **Decoupled Script Anchoring vs. Audio-Visual Timing (`CueScriptAnchoring.tsx`, `CueTimingCard.tsx`)**:
+      - Screenplay character offsets (`startIndex`, `endIndex`) must never be mixed into the primary audio-visual timing deck.
+      - Keep character indices fully editable in a dedicated `CueScriptAnchoring` card to support manual cue drafting, pasting raw quotes, and proximity alignment without cluttering the timing deck.
+    - **Surrounding Scene Context Window (`CueSceneContext.tsx`)**:
+      - Surrounds the editable quote with dimmed preceding (`PREV`) and following (`NEXT`) screenplay lines derived from `scriptText` to provide instant narrative context without cross-panel eye scanning.
+    - **Pinned Sticky Bottom Action Bar (`CueEditorForm.tsx`)**:
+      - Primary actions (`Update / Create Cue` via <kbd>Ctrl+Enter</kbd>, `Cancel` via <kbd>Esc</kbd>, and `Delete`) must be pinned permanently to `bottom-0` (`bg-surface/95 backdrop-blur border-t`).
+      - Guarantees width resilience when the inspector is dragged narrow (`280px`–`320px`), avoiding horizontal button collision in the top 48px header while ensuring the save button is never pushed below the vertical scroll fold.
+
+
 

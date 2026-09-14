@@ -139,3 +139,25 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
   - **Secondary Co-Active Cues (`isActive && !isPrimary`)**: Renders with a clearly visible ambient gradient wash (`~16.2% → 4.5%`, `opacity-65`), but explicitly omits colored borders (retains default subtle border) and outer glow shadows to keep visual noise low during dense multi-track playback.
   - **Selected Cue (`isSelected`)**: Maintains primary focus outline (`rgba(${themed.rgb}, 0.7)` with focus ring) for manual inspector editing.
 
+## 13. Desktop 3-Panel Workstation & Inspector Resizing Invariants
+- **Dedicated 3-Panel Workstation**: Edit mode on desktop organizes into three vertical columns: Left Panel (`EditLeftPanel`), Center Panel (Screenplay Canvas with `flex-1 min-w-0`), and Right Panel (`EditRightPanel`).
+- **Draggable Inspector Divider (`InspectorSplitDivider`)**:
+  - Measured from the right screen boundary (`window.innerWidth - clientX`), clamped between `280px` and `560px`.
+  - Must enforce a floor safeguard for left + center panels (`window.innerWidth - 650px`) so dragging the inspector wide can never collapse the center screenplay.
+  - Leverages pointer capture, `requestAnimationFrame` throttling, and `.is-resizing-split` transition suppression.
+  - Double-click resets to default `360px`; persists in `localStorage` (`sceneflow_inspector_width`).
+
+## 14. Cue Inspector Layout & Component Decoupling
+- **Decoupled Script Anchoring vs. Audio-Visual Timing**:
+  - Never mix screenplay character offsets (`startIndex`, `endIndex`) into the primary timing deck.
+  - Keep character indices fully editable in a dedicated `CueScriptAnchoring` card to support manual cue drafting, pasting raw quotes, and proximity alignment.
+- **Audio-Visual Timing Deck (`CueTimingCard`)**:
+  - Symmetrical Start and End boundary cards with precision timecode HUDs, clock capture buttons, and tactile micro-nudge steppers (`-0.5s`, `-0.1s`, `+0.1s`, `+0.5s`).
+  - Integrated duration calculation and live loop preview controller.
+- **Surrounding Scene Context Window (`CueSceneContext`)**:
+  - Surrounds the editable quote with dimmed preceding (`PREV`) and following (`NEXT`) screenplay lines derived from `scriptText` to provide instant narrative context without cross-panel eye scanning.
+- **Pinned Sticky Bottom Action Bar**:
+  - Anchors primary actions (`Update / Create Cue` via `Ctrl+Enter`, `Cancel` via `Esc`, and `Delete`) permanently to `bottom-0` (`bg-surface/95 backdrop-blur border-t`).
+  - Guarantees width resilience when the inspector is dragged narrow (`280px`–`320px`), avoiding horizontal button collision in the top 48px header while ensuring the save button is never pushed below the vertical scroll fold.
+
+

@@ -121,3 +121,10 @@ YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds
   - Resolving against the global collection causes the active target ID to point to an element hidden from the rendered DOM (`document.getElementById(...) === null`), causing auto-scroll to freeze and active selection indicators to disappear whenever filters are active.
   - When hoisting active-item resolution to parent containers for tick-shielding performance, hoist or synchronize filter criteria (`selectedCategories`, `searchQuery`) to ensure the parent resolver and child view use identical item subsets.
 
+## 20. Live Mutable Ref Synchronization for Media Loops & Interval Checks
+When implementing media preview loops, boundary checks, or cue audition players (e.g. `CueTimingCard`):
+1. **Zero-Stale-Closure Invariant**: Never evaluate raw props or state (`startTime`, `endTime`, `isLooping`) inside long-running intervals or animation frames. Always sync them to mutable `refs` (`startTimeRef`, `endTimeRef`, `isLoopingRef` via `useEffect`).
+2. **On-The-Fly Boundary Adaptation**: Polling ticks (e.g. 40–50ms) must read from `ref.current`. When an editor clicks micro-nudge steppers (`+0.1s`, `-0.5s`) or types new timestamps while video is actively playing, the loop must dynamically adapt immediately without requiring the user to pause and restart playback.
+3. **External State Sync**: Always check external player state (`player.getPlayerState() === 2` for pause, `0` for ended) within the check loop to automatically reset UI play/pause toggles if the user pauses media via keyboard shortcuts or on the video player directly.
+
+
