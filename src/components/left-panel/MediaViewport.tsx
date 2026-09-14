@@ -39,7 +39,7 @@ export const MediaViewport: React.FC<MediaViewportProps> = memo(({
   return (
     <div 
       className={cn(
-        "bg-black overflow-hidden shadow-2xl ring-1 ring-border-main relative group pointer-events-auto rounded-none lg:rounded-2xl transition-all duration-300 flex items-center justify-center shrink-0",
+        "bg-black overflow-hidden shadow-2xl ring-1 ring-border-main relative group pointer-events-auto rounded-none lg:rounded-2xl transition-[height,opacity,box-shadow] duration-200 flex items-center justify-center shrink-0",
         isVideoCollapsed && "h-0 min-h-0 max-h-0 opacity-0 pointer-events-none ring-0 shadow-none border-none !m-0 !p-0 overflow-hidden"
       )}
       style={!isVideoCollapsed ? (isDesktop ? { 

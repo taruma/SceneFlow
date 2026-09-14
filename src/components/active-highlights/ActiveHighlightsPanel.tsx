@@ -318,7 +318,7 @@ export const ActiveHighlightsPanel: React.FC<ActiveHighlightsPanelProps> = ({
   );
 
   return (
-    <div ref={panelRef} className="hidden lg:flex flex-col flex-1 mt-1 animate-in fade-in slide-in-from-left-4 duration-500 min-h-0">
+    <div ref={panelRef} className="hidden lg:flex flex-col flex-1 mt-1 min-h-0">
       {/* Adaptive Header: Single unified row when wide (>= 560px), Two-tier when narrow (< 560px) */}
       {!isNarrow ? (
         /* Wide Mode: Single unified row */

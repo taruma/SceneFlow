@@ -258,6 +258,7 @@ export default function App() {
     setAutoScrollTargets,
     isAutoScrollDropdownOpen,
     setIsAutoScrollDropdownOpen,
+    lastScrolledCueId,
     applyScrollFocus,
   } = useAutoScroll({
     scriptRef,
@@ -269,6 +270,53 @@ export default function App() {
     scrollFocusPreset,
     onScrollFocusChange: setScrollFocusPreset,
   });
+
+  const currentTimeRef = useRef(currentTime);
+  currentTimeRef.current = currentTime;
+  const lastScrolledCueIdRef = useRef(lastScrolledCueId);
+  lastScrolledCueIdRef.current = lastScrolledCueId;
+  const cuesRef = useRef(state.cues);
+  cuesRef.current = state.cues;
+  const settingsRef = useRef(state.settings);
+  settingsRef.current = state.settings;
+
+  // Seamlessly align screenplay to current playback position when transitioning into Edit mode
+  useEffect(() => {
+    if (mode === 'edit' && scriptRef.current && isDesktop) {
+      const cues = cuesRef.current || [];
+      const curTime = currentTimeRef.current;
+      const lastId = lastScrolledCueIdRef.current;
+      const curSettings = settingsRef.current;
+
+      const targetCue = (lastId && cues.find(c => c.id === lastId))
+        || cues.find(c => isCueActive(c, curTime, curSettings))
+        || cues.filter(c => c.startTime <= curTime).sort((a, b) => b.startTime - a.startTime)[0];
+
+      if (targetCue) {
+        requestAnimationFrame(() => {
+          const container = scriptRef.current;
+          if (!container) return;
+          const targetElement = document.getElementById(`cue-${targetCue.id}`) ||
+            (Array.from(container.querySelectorAll('[data-line-start]')) as HTMLElement[]).find(el => {
+              const start = parseInt(el.getAttribute('data-line-start') || '-1', 10);
+              const end = parseInt(el.getAttribute('data-line-end') || '-1', 10);
+              return start <= targetCue.startIndex && end >= targetCue.startIndex;
+            });
+
+          if (targetElement) {
+            const containerRect = container.getBoundingClientRect();
+            const elementRect = targetElement.getBoundingClientRect();
+            const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
+            const targetScrollTop = Math.max(0, relativeTop - (containerRect.height / 2) + (elementRect.height / 2));
+            container.scrollTo({
+              top: targetScrollTop,
+              behavior: 'instant',
+            });
+          }
+        });
+      }
+    }
+  }, [mode, isDesktop]);
 
   const isEffectiveViewCustomized = isViewCustomized || (mode === 'edit' && !isInspectorOpen);
 

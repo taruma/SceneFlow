@@ -221,7 +221,7 @@ export const WorkstationLeftPanel: React.FC<WorkstationLeftPanelProps> = memo(({
       style={{ ...style, containerType: 'inline-size' }}
       className={cn(
         UI_TOKENS.layout.leftPanelBase,
-        "panel-container-query @container w-full border-r p-0 lg:px-5 lg:py-3 gap-0 flex flex-col h-full overflow-hidden z-10 transition-all duration-300",
+        "panel-container-query @container w-full border-r p-0 lg:px-5 lg:py-3 gap-0 flex flex-col h-full overflow-hidden z-10 transition-[border-color,background-color] duration-200",
         mode === 'playback' && "overflow-y-auto lg:overflow-hidden",
         className
       )}

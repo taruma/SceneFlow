@@ -120,7 +120,7 @@ export const EditRightPanel: React.FC<EditRightPanelProps> = memo(({
           <CueEditorForm />
         ) : (
           /* Studio Idle Overview & Cheat Sheet */
-          <div className="p-5 space-y-6 flex-1 flex flex-col justify-between text-text-main animate-in fade-in duration-300">
+          <div className="p-5 space-y-6 flex-1 flex flex-col justify-between text-text-main">
             <div className="space-y-5">
               {/* Guidance Box */}
               <div className="p-4 bg-surface-subtle border border-border-subtle rounded-2xl space-y-2">
