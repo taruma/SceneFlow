@@ -50,6 +50,9 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
   - `SyncCuesPanel` renders cue cards in memoized chronological order (`startTime` ascending, secondary on `startIndex`), ensuring the card list remains organized and predictable regardless of JSON array insertion order.
 - **Defensive Rendering**:
   - Always guard numeric formatting against null/undefined timestamps using `(cue.startTime ?? 0).toFixed(1)`.
+- **Screenplay Dialogue Inline Hierarchy**:
+  - For dialogue cues with an identified speaker (`cue.speaker`), format the excerpt as an inline prefix: `<span className="font-black uppercase tracking-wider">{cue.speaker}:</span> "{cue.selectedText}"`.
+  - Avoid stacking character names above dialogue lines in separate blocks, as vertical height must be conserved (~74–76px) to maximize the visible cue count in the Left Panel Studio.
 
 ## 6. Two-Tier Flex Architecture & Cross-Panel Sync Invariants
 - **Two-Tier Flex Container**:

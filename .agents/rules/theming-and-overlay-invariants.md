@@ -68,4 +68,12 @@ When rendering directional translucent gradient washes or ambient color overlays
    - For primary focus items (such as the primary active cue driving auto-scroll), calibrate the leading edge to `22%–25%` falling off to `6%–7%`.
    - Pair with an active category border (`rgba(rgb, 0.65)`), outer glow halo (`0 0 10px rgba(rgb, 0.3)`), and expanded theme stripe (`w-1.5`) to establish definitive visual primacy over secondary items.
 
+## 7. Category-Harmonized Interactive States Invariant
+When rendering selectable, clickable, or active items that possess a category color (cues, cards, timeline blocks, tags):
+1. **No Static Accent Rings**: Never hardcode generic blue borders (`border-blue-500`, `ring-blue-500`) for active or selected states on categorized domain entities.
+2. **Dynamic RGB Derivation**:
+   - Selected Border: `borderColor: rgba(${themed.rgb}, 0.7)` with `boxShadow: 0 0 0 1px rgba(${themed.rgb}, 0.5)`.
+   - Active Playback Border/Glow: `borderColor: rgba(${themed.rgb}, 0.55)` with `boxShadow: 0 0 8px rgba(${themed.rgb}, 0.25), 0 0 0 1px rgba(${themed.rgb}, 0.3)`.
+3. **Theme & CVD Profile Compatibility**: Deriving from `themed.rgb` guarantees that interactive selection states remain visually harmonious across Light, Warm, Dark, and Protanopia-safe palettes without secondary color collisions.
+
 
