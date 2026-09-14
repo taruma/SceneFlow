@@ -332,13 +332,8 @@ function ScriptLineComponent({
 function areScriptLinePropsEqual(prev: ScriptLineProps, next: ScriptLineProps): boolean {
   if (
     prev.lineData !== next.lineData ||
-    prev.cues !== next.cues ||
-    prev.mode !== next.mode ||
-    prev.hiddenCueTypes !== next.hiddenCueTypes ||
     prev.scriptThemeId !== next.scriptThemeId ||
-    prev.cuePaletteProfile !== next.cuePaletteProfile ||
-    prev.isDesktop !== next.isDesktop ||
-    prev.settings !== next.settings
+    prev.isDesktop !== next.isDesktop
   ) {
     return false;
   }
@@ -348,14 +343,31 @@ function areScriptLinePropsEqual(prev: ScriptLineProps, next: ScriptLineProps): 
     return false;
   }
 
+  const { lineStart, lineEnd } = next.lineData;
+  const prevOverlaps = Boolean(prev.selection && prev.selection.start < lineEnd && prev.selection.end > lineStart);
+  const nextOverlaps = Boolean(next.selection && next.selection.start < lineEnd && next.selection.end > lineStart);
+
+  // If this line has NO cues and no text selection in either render, mode and cue properties have zero visual impact
+  if (prev.cues.length === 0 && next.cues.length === 0 && !prevOverlaps && !nextOverlaps) {
+    return true;
+  }
+
+  // From here, the line has cues or active text selection, so mode and cue props matter
+  if (
+    prev.cues !== next.cues ||
+    prev.mode !== next.mode ||
+    prev.hiddenCueTypes !== next.hiddenCueTypes ||
+    prev.cuePaletteProfile !== next.cuePaletteProfile ||
+    prev.settings !== next.settings
+  ) {
+    return false;
+  }
+
   // Edit mode checks
   if (next.mode === 'edit') {
     if (prev.playerState !== next.playerState) return false;
     if (prev.editingCueId !== next.editingCueId) return false;
 
-    const { lineStart, lineEnd } = next.lineData;
-    const prevOverlaps = Boolean(prev.selection && prev.selection.start < lineEnd && prev.selection.end > lineStart);
-    const nextOverlaps = Boolean(next.selection && next.selection.start < lineEnd && next.selection.end > lineStart);
     if (prevOverlaps !== nextOverlaps) return false;
     if (nextOverlaps) {
       if (

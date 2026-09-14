@@ -18,8 +18,8 @@ import { ScriptColorModal } from './components/ScriptColorModal';
 import { MobileColorModal } from './components/MobileColorModal';
 import { AppInfoModal } from './components/AppInfoModal';
 import { AppHeader } from './components/AppHeader';
-import { PlaybackLeftPanel } from './components/playback/PlaybackLeftPanel';
-import { EditLeftPanel, EditRightPanel, CueEditorForm, CueEditorProvider, type CueEditorContextValue } from './components/edit';
+import { WorkstationLeftPanel } from './components/left-panel';
+import { EditRightPanel, CueEditorForm, CueEditorProvider, type CueEditorContextValue } from './components/edit';
 import { SplitPaneDivider, InspectorSplitDivider } from './components/common';
 import { ScriptHeaderControls } from './components/ScriptHeaderControls';
 import { cn, extractYoutubeId } from './lib/utils';
@@ -685,66 +685,44 @@ export default function App() {
           "flex flex-1 flex-col lg:flex-row overflow-hidden",
           mode === 'playback' && "overflow-y-auto lg:overflow-hidden"
         )}>
-        {/* Left Panel: Media & Controls */}
-        {mode === 'playback' ? (
-          <PlaybackLeftPanel
-            youtubeId={state.youtubeId}
-            videoHeight={videoHeight}
-            setVideoHeight={setVideoHeight}
-            commitVideoHeight={commitVideoHeight}
-            isVideoCollapsed={isVideoCollapsed}
-            onToggleVideoCollapsed={toggleVideoCollapsed}
-            onTogglePlayPause={togglePlayPause}
-            onReplay={handleReplay}
-            isDesktop={isDesktop}
-            playerState={playerState}
-            currentTime={currentTime}
-            onReady={onReady}
-            onStateChange={onStateChange}
-            seekTo={seekTo}
-            cues={state.cues}
-            settings={state.settings}
-            isCueVisible={isCueVisible}
-            activeCueTypes={activeCueTypes}
-            hiddenCueTypes={hiddenCueTypes}
-            toggleCueTypeVisibility={toggleCueTypeVisibility}
-            scriptThemeId={scriptThemeId}
-            cuePaletteProfile={cuePaletteProfile}
-            style={leftPanelStyle}
-          />
-        ) : (
-          <EditLeftPanel
-            youtubeId={state.youtubeId}
-            onChangeYoutubeId={handleChangeYoutubeId}
-            onClearYoutubeId={handleClearYoutubeId}
-            hasPlayer={!!player}
-            videoHeight={videoHeight}
-            setVideoHeight={setVideoHeight}
-            commitVideoHeight={commitVideoHeight}
-            isVideoCollapsed={isVideoCollapsed}
-            onToggleVideoCollapsed={toggleVideoCollapsed}
-            onTogglePlayPause={togglePlayPause}
-            onReplay={handleReplay}
-            isDesktop={isDesktop}
-            playerState={playerState}
-            currentTime={currentTime}
-            duration={duration}
-            onReady={onReady}
-            onStateChange={onStateChange}
-            cues={state.cues}
-            settings={state.settings}
-            scriptThemeId={scriptThemeId}
-            cuePaletteProfile={cuePaletteProfile}
-            selectedCueId={newCue.id}
-            onSelectCue={handleSelectCueForEdit}
-            onDeleteCue={deleteCue}
-            onOpenRawCuesModal={handleOpenRawCuesModal}
-            onRealignCues={realignCues}
-            isAligning={isAligning}
-            alignSuccess={alignSuccess}
-            style={leftPanelStyle}
-          />
-        )}
+        {/* Left Panel: Unified Media Viewport & Workstation (Playback vs Edit) */}
+        <WorkstationLeftPanel
+          mode={mode}
+          youtubeId={state.youtubeId}
+          onChangeYoutubeId={handleChangeYoutubeId}
+          onClearYoutubeId={handleClearYoutubeId}
+          hasPlayer={!!player}
+          videoHeight={videoHeight}
+          setVideoHeight={setVideoHeight}
+          commitVideoHeight={commitVideoHeight}
+          isVideoCollapsed={isVideoCollapsed}
+          onToggleVideoCollapsed={toggleVideoCollapsed}
+          onTogglePlayPause={togglePlayPause}
+          onReplay={handleReplay}
+          isDesktop={isDesktop}
+          playerState={playerState}
+          currentTime={currentTime}
+          duration={duration}
+          onReady={onReady}
+          onStateChange={onStateChange}
+          seekTo={seekTo}
+          cues={state.cues}
+          settings={state.settings}
+          isCueVisible={isCueVisible}
+          activeCueTypes={activeCueTypes}
+          hiddenCueTypes={hiddenCueTypes}
+          toggleCueTypeVisibility={toggleCueTypeVisibility}
+          scriptThemeId={scriptThemeId}
+          cuePaletteProfile={cuePaletteProfile}
+          selectedCueId={newCue.id}
+          onSelectCue={handleSelectCueForEdit}
+          onDeleteCue={deleteCue}
+          onOpenRawCuesModal={handleOpenRawCuesModal}
+          onRealignCues={realignCues}
+          isAligning={isAligning}
+          alignSuccess={alignSuccess}
+          style={leftPanelStyle}
+        />
 
         {/* Desktop Resizable Split Pane Divider */}
         {isDesktop && (
@@ -796,7 +774,7 @@ export default function App() {
             )}
           >
             <div className={cn(
-              "script-paper-container mx-auto min-h-full rounded-sm relative transition-all duration-300",
+              "script-paper-container mx-auto min-h-full rounded-sm relative transition-colors duration-200",
               isScriptPureBlack ? "!bg-black !shadow-none" : cn(activeTheme.paperBg, activeTheme.paperShadow),
               activeTheme.paperBorder,
               activeTheme.textColor,

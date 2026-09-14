@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.4.0-dev] - Unreleased
 
 ### Added
+- **Cross-Mode Playback Continuity & Unified Workstation Left Panel (`src/components/left-panel/WorkstationLeftPanel.tsx`, `src/components/left-panel/MediaViewport.tsx`, `src/components/left-panel/MediaHeader.tsx`, `src/App.tsx`, `src/components/script/ScriptLine.tsx`)**:
+  - **Single Persistent Media Viewport**: Unified Playback and Edit left panels into `WorkstationLeftPanel`, hosting a permanent `MediaViewport` holding the `<YouTube>` player iframe across mode switches. Completely eliminates YouTube player destruction, abrupt audio cutoff, and video timestamp resets to 0:00 when toggling between Playback Mode and Edit Mode.
+  - **Eliminated Mode-Switch Jitter & Lag**:
+    - Removed expensive third-party iframe teardown and reconstruction cycles on mode transitions.
+    - Optimized `areScriptLinePropsEqual` in `ScriptLine.tsx` to skip re-rendering screenplay lines that contain no cues and no active text selection, preventing hundreds of plain text lines from re-rendering simultaneously on mode toggle.
+    - Replaced `transition-all duration-300` with `transition-colors duration-200` on `.script-paper-container` in `App.tsx` to eliminate layout dimension animation thrashing during split-ratio snapping.
+  - **Backwards Compatibility**: Re-exported `PlaybackLeftPanel` and `EditLeftPanel` as thin adapters over `WorkstationLeftPanel` to maintain seamless compatibility.
 - **Mode-Aware Layout Reset & 40/35/25 Edit Workstation Distribution (`src/hooks/useScriptPreferences.ts`, `src/App.tsx`, `src/components/common/InspectorSplitDivider.tsx`, `src/components/edit/EditRightPanel.tsx`)**:
   - Implemented mode-aware layout reset behavior: resetting view layout in Edit Mode now snaps panels to a **40 / 35 / 25** distribution (40% Left Media/Cue Panel, 35% Center Screenplay, 25% Right Cue Inspector) instead of inheriting Playback Mode's 65/35 ratio.
   - Decoupled edit mode split ratio (`editSplitRatio`, default 40%) and inspector ratio (`inspectorRatio`, default 25%) from playback mode split ratio (`splitRatio`, default 65%), persisting each independently in `localStorage` (`sceneflow_edit_split_ratio`, `sceneflow_inspector_ratio`, `sceneflow_split_ratio`).

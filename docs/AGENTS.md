@@ -163,8 +163,9 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
    - Keep playback visualization components modularized inside `src/components/active-highlights/` rather than expanding `App.tsx`.
    - Consume the public API barrel export (`src/components/active-highlights/index.ts`).
 
-5. **Playback Left Panel Isolation**:
-   - Maintain strict container separation between Playback mode (`src/components/playback/PlaybackLeftPanel.tsx`) and Edit mode in `App.tsx`.
+5. **Workstation Left Panel Architecture & Tier Isolation**:
+   - The unified Left Panel (`src/components/left-panel/WorkstationLeftPanel.tsx`) permanently houses Tier 1 (`MediaViewport` and `MediaHeader`), ensuring the `<YouTube>` player iframe is **never unmounted** when switching between Playback and Edit modes.
+   - Maintain strict Tier 2 container separation between Playback mode (`ActiveHighlightsPanel`) and Edit mode (`SyncCuesPanel`).
    - Never cross-contaminate playback containers with edit-mode sticky scroll animations, form paddings, or modal listeners.
 
 6. **Timeline Density & Geometry Synchronization**:
@@ -201,7 +202,7 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
     - **Empty Lane Height Preservation**: `TimelineLane` must accept `totalSubLanes` from category-level metadata to maintain its pre-allocated height and horizontal dividers even when `items.length === 0` (no visible cues passing through that track).
 
 12. **Collapsible Video Player & Background Playback Invariants**:
-    - **Zero-Height Audio & Sync Continuity**: When collapsing the video player in Playback mode (`PlaybackLeftPanel.tsx`), **never** unmount the `<YouTube>` component. Use zero-height clipping styles (`h-0 min-h-0 max-h-0 opacity-0 pointer-events-none !m-0 !p-0 overflow-hidden`) so the iframe context remains attached, audio continues playing, and real-time timeline playhead/cue synchronization persists for screen recording.
+    - **Zero-Height Audio & Sync Continuity**: When collapsing the video player or toggling modes (`WorkstationLeftPanel.tsx`), **never** unmount the `<YouTube>` component. Use zero-height clipping styles (`h-0 min-h-0 max-h-0 opacity-0 pointer-events-none !m-0 !p-0 overflow-hidden`) so the iframe context remains attached, audio continues playing, and real-time timeline playhead/cue synchronization persists for screen recording and mode transitions.
     - **Resizer Divider Suppression**: Conditionally omit `VideoSplitDivider` when the video player is collapsed so no orphaned resize handles float above the timeline.
     - **Dual Control & Quick Toggle**: Provide an interactive header toggle button (`[ Hide Video ]` ⇋ `[ Show Video ]`) alongside the global keyboard shortcut (`KeyV` / <kbd>V</kbd>) with animated status badge (`Video Hidden`).
     - **Unified View Reset**: `isViewCustomized` and `resetViewLayout` must track `isVideoCollapsed`, ensuring clicking "Reset View" restores the video player to default visibility.
