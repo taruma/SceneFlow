@@ -50,6 +50,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Adaptive Container Queries for Split Panels (`src/index.css`, `src/components/edit/EditLeftPanel.tsx`, `src/components/playback/PlaybackLeftPanel.tsx`, `src/components/edit/SyncCuesToolbar.tsx`)**:
   - Introduced CSS container queries (`@container (max-width: 580px)`) across left panels.
   - Action button labels (`.header-btn-label`) and YouTube source pill text (`.youtube-pill-text`) automatically collapse to compact icon buttons on narrow panels, eliminating horizontal overflow and text wrapping without JavaScript resize listeners.
+- **Two-Tier Flex Studio Layout & Interactive Sync Cue Station (`src/components/edit/EditLeftPanel.tsx`, `src/components/edit/SyncCuesPanel.tsx`, `src/components/edit/SyncCuesToolbar.tsx`, `src/App.tsx`)**:
+  - Re-architected Edit Mode's Left Panel into an unpinned, two-tier flex workstation mirroring Playback Mode.
+  - **Tier 1 (Media Preview)**: Persistent transport bar (`Replay`, `Play/Pause`, `Hide/Show Video`), live timecode HUD badge, collapsible YouTube source pill, resizable 16:9 video player, and horizontal split divider (`VideoSplitDivider`).
+  - **Tier 2 (Sync Cues Studio)**: Permanently docked `SyncCuesToolbar` and dedicated scrollable cue list supporting both Cards (`SyncCueCard`) and Compact (`SyncCueRow`) density presentations with chronological ordering and `content-visibility: auto` paint acceleration.
+  - **Cross-Panel Synchronized Jump**: Clicking any cue card or row smoothly seeks the video player (without premature pause calls), populates `CueEditorForm`, and scrolls the script reading canvas to center the corresponding line.
 
 ### Refactored
 - **Cue Authoring State Consolidation & Zero-Prop `CueEditorForm` (`src/components/edit/CueEditorContext.tsx`, `src/components/edit/CueEditorForm.tsx`, `src/components/edit/index.ts`, `src/App.tsx`)**:
@@ -58,9 +63,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Project Lifecycle Decoupling from Cue Authoring (`src/hooks/useCueEditor.ts`, `src/App.tsx`)**:
   - Untangled project-level `resetConfirmation` and `setResetConfirmation` modal state from `useCueEditor`, relocating it directly into `App.tsx` where project loaders (`loadBlank`, `loadGuide`, `loadExample`, `loadRemoteProject`) reside.
   - Reduced `useCueEditor` responsibility strictly to cue draft authoring, validation, and deletion.
-- **Dead Code & Legacy Bridge Pruning (`src/components/edit/SyncCuesHeader.tsx`, `src/components/edit/CueLegend.tsx`, `src/components/TimelineCuesPanel.tsx`, `src/components/CueEditorForm.tsx`, `src/components/edit/index.ts`)**:
+- **Dead Code & Legacy Bridge Pruning (`src/components/edit/SyncCuesHeader.tsx`, `src/components/edit/CueLegend.tsx`, `src/components/TimelineCuesPanel.tsx`, `src/components/CueEditorForm.tsx`, `src/components/ScriptManagementBar.tsx`, `src/components/edit/index.ts`)**:
   - Deleted obsolete `SyncCuesHeader.tsx` (superseded by `SyncCuesToolbar.tsx`) and `CueLegend.tsx` (superseded by interactive toolbar category filter pills).
   - Deleted legacy re-export bridges `src/components/TimelineCuesPanel.tsx` and `src/components/CueEditorForm.tsx`.
+  - Pruned obsolete `src/components/ScriptManagementBar.tsx`, superseded by the symmetrical right panel header in `ScriptHeaderControls.tsx`.
   - Pruned deprecated `Timeline*` aliases from `src/components/edit/index.ts`.
 - **Playback Tick Isolation & Theme Resolution Hoisting (`src/components/edit/SyncCueCard.tsx`, `src/components/edit/SyncCueRow.tsx`, `src/components/edit/EditLeftPanel.tsx`, `src/components/playback/PlaybackLeftPanel.tsx`)**:
   - Removed redundant `useScriptTheme` hook executions inside individual items in `SyncCueCard` and `SyncCueRow`, replacing the fallback with the pure function `getCueColorForTheme` to eliminate 100–300 hook executions on every render and search keystroke.
@@ -140,6 +146,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added responsive `"Cards"` and `"Compact"` text labels to the view density switcher that automatically collapse to clean icon glyphs (`[ ⊞ | ≡ ]`) via container queries on narrow panels.
 - **Script Preview Header Streamlining & Decluttering (`src/components/ScriptHeaderControls.tsx`, `src/styles/tokens/ui.ts`)**:
   - Removed the redundant, non-clickable `[PLAYBACK]` / `[EDIT]` mode badge, eliminating toolbar crowding on tablets/wide mobile (`sm:block`) and restoring clean visual clustering of reading controls on desktop.
+  - Added symmetrical `"Script Editor"` header title, loaded line count badge (`{lineCount} lines`), and direct `[Edit Raw]` action button when in Edit mode, cleanly replacing the old standalone `ScriptManagementBar`.
   - Removed the redundant mobile `TIME 0.0s` pill (`UI_TOKENS.badge.currentTimePillSm`), maximizing reading canvas breathing room and relying on the sticky video player and timeline playhead for timecode feedback.
   - Pruned unused `currentTimePill` and `currentTimePillSm` badge design tokens from `src/styles/tokens/ui.ts`.
 - **3-Zone Studio Header Architecture & Decluttering (`src/components/AppHeader.tsx`, `src/styles/tokens/ui.ts`)**:

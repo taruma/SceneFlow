@@ -93,7 +93,7 @@ YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds
 
 ## 15. Mobile Viewport Exclusivity & Edit Mode Boundary
 - **Playback/Review Only**: SceneFlow on mobile viewports (< 1024px) is strictly an immersive script reading and media playback experience.
-- **Desktop-Only Cue Authoring**: Cue authoring forms (`CueEditorForm`), timeline cue management (`TimelineCuesPanel`), split-pane dividers (`SplitPaneDivider`, `VideoSplitDivider`), and top studio chrome (`AppHeader`) are strictly desktop-only and must declare unconditional `hidden lg:flex` / `hidden lg:block`.
+- **Desktop-Only Cue Authoring**: Cue authoring forms (`CueEditorForm`), sync cues studio (`SyncCuesPanel`), split-pane dividers (`SplitPaneDivider`, `VideoSplitDivider`), and top studio chrome (`AppHeader`) are strictly desktop-only and must declare unconditional `hidden lg:flex` / `hidden lg:block`.
 - **No Mobile Authoring Creep**: Never attempt to adapt desktop cue creation tools or multi-zone studio toolbars onto mobile viewports; mobile devices are reserved exclusively for distraction-free reading, playback sync, and review.
 
 ## 16. Non-Blocking Overlay & Outside Click Invariants

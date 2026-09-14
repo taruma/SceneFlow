@@ -73,8 +73,9 @@ Supports eight color-coded cue categories, each calibrated with theme-specific R
 
 ### Cue Creation & In-Place Text Editing
 - **Creation**: In Edit Mode, highlight text in the script preview to populate the "New Sync Cue" panel with calculated start and end character offsets.
-- **Timestamp Capture**: Click the `Clock` button next to Start/End Time to snap directly to the player's current video time, or input manual values.
-- **Manual Monospace Textarea**: Users can directly edit a cue's selected text in-place within the Edit Sync Cue panel. This allows safe text corrections without manual JSON editing while preserving character synchronization.
+- **Compound Context Architecture (`CueEditorContext`, `CueEditorForm`)**: Cue draft state, timing offsets, DOM text selection ranges, alternative locations, and persistence actions are encapsulated within `<CueEditorProvider>`, enabling zero-prop invocation with automatic fallback resolution across layout panels.
+- **Timestamp Capture & Live Precision Timecodes (`CueTimingInputs`)**: Start and End inputs display live formatted precision timecodes (`MM:SS.s`) above each field alongside `Clock` buttons to capture the player's current video time, or input manual values.
+- **Manual Monospace Textarea (`CueTextSection`)**: Users can directly edit a cue's selected text in-place within the Edit Sync Cue panel. This allows safe text corrections without manual JSON editing while preserving character synchronization.
 - **ID Sanitization**: All cues loaded from any source (localStorage, built-in examples, remote projects, or pasted JSON) are automatically run through `sanitizeCues()`, which deduplicates IDs, normalizes `type`/`colorClass` fields bidirectionally, and injects fallback UUIDs for malformed entries.
 - **Duplicate Text & Alternative Location Finder**: When a phrase appears multiple times (e.g., `WIDE SHOT`), clicking "Find Alternative" scans the screenplay and presents a contextual list of all occurrences with character offsets and text snippets for instant snapping. Hidden `[[STAGING]]` block ranges are strictly excluded from search matches.
 
@@ -182,7 +183,7 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
   - Automatic 16:9 aspect scaling (`aspect-video` + `maxWidth: 100%`) ensures zero video distortion and completely eliminates lateral empty gutters.
 - **Clean Headroom**: The redundant "NOW PLAYING" header row and percentage slider have been completely eliminated, reclaiming ~28px of top vertical space.
 - **Hardware VSync Dragging (60–144fps) & Gesture Safety**: Pointer movements are throttled via `requestAnimationFrame` with global `window`-level event subscriptions, `touch-action: none` gesture protection against Windows/touchpad scroll collisions, dynamic boundary deadband re-anchoring, and `.is-resizing-split` CSS transition suppression on `document.body` for rock-solid, uninterrupted cursor tracking.
-- **Unified Header "Reset View" (`AppHeader`)**: A single click on the `RotateCcw` button in the header toolbar (or double-clicking either divider) immediately snaps both the 65:35 horizontal panel split and the 220px vertical video height back to defaults.
+- **Unified "Reset View Layout" (`SettingsMenuDropdown`, <kbd>Shift+R</kbd>)**: Accessible inside Studio Settings (`[ ⚙️ Settings ▾ ]`), via the global <kbd>Shift+R</kbd> keyboard shortcut, or by double-clicking either split divider, immediately snapping both the 65:35 horizontal panel split and the 220px vertical video height back to defaults.
 - **Decoupled Persistence**: Changes commit to `localStorage` (`sceneflow_split_ratio`, `sceneflow_video_height`) only upon pointer release to eliminate main-thread disk I/O bottlenecks.
 
 ### Collapsible Video Player (Screen Recording Mode)
@@ -194,7 +195,7 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
   - Timeline playhead, cue activation glows, and screenplay auto-scrolling remain in perfect lockstep.
   - Re-expanding the player is instant with zero buffering or reload latency.
 - **Context-Aware Header & Status Badge**: Displays an animated amber status pill (`Video Hidden`) when collapsed, and automatically hides the vertical `VideoSplitDivider` handle.
-- **Session Persistence**: Stored in `localStorage` (`sceneflow_playback_video_collapsed`), and unified with the header "Reset View" button to restore the video player in a single click.
+- **Session Persistence**: Stored in `localStorage` (`sceneflow_playback_video_collapsed`), and unified with the Reset View Layout action in Studio Settings or <kbd>Shift+R</kbd> to restore the video player in a single click.
 
 ### Persistent Playback Header Transport Controls
 - **Always-Accessible Media Controls**: The `PLAYBACK` section header in `PlaybackLeftPanel` houses dedicated playback transport controls:
@@ -272,7 +273,7 @@ The application shell features three bespoke CSS variable palettes that dynamica
 - **Warm Mode**: Soft antique sepia & warm umber parchment (`#faf7f0`, `#f3efe6`, `#2b231d`).
 - **Dark Mode**: Midnight slate with high-contrast light text (`#171514`, `#0c0a09`, `#f5f5f4`).
 - **Auto-Sync Mode (Default)**: Changing the screenplay paper preset automatically transitions the application shell to the matching theme category.
-- **Manual Mode Toggle**: Users can click the App Theme button in the header toolbar (`Sparkles [A]`, `Sun`, `Coffee`, `Moon`) to cycle modes explicitly. Preference is persisted in `localStorage`.
+- **Manual Mode Selection**: Users can select their desired App Theme directly via the 4-theme quick-selector grid (`Auto`, `Light`, `Warm`, `Dark`) inside Studio Settings (`[ ⚙️ Settings ▾ ]`) on desktop, or via the 4-segment switcher in the mobile theme drawer (`MobileColorModal`). Preference is persisted in `localStorage`.
 
 ### 6-Theme Script Engine
 Users can toggle between six screenplay visual themes via the desktop `ScriptColorModal` or the mobile `MobileColorModal`:
@@ -317,9 +318,6 @@ Selectable directly within Studio Settings (`[ ⚙️ Settings ▾ ]`) via a 5-s
 - *Wide*: 768px (`max-w-3xl`) — Spacious dual-column feel.
 - *Expanded*: 1024px (`max-w-5xl`) — Full page layout.
 - Width preference is saved to `localStorage` and hidden on mobile screens.
-
-### Video Player Sizing Slider
-Desktop playback mode includes a range slider (40% to 100%) to scale video preview width seamlessly.
 
 ---
 
@@ -388,7 +386,7 @@ Available on desktop across both Playback and Edit modes with automatic input/te
 - `Space` / `K`: Toggle YouTube video playback (Play / Pause).
 - `←` / `→` (ArrowLeft / ArrowRight): Seek -5s / +5s.
 - `J` / `L`: Seek -5s / +5s (YouTube standard navigation hotkeys).
-- `V`: Toggle video player visibility / collapse (Playback mode).
+- `V`: Toggle video player visibility / collapse (Playback and Edit modes).
 - `Shift + C`: Open Script Paper & Colors modal.
 - `Shift + T`: Open Timing & Durations modal.
 - `Shift + R`: Reset View Layout & Video Size to defaults.
