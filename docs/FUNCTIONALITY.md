@@ -193,22 +193,24 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
   - Automatic 16:9 aspect scaling (`aspect-video` + `maxWidth: 100%`) ensures zero video distortion and completely eliminates lateral empty gutters.
 - **Clean Headroom**: The redundant "NOW PLAYING" header row and percentage slider have been completely eliminated, reclaiming ~28px of top vertical space.
 - **Hardware VSync Dragging (60–144fps) & Gesture Safety**: Pointer movements are throttled via `requestAnimationFrame` with global `window`-level event subscriptions, `touch-action: none` gesture protection against Windows/touchpad scroll collisions, dynamic boundary deadband re-anchoring, and `.is-resizing-split` CSS transition suppression on `document.body` for rock-solid, uninterrupted cursor tracking.
-- **Unified "Reset View Layout" (`SettingsMenuDropdown`, <kbd>Shift+R</kbd>)**: Accessible inside Studio Settings (`[ ⚙️ Settings ▾ ]`), via the global <kbd>Shift+R</kbd> keyboard shortcut, or by double-clicking either split divider, immediately snapping both the 65:35 horizontal panel split and the 220px vertical video height back to defaults.
-- **Decoupled Persistence**: Changes commit to `localStorage` (`sceneflow_split_ratio`, `sceneflow_video_height`) only upon pointer release to eliminate main-thread disk I/O bottlenecks.
+- **Unified Mode-Aware "Reset View Layout" (`SettingsMenuDropdown`, <kbd>Shift+R</kbd>)**: Accessible inside Studio Settings (`[ ⚙️ Settings ▾ ]`), via the global <kbd>Shift+R</kbd> keyboard shortcut, or by double-clicking split dividers:
+  - **In Edit Mode**: Snaps the 3-panel workstation to a calibrated **40 / 35 / 25** distribution (40% Left Media/Cues, 35% Center Screenplay, 25% Right Cue Inspector), restores the 220px vertical video height, expands collapsed video, and re-opens the cue inspector.
+  - **In Playback Mode**: Snaps the 2-panel player to a **65 : 35** horizontal split (65% Left Player/Timeline, 35% Screenplay) and restores the 220px video height.
+- **Decoupled Persistence**: Changes commit to `localStorage` (`sceneflow_split_ratio`, `sceneflow_edit_split_ratio`, `sceneflow_inspector_ratio`, `sceneflow_video_height`) only upon pointer release to eliminate main-thread disk I/O bottlenecks.
 
 ### Desktop 3-Panel Edit Workstation & Draggable Cue Inspector
-- **Dedicated 3-Panel Workstation Layout**: Desktop Edit Mode organizes the workspace into three specialized vertical columns:
-  1. *Left Panel (`EditLeftPanel`)*: Houses the media preview with live timecode HUD badge, persistent transport controls, and the time-clustered Sync Cues fluid grid.
-  2. *Center Panel (Screenplay Canvas)*: An unobstructed reading canvas that flexes smoothly (`flex-1 min-w-0`), ensuring screenplay text editing never overlaps or collides with the cue inspector.
-  3. *Right Panel (`EditRightPanel`)*: A dedicated Cue Inspector panel featuring a 48px header matching the script toolbar, active status indicator (`Drafting`, `Editing`, `Idle`), collapsible toggle, embedded `CueEditorForm`, and an idle overview displaying cue statistics by category with quick editing shortcuts.
+- **Dedicated 3-Panel Workstation Layout**: Desktop Edit Mode organizes the workspace into three specialized vertical columns calibrated to **40 / 35 / 25**:
+  1. *Left Panel (`EditLeftPanel`)*: Defaults to **40%** width, housing the media preview with live timecode HUD badge, persistent transport controls, and the time-clustered Sync Cues fluid grid.
+  2. *Center Panel (Screenplay Canvas)*: Defaults to **35%** width (`flex-1 min-w-0`), an unobstructed reading canvas ensuring screenplay text editing never overlaps or collides with the cue inspector.
+  3. *Right Panel (`EditRightPanel`)*: Defaults to **25%** width, a dedicated Cue Inspector panel featuring a 48px header matching the script toolbar, active status indicator (`Drafting`, `Editing`, `Idle`), collapsible toggle, embedded `CueEditorForm`, and an idle overview displaying cue statistics by category with quick editing shortcuts.
 - **Draggable Vertical Inspector Splitter (`InspectorSplitDivider`)**:
-  - Dragging the divider between the screenplay canvas and cue inspector resizes inspector width between `280px` (minimum) and `560px` (maximum), defaulting to `360px`.
-  - Enforces a minimum width floor for the left and center panels (`window.innerWidth - 650px`) so the script canvas is never collapsed.
+  - Dragging the divider between the screenplay canvas and cue inspector resizes inspector ratio between `18%` (minimum, pixel floor `260px`) and `45%` (maximum), defaulting to `25%`.
+  - Enforces minimum width floors so neither the script canvas nor inspector are ever crushed.
   - VSync-aligned `requestAnimationFrame` throttling and zero-transition suppression (`is-resizing-split`) deliver fluid 60–144fps dragging.
-  - Double-clicking the divider snaps inspector width back to default (`360px`).
-  - Keyboard accessible: <kbd>←</kbd> widens inspector, <kbd>→</kbd> narrows inspector, <kbd>Enter</kbd> / <kbd>Home</kbd> resets width.
-  - Persists preference in `localStorage` (`sceneflow_inspector_width`) upon drag release.
-- **Interactive Panel Toggling**: A dedicated `<PanelRight />` toggle in `ScriptHeaderControls` allows collapsing or expanding the inspector on demand. Selecting script text or clicking any sync cue card automatically opens the inspector.
+  - Double-clicking the divider snaps inspector back to default layout (`25%`).
+  - Keyboard accessible: <kbd>←</kbd> widens inspector by 1%, <kbd>→</kbd> narrows inspector by 1%, <kbd>Enter</kbd> / <kbd>Home</kbd> resets to default.
+  - Persists preference in `localStorage` (`sceneflow_inspector_ratio`) upon drag release.
+- **Interactive Panel Toggling**: A dedicated `<PanelRight />` toggle in `ScriptHeaderControls` allows collapsing or expanding the inspector on demand. Selecting script text or clicking any sync cue card automatically opens the inspector. Closing the inspector allows the center script canvas to smoothly expand into the remaining 60% space.
 - **Ergonomic Cue Inspector Workstation (`CueEditorForm`, `CueTimingCard`, `CueSceneContext`, `CueScriptAnchoring`)**:
   - *Surrounding Scene Context Window*: Renders dimmed preceding (`PREV`) and following (`NEXT`) screenplay lines directly around the editable quote, providing instant narrative orientation.
   - *Audio-Visual Timing Deck*: Symmetrical Start and End boundary cards featuring precision timecodes (`00:00.2`), single-click micro-nudge steppers (`-0.5s`, `-0.1s`, `+0.1s`, `+0.5s`), clock capture buttons, a live calculated duration badge (`⏱ 1.6s`), and an integrated `Play Cue [▶]` preview button with a `Loop [🔁]` toggle for repetitive sound/speech auditing that dynamically adapts to nudged timestamps in real time without restarting playback.

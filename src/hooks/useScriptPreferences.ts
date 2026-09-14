@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import type { ScriptWidthPresetId, ScrollFocusPresetId } from '../types/script';
+import type { ScriptWidthPresetId, ScrollFocusPresetId, AppMode } from '../types/script';
 import { 
   SCRIPT_WIDTH_PRESETS, 
   SCROLL_FOCUS_PRESETS,
@@ -13,6 +13,15 @@ export const MIN_SPLIT_RATIO = 30;
 export const MAX_SPLIT_RATIO = 72;
 export const MIN_PANEL_PIXEL_WIDTH = 380;
 
+export const DEFAULT_EDIT_SPLIT_RATIO = 40;
+export const MIN_EDIT_SPLIT_RATIO = 25;
+export const MAX_EDIT_SPLIT_RATIO = 55;
+
+export const DEFAULT_EDIT_INSPECTOR_RATIO = 25;
+export const MIN_EDIT_INSPECTOR_RATIO = 18;
+export const MAX_EDIT_INSPECTOR_RATIO = 45;
+export const MIN_INSPECTOR_PIXEL_WIDTH = 260;
+
 export const DEFAULT_VIDEO_HEIGHT = 220;
 export const MIN_VIDEO_HEIGHT = 160;
 export const MAX_VIDEO_HEIGHT = 480;
@@ -24,6 +33,8 @@ export const MAX_INSPECTOR_WIDTH = 560;
 export const SCRIPT_PREFERENCES_STORAGE_KEYS = {
   VIDEO_HEIGHT: 'sceneflow_video_height',
   SPLIT_RATIO: 'sceneflow_split_ratio',
+  EDIT_SPLIT_RATIO: 'sceneflow_edit_split_ratio',
+  INSPECTOR_RATIO: 'sceneflow_inspector_ratio',
   INSPECTOR_WIDTH: 'sceneflow_inspector_width',
   VIDEO_COLLAPSED: 'sceneflow_playback_video_collapsed',
   SCRIPT_WIDTH_PRESET: 'sceneflow_script_width_preset',
@@ -33,7 +44,7 @@ export const SCRIPT_PREFERENCES_STORAGE_KEYS = {
   PURE_BLACK_BG: 'sceneflow_pure_black_bg',
 } as const;
 
-export function useScriptPreferences() {
+export function useScriptPreferences(mode: AppMode = 'playback') {
   const [videoHeight, setVideoHeightState] = useState<number>(() => {
     if (typeof localStorage !== 'undefined') {
       const saved = localStorage.getItem(SCRIPT_PREFERENCES_STORAGE_KEYS.VIDEO_HEIGHT);
@@ -63,6 +74,7 @@ export function useScriptPreferences() {
     });
   }, []);
 
+  // Playback mode split ratio (Left video/cues vs Right script)
   const [splitRatio, setSplitRatioState] = useState<number>(() => {
     if (typeof localStorage !== 'undefined') {
       const saved = localStorage.getItem(SCRIPT_PREFERENCES_STORAGE_KEYS.SPLIT_RATIO);
@@ -92,6 +104,74 @@ export function useScriptPreferences() {
     });
   }, []);
 
+  // Edit mode workstation left panel split ratio (Left panel: 40% default)
+  const [editSplitRatio, setEditSplitRatioState] = useState<number>(() => {
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem(SCRIPT_PREFERENCES_STORAGE_KEYS.EDIT_SPLIT_RATIO);
+      if (saved) {
+        const parsed = parseFloat(saved);
+        if (!isNaN(parsed) && parsed >= MIN_EDIT_SPLIT_RATIO && parsed <= MAX_EDIT_SPLIT_RATIO) {
+          return parsed;
+        }
+      }
+    }
+    return DEFAULT_EDIT_SPLIT_RATIO;
+  });
+
+  const setEditSplitRatio = useCallback((ratio: number) => {
+    const clamped = Math.min(MAX_EDIT_SPLIT_RATIO, Math.max(MIN_EDIT_SPLIT_RATIO, Math.round(ratio * 10) / 10));
+    setEditSplitRatioState(clamped);
+  }, []);
+
+  const commitEditSplitRatio = useCallback((ratio?: number) => {
+    setEditSplitRatioState(prev => {
+      const target = typeof ratio === 'number' ? ratio : prev;
+      const clamped = Math.min(MAX_EDIT_SPLIT_RATIO, Math.max(MIN_EDIT_SPLIT_RATIO, Math.round(target * 10) / 10));
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(SCRIPT_PREFERENCES_STORAGE_KEYS.EDIT_SPLIT_RATIO, clamped.toString());
+      }
+      return clamped;
+    });
+  }, []);
+
+  // Edit mode Cue Inspector ratio (Right panel: 30% default)
+  const [inspectorRatio, setInspectorRatioState] = useState<number>(() => {
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem(SCRIPT_PREFERENCES_STORAGE_KEYS.INSPECTOR_RATIO);
+      if (saved) {
+        const parsed = parseFloat(saved);
+        if (!isNaN(parsed) && parsed >= MIN_EDIT_INSPECTOR_RATIO && parsed <= MAX_EDIT_INSPECTOR_RATIO) {
+          return parsed;
+        }
+      }
+    }
+    return DEFAULT_EDIT_INSPECTOR_RATIO;
+  });
+
+  const setInspectorRatio = useCallback((ratio: number) => {
+    const clamped = Math.min(MAX_EDIT_INSPECTOR_RATIO, Math.max(MIN_EDIT_INSPECTOR_RATIO, Math.round(ratio * 10) / 10));
+    setInspectorRatioState(clamped);
+  }, []);
+
+  const commitInspectorRatio = useCallback((ratio?: number) => {
+    setInspectorRatioState(prev => {
+      const target = typeof ratio === 'number' ? ratio : prev;
+      const clamped = Math.min(MAX_EDIT_INSPECTOR_RATIO, Math.max(MIN_EDIT_INSPECTOR_RATIO, Math.round(target * 10) / 10));
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(SCRIPT_PREFERENCES_STORAGE_KEYS.INSPECTOR_RATIO, clamped.toString());
+      }
+      return clamped;
+    });
+  }, []);
+
+  const resetInspectorRatio = useCallback(() => {
+    setInspectorRatioState(DEFAULT_EDIT_INSPECTOR_RATIO);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(SCRIPT_PREFERENCES_STORAGE_KEYS.INSPECTOR_RATIO);
+    }
+  }, []);
+
+  // Backwards compatibility for pixel-based inspector width
   const [inspectorWidth, setInspectorWidthState] = useState<number>(() => {
     if (typeof localStorage !== 'undefined') {
       const saved = localStorage.getItem(SCRIPT_PREFERENCES_STORAGE_KEYS.INSPECTOR_WIDTH);
@@ -155,20 +235,34 @@ export function useScriptPreferences() {
     });
   }, []);
 
-  const resetViewLayout = useCallback(() => {
-    setSplitRatio(DEFAULT_SPLIT_RATIO);
-    commitSplitRatio(DEFAULT_SPLIT_RATIO);
+  const resetViewLayout = useCallback((targetMode?: AppMode) => {
+    const activeMode = targetMode || mode;
+    if (activeMode === 'edit') {
+      setEditSplitRatio(DEFAULT_EDIT_SPLIT_RATIO);
+      commitEditSplitRatio(DEFAULT_EDIT_SPLIT_RATIO);
+      resetInspectorRatio();
+    } else {
+      setSplitRatio(DEFAULT_SPLIT_RATIO);
+      commitSplitRatio(DEFAULT_SPLIT_RATIO);
+    }
     setVideoHeight(DEFAULT_VIDEO_HEIGHT);
     commitVideoHeight(DEFAULT_VIDEO_HEIGHT);
     resetInspectorWidth();
     setIsVideoCollapsed(false);
-  }, [setSplitRatio, commitSplitRatio, setVideoHeight, commitVideoHeight, resetInspectorWidth, setIsVideoCollapsed]);
+  }, [mode, setEditSplitRatio, commitEditSplitRatio, resetInspectorRatio, setSplitRatio, commitSplitRatio, setVideoHeight, commitVideoHeight, resetInspectorWidth, setIsVideoCollapsed]);
 
-  const isViewCustomized = 
-    Math.round(splitRatio) !== DEFAULT_SPLIT_RATIO || 
-    videoHeight !== DEFAULT_VIDEO_HEIGHT ||
-    inspectorWidth !== DEFAULT_INSPECTOR_WIDTH ||
-    isVideoCollapsed;
+  const isViewCustomized = mode === 'edit'
+    ? (
+        Math.round(editSplitRatio) !== DEFAULT_EDIT_SPLIT_RATIO ||
+        Math.round(inspectorRatio) !== DEFAULT_EDIT_INSPECTOR_RATIO ||
+        videoHeight !== DEFAULT_VIDEO_HEIGHT ||
+        isVideoCollapsed
+      )
+    : (
+        Math.round(splitRatio) !== DEFAULT_SPLIT_RATIO ||
+        videoHeight !== DEFAULT_VIDEO_HEIGHT ||
+        isVideoCollapsed
+      );
 
   const [scriptWidthPreset, setScriptWidthPresetState] = useState<ScriptWidthPresetId>(() => {
     if (typeof localStorage !== 'undefined') {
@@ -309,6 +403,13 @@ export function useScriptPreferences() {
     splitRatio,
     setSplitRatio,
     commitSplitRatio,
+    editSplitRatio,
+    setEditSplitRatio,
+    commitEditSplitRatio,
+    inspectorRatio,
+    setInspectorRatio,
+    commitInspectorRatio,
+    resetInspectorRatio,
     inspectorWidth,
     setInspectorWidth,
     commitInspectorWidth,

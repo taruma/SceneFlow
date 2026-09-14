@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.4.0-dev] - Unreleased
 
 ### Added
+- **Mode-Aware Layout Reset & 40/35/25 Edit Workstation Distribution (`src/hooks/useScriptPreferences.ts`, `src/App.tsx`, `src/components/common/InspectorSplitDivider.tsx`, `src/components/edit/EditRightPanel.tsx`)**:
+  - Implemented mode-aware layout reset behavior: resetting view layout in Edit Mode now snaps panels to a **40 / 35 / 25** distribution (40% Left Media/Cue Panel, 35% Center Screenplay, 25% Right Cue Inspector) instead of inheriting Playback Mode's 65/35 ratio.
+  - Decoupled edit mode split ratio (`editSplitRatio`, default 40%) and inspector ratio (`inspectorRatio`, default 25%) from playback mode split ratio (`splitRatio`, default 65%), persisting each independently in `localStorage` (`sceneflow_edit_split_ratio`, `sceneflow_inspector_ratio`, `sceneflow_split_ratio`).
+  - Upgraded `InspectorSplitDivider` and `EditRightPanel` to support percentage ratio-based dragging (`18%` to `45%`, with `260px` pixel floor safety), keyboard accessibility, and double-click reset to default 25%.
+  - Wired `Reset View` (<kbd>Shift+R</kbd>) to automatically re-open the Cue Inspector if collapsed and restore the 40/35/25 workstation distribution in Edit Mode.
 - **Cue Inspector Ergonomic Overhaul & Modern Workstation Controls (`src/components/edit/CueEditorForm.tsx`, `src/components/edit/CueTimingCard.tsx`, `src/components/edit/CueSceneContext.tsx`, `src/components/edit/CueScriptAnchoring.tsx`, `src/components/edit/index.ts`)**:
   - **Audio-Visual Timing Deck (`CueTimingCard.tsx`)**: Replaced raw inputs with symmetrical Start/End boundary cards featuring live formatted timecode HUDs (`00:00.2`), single-click micro-nudge steppers (`-0.5s`, `-0.1s`, `+0.1s`, `+0.5s`), video capture buttons, and a live calculated duration chip (`⏱ 1.6s`).
   - **Integrated Preview & Dynamic Loop Controller**: Added dedicated `Play Cue [▶]` preview button and `Loop [🔁]` toggle with live mutable ref synchronization (`startTimeRef`, `endTimeRef`, `isLoopingRef`), enabling real-time boundary updates on the fly during active playback without needing to pause and restart.

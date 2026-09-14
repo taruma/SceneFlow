@@ -13,6 +13,8 @@ export interface EditRightPanelProps {
   isOpen: boolean;
   onClose: () => void;
   width?: number;
+  ratio?: number;
+  style?: React.CSSProperties;
   cues?: Cue[];
   scriptThemeId?: string;
   cuePaletteProfile?: CuePaletteProfile;
@@ -23,6 +25,8 @@ export const EditRightPanel: React.FC<EditRightPanelProps> = memo(({
   isOpen,
   onClose,
   width,
+  ratio,
+  style,
   cues = [],
   scriptThemeId = 'studio-light',
   cuePaletteProfile = 'standard',
@@ -32,6 +36,13 @@ export const EditRightPanel: React.FC<EditRightPanelProps> = memo(({
   const selection = context?.selection;
   const newCue = context?.newCue;
   const { resolveCueColor } = useScriptTheme(scriptThemeId as any, cuePaletteProfile);
+
+  const panelStyle = useMemo(() => {
+    if (style) return style;
+    if (typeof ratio === 'number') return { width: `${ratio}%` };
+    if (typeof width === 'number') return { width: `${width}px` };
+    return undefined;
+  }, [style, ratio, width]);
 
   // Group cues by type for the idle studio overview
   const cueTypeCounts = useMemo(() => {
@@ -53,10 +64,10 @@ export const EditRightPanel: React.FC<EditRightPanelProps> = memo(({
   return (
     <aside 
       aria-label="Cue Inspector"
-      style={width ? { width: `${width}px` } : undefined}
+      style={panelStyle}
       className={cn(
         "bg-surface border-l border-border-main flex flex-col shrink-0 h-full overflow-hidden transition-[border-color,background-color] duration-300 z-20",
-        !width && "w-[340px] lg:w-[360px]",
+        !panelStyle && "w-[340px] lg:w-[360px]",
         className
       )}
     >

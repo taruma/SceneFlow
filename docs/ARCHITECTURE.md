@@ -184,11 +184,13 @@ YouTube IFrame Player API wrapper:
 
 ### `useScriptPreferences`
 Persistent visual customization and layout management:
-- Stored in `localStorage` via centralized `SCRIPT_PREFERENCES_STORAGE_KEYS`: reading column width preset (`sceneflow_script_width_preset`), auto-scroll focus preset (`sceneflow_scroll_focus_preset`), active theme ID (`sceneflow_script_theme`), cue palette accessibility profile (`sceneflow_cue_palette_profile`), asymmetric split ratio (`sceneflow_split_ratio`, default 65%), video player height (`sceneflow_video_height`, default 220px), and video collapse state (`sceneflow_playback_video_collapsed`).
-- Provides `resetViewLayout()` to instantly restore default 65:35 panel split, 220px video height, and expand the video player if collapsed.
+- Stored in `localStorage` via centralized `SCRIPT_PREFERENCES_STORAGE_KEYS`: reading column width preset (`sceneflow_script_width_preset`), auto-scroll focus preset (`sceneflow_scroll_focus_preset`), active theme ID (`sceneflow_script_theme`), cue palette accessibility profile (`sceneflow_cue_palette_profile`), asymmetric playback split ratio (`sceneflow_split_ratio`, default 65%), edit mode left split ratio (`sceneflow_edit_split_ratio`, default 40%), cue inspector ratio (`sceneflow_inspector_ratio`, default 25%), video player height (`sceneflow_video_height`, default 220px), and video collapse state (`sceneflow_playback_video_collapsed`).
+- Provides mode-aware `resetViewLayout(mode)`:
+  - In **Edit Mode**: instantly restores the **40/35/25** 3-panel workstation layout (40% Left Media/Cue Panel, 35% Center Screenplay, 25% Right Cue Inspector), resets video height to 220px, expands collapsed video, and ensures the inspector panel is opened.
+  - In **Playback Mode**: instantly restores the **65:35** panel split and 220px video height.
 - Exposes `isScriptPreferencesCustomized` and `resetScriptPreferences()` for centralized factory preference resetting.
 - Exposes `isVideoCollapsed`, `setIsVideoCollapsed`, and `toggleVideoCollapsed` helpers.
-- Exposes `isViewCustomized` flag to drive the active status dot on the header "Reset View" button.
+- Exposes `isViewCustomized` flag evaluated per active mode to drive the active status dot on the header "Reset View" button.
 - Manages dropdown visibility toggles, cue type category filter sets, cue palette accessibility profile (`cuePaletteProfile`, `setCuePaletteProfile`), and color picker modal state.
 
 ### `useAutoScroll`

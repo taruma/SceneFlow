@@ -26,7 +26,13 @@ import { cn, extractYoutubeId } from './lib/utils';
 import { UI_TOKENS } from './styles/tokens/ui';
 import { useScriptStorage } from './hooks/useScriptStorage';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
-import { useScriptPreferences } from './hooks/useScriptPreferences';
+import { 
+  useScriptPreferences,
+  MIN_EDIT_SPLIT_RATIO,
+  MAX_EDIT_SPLIT_RATIO,
+  MIN_SPLIT_RATIO,
+  MAX_SPLIT_RATIO,
+} from './hooks/useScriptPreferences';
 import { useScriptTheme } from './hooks/useScriptTheme';
 import { useAppShellTheme } from './hooks/useAppShellTheme';
 import { useAutoScroll } from './hooks/useAutoScroll';
@@ -109,6 +115,13 @@ export default function App() {
     splitRatio,
     setSplitRatio,
     commitSplitRatio,
+    editSplitRatio,
+    setEditSplitRatio,
+    commitEditSplitRatio,
+    inspectorRatio,
+    setInspectorRatio,
+    commitInspectorRatio,
+    resetInspectorRatio,
     inspectorWidth,
     setInspectorWidth,
     commitInspectorWidth,
@@ -119,7 +132,7 @@ export default function App() {
     toggleVideoCollapsed,
     pureBlackMode,
     setPureBlackMode,
-  } = useScriptPreferences();
+  } = useScriptPreferences(mode);
 
   const { theme: activeTheme } = useScriptTheme(scriptThemeId, cuePaletteProfile);
   const {
@@ -220,6 +233,13 @@ export default function App() {
     overlapPicker.isOpen
   );
 
+  const handleResetView = useCallback(() => {
+    resetViewLayout(mode);
+    if (mode === 'edit') {
+      setIsInspectorOpen(true);
+    }
+  }, [resetViewLayout, mode]);
+
   const { isDesktop } = useKeyboardShortcuts({
     player,
     togglePlayPause,
@@ -227,7 +247,7 @@ export default function App() {
     onToggleVideo: toggleVideoCollapsed,
     onOpenColors: () => setIsColorModalOpen(true),
     onOpenTiming: () => setIsSettingsOpen(true),
-    onResetView: resetViewLayout,
+    onResetView: handleResetView,
     disabled: isAnyModalOpen,
   });
 
@@ -250,17 +270,19 @@ export default function App() {
     onScrollFocusChange: setScrollFocusPreset,
   });
 
+  const isEffectiveViewCustomized = isViewCustomized || (mode === 'edit' && !isInspectorOpen);
+
   const isPreferencesCustomized = 
     themeMode !== 'auto' ||
     isScriptPreferencesCustomized ||
-    isViewCustomized;
+    isEffectiveViewCustomized;
 
   const handleResetAllPreferences = useCallback(() => {
     setThemeMode('auto');
     resetScriptPreferences();
     applyScrollFocus(DEFAULT_SCROLL_FOCUS_PRESET_ID);
-    resetViewLayout();
-  }, [setThemeMode, resetScriptPreferences, applyScrollFocus, resetViewLayout]);
+    handleResetView();
+  }, [setThemeMode, resetScriptPreferences, applyScrollFocus, handleResetView]);
 
 
   const prevActiveCueTypesRef = useRef<Set<string>>(new Set());
@@ -610,8 +632,12 @@ export default function App() {
 
   // Memoize layout panel styles so playback currentTime updates never bust React.memo
   const leftPanelStyle = useMemo(
-    () => (isDesktop ? { width: `${splitRatio}%` } : undefined),
-    [isDesktop, splitRatio]
+    () => {
+      if (!isDesktop) return undefined;
+      const ratio = mode === 'edit' ? editSplitRatio : splitRatio;
+      return { width: `${ratio}%` };
+    },
+    [isDesktop, mode, editSplitRatio, splitRatio]
   );
 
   const rightPanelStyle = useMemo(
@@ -644,8 +670,8 @@ export default function App() {
         themeMode={themeMode}
         effectiveThemeCategory={effectiveCategory}
         onSetThemeMode={setThemeMode}
-        isViewCustomized={isViewCustomized}
-        onResetView={resetViewLayout}
+        isViewCustomized={isEffectiveViewCustomized}
+        onResetView={handleResetView}
         scriptWidthPreset={scriptWidthPreset}
         setScriptWidthPreset={setScriptWidthPreset}
         scrollFocusPreset={scrollFocusPreset}
@@ -723,10 +749,12 @@ export default function App() {
         {/* Desktop Resizable Split Pane Divider */}
         {isDesktop && (
           <SplitPaneDivider
-            splitRatio={splitRatio}
-            onSplitChange={setSplitRatio}
-            onSplitCommit={commitSplitRatio}
-            onReset={resetViewLayout}
+            splitRatio={mode === 'edit' ? editSplitRatio : splitRatio}
+            onSplitChange={mode === 'edit' ? setEditSplitRatio : setSplitRatio}
+            onSplitCommit={mode === 'edit' ? commitEditSplitRatio : commitSplitRatio}
+            minRatio={mode === 'edit' ? MIN_EDIT_SPLIT_RATIO : MIN_SPLIT_RATIO}
+            maxRatio={mode === 'edit' ? MAX_EDIT_SPLIT_RATIO : MAX_SPLIT_RATIO}
+            onReset={handleResetView}
           />
         )}
 
@@ -795,14 +823,14 @@ export default function App() {
         {mode === 'edit' && isDesktop && isInspectorOpen && (
           <>
             <InspectorSplitDivider
-              width={inspectorWidth}
-              onWidthChange={setInspectorWidth}
-              onWidthCommit={commitInspectorWidth}
-              onReset={resetInspectorWidth}
+              ratio={inspectorRatio}
+              onRatioChange={setInspectorRatio}
+              onRatioCommit={commitInspectorRatio}
+              onReset={handleResetView}
             />
             <EditRightPanel
               isOpen={isInspectorOpen}
-              width={inspectorWidth}
+              ratio={inspectorRatio}
               onClose={() => setIsInspectorOpen(false)}
               cues={state.cues}
               scriptThemeId={scriptThemeId}
