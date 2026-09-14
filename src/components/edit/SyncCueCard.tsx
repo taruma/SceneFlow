@@ -4,6 +4,7 @@ import { Cue } from '../../types/script';
 import { COLORS } from '../../constants/script';
 import { LEGACY_CLASS_MAP, type CuePaletteProfile } from '../../styles/tokens/cues';
 import { useScriptTheme } from '../../hooks/useScriptTheme';
+import { type CueThemeResolvedColor } from '../../styles';
 import { cn } from '../../lib/utils';
 import { UI_TOKENS } from '../../styles/tokens/ui';
 
@@ -12,8 +13,9 @@ export interface SyncCueCardProps {
   isSelected: boolean;
   onSelectCue: (cue: Cue) => void;
   onDeleteCue: (id: string) => void;
-  scriptThemeId: string;
+  scriptThemeId?: string;
   cuePaletteProfile?: CuePaletteProfile;
+  resolveCueColor?: (typeOrClass?: string) => CueThemeResolvedColor;
 }
 
 export const SyncCueCard: React.FC<SyncCueCardProps> = memo(({
@@ -21,10 +23,12 @@ export const SyncCueCard: React.FC<SyncCueCardProps> = memo(({
   isSelected,
   onSelectCue,
   onDeleteCue,
-  scriptThemeId,
+  scriptThemeId = 'studio-light',
   cuePaletteProfile = 'standard',
+  resolveCueColor: externalResolveCueColor,
 }) => {
-  const { resolveCueColor } = useScriptTheme(scriptThemeId as any, cuePaletteProfile);
+  const fallbackTheme = useScriptTheme(scriptThemeId as any, cuePaletteProfile);
+  const resolveCueColor = externalResolveCueColor || fallbackTheme.resolveCueColor;
   const cueType = cue.type || (cue.colorClass ? (LEGACY_CLASS_MAP[cue.colorClass] || COLORS.find(c => c.class === cue.colorClass)?.type) : 'dialogue') || 'dialogue';
   const themed = resolveCueColor(cueType);
 
@@ -36,6 +40,7 @@ export const SyncCueCard: React.FC<SyncCueCardProps> = memo(({
       onClick={() => onSelectCue(cue)}
       role="button"
       tabIndex={0}
+      style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 64px' }}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();

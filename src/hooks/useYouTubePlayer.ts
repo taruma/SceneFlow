@@ -105,9 +105,7 @@ export function useYouTubePlayer({ youtubeId, onPlay, onPause }: UseYouTubePlaye
           seekPauseTimeoutRef.current = null;
         }, 600);
 
-        player.pauseVideo();
         player.seekTo(seconds, allowSeekAhead);
-        player.pauseVideo();
       } else {
         isSeekingWhilePausedRef.current = false;
         if (seekPauseTimeoutRef.current) {

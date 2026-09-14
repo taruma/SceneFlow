@@ -4,6 +4,8 @@ import { Cue } from '../../types/script';
 import { CuePaletteProfile } from '../../styles';
 import { COLORS } from '../../constants/script';
 import { LEGACY_CLASS_MAP } from '../../styles/tokens/cues';
+import { useScriptTheme } from '../../hooks/useScriptTheme';
+import { cn } from '../../lib/utils';
 import { SyncCuesToolbar, CueDensityMode } from './SyncCuesToolbar';
 import { SyncCueCard } from './SyncCueCard';
 import { SyncCueRow } from './SyncCueRow';
@@ -42,6 +44,8 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
   alignSuccess,
   className,
 }) => {
+  const { resolveCueColor } = useScriptTheme(scriptThemeId as any, cuePaletteProfile);
+
   // Density mode state with persistent localStorage
   const [densityMode, setDensityMode] = useState<CueDensityMode>(() => {
     if (typeof window !== 'undefined') {
@@ -103,7 +107,7 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
   };
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className={cn("flex flex-col h-full overflow-hidden select-none", className)}>
       {/* Permanently Docked Toolbar (Never scrolls away) */}
       <SyncCuesToolbar
         filteredCount={filteredCues.length}
@@ -129,13 +133,12 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
           <div className="grid gap-2">
             {filteredCues.map((cue, idx) => (
               <SyncCueCard
-                key={cue.id ? `sync-cue-${cue.id}-${idx}` : `sync-cue-idx-${idx}`}
+                key={cue.id ? `sync-cue-${cue.id}` : `sync-cue-idx-${idx}`}
                 cue={cue}
                 isSelected={selectedCueId === cue.id}
                 onSelectCue={onSelectCue}
                 onDeleteCue={onDeleteCue}
-                scriptThemeId={scriptThemeId}
-                cuePaletteProfile={cuePaletteProfile}
+                resolveCueColor={resolveCueColor}
               />
             ))}
           </div>
@@ -146,13 +149,12 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
           <div className="space-y-1">
             {filteredCues.map((cue, idx) => (
               <SyncCueRow
-                key={cue.id ? `sync-row-${cue.id}-${idx}` : `sync-row-idx-${idx}`}
+                key={cue.id ? `sync-row-${cue.id}` : `sync-row-idx-${idx}`}
                 cue={cue}
                 isSelected={selectedCueId === cue.id}
                 onSelectCue={onSelectCue}
                 onDeleteCue={onDeleteCue}
-                scriptThemeId={scriptThemeId}
-                cuePaletteProfile={cuePaletteProfile}
+                resolveCueColor={resolveCueColor}
               />
             ))}
           </div>

@@ -171,11 +171,7 @@ export function useCueEditor({
     setNewCue({ ...cue, type: cueType, colorClass });
     setSelection({ text: cue.selectedText, start: cue.startIndex, end: cue.endIndex });
     if (player) {
-      const isPlaying = player.getPlayerState?.() === 1;
       player.seekTo(cue.startTime, true);
-      if (!isPlaying) {
-        player.pauseVideo();
-      }
     }
   }, [player]);
 

@@ -78,20 +78,20 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
 }) => {
   const isPlaying = playerState === 1;
 
-  const handleResetVideoHeight = () => {
+  const handleResetVideoHeight = React.useCallback(() => {
     if (onResetVideoHeight) {
       onResetVideoHeight();
     } else {
       setVideoHeight(DEFAULT_VIDEO_HEIGHT);
       commitVideoHeight?.(DEFAULT_VIDEO_HEIGHT);
     }
-  };
+  }, [onResetVideoHeight, setVideoHeight, commitVideoHeight]);
 
-  const handleReplay = () => {
+  const handleReplay = React.useCallback(() => {
     if (onReplay) {
       onReplay();
     }
-  };
+  }, [onReplay]);
 
   return (
     <div 

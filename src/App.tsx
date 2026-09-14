@@ -548,6 +548,17 @@ export default function App() {
     }
   }, [selectCueForEdit, scriptRef]);
 
+  // Memoize layout panel styles so playback currentTime updates never bust React.memo
+  const leftPanelStyle = useMemo(
+    () => (isDesktop ? { width: `${splitRatio}%` } : undefined),
+    [isDesktop, splitRatio]
+  );
+
+  const rightPanelStyle = useMemo(
+    () => (isDesktop ? { width: `${100 - splitRatio}%` } : undefined),
+    [isDesktop, splitRatio]
+  );
+
   if (!isInitialized) {
     return <InitializingScreen />;
   }
@@ -612,7 +623,7 @@ export default function App() {
             toggleCueTypeVisibility={toggleCueTypeVisibility}
             scriptThemeId={scriptThemeId}
             cuePaletteProfile={cuePaletteProfile}
-            style={isDesktop ? { width: `${splitRatio}%` } : undefined}
+            style={leftPanelStyle}
           />
         ) : (
           <EditLeftPanel
@@ -641,7 +652,7 @@ export default function App() {
             onRealignCues={realignCues}
             isAligning={isAligning}
             alignSuccess={alignSuccess}
-            style={isDesktop ? { width: `${splitRatio}%` } : undefined}
+            style={leftPanelStyle}
           />
         )}
 
@@ -657,7 +668,7 @@ export default function App() {
 
         {/* Right Panel: The Screenplay */}
         <div 
-          style={isDesktop ? { width: `${100 - splitRatio}%` } : undefined}
+          style={rightPanelStyle}
           className={cn(
             UI_TOKENS.layout.rightPanelBase,
             isScriptPureBlack && "!bg-black",
