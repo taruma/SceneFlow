@@ -19,7 +19,7 @@ import { MobileColorModal } from './components/MobileColorModal';
 import { AppInfoModal } from './components/AppInfoModal';
 import { AppHeader } from './components/AppHeader';
 import { PlaybackLeftPanel } from './components/playback/PlaybackLeftPanel';
-import { EditLeftPanel, CueEditorForm } from './components/edit';
+import { EditLeftPanel, CueEditorForm, CueEditorProvider, type CueEditorContextValue } from './components/edit';
 import { SplitPaneDivider } from './components/common/SplitPaneDivider';
 import { ScriptHeaderControls } from './components/ScriptHeaderControls';
 import { cn, extractYoutubeId } from './lib/utils';
@@ -33,7 +33,7 @@ import { useAutoScroll } from './hooks/useAutoScroll';
 import { useCueEditor } from './hooks/useCueEditor';
 import { useCueAlignment } from './hooks/useCueAlignment';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import type { Cue, AppMode } from './types/script';
+import type { Cue, AppMode, ResetConfirmationState } from './types/script';
 import { 
   COLORS, 
   DEFAULT_SETTINGS, 
@@ -157,8 +157,6 @@ export default function App() {
     altLocations,
     deleteConfirmation,
     setDeleteConfirmation,
-    resetConfirmation,
-    setResetConfirmation,
     overlapPicker,
     setOverlapPicker,
     handleSelection,
@@ -175,6 +173,12 @@ export default function App() {
     setState,
     mode,
     player,
+  });
+
+  const [resetConfirmation, setResetConfirmation] = useState<ResetConfirmationState>({
+    isOpen: false,
+    type: null,
+    error: null,
   });
 
   const {
@@ -550,6 +554,43 @@ export default function App() {
     }
   }, [selectCueForEdit, scriptRef]);
 
+  // Consolidate cue authoring context to eliminate prop-drilling
+  const cueEditorContextValue = useMemo<CueEditorContextValue>(() => ({
+    newCue,
+    setNewCue,
+    selection,
+    setSelection,
+    altLocations,
+    findAlternativeLocations,
+    cancelEdit,
+    saveCue,
+    deleteCue,
+    canSave,
+    scriptText: state.scriptText,
+    scriptThemeId,
+    cuePaletteProfile,
+    player,
+    widthClass: getScriptWidthPreset(scriptWidthPreset).widthClass,
+    selectCueForEdit: handleSelectCueForEdit,
+  }), [
+    newCue,
+    setNewCue,
+    selection,
+    setSelection,
+    altLocations,
+    findAlternativeLocations,
+    cancelEdit,
+    saveCue,
+    deleteCue,
+    canSave,
+    state.scriptText,
+    scriptThemeId,
+    cuePaletteProfile,
+    player,
+    scriptWidthPreset,
+    handleSelectCueForEdit,
+  ]);
+
   // Memoize layout panel styles so playback currentTime updates never bust React.memo
   const leftPanelStyle = useMemo(
     () => (isDesktop ? { width: `${splitRatio}%` } : undefined),
@@ -596,10 +637,11 @@ export default function App() {
         onResetAll={handleResetAllPreferences}
       />
 
-      <main className={cn(
-        "flex flex-1 flex-col lg:flex-row overflow-hidden",
-        mode === 'playback' && "overflow-y-auto lg:overflow-hidden"
-      )}>
+      <CueEditorProvider value={cueEditorContextValue}>
+        <main className={cn(
+          "flex flex-1 flex-col lg:flex-row overflow-hidden",
+          mode === 'playback' && "overflow-y-auto lg:overflow-hidden"
+        )}>
         {/* Left Panel: Media & Controls */}
         {mode === 'playback' ? (
           <PlaybackLeftPanel
@@ -695,26 +737,8 @@ export default function App() {
             onOpenRawScriptModal={handleOpenRawScriptModal}
           />
 
-          {/* Create / Edit Cue Form in Edit Mode */}
-          {mode === 'edit' && (
-            <CueEditorForm
-              newCue={newCue}
-              setNewCue={setNewCue}
-              selection={selection}
-              setSelection={setSelection}
-              altLocations={altLocations}
-              findAlternativeLocations={findAlternativeLocations}
-              cancelEdit={cancelEdit}
-              saveCue={saveCue}
-              deleteCue={deleteCue}
-              canSave={canSave}
-              scriptText={state.scriptText}
-              scriptThemeId={scriptThemeId}
-              cuePaletteProfile={cuePaletteProfile}
-              player={player}
-              widthClass={getScriptWidthPreset(scriptWidthPreset).widthClass}
-            />
-          )}
+          {/* Create / Edit Cue Form in Edit Mode (Zero-prop consumption via CueEditorContext) */}
+          {mode === 'edit' && <CueEditorForm />}
           
           <div 
             ref={scriptRef}
@@ -749,6 +773,7 @@ export default function App() {
           </div>
         </div>
       </main>
+    </CueEditorProvider>
 
       <StagingModal
         isOpen={!!activeStaging}

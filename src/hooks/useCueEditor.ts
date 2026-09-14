@@ -4,7 +4,6 @@ import type {
   AppState, 
   TextSelection, 
   DeleteConfirmationState, 
-  ResetConfirmationState, 
   OverlapPickerState, 
   AlternativeLocation, 
   AppMode 
@@ -38,11 +37,6 @@ export function useCueEditor({
   const [deleteConfirmation, setDeleteConfirmation] = useState<DeleteConfirmationState>({
     isOpen: false,
     cue: null,
-  });
-  const [resetConfirmation, setResetConfirmation] = useState<ResetConfirmationState>({
-    isOpen: false,
-    type: null,
-    error: null,
   });
   const [overlapPicker, setOverlapPicker] = useState<OverlapPickerState>({
     isOpen: false,
@@ -184,8 +178,6 @@ export function useCueEditor({
     setAltLocations,
     deleteConfirmation,
     setDeleteConfirmation,
-    resetConfirmation,
-    setResetConfirmation,
     overlapPicker,
     setOverlapPicker,
     handleSelection,

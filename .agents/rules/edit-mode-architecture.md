@@ -31,6 +31,8 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
   - **Memoized Style Objects**: Never pass inline style object literals (e.g. `style={{ width: `${splitRatio}%` }}`) to memoized panels in `App.tsx`; always memoize via `useMemo`.
   - **Theme Resolution Hoisting**: Never invoke `useScriptTheme` inside individual cue cards or row items. Hoist `resolveCueColor` to `SyncCuesPanel` and pass down the stable function reference to avoid thousands of redundant hook calls per second during playback.
   - **Offscreen Paint Skipping**: The scrollable cue list must declare `content-visibility: auto` with `contain-intrinsic-size` to permit the browser engine to skip layout and paint calculations for offscreen cue cards.
+  - **Static Player Options**: Never pass inline `opts={{ ... }}` literals to `<YouTube>` inside panels. Consume static, module-level `YOUTUBE_PLAYER_OPTS`.
+  - **Playback Tick Shielding (`EditVideoViewport`)**: Encapsulate the `<YouTube>` player container in memoized `EditVideoViewport`, preventing 10Hz `LiveTimecodeBadge` tick updates from re-diffing the YouTube iframe or container.
 
 ## 4. Header Symmetrical Layout & Action Scoping
 - **Zero-Pixel Shift**: Both Playback and Edit headers must strictly share the `h-12` (48px) sticky top-0 layout token (`UI_TOKENS.layout.scriptHeader`). Switching modes must produce 0px vertical layout jump.
@@ -89,5 +91,11 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
   - Never call `player.pauseVideo()` synchronously immediately after `player.seekTo()` when jumping to cue timestamps while paused.
   - In Chromium and YouTube iframes, premature pauses abort the video frame decoding pipeline before the texture buffer renders, causing a black canvas.
   - Direct seeking updates the frame position cleanly without unwanted autoplay triggers.
+
+## 10. Compound Cue Authoring Context (`CueEditorContext.tsx`)
+- **Zero-Prop Form Portability**:
+  - Cue draft values (`newCue`), timing inputs, text selection ranges, and saving actions are encapsulated within `<CueEditorProvider value={cueEditorContextValue}>`.
+  - `CueEditorForm` supports zero-prop invocation (`<CueEditorForm />`) via `useOptionalCueEditorContext()`, completely eliminating prop-drilling through `App.tsx` and enabling the form to be freely moved or co-located across Edit Mode panels (such as inside the Left Panel).
+
 
 

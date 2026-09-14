@@ -257,4 +257,10 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
       - **One-Click Counter Reset**: The cue count badge (`{filteredCount}/{totalCount}`) converts into an interactive reset button with an `X` when filtering is active, clearing all filters and auto-collapsing the bar in a single click.
     - **Cue Selection Buffering Continuity**:
       - Selecting a cue in Edit mode must never invoke premature `player.pauseVideo()` immediately after `player.seekTo()`. Seeking directly updates the target timestamp, allowing the browser's video decoding pipeline to paint the target frame cleanly without black screen artifacts.
+    - **Cue Authoring Compound Context Invariant (`CueEditorContext.tsx`)**:
+      - Cue draft state, timing inputs, selection ranges, and saving actions are encapsulated within `<CueEditorProvider>` (`src/components/edit/CueEditorContext.tsx`).
+      - `CueEditorForm` supports zero-prop invocation with automatic fallback resolution via `useOptionalCueEditorContext()`, decoupling cue authoring from `App.tsx` and allowing the editor form to be positioned or moved anywhere across Left and Right panels without prop-drilling through parent orchestrators.
+    - **Playback Tick Shielding & Static Options (`EditVideoViewport`, `YOUTUBE_PLAYER_OPTS`)**:
+      - The YouTube player viewport in Edit mode is encapsulated within the memoized subcomponent `EditVideoViewport` consuming module-level `YOUTUBE_PLAYER_OPTS`.
+      - High-frequency timecode ticks (10Hz) delivered to `LiveTimecodeBadge` must never cause React to reconcile or re-evaluate the YouTube iframe player container.
 

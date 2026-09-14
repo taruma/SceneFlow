@@ -8,6 +8,7 @@ import { CueTextSection } from './CueTextSection';
 import { CueTimingInputs } from './CueTimingInputs';
 import { CueTypeSelector } from './CueTypeSelector';
 import { CueEditorActions } from './CueEditorActions';
+import { useOptionalCueEditorContext } from './CueEditorContext';
 
 export interface CueEditorFormProps {
   newCue: Partial<Cue>;
@@ -27,23 +28,24 @@ export interface CueEditorFormProps {
   widthClass?: string;
 }
 
-export const CueEditorForm: React.FC<CueEditorFormProps> = memo(({
-  newCue,
-  setNewCue,
-  selection,
-  setSelection,
-  altLocations,
-  findAlternativeLocations,
-  cancelEdit,
-  saveCue,
-  deleteCue,
-  canSave,
-  scriptText,
-  scriptThemeId,
-  cuePaletteProfile = 'standard',
-  player,
-  widthClass,
-}) => {
+export const CueEditorForm: React.FC<Partial<CueEditorFormProps>> = memo((props) => {
+  const context = useOptionalCueEditorContext();
+
+  const newCue = props.newCue ?? context?.newCue ?? {};
+  const setNewCue = props.setNewCue ?? context?.setNewCue ?? (() => {});
+  const selection = props.selection !== undefined ? props.selection : (context?.selection ?? null);
+  const setSelection = props.setSelection ?? context?.setSelection ?? (() => {});
+  const altLocations = props.altLocations !== undefined ? props.altLocations : (context?.altLocations ?? null);
+  const findAlternativeLocations = props.findAlternativeLocations ?? context?.findAlternativeLocations ?? (() => {});
+  const cancelEdit = props.cancelEdit ?? context?.cancelEdit ?? (() => {});
+  const saveCue = props.saveCue ?? context?.saveCue ?? (() => {});
+  const deleteCue = props.deleteCue ?? context?.deleteCue ?? (() => {});
+  const canSave = props.canSave !== undefined ? props.canSave : (context?.canSave ?? false);
+  const scriptText = props.scriptText ?? context?.scriptText ?? '';
+  const scriptThemeId = props.scriptThemeId ?? context?.scriptThemeId ?? 'studio-light';
+  const cuePaletteProfile = props.cuePaletteProfile ?? context?.cuePaletteProfile ?? 'standard';
+  const player = props.player ?? context?.player;
+  const widthClass = props.widthClass ?? context?.widthClass;
   const handleTextChange = useCallback((text: string) => {
     setNewCue(prev => ({ ...prev, selectedText: text }));
     setSelection(s => s ? { ...s, text } : { text, start: newCue.startIndex || 0, end: newCue.endIndex || 0 });

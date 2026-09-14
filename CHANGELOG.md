@@ -43,6 +43,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Action button labels (`.header-btn-label`) and YouTube source pill text (`.youtube-pill-text`) automatically collapse to compact icon buttons on narrow panels, eliminating horizontal overflow and text wrapping without JavaScript resize listeners.
 
 ### Refactored
+- **Cue Authoring State Consolidation & Zero-Prop `CueEditorForm` (`src/components/edit/CueEditorContext.tsx`, `src/components/edit/CueEditorForm.tsx`, `src/components/edit/index.ts`, `src/App.tsx`)**:
+  - Introduced `CueEditorContext` and `<CueEditorProvider>` encapsulating cue draft values, timing inputs, DOM text selections, alternative locations, and persistence callbacks into a unified compound context.
+  - Made `CueEditorForm` zero-prop capable via `useOptionalCueEditorContext()`, removing 15 props of manual prop-drilling in `App.tsx` and enabling `CueEditorForm` to be freely moved or co-located anywhere in Edit Mode (including inside the Left Panel).
+- **Project Lifecycle Decoupling from Cue Authoring (`src/hooks/useCueEditor.ts`, `src/App.tsx`)**:
+  - Untangled project-level `resetConfirmation` and `setResetConfirmation` modal state from `useCueEditor`, relocating it directly into `App.tsx` where project loaders (`loadBlank`, `loadGuide`, `loadExample`, `loadRemoteProject`) reside.
+  - Reduced `useCueEditor` responsibility strictly to cue draft authoring, validation, and deletion.
+- **Dead Code & Legacy Bridge Pruning (`src/components/edit/SyncCuesHeader.tsx`, `src/components/edit/CueLegend.tsx`, `src/components/TimelineCuesPanel.tsx`, `src/components/CueEditorForm.tsx`, `src/components/edit/index.ts`)**:
+  - Deleted obsolete `SyncCuesHeader.tsx` (superseded by `SyncCuesToolbar.tsx`) and `CueLegend.tsx` (superseded by interactive toolbar category filter pills).
+  - Deleted legacy re-export bridges `src/components/TimelineCuesPanel.tsx` and `src/components/CueEditorForm.tsx`.
+  - Pruned deprecated `Timeline*` aliases from `src/components/edit/index.ts`.
+- **Playback Tick Isolation & Theme Resolution Hoisting (`src/components/edit/SyncCueCard.tsx`, `src/components/edit/SyncCueRow.tsx`, `src/components/edit/EditLeftPanel.tsx`, `src/components/playback/PlaybackLeftPanel.tsx`)**:
+  - Removed redundant `useScriptTheme` hook executions inside individual items in `SyncCueCard` and `SyncCueRow`, replacing the fallback with the pure function `getCueColorForTheme` to eliminate 100–300 hook executions on every render and search keystroke.
+  - Extracted the video container into a memoized `EditVideoViewport` inside `EditLeftPanel`, shielding the YouTube player iframe, divider, and cue list from 10Hz `LiveTimecodeBadge` tick updates.
+  - Exported static `YOUTUBE_PLAYER_OPTS` to eliminate per-render options allocation across `EditLeftPanel` and `PlaybackLeftPanel`.
 - **High-Refresh Auto-Scroll Engine & Gesture Interruption (`src/hooks/useAutoScroll.ts`)**:
   - Replaced browser-native `behavior: 'smooth'` with a high-refresh `requestAnimationFrame` cubic ease-out (`1 - (1 - t)^3`) animator (`smoothScrollTo`), eliminating 60Hz scroll pacing judder and frame rate mismatch on high-refresh displays and during 60fps screen recordings.
   - Added passive wheel and touch listeners to cancel ongoing auto-scroll animations immediately upon user manual input without scroll fighting.

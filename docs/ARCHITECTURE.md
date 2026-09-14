@@ -200,7 +200,7 @@ Real-time playback auto-scroll engine:
 Cue authoring and editing state machine:
 - Handles line-anchored DOM text selection → script-text mapping via `getSelectionIndicesFromDOM` with fallback to `findTextInScript`.
 - Manages cue creation, editing, deletion with confirmation modals, and duplicate occurrence lookup.
-- Exposes `selection`, `newCue`, `altLocations`, `overlapPicker`, and `resetConfirmation` state.
+- Exposes `selection`, `newCue`, `altLocations`, `overlapPicker`, and `deleteConfirmation` state (with project lifecycle `resetConfirmation` cleanly isolated to `App.tsx`).
 
 ### `useCueAlignment`
 Automated cue realignment orchestration:
@@ -254,10 +254,10 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 2. **`InitializingScreen.tsx`**: Branded initial load screen displaying the SceneFlow logo with subtle animation.
 3. **`YoutubeSourceInput.tsx`**: YouTube URL/ID input with live player connection indicator and automatic ID extraction using `UI_TOKENS.input`.
 4. **`ScriptManagementBar.tsx`**: Screenplay status banner showing loaded line count with an "Edit Raw" action button styled with `UI_TOKENS`.
-5. **`CueEditorForm.tsx`**: Cue authoring/editing form with editable text area, cue type selector, start/end time inputs with clock buttons, index editors, and "Find Alternative" button, consuming `useScriptTheme` for cue colors.
+5. **`CueEditorForm.tsx` & `CueEditorContext.tsx` (`src/components/edit/`)**: Cue authoring/editing form with editable text area, cue type selector, start/end time inputs with clock buttons, index editors, and "Find Alternative" button. Powered by compound `CueEditorContext` (`CueEditorProvider`) allowing zero-prop invocation with automatic fallback resolution across layout panels.
 6. **`EditLeftPanel.tsx` & `SyncCuesPanel.tsx`**: Studio-grade Two-Tier Flex Left Panel for Edit mode with adaptive container queries (`@container (max-width: 580px)`):
-   - **Tier 1 (Media Viewport)**: Media header with persistent transport controls (`[Replay]`, `[Play/Pause]`, `[Hide/Show Video]`), live timecode HUD badge (`LiveTimecodeBadge.tsx`), collapsible YouTube source pill (`[ 🟢 {videoId} ✏️ ]` in `YoutubeSourceInput.tsx`), resizable YouTube player, and horizontal `VideoSplitDivider` (tightened `mt-2 mb-1`).
-   - **Tier 2 (Sync Cues Studio)**: `flex-1 min-h-0` workspace featuring permanently docked `SyncCuesToolbar.tsx` (with `[ { } JSON ]`, `[ ↺ Resync ]`, `[ ⊞ Cards | ≡ Compact ]` adaptive density switcher, collapsible search & multi-select category filter drawer with <kbd>Esc</kbd> shortcut and one-click reset counter badge, and balanced `py-2` vertical padding) and a dedicated scrollable container rendering `SyncCueCard.tsx` or high-density `SyncCueRow.tsx` items optimized with `content-visibility: auto`.
+   - **Tier 1 (Media Viewport)**: Media header with persistent transport controls (`[Replay]`, `[Play/Pause]`, `[Hide/Show Video]`), live timecode HUD badge (`LiveTimecodeBadge.tsx`), collapsible YouTube source pill (`[ 🟢 {videoId} ✏️ ]` in `YoutubeSourceInput.tsx`), isolated memoized video viewport (`EditVideoViewport`) with static `YOUTUBE_PLAYER_OPTS` to shield iframe rendering from 10Hz timecode updates, and horizontal `VideoSplitDivider` (tightened `mt-2 mb-1`).
+   - **Tier 2 (Sync Cues Studio)**: `flex-1 min-h-0` workspace featuring permanently docked `SyncCuesToolbar.tsx` (with `[ { } JSON ]`, `[ ↺ Resync ]`, `[ ⊞ Cards | ≡ Compact ]` adaptive density switcher, collapsible search & multi-select category filter drawer with <kbd>Esc</kbd> shortcut and one-click reset counter badge, and balanced `py-2` vertical padding) and a dedicated scrollable container rendering `SyncCueCard.tsx` or high-density `SyncCueRow.tsx` items optimized with hoisted `resolveCueColor` and `content-visibility: auto`.
    - **Cross-Panel Full Sync Jump**: Selecting any cue card/row executes a synchronized triple-action: seeks the video player (without premature pause calls), populates `CueEditorForm.tsx`, and smoothly scrolls the script canvas to center the corresponding line.
 7. **`RawScriptModal.tsx`**: Modal dialog for bulk editing raw screenplay text using `UI_TOKENS.modal` and `UI_TOKENS.input`.
 8. **`RawCuesModal.tsx`**: Modal dialog for viewing and editing raw cue data in JSON format, with `sanitizeCues()` applied on save and styled via `UI_TOKENS`.
