@@ -226,23 +226,46 @@ body.is-resizing-split iframe {
   container-type: inline-size;
 }
 
-@container (max-width: 580px) {
+/* Left Workstation Panel Container Queries (Media Preview & Sync Cues Toolbar) */
+@container (max-width: 680px) {
   .header-btn-label {
-    display: none !important;
-  }
-  .youtube-pill-text {
     display: none !important;
   }
 }
 
-@container (max-width: 440px) {
+@container (max-width: 540px) {
+  .youtube-pill-text {
+    display: none !important;
+  }
   .timecode-duration {
     display: none !important;
   }
 }
 
-@container (max-width: 360px) {
+@container (max-width: 380px) {
   .media-preview-title {
+    display: none !important;
+  }
+}
+
+/* Center Script Panel Header Container Queries (Script Header Controls) */
+@container (max-width: 480px) {
+  .cue-status-text {
+    display: none !important;
+  }
+}
+
+@container (max-width: 420px) {
+  .script-btn-label {
+    display: none !important;
+  }
+  .script-line-count {
+    display: none !important;
+  }
+}
+
+@container (max-width: 320px) {
+  .script-header-title {
     display: none !important;
   }
 }
