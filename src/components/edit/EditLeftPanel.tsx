@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import YouTube from 'react-youtube';
-import { Video, VideoOff, Play, Pause, RotateCcw } from 'lucide-react';
+import { Video, VideoOff, Play, Pause, RotateCcw, Edit2, Plus } from 'lucide-react';
 import { Cue } from '../../types/script';
 import { extractYoutubeId, cn } from '../../lib/utils';
 import { UI_TOKENS } from '../../styles/tokens/ui';
@@ -83,6 +83,24 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
 }) => {
   const isPlaying = playerState === 1;
 
+  const [isSourceInputOpen, setIsSourceInputOpen] = React.useState<boolean>(() => !youtubeId);
+  const prevYoutubeIdRef = React.useRef(youtubeId);
+
+  React.useEffect(() => {
+    // If youtubeId becomes empty (e.g. cleared), automatically expand input
+    if (!youtubeId && prevYoutubeIdRef.current) {
+      setIsSourceInputOpen(true);
+    }
+    prevYoutubeIdRef.current = youtubeId;
+  }, [youtubeId]);
+
+  const extractedId = React.useMemo(() => extractYoutubeId(youtubeId), [youtubeId]);
+
+  const handleClearYoutubeId = React.useCallback(() => {
+    onClearYoutubeId();
+    setIsSourceInputOpen(true);
+  }, [onClearYoutubeId]);
+
   const handleResetVideoHeight = React.useCallback(() => {
     if (onResetVideoHeight) {
       onResetVideoHeight();
@@ -111,13 +129,50 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
       <div className="shrink-0 space-y-2 select-none">
         {/* Section Header with Transport & Collapse Controls */}
         <div className="flex items-center justify-between px-3 pt-2 pb-1 lg:px-0 lg:pt-0 lg:pb-0.5">
-          <div className="flex items-center gap-2">
-            <h2 className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-2")}>
+          <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+            <h2 className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-2 shrink-0")}>
               <Video size={14} className="text-text-muted" /> Media Preview
             </h2>
+
+            {/* Collapsible YouTube Source Pill */}
+            <button
+              type="button"
+              onClick={() => setIsSourceInputOpen(prev => !prev)}
+              aria-expanded={isSourceInputOpen}
+              aria-label={youtubeId ? "Edit YouTube video source URL" : "Set YouTube video source URL"}
+              title={
+                isSourceInputOpen
+                  ? "Hide YouTube source input"
+                  : (youtubeId ? `Video ID: ${extractedId || youtubeId} (Click to change URL)` : "Set YouTube video source URL")
+              }
+              className={cn(
+                "group flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono transition-all duration-150 border shadow-2xs select-none max-w-[140px] sm:max-w-[180px] active:scale-95",
+                isSourceInputOpen
+                  ? "bg-blue-500/15 border-blue-500/40 text-blue-600 dark:text-blue-400 font-semibold shadow-blue-500/10"
+                  : "bg-surface-subtle hover:bg-surface border-border-subtle hover:border-border-main text-text-muted hover:text-text-main"
+              )}
+            >
+              <span className={cn(
+                "w-1.5 h-1.5 rounded-full shrink-0 transition-all duration-300",
+                youtubeId
+                  ? (hasPlayer ? "bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.6)]" : "bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.5)]")
+                  : "bg-red-400"
+              )} />
+              {youtubeId ? (
+                <>
+                  <span className="truncate">{extractedId || youtubeId}</span>
+                  <Edit2 size={9} className="shrink-0 text-text-faint group-hover:text-text-main transition-colors opacity-70" />
+                </>
+              ) : (
+                <span className="text-[9px] font-sans font-bold uppercase tracking-wider text-blue-500 flex items-center gap-0.5">
+                  <Plus size={10} className="shrink-0" /> Video
+                </span>
+              )}
+            </button>
+
             {isVideoCollapsed && (
               <span 
-                className="text-[9px] font-black uppercase tracking-wider text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md flex items-center gap-1 animate-in fade-in zoom-in-95 duration-200"
+                className="text-[9px] font-black uppercase tracking-wider text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md flex items-center gap-1 animate-in fade-in zoom-in-95 duration-200 shrink-0"
                 title="Video player is hidden. Sync cues workspace is expanded."
               >
                 <VideoOff size={10} /> Video Hidden
@@ -217,14 +272,17 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
           </div>
         </div>
 
-        {/* Compact YouTube Source Input */}
-        <YoutubeSourceInput
-          youtubeId={youtubeId}
-          onChange={onChangeYoutubeId}
-          onClear={onClearYoutubeId}
-          hasPlayer={hasPlayer}
-          compact={true}
-        />
+        {/* Collapsible YouTube Source Input Bar */}
+        {isSourceInputOpen && (
+          <YoutubeSourceInput
+            youtubeId={youtubeId}
+            onChange={onChangeYoutubeId}
+            onClear={handleClearYoutubeId}
+            hasPlayer={hasPlayer}
+            compact={true}
+            onClose={() => setIsSourceInputOpen(false)}
+          />
+        )}
 
         {/* Video Player Viewport */}
         <div 
