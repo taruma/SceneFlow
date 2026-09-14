@@ -201,6 +201,8 @@ export default function App() {
     confirmDelete,
     selectCueForEdit,
     canSave,
+    isDirty,
+    dismissIfClean,
   } = useCueEditor({
     scriptText: state.scriptText,
     cues: state.cues,
@@ -220,6 +222,28 @@ export default function App() {
       }
     }
   }, [handleSelection, mode]);
+
+  const handleScriptClick = useCallback((e: React.MouseEvent) => {
+    if (mode !== 'edit') return;
+
+    // If overlap picker was open, let its own click-outside handler dismiss it without closing cue edit
+    if (overlapPicker.isOpen) return;
+
+    // Ignore clicks on buttons, inputs, links, or staging markers
+    const target = e.target as HTMLElement | null;
+    if (target?.closest('button, [role="button"], a, input, textarea, select, [data-prevent-dismiss]')) {
+      return;
+    }
+
+    // Ignore if there is an active text drag selection
+    const sel = window.getSelection();
+    if (sel && !sel.isCollapsed && Boolean(sel.toString().trim())) {
+      return;
+    }
+
+    // Safely dismiss back to idle overview if no changes were made
+    dismissIfClean();
+  }, [mode, overlapPicker.isOpen, dismissIfClean]);
 
   const [resetConfirmation, setResetConfirmation] = useState<ResetConfirmationState>({
     isOpen: false,
@@ -671,6 +695,8 @@ export default function App() {
     saveCue,
     deleteCue,
     canSave,
+    isDirty,
+    dismissIfClean,
     scriptText: state.scriptText,
     scriptThemeId,
     cuePaletteProfile,
@@ -688,6 +714,8 @@ export default function App() {
     saveCue,
     deleteCue,
     canSave,
+    isDirty,
+    dismissIfClean,
     state.scriptText,
     scriptThemeId,
     cuePaletteProfile,
@@ -832,6 +860,7 @@ export default function App() {
 
           <div 
             ref={scriptRef}
+            onClick={handleScriptClick}
             onMouseUp={handleScriptMouseUp}
             className={cn(
               "flex-1 overflow-y-auto font-serif text-[14px] leading-snug scrollbar-hide",

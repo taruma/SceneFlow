@@ -95,7 +95,8 @@ function ScriptLineComponent({
       {stagingMarker.blocks.map((block, bIdx) => (
         <button
           key={bIdx}
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             if (playerState !== 1) {
               onSelectStaging(block);
             }

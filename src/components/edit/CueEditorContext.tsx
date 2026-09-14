@@ -13,6 +13,8 @@ export interface CueEditorContextValue {
   saveCue: () => void;
   deleteCue: (id: string) => void;
   canSave: boolean;
+  isDirty?: boolean;
+  dismissIfClean?: () => boolean;
   scriptText: string;
   scriptThemeId: string;
   cuePaletteProfile?: CuePaletteProfile;
