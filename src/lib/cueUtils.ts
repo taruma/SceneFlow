@@ -411,6 +411,33 @@ export function isCueActive(
 }
 
 /**
+ * Finds the most relevant active cue for a given playback timestamp.
+ * Prioritizes the cue with the latest start time (or furthest down the script if tied).
+ */
+export function findActiveCue(
+  cues: Cue[],
+  currentTime: number,
+  settings?: Record<string, TimingSettings>
+): Cue | null {
+  if (!cues || cues.length === 0) return null;
+
+  let best: Cue | null = null;
+  for (let i = 0; i < cues.length; i++) {
+    const cue = cues[i];
+    if (isCueActive(cue, currentTime, settings)) {
+      if (!best) {
+        best = cue;
+      } else if (cue.startTime > best.startTime) {
+        best = cue;
+      } else if (cue.startTime === best.startTime && (cue.startIndex || 0) > (best.startIndex || 0)) {
+        best = cue;
+      }
+    }
+  }
+  return best;
+}
+
+/**
  * Calculates the opacity of a cue during playback with fade-in / fade-out offsets.
  */
 export function calculateCuePlaybackOpacity(

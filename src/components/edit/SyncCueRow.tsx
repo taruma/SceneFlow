@@ -10,6 +10,7 @@ import { UI_TOKENS } from '../../styles/tokens/ui';
 export interface SyncCueRowProps {
   cue: Cue;
   isSelected: boolean;
+  isActive?: boolean;
   onSelectCue: (cue: Cue) => void;
   onDeleteCue: (id: string) => void;
   scriptThemeId?: string;
@@ -20,6 +21,7 @@ export interface SyncCueRowProps {
 export const SyncCueRow: React.FC<SyncCueRowProps> = memo(({
   cue,
   isSelected,
+  isActive = false,
   onSelectCue,
   onDeleteCue,
   scriptThemeId = 'studio-light',
@@ -35,6 +37,7 @@ export const SyncCueRow: React.FC<SyncCueRowProps> = memo(({
 
   return (
     <div
+      id={cue.id ? `sync-cue-${cue.id}` : undefined}
       onClick={() => onSelectCue(cue)}
       role="button"
       tabIndex={0}
@@ -49,7 +52,9 @@ export const SyncCueRow: React.FC<SyncCueRowProps> = memo(({
         "group flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg border transition-all cursor-pointer text-xs select-none",
         isSelected 
           ? "bg-surface-subtle border-blue-500/50 shadow-xs ring-1 ring-blue-500/30 text-text-main" 
-          : "bg-surface hover:bg-surface-subtle border-border-subtle hover:border-border-main text-text-body"
+          : isActive
+            ? "bg-surface-subtle/80 border-blue-500/30 shadow-2xs ring-1 ring-blue-500/20 text-text-main"
+            : "bg-surface hover:bg-surface-subtle border-border-subtle hover:border-border-main text-text-body"
       )}
     >
       {/* Timecode Pill */}

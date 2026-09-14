@@ -689,6 +689,7 @@ export default function App() {
             onReady={onReady}
             onStateChange={onStateChange}
             cues={state.cues}
+            settings={state.settings}
             scriptThemeId={scriptThemeId}
             cuePaletteProfile={cuePaletteProfile}
             selectedCueId={newCue.id}

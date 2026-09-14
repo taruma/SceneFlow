@@ -1,22 +1,26 @@
-import React, { memo, useMemo, useState, useEffect } from 'react';
+import React, { memo, useMemo, useState, useEffect, useRef, useCallback } from 'react';
 import { FilterX, Highlighter } from 'lucide-react';
 import { Cue } from '../../types/script';
 import { CuePaletteProfile } from '../../styles';
 import { COLORS } from '../../constants/script';
 import { LEGACY_CLASS_MAP } from '../../styles/tokens/cues';
 import { useScriptTheme } from '../../hooks/useScriptTheme';
+import { smoothScrollTo } from '../../hooks/useAutoScroll';
 import { cn } from '../../lib/utils';
 import { SyncCuesToolbar, CueDensityMode } from './SyncCuesToolbar';
 import { SyncCueCard } from './SyncCueCard';
 import { SyncCueRow } from './SyncCueRow';
 
 const DENSITY_STORAGE_KEY = 'sceneflow_edit_cue_density';
+const AUTOSCROLL_STORAGE_KEY = 'sceneflow_edit_autoscroll';
 
 export interface SyncCuesPanelProps {
   cues: Cue[];
   scriptThemeId: string;
   cuePaletteProfile?: CuePaletteProfile;
   selectedCueId?: string;
+  activeCueId?: string | null;
+  seekVersion?: number;
   onSelectCue: (cue: Cue) => void;
   onDeleteCue: (id: string) => void;
   onOpenRawCuesModal: () => void;
@@ -36,6 +40,8 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
   scriptThemeId,
   cuePaletteProfile = 'standard',
   selectedCueId,
+  activeCueId,
+  seekVersion = 0,
   onSelectCue,
   onDeleteCue,
   onOpenRawCuesModal,
@@ -61,6 +67,59 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
       localStorage.setItem(DENSITY_STORAGE_KEY, mode);
     }
   };
+
+  // Auto-scroll state with persistent localStorage
+  const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(AUTOSCROLL_STORAGE_KEY);
+      if (saved !== null) return saved === 'true';
+    }
+    return true;
+  });
+
+  const handleToggleAutoScroll = useCallback(() => {
+    setIsAutoScrollEnabled(prev => {
+      const next = !prev;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(AUTOSCROLL_STORAGE_KEY, String(next));
+      }
+      return next;
+    });
+  }, []);
+
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const scrollAnimRef = useRef<number | null>(null);
+
+  // User manual scroll listener to cancel ongoing auto-scroll smoothly without fighting user
+  useEffect(() => {
+    const container = viewportRef.current;
+    if (!container) return;
+
+    const handleUserScroll = () => {
+      if (scrollAnimRef.current !== null) {
+        cancelAnimationFrame(scrollAnimRef.current);
+        scrollAnimRef.current = null;
+      }
+    };
+
+    container.addEventListener('wheel', handleUserScroll, { passive: true });
+    container.addEventListener('touchmove', handleUserScroll, { passive: true });
+
+    return () => {
+      container.removeEventListener('wheel', handleUserScroll);
+      container.removeEventListener('touchmove', handleUserScroll);
+    };
+  }, []);
+
+  // Cleanup pending animation frame on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollAnimRef.current !== null) {
+        cancelAnimationFrame(scrollAnimRef.current);
+        scrollAnimRef.current = null;
+      }
+    };
+  }, []);
 
   // Search & Category filter states
   const [searchQuery, setSearchQuery] = useState('');
@@ -123,6 +182,46 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
     setSelectedCategories(new Set());
   };
 
+  const furthestScrollTopRef = useRef<number>(0);
+
+  // Reset forward scroll guard when user seeks backwards, or changes density/filters
+  useEffect(() => {
+    furthestScrollTopRef.current = 0;
+  }, [seekVersion, densityMode, filteredCues]);
+
+  // Auto-scroll logic when activeCueId changes
+  useEffect(() => {
+    if (!isAutoScrollEnabled || !activeCueId || !viewportRef.current) return;
+
+    // Graceful check: ensure cue is visible in current filtered list
+    const isCueVisibleInFiltered = filteredCues.some(c => c.id === activeCueId);
+    if (!isCueVisibleInFiltered) return;
+
+    const element = document.getElementById(`sync-cue-${activeCueId}`);
+    const container = viewportRef.current;
+    if (!element || !container) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const elementRect = element.getBoundingClientRect();
+    const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
+
+    // Center the active cue card in the viewport
+    const targetScrollTop = Math.max(0, relativeTop - (containerRect.height / 2) + (elementRect.height / 2));
+
+    // Forward Monotonic Guard: During forward playback, never scroll backwards to an
+    // enclosing/parent cue that started earlier just because nested child cues finished.
+    if (furthestScrollTopRef.current > 0 && targetScrollTop < furthestScrollTopRef.current - 40) {
+      return;
+    }
+
+    furthestScrollTopRef.current = Math.max(furthestScrollTopRef.current, targetScrollTop);
+
+    // Deadband guard: avoid micro-jitter if already near target
+    if (Math.abs(container.scrollTop - targetScrollTop) > 12) {
+      smoothScrollTo(container, targetScrollTop, 350, scrollAnimRef);
+    }
+  }, [activeCueId, isAutoScrollEnabled, filteredCues]);
+
   return (
     <div className={cn("flex flex-col h-full overflow-hidden select-none", className)}>
       {/* Permanently Docked Toolbar (Never scrolls away) */}
@@ -131,6 +230,8 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
         totalCount={sortedCues.length}
         densityMode={densityMode}
         onDensityModeChange={handleDensityChange}
+        isAutoScrollEnabled={isAutoScrollEnabled}
+        onToggleAutoScroll={handleToggleAutoScroll}
         searchQuery={searchQuery}
         onSearchQueryChange={setSearchQuery}
         selectedCategories={selectedCategories}
@@ -145,7 +246,7 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
       />
 
       {/* Dedicated Scrollable Cue Viewport */}
-      <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide pt-2.5 pb-2 px-0.5">
+      <div ref={viewportRef} className="flex-1 min-h-0 overflow-y-auto scrollbar-hide pt-2.5 pb-2 px-0.5">
         {/* Render Cards Mode */}
         {densityMode === 'cards' && (
           <div className="grid gap-2">
@@ -154,6 +255,7 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
                 key={cue.id ? `sync-cue-${cue.id}` : `sync-cue-idx-${idx}`}
                 cue={cue}
                 isSelected={selectedCueId === cue.id}
+                isActive={cue.id === activeCueId}
                 onSelectCue={onSelectCue}
                 onDeleteCue={onDeleteCue}
                 resolveCueColor={resolveCueColor}
@@ -170,6 +272,7 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
                 key={cue.id ? `sync-row-${cue.id}` : `sync-row-idx-${idx}`}
                 cue={cue}
                 isSelected={selectedCueId === cue.id}
+                isActive={cue.id === activeCueId}
                 onSelectCue={onSelectCue}
                 onDeleteCue={onDeleteCue}
                 resolveCueColor={resolveCueColor}

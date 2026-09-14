@@ -1,8 +1,9 @@
 import React, { memo, useMemo } from 'react';
 import YouTube, { type YouTubeProps } from 'react-youtube';
 import { Video, VideoOff, Play, Pause, RotateCcw, Edit2, Plus } from 'lucide-react';
-import { Cue } from '../../types/script';
+import { Cue, TimingSettings } from '../../types/script';
 import { extractYoutubeId, cn } from '../../lib/utils';
+import { findActiveCue } from '../../lib/cueUtils';
 import { UI_TOKENS } from '../../styles/tokens/ui';
 import { CuePaletteProfile } from '../../styles';
 import { DEFAULT_VIDEO_HEIGHT } from '../../hooks/useScriptPreferences';
@@ -31,6 +32,7 @@ export interface EditLeftPanelProps {
   onReady: (event: any) => void;
   onStateChange: (event: any) => void;
   cues: Cue[];
+  settings?: Record<string, TimingSettings>;
   scriptThemeId: string;
   cuePaletteProfile?: CuePaletteProfile;
   selectedCueId?: string;
@@ -145,6 +147,7 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
   onReady,
   onStateChange,
   cues,
+  settings,
   scriptThemeId,
   cuePaletteProfile = 'standard',
   selectedCueId,
@@ -158,6 +161,23 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
   className,
 }) => {
   const isPlaying = playerState === 1;
+
+  // Discreet active cue calculation - only changes when a cue boundary is crossed
+  const activeCue = useMemo(() => {
+    return findActiveCue(cues, currentTime, settings);
+  }, [cues, currentTime, settings]);
+  const activeCueId = activeCue?.id ?? null;
+
+  // Track backward seeks to reset forward monotonic auto-scroll guard
+  const prevTimeRef = React.useRef<number>(currentTime);
+  const [seekVersion, setSeekVersion] = React.useState<number>(0);
+
+  React.useEffect(() => {
+    if (currentTime < prevTimeRef.current - 0.3) {
+      setSeekVersion(v => v + 1);
+    }
+    prevTimeRef.current = currentTime;
+  }, [currentTime]);
 
   const [isSourceInputOpen, setIsSourceInputOpen] = React.useState<boolean>(() => !youtubeId);
   const prevYoutubeIdRef = React.useRef(youtubeId);
@@ -382,6 +402,8 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
           scriptThemeId={scriptThemeId}
           cuePaletteProfile={cuePaletteProfile}
           selectedCueId={selectedCueId}
+          activeCueId={activeCueId}
+          seekVersion={seekVersion}
           onSelectCue={onSelectCue}
           onDeleteCue={onDeleteCue}
           onOpenRawCuesModal={onOpenRawCuesModal}

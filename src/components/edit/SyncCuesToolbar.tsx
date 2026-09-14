@@ -7,7 +7,8 @@ import {
   Search, 
   X, 
   LayoutGrid, 
-  List 
+  List,
+  Target
 } from 'lucide-react';
 import { COLORS } from '../../constants/script';
 import { useScriptTheme } from '../../hooks/useScriptTheme';
@@ -22,6 +23,8 @@ export interface SyncCuesToolbarProps {
   totalCount: number;
   densityMode: CueDensityMode;
   onDensityModeChange: (mode: CueDensityMode) => void;
+  isAutoScrollEnabled?: boolean;
+  onToggleAutoScroll?: () => void;
   searchQuery: string;
   onSearchQueryChange: (query: string) => void;
   selectedCategories: Set<string>;
@@ -44,6 +47,8 @@ export const SyncCuesToolbar: React.FC<SyncCuesToolbarProps> = memo(({
   totalCount,
   densityMode,
   onDensityModeChange,
+  isAutoScrollEnabled = true,
+  onToggleAutoScroll,
   searchQuery,
   onSearchQueryChange,
   selectedCategories,
@@ -145,6 +150,25 @@ export const SyncCuesToolbar: React.FC<SyncCuesToolbarProps> = memo(({
               <span className="header-btn-label">Compact</span>
             </button>
           </div>
+
+          {/* Auto-Scroll Tracking Toggle */}
+          {onToggleAutoScroll && (
+            <button
+              type="button"
+              onClick={onToggleAutoScroll}
+              aria-pressed={isAutoScrollEnabled}
+              title={isAutoScrollEnabled ? "Auto-scroll enabled (follows playing cue)" : "Auto-scroll disabled"}
+              className={cn(
+                "flex items-center gap-1 px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all active:scale-95 border shadow-2xs",
+                isAutoScrollEnabled
+                  ? "bg-blue-500/15 border-blue-500/40 text-blue-600 dark:text-blue-400 font-semibold shadow-blue-500/10"
+                  : "bg-surface-muted hover:bg-surface-hover border-border-main text-text-muted hover:text-text-main"
+              )}
+            >
+              <Target size={10} className={cn("shrink-0", isAutoScrollEnabled && "text-blue-500 animate-pulse")} />
+              <span className="header-btn-label">Scroll</span>
+            </button>
+          )}
 
           <div className="w-px h-3.5 bg-border-subtle mx-0.5" aria-hidden="true" />
 

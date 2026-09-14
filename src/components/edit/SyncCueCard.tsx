@@ -10,6 +10,7 @@ import { UI_TOKENS } from '../../styles/tokens/ui';
 export interface SyncCueCardProps {
   cue: Cue;
   isSelected: boolean;
+  isActive?: boolean;
   onSelectCue: (cue: Cue) => void;
   onDeleteCue: (id: string) => void;
   scriptThemeId?: string;
@@ -20,6 +21,7 @@ export interface SyncCueCardProps {
 export const SyncCueCard: React.FC<SyncCueCardProps> = memo(({
   cue,
   isSelected,
+  isActive = false,
   onSelectCue,
   onDeleteCue,
   scriptThemeId = 'studio-light',
@@ -36,6 +38,7 @@ export const SyncCueCard: React.FC<SyncCueCardProps> = memo(({
 
   return (
     <div 
+      id={cue.id ? `sync-cue-${cue.id}` : undefined}
       onClick={() => onSelectCue(cue)}
       role="button"
       tabIndex={0}
@@ -50,12 +53,17 @@ export const SyncCueCard: React.FC<SyncCueCardProps> = memo(({
         "flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer relative overflow-hidden group select-none",
         isSelected 
           ? "bg-surface-subtle border-blue-500/60 shadow-sm ring-1 ring-blue-500/40 text-text-main" 
-          : "bg-surface hover:bg-surface-subtle border-border-subtle hover:border-border-main hover:shadow-xs text-text-body"
+          : isActive
+            ? "bg-surface-subtle/80 border-blue-500/40 shadow-xs ring-1 ring-blue-500/25 text-text-main"
+            : "bg-surface hover:bg-surface-subtle border-border-subtle hover:border-border-main hover:shadow-xs text-text-body"
       )}
     >
       <div className="flex items-center gap-3.5 flex-1 min-w-0">
         <div 
-          className="w-1.5 h-9 rounded-full shrink-0" 
+          className={cn(
+            "w-1.5 h-9 rounded-full shrink-0 transition-all duration-200",
+            isActive && "shadow-[0_0_8px_rgba(59,130,246,0.5)] scale-y-105"
+          )} 
           style={{ backgroundColor: `rgb(${themed.rgb})` }} 
         />
         <div className="flex flex-col flex-1 min-w-0">
