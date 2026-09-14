@@ -26,6 +26,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **144Hz Smooth Timeline Clock Extrapolator (`src/components/active-highlights/timeline/useSmoothTimelineTime.ts`, `src/components/active-highlights/index.ts`)**:
   - Implemented high-precision `useSmoothTimelineTime` hook leveraging `requestAnimationFrame` and `performance.now()` to advance timeline time continuously at native display refresh rates (144Hz, 120Hz, 60Hz).
   - Integrated soft-sync drift compensation against 100ms YouTube timecode ticks with instant snapping on seeking (>0.35s) and zero idle overhead when paused.
+- **Live Timecode HUD Badge & Precision Formatter (`src/components/edit/LiveTimecodeBadge.tsx`, `src/components/edit/EditLeftPanel.tsx`, `src/components/edit/CueTimingInputs.tsx`, `src/lib/utils.ts`)**:
+  - Added pure `formatPrecisionTimecode(seconds)` utility formatting timestamps into `MM:SS.s` (or `HH:MM:SS.s` for $\ge 1\text{h}$).
+  - Docked a live `LiveTimecodeBadge` in the Media Preview header displaying a real-time pulsing status pip, current playback timecode, and media duration (e.g. `00:03.9 / 01:09.0`).
+  - Embedded live formatted timecodes directly into `CueTimingInputs` above Start/End inputs and into `SyncCueCard` / `SyncCueRow` item tags.
+- **Collapsible YouTube Source Header Pill (`src/components/YoutubeSourceInput.tsx`, `src/components/edit/EditLeftPanel.tsx`)**:
+  - Replaced the bulky persistent YouTube input container with a sleek header pill (`[ 🟢 {videoId} ✏️ ]`), reclaiming ~50px of vertical height for the video player and cue list.
+  - Clicking the pill or edit icon opens a compact overlay input; clearing the video ID auto-opens the input with auto-focus.
+- **Collapsible Search & Multi-Select Category Filters (`src/components/edit/SyncCuesToolbar.tsx`, `src/components/edit/SyncCuesPanel.tsx`)**:
+  - Restructured the toolbar into a compact single-row resting state with a dedicated `[ 🔍 Filter ]` toggle action, reclaiming ~64px of vertical height by default.
+  - Added multi-select category filtering (`Set<string>`) allowing users to filter by multiple cue types concurrently (e.g. `DIALOGUE` + `ACTION`).
+  - Added an interactive filter counter badge (`{filteredCount}/{totalCount}`) that converts into an instant 1-click reset chip (`[ 12/297 ✕ ]`) when filtering is active.
+  - Added keyboard shortcut support (<kbd>Escape</kbd> to clear query or dismiss bar) and smart auto-expansion whenever filters are active.
+- **Adaptive Container Queries for Split Panels (`src/index.css`, `src/components/edit/EditLeftPanel.tsx`, `src/components/playback/PlaybackLeftPanel.tsx`, `src/components/edit/SyncCuesToolbar.tsx`)**:
+  - Introduced CSS container queries (`@container (max-width: 580px)`) across left panels.
+  - Action button labels (`.header-btn-label`) and YouTube source pill text (`.youtube-pill-text`) automatically collapse to compact icon buttons on narrow panels, eliminating horizontal overflow and text wrapping without JavaScript resize listeners.
 
 ### Refactored
 - **High-Refresh Auto-Scroll Engine & Gesture Interruption (`src/hooks/useAutoScroll.ts`)**:
@@ -83,8 +98,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Upgraded `ScriptHeaderControls` dropdowns (Auto-Scroll Focus, Width Presets, Scroll Focus Line) to use `useClickOutside` and `useEscapeKey`, removing click interception on adjacent controls.
 - **Mobile Viewport Edit-Mode Header Leak (`src/components/AppHeader.tsx`)**:
   - Resolved an issue where edit mode allowed the desktop header to render on mobile viewports by enforcing unconditional `hidden lg:flex` on `AppHeader`.
+- **Black Screen on Cue Selection in Edit Mode (`src/hooks/useCueEditor.ts`, `src/hooks/useYouTubePlayer.ts`)**:
+  - Resolved an issue where selecting any sync cue on an unstarted or paused YouTube player rendered a black viewport.
+  - Eliminated premature `player.pauseVideo()` calls immediately following `player.seekTo()` that were aborting the browser's video decoding pipeline before frame buffer initialization.
+- **Edit Mode Playback Lag & Decoupling (`src/App.tsx`, `src/components/edit/EditLeftPanel.tsx`, `src/components/edit/SyncCueCard.tsx`, `src/components/edit/SyncCueRow.tsx`)**:
+  - Memoized `leftPanelStyle` in `App.tsx` to stop breaking `React.memo(EditLeftPanel)` on high-frequency 10Hz playback clock ticks.
+  - Hoisted theme color resolution (`resolveCueColor`) out of individual cue card render loops, eliminating thousands of redundant hook calls per second.
+  - Added CSS `content-visibility: auto` with `contain-intrinsic-size` on the scrollable cue list, allowing the browser engine to skip offscreen layout and paint recalculations.
+- **Vertical Spacing Asymmetry Around Sync Cues Header (`src/components/edit/EditLeftPanel.tsx`, `src/components/edit/SyncCuesToolbar.tsx`, `src/components/edit/SyncCuesPanel.tsx`)**:
+  - Resolved an unintended ~32px empty void above the `SYNC CUES` header caused by compounding uncollapsed margins and paddings across `VideoSplitDivider`, the Tier 2 container, and toolbar wrappers.
+  - Tightened divider bottom margin (`className="mt-2 mb-1"`), eliminated redundant Tier 2 top padding (`pt-0`), balanced toolbar padding to symmetric `py-2`, and matched cue list top padding (`pt-2.5`) to create harmonious, proportional vertical separation.
+- **Narrow Split Panel Horizontal Overflow (`src/components/playback/PlaybackLeftPanel.tsx`)**:
+  - Removed duplicate static `Video Hidden` badge in `PlaybackLeftPanel` header that caused horizontal text squishing and overflow when the panel was dragged narrow.
 
 ### Changed
+- **Sync Cues Action Nomenclature & Density Badging (`src/components/edit/SyncCuesToolbar.tsx`)**:
+  - Replaced ambiguous `"RAW"` and `"ALIGN"` button labels with self-describing `"JSON"` (with `{ }` braces icon and tooltip) and `"Resync"` (with `↺` refresh icon and animated `"Synced"` success state).
+  - Added responsive `"Cards"` and `"Compact"` text labels to the view density switcher that automatically collapse to clean icon glyphs (`[ ⊞ | ≡ ]`) via container queries on narrow panels.
 - **Script Preview Header Streamlining & Decluttering (`src/components/ScriptHeaderControls.tsx`, `src/styles/tokens/ui.ts`)**:
   - Removed the redundant, non-clickable `[PLAYBACK]` / `[EDIT]` mode badge, eliminating toolbar crowding on tablets/wide mobile (`sm:block`) and restoring clean visual clustering of reading controls on desktop.
   - Removed the redundant mobile `TIME 0.0s` pill (`UI_TOKENS.badge.currentTimePillSm`), maximizing reading canvas breathing room and relying on the sticky video player and timeline playhead for timecode feedback.

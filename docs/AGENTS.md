@@ -240,3 +240,21 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
     - **Preset Lookup & Scroll Math Centralization (`constants/script.ts`, `hooks/useAutoScroll.ts`)**:
       - Reading column width and auto-scroll focus presets must be resolved through typed lookup helpers (`getScriptWidthPreset(id)` and `getScrollFocusPreset(id)`) with guaranteed default fallbacks (`DEFAULT_SCRIPT_WIDTH_PRESET`, `DEFAULT_SCROLL_FOCUS_PRESET`), preventing repetitive and fragile `.find() || [0]` ladders across components.
       - Viewport auto-scroll offsets are computed strictly through the pure helper `calculateTargetScrollTop(relativeTop, containerHeight, elementHeight, isDesktop, focusRatio)`, unifying manual preset adjustments (`applyScrollFocus`) and continuous playback auto-scrolling to eliminate formula drift.
+
+16. **Edit Mode Architecture & Two-Tier Left Panel Invariants (`EditLeftPanel.tsx`, `SyncCuesPanel.tsx`, `SyncCuesToolbar.tsx`)**:
+    - **Two-Tier Flex Container**: Edit mode avoids `sticky top-0` scroll container hacks by structuring the Left Panel as an unpinned, two-zone flex container (`h-full flex flex-col overflow-hidden`):
+      - **Tier 1 (Media Preview)**: Contains persistent transport controls, `LiveTimecodeBadge` (real-time `MM:SS.s` timecode and duration), collapsible YouTube source pill (`[ 🟢 {videoId} ✏️ ]` reclaiming ~50px height), resizable 16:9 video player, and horizontal `VideoSplitDivider` (tightened with `className="mt-2 mb-1"`).
+      - **Tier 2 (Sync Cues Studio)**: Occupies `flex-1 min-h-0 flex flex-col overflow-hidden` with `pt-0` to eliminate dead space. Houses permanently docked `SyncCuesToolbar` and internal scrollable cue list viewport.
+    - **Adaptive Container Queries (`@container (max-width: 580px)`)**:
+      - Left panels declare `containerType: 'inline-size'` and class `@container`.
+      - When split panels are dragged narrow ($\le 580\text{px}$), text labels (`.header-btn-label`) and pill text (`.youtube-pill-text`) automatically collapse into clean icon-only buttons (`[ ↺ ]`, `[ ▶ ]`, `[ 👁/ ]`, `[ 🟢 ✏️ ]`, `[ ⊞ | ≡ ]`, `[ 🔍 ]`, `[ { } ]`, `[ ↺ ]`), guaranteeing single-row alignment with zero horizontal overflow or text wrapping.
+    - **Sync Cues Toolbar Architecture (`SyncCuesToolbar.tsx`)**:
+      - **Symmetric Padding**: Standardized to `py-2` (8px top, 8px bottom) when collapsed, maintaining balanced breathing room between the video divider above and the cue list below.
+      - **Action Nomenclature**: Standardized on `[ { } JSON ]` for modal cue inspection and `[ ↺ Resync ]` for proximity realignment with animated `[ ✓ Synced ]` feedback.
+      - **Adaptive Density Toggle**: `[ ⊞ Cards | ≡ Compact ]` with responsive text labels collapsing cleanly to icons on narrow viewports.
+      - **Collapsible Search & Filter Section**: Resting state is a compact single row with a `[ 🔍 Filter ]` toggle button, reclaiming ~64px of vertical height. Smoothly expands search input (with autofocus and <kbd>Escape</kbd> dismissal) and category pills when toggled or when active queries/filters are present.
+      - **Multi-Select Category Filtering**: Category pills use a `Set<string>` to support concurrent multi-category filtering (e.g. `DIALOGUE` + `ACTION`).
+      - **One-Click Counter Reset**: The cue count badge (`{filteredCount}/{totalCount}`) converts into an interactive reset button with an `X` when filtering is active, clearing all filters and auto-collapsing the bar in a single click.
+    - **Cue Selection Buffering Continuity**:
+      - Selecting a cue in Edit mode must never invoke premature `player.pauseVideo()` immediately after `player.seekTo()`. Seeking directly updates the target timestamp, allowing the browser's video decoding pipeline to paint the target frame cleanly without black screen artifacts.
+

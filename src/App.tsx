@@ -528,8 +528,9 @@ export default function App() {
     // Cross-panel auto-center: smoothly scroll script container to the selected cue
     if (scriptRef.current) {
       const container = scriptRef.current;
+      const lineElements = Array.from(container.querySelectorAll('[data-line-start]')) as HTMLElement[];
       const targetElement = document.getElementById(`cue-${cue.id}`) ||
-        Array.from(container.querySelectorAll<HTMLElement>('[data-line-start]')).find(el => {
+        lineElements.find(el => {
           const start = parseInt(el.getAttribute('data-line-start') || '-1', 10);
           const end = parseInt(el.getAttribute('data-line-end') || '-1', 10);
           return start <= cue.startIndex && end >= cue.startIndex;

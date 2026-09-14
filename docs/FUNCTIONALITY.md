@@ -84,6 +84,29 @@ Multiple cues can span the same character ranges. In Edit Mode, overlapping regi
 ### Chronological Proximity Alignment (`realignCues`)
 When script text is edited or pasted, the "Align" tool sorts cues chronologically by time and uses proximity-aware regex matching to re-anchor cue indices to the nearest logical position, falling back to a 15-character prefix search if major edits occurred.
 
+### Edit Mode: Studio Workspace & Cue Management
+Desktop Edit Mode features a dedicated Two-Tier studio workspace in the Left Panel (`EditLeftPanel` & `SyncCuesPanel`) optimized for high-density cue inspection and authoring:
+
+- **Two-Tier Flex Architecture**:
+  - **Tier 1 (Media Preview)**:
+    - Persistent media transport controls (`[Replay]`, `[Play/Pause]`, `[Hide/Show Video]`).
+    - **Live Timecode HUD Badge (`LiveTimecodeBadge.tsx`)**: Real-time `MM:SS.s` timecode display, video duration tracking, and live pulsing activity indicator.
+    - **Collapsible YouTube Source Header Pill (`[ 🟢 {videoId} ✏️ ]`)**: Replaces bulky persistent input boxes, saving ~50px vertical height while keeping video ID editing 1 click away.
+    - Resizable 16:9 video player and horizontal `VideoSplitDivider` with balanced vertical spacing.
+  - **Tier 2 (Sync Cues Studio)**:
+    - Permanently docked `SyncCuesToolbar` that never scrolls away.
+    - Dedicated internal scrollable viewport rendering cues in either `SyncCueCard` (Cards view) or high-density `SyncCueRow` (Compact view) with `content-visibility: auto` rendering optimization.
+- **Sync Cues Toolbar Capabilities**:
+  - **Collapsible Search & Filter Bar**: Rests in an ultra-slim single row by default with a `[ 🔍 Filter ]` toggle action, reclaiming ~64px of vertical height. Smoothly expands search input (with autofocus and <kbd>Escape</kbd> shortcut) and category pills when toggled or when active queries/filters are present.
+  - **Multi-Select Category Filtering**: Category pills use a `Set<string>` to support concurrent multi-category filtering (e.g. `DIALOGUE` + `ACTION` simultaneously).
+  - **One-Click Filter Reset**: Counter badge (`{filteredCount}/{totalCount}`) converts into an interactive reset button with an `X` when filtering is active, clearing all filters and auto-collapsing the bar in a single click.
+  - **Action Tools**: Standardized on `[ { } JSON ]` for modal cue inspection and `[ ↺ Resync ]` for proximity realignment with animated `[ ✓ Synced ]` feedback.
+  - **Dual Density Modes**: `[ ⊞ Cards | ≡ Compact ]` density switcher with responsive text labels.
+- **Adaptive Container Queries (`@container (max-width: 580px)`)**:
+  - Left panels declare native CSS container queries. Action button labels (`.header-btn-label`) and YouTube source pill text (`.youtube-pill-text`) automatically collapse to compact icon buttons when the left panel is dragged narrow, preventing horizontal overflow or text wrapping without JavaScript resize listeners.
+- **Black-Screen-Free Cue Seeking**:
+  - Clicking any cue in the list seeks the YouTube player directly to the cue's start time without premature `pauseVideo()` calls, ensuring the video decoding pipeline smoothly paints the target frame buffer on first load or paused scrub.
+
 ---
 
 ## 4. Multi-Track Sync Timeline & Active Highlights

@@ -197,7 +197,7 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
             <FilterX size={20} className="text-text-faint mb-2" />
             <p className="text-xs font-bold text-text-main mb-1">No Matching Cues</p>
             <p className="text-[11px] text-text-faint max-w-[220px] mb-3">
-              No cues match {selectedCategory ? `category "${selectedCategory}"` : ''}{searchQuery ? ` search "${searchQuery}"` : ''}.
+              No cues match {selectedCategories.size > 0 ? `selected categories` : ''}{searchQuery ? ` search "${searchQuery}"` : ''}.
             </p>
             <button
               type="button"

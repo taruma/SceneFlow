@@ -91,6 +91,7 @@ A dedicated module containing nine exported pure functions for cue lifecycle man
 Shared utility functions extracted from `App.tsx`:
 - **`cn(...inputs)`**: Merges Tailwind utility classes safely using `clsx` and `tailwind-merge`.
 - **`extractYoutubeId(url)`**: Extracts an 11-character YouTube video ID from various URL formats (standard, shortened `youtu.be`, embeds, shorts, mobile).
+- **`formatPrecisionTimecode(seconds)`**: Formats raw seconds into standardized `MM:SS.s` (or `HH:MM:SS.s` for $\ge 1\text{h}$) precision timecodes for live playback badges, cue editors, and cue card tags.
 - **`generateId()`**: UUID generator utilizing `crypto.randomUUID()` with fallback.
 
 ### `src/constants/script.ts`
@@ -254,10 +255,10 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 3. **`YoutubeSourceInput.tsx`**: YouTube URL/ID input with live player connection indicator and automatic ID extraction using `UI_TOKENS.input`.
 4. **`ScriptManagementBar.tsx`**: Screenplay status banner showing loaded line count with an "Edit Raw" action button styled with `UI_TOKENS`.
 5. **`CueEditorForm.tsx`**: Cue authoring/editing form with editable text area, cue type selector, start/end time inputs with clock buttons, index editors, and "Find Alternative" button, consuming `useScriptTheme` for cue colors.
-6. **`EditLeftPanel.tsx` & `SyncCuesPanel.tsx`**: Studio-grade Two-Tier Flex Left Panel for Edit mode:
-   - **Tier 1 (Media Viewport)**: Media header with transport controls (`[Replay]`, `[Play/Pause]`, `[Hide/Show Video]`), compact `YoutubeSourceInput` (`compact={true}`), resizable YouTube player, and horizontal `VideoSplitDivider`.
-   - **Tier 2 (Sync Cues Studio)**: `flex-1 min-h-0` workspace featuring a permanently docked `SyncCuesToolbar.tsx` (with real-time search, interactive category filter pills, `[Raw]` JSON, `[Align]` realignment, and `[ 🗂 Cards | ☰ List ]` dual density switcher) and a dedicated scrollable container rendering `SyncCueCard.tsx` or high-density `SyncCueRow.tsx` items.
-   - **Cross-Panel Full Sync Jump**: Selecting any cue card/row executes a synchronized triple-action: seeks the video player, populates `CueEditorForm.tsx`, and smoothly scrolls the script canvas to center the corresponding line.
+6. **`EditLeftPanel.tsx` & `SyncCuesPanel.tsx`**: Studio-grade Two-Tier Flex Left Panel for Edit mode with adaptive container queries (`@container (max-width: 580px)`):
+   - **Tier 1 (Media Viewport)**: Media header with persistent transport controls (`[Replay]`, `[Play/Pause]`, `[Hide/Show Video]`), live timecode HUD badge (`LiveTimecodeBadge.tsx`), collapsible YouTube source pill (`[ 🟢 {videoId} ✏️ ]` in `YoutubeSourceInput.tsx`), resizable YouTube player, and horizontal `VideoSplitDivider` (tightened `mt-2 mb-1`).
+   - **Tier 2 (Sync Cues Studio)**: `flex-1 min-h-0` workspace featuring permanently docked `SyncCuesToolbar.tsx` (with `[ { } JSON ]`, `[ ↺ Resync ]`, `[ ⊞ Cards | ≡ Compact ]` adaptive density switcher, collapsible search & multi-select category filter drawer with <kbd>Esc</kbd> shortcut and one-click reset counter badge, and balanced `py-2` vertical padding) and a dedicated scrollable container rendering `SyncCueCard.tsx` or high-density `SyncCueRow.tsx` items optimized with `content-visibility: auto`.
+   - **Cross-Panel Full Sync Jump**: Selecting any cue card/row executes a synchronized triple-action: seeks the video player (without premature pause calls), populates `CueEditorForm.tsx`, and smoothly scrolls the script canvas to center the corresponding line.
 7. **`RawScriptModal.tsx`**: Modal dialog for bulk editing raw screenplay text using `UI_TOKENS.modal` and `UI_TOKENS.input`.
 8. **`RawCuesModal.tsx`**: Modal dialog for viewing and editing raw cue data in JSON format, with `sanitizeCues()` applied on save and styled via `UI_TOKENS`.
 9. **`OverlapPicker.tsx`**: Floating context popup for selecting which overlapping cue to edit at a shared position.

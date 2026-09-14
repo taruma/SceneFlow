@@ -48,7 +48,21 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
 ## 6. Two-Tier Flex Architecture & Cross-Panel Sync Invariants
 - **Two-Tier Flex Container**:
   - The Edit Left Panel strictly avoids `sticky top-0` overlay hacks inside scrolling containers. It is structured as an unpinned, two-zone flex container (`h-full flex flex-col overflow-hidden`).
-  - **Tier 1 (Media Preview)**: Contains transport controls, compact YouTube input (`compact={true}`), resizable video player, and horizontal `VideoSplitDivider`.
-  - **Tier 2 (Sync Cues Studio)**: Occupies `flex-1 min-h-0 flex flex-col overflow-hidden`. Features a permanently docked `SyncCuesToolbar` (with search, category filter pills, `[Raw]`, `[Align]`, and dual density toggle) and a dedicated internal scrollable viewport (`SyncCueCard` in Cards mode, `SyncCueRow` in Compact mode).
+  - **Tier 1 (Media Preview)**:
+    - Persistent transport controls (`[Replay]`, `[Play/Pause]`, `[Hide/Show Video]`).
+    - **Live Timecode HUD Badge (`LiveTimecodeBadge.tsx`)**: Displays live pulsing playback indicator, current formatted timecode (`MM:SS.s`), and total video duration.
+    - **Collapsible YouTube Source Pill (`[ 🟢 {videoId} ✏️ ]`)**: Reclaims ~50px of vertical space, revealing the full input on click or when cleared.
+    - Proportional 16:9 video player and horizontal `VideoSplitDivider` (with tightened bottom margin `mt-2 mb-1`).
+    - **Adaptive Container Queries (`@container (max-width: 580px)`)**: Action button text labels (`.header-btn-label`) and pill text (`.youtube-pill-text`) automatically collapse to compact icon buttons when the left panel is dragged narrow.
+  - **Tier 2 (Sync Cues Studio)**:
+    - Occupies `flex-1 min-h-0 flex flex-col overflow-hidden` with `pt-0` to maintain balanced vertical spacing.
+    - Features a permanently docked `SyncCuesToolbar`:
+      - Standardized symmetric padding (`py-2` collapsed, `pt-1.5 pb-2.5` expanded).
+      - **Action Nomenclature**: `[ { } JSON ]` for raw cue modal and `[ ↺ Resync ]` for proximity realignment with animated `[ ✓ Synced ]` feedback.
+      - **Adaptive Density Toggle**: `[ ⊞ Cards | ≡ Compact ]` with responsive text labels collapsing cleanly to icons via container queries.
+      - **Collapsible Search & Multi-Select Filters**: Rested in a slim single-row by default with a `[ 🔍 Filter ]` toggle button, keyboard shortcuts (<kbd>Escape</kbd> to clear/close), autofocus, and multi-select category pills (`Set<string>`) allowing concurrent filtering across categories (e.g. Dialogue + Action).
+      - **One-Click Filter Reset**: Counter badge (`{filteredCount}/{totalCount}`) converts into an interactive reset chip with `X` whenever filters are active.
+    - Dedicated internal scrollable viewport (`SyncCueCard` in Cards mode, `SyncCueRow` in Compact mode) with `pt-2.5 pb-2` padding and `content-visibility: auto` rendering optimization.
 - **Cross-Panel Full Sync Jump**:
-  - Selecting any cue in the Left Panel executes a synchronized triple-action: seeks the video player to `cue.startTime` (preserving pause state), populates `newCue` in `CueEditorForm`, and smoothly scrolls the script canvas to center the corresponding line in the viewport.
+  - Selecting any cue in the Left Panel executes a synchronized triple-action: seeks the video player to `cue.startTime` (preserving pause state without premature `pauseVideo()` calls that abort frame decoding), populates `newCue` in `CueEditorForm`, and smoothly scrolls the script canvas to center the corresponding line in the viewport.
+
