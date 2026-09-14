@@ -249,6 +249,7 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
               <SyncCueCard
                 key={cue.id ? `sync-cue-${cue.id}` : `sync-cue-idx-${idx}`}
                 cue={cue}
+                index={idx}
                 isSelected={selectedCueId === cue.id}
                 isActive={cue.id === activeCueId}
                 onSelectCue={onSelectCue}
