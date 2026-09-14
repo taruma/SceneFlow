@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.4.0-dev] - Unreleased
 
 ### Added
+- **Two-Tier Active Cue Visual Hierarchy & Multi-Cue Highlighting (`src/components/edit/SyncCueCard.tsx`, `src/components/edit/MiniCueCard.tsx`, `src/components/edit/SyncCueRow.tsx`, `src/components/edit/SyncCuesPanel.tsx`, `src/components/edit/EditLeftPanel.tsx`, `src/lib/cueUtils.ts`)**:
+  - Implemented `findActiveCues(cues, currentTime, settings)` utility in `src/lib/cueUtils.ts` to identify all concurrently active cues at the current playback timestamp.
+  - Decoupled primary auto-scroll target tracking (`activeCueId: string | null`) from multi-cue active state (`activeCueIds: Set<string>`) in `EditLeftPanel.tsx`, using `useRef` reference stabilization to preserve the high-performance playback tick shield boundary (0 unnecessary re-renders while video is running).
+  - Established a two-tier visual feedback hierarchy across `SyncCueCard`, `MiniCueCard`, and `SyncCueRow`:
+    - **Scroll Focus Cue (`isPrimary`)**: Highlighted with a vibrant directional ambient gradient wash (`25% → 7%`, `opacity-100`), a theme-calibrated border (`rgba(${themed.rgb}, 0.65)`), a luminous outer ring and box-shadow halo (`0 0 10px rgba(..., 0.3)`), and an expanded glowing theme stripe (`w-1.5`).
+    - **Secondary Co-Active Cues (`isActive && !isPrimary`)**: Highlighted with a visible yet subtle ambient gradient wash (`~16.2% → 4.5%`, `opacity-65`) while omitting custom borders (retains standard subtle border) and outer glows to keep visual noise low during dense multi-track playback.
+  - Upgraded `SyncCueRow` compact list items to use theme-calibrated `themed.rgb` borders and box shadows, replacing legacy static `blue-500` outlines.
 - **Time-Clustered Fluid Grid & Adaptive Cue Layout (`src/components/edit/SyncCuesPanel.tsx`, `src/components/edit/SyncCueCard.tsx`, `src/components/edit/MiniCueCard.tsx`, `src/components/edit/index.ts`, `src/lib/cueUtils.ts`)**:
   - Implemented temporal cue clustering via pure `clusterCuesByTime(cues, maxGapSeconds = 2.5, maxClusterSpanSeconds = 10.0, maxCuesPerCluster = 8)` with hard ceiling bounds (max 10s span, max 8 cues) preventing continuous cue sequences from merging into monolithic mega-clusters.
   - Added sticky Timecode Ruler Strips (`⏱ 00:00.0 – 00:04.5 · N cues`) with backdrop blur, giving editors clear temporal landmarks when scanning through scenes.

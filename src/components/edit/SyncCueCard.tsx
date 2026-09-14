@@ -12,6 +12,7 @@ export interface SyncCueCardProps {
   index?: number;
   isSelected: boolean;
   isActive?: boolean;
+  isPrimary?: boolean;
   onSelectCue: (cue: Cue) => void;
   onDeleteCue: (id: string) => void;
   scriptThemeId?: string;
@@ -37,6 +38,7 @@ export const SyncCueCard: React.FC<SyncCueCardProps> = memo(({
   index,
   isSelected,
   isActive = false,
+  isPrimary = false,
   onSelectCue,
   onDeleteCue,
   scriptThemeId = 'studio-light',
@@ -84,13 +86,13 @@ export const SyncCueCard: React.FC<SyncCueCardProps> = memo(({
         containIntrinsicSize: 'auto 76px',
         borderColor: isSelected 
           ? `rgba(${themed.rgb}, 0.7)` 
-          : isActive 
-            ? `rgba(${themed.rgb}, 0.55)` 
+          : isPrimary 
+            ? `rgba(${themed.rgb}, 0.65)` 
             : undefined,
         boxShadow: isSelected 
           ? `0 0 0 1px rgba(${themed.rgb}, 0.5), 0 1px 3px rgba(0,0,0,0.06)` 
-          : isActive 
-            ? `0 0 8px rgba(${themed.rgb}, 0.25), 0 0 0 1px rgba(${themed.rgb}, 0.3)` 
+          : isPrimary 
+            ? `0 0 10px rgba(${themed.rgb}, 0.3), 0 0 0 1px rgba(${themed.rgb}, 0.35)` 
             : undefined,
       }}
       onKeyDown={(e) => {
@@ -104,26 +106,39 @@ export const SyncCueCard: React.FC<SyncCueCardProps> = memo(({
         "group flex items-stretch gap-2.5 p-2.5 rounded-xl border transition-all cursor-pointer relative overflow-hidden select-none",
         isSelected 
           ? "bg-surface-subtle text-text-main shadow-xs" 
-          : isActive
+          : isPrimary
             ? "bg-surface-subtle/90 text-text-main shadow-2xs"
-            : "bg-surface hover:bg-surface-subtle border-border-subtle hover:border-border-main hover:shadow-xs text-text-body",
+            : isActive
+              ? "bg-surface text-text-main border-border-subtle"
+              : "bg-surface hover:bg-surface-subtle border-border-subtle hover:border-border-main hover:shadow-xs text-text-body",
         className
       )}
     >
+      {/* Active Category Ambient Glow Layer (Directional Gradient) */}
+      <div 
+        className={cn(
+          "absolute inset-0 pointer-events-none transition-opacity duration-300",
+          isActive ? (isPrimary ? "opacity-100" : "opacity-65") : "opacity-0"
+        )}
+        style={{
+          background: `linear-gradient(90deg, rgba(${themed.rgb}, 0.25) 0%, rgba(${themed.rgb}, 0.07) 100%)`,
+        }}
+      />
+
       {/* Vertical Theme Stripe */}
       <div 
         className={cn(
-          "w-1 rounded-full shrink-0 transition-all duration-200 self-stretch my-0.5",
-          isActive && "w-1.5"
+          "w-1 rounded-full shrink-0 transition-all duration-200 self-stretch my-0.5 relative",
+          isPrimary && "w-1.5"
         )} 
         style={{ 
           backgroundColor: `rgb(${themed.rgb})`,
-          boxShadow: isActive ? `0 0 8px rgba(${themed.rgb}, 0.7)` : undefined
+          boxShadow: isPrimary ? `0 0 8px rgba(${themed.rgb}, 0.7)` : undefined
         }} 
       />
 
       {/* Main Content (3-Zone Flex) */}
-      <div className="flex flex-col flex-1 min-w-0 gap-1.5">
+      <div className="flex flex-col flex-1 min-w-0 gap-1.5 relative">
         {/* Zone 1: Metadata Header */}
         <div className="flex items-center justify-between gap-1.5 min-w-0">
           <div className="flex items-center gap-1.5 min-w-0 flex-wrap">

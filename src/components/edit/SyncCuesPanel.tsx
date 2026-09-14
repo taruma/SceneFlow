@@ -20,6 +20,7 @@ export interface SyncCuesPanelProps {
   cuePaletteProfile?: CuePaletteProfile;
   selectedCueId?: string;
   activeCueId?: string | null;
+  activeCueIds?: Set<string>;
   seekVersion?: number;
   searchQuery?: string;
   onSearchQueryChange?: (query: string) => void;
@@ -46,6 +47,7 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
   cuePaletteProfile = 'standard',
   selectedCueId,
   activeCueId,
+  activeCueIds,
   seekVersion = 0,
   searchQuery: controlledSearchQuery,
   onSearchQueryChange: controlledOnSearchQueryChange,
@@ -278,6 +280,9 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
                       // Dialogue and longer text cues are guaranteed at least 2 columns to avoid truncation
                       const isMini = duration <= 1.8 && cue.type !== 'dialogue' && textLen <= 40;
 
+                      const isPrimary = Boolean(cue.id && cue.id === activeCueId);
+                      const isCardActive = Boolean(cue.id && (activeCueIds ? activeCueIds.has(cue.id) : isPrimary));
+
                       if (isMini) {
                         return (
                           <MiniCueCard
@@ -285,7 +290,8 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
                             cue={cue}
                             index={index}
                             isSelected={selectedCueId === cue.id}
-                            isActive={cue.id === activeCueId}
+                            isActive={isCardActive}
+                            isPrimary={isPrimary}
                             onSelectCue={onSelectCue}
                             onDeleteCue={onDeleteCue}
                             resolveCueColor={resolveCueColor}
@@ -299,7 +305,8 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
                           cue={cue}
                           index={index}
                           isSelected={selectedCueId === cue.id}
-                          isActive={cue.id === activeCueId}
+                          isActive={isCardActive}
+                          isPrimary={isPrimary}
                           onSelectCue={onSelectCue}
                           onDeleteCue={onDeleteCue}
                           resolveCueColor={resolveCueColor}
@@ -316,17 +323,23 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
         {/* Render Compact List Mode */}
         {densityMode === 'compact' && (
           <div className="space-y-1">
-            {filteredCues.map((cue, idx) => (
-              <SyncCueRow
-                key={cue.id ? `sync-row-${cue.id}` : `sync-row-idx-${idx}`}
-                cue={cue}
-                isSelected={selectedCueId === cue.id}
-                isActive={cue.id === activeCueId}
-                onSelectCue={onSelectCue}
-                onDeleteCue={onDeleteCue}
-                resolveCueColor={resolveCueColor}
-              />
-            ))}
+            {filteredCues.map((cue, idx) => {
+              const isPrimary = Boolean(cue.id && cue.id === activeCueId);
+              const isRowActive = Boolean(cue.id && (activeCueIds ? activeCueIds.has(cue.id) : isPrimary));
+
+              return (
+                <SyncCueRow
+                  key={cue.id ? `sync-row-${cue.id}` : `sync-row-idx-${idx}`}
+                  cue={cue}
+                  isSelected={selectedCueId === cue.id}
+                  isActive={isRowActive}
+                  isPrimary={isPrimary}
+                  onSelectCue={onSelectCue}
+                  onDeleteCue={onDeleteCue}
+                  resolveCueColor={resolveCueColor}
+                />
+              );
+            })}
           </div>
         )}
 

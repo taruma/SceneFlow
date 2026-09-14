@@ -438,6 +438,18 @@ export function findActiveCue(
 }
 
 /**
+ * Finds all active cues for a given playback timestamp.
+ */
+export function findActiveCues(
+  cues: Cue[],
+  currentTime: number,
+  settings?: Record<string, TimingSettings>
+): Cue[] {
+  if (!cues || cues.length === 0) return [];
+  return cues.filter(cue => isCueActive(cue, currentTime, settings));
+}
+
+/**
  * Filters cues by multi-select category types and/or text search query.
  */
 export function filterCues(

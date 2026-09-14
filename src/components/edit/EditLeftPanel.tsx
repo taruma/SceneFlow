@@ -3,7 +3,7 @@ import YouTube, { type YouTubeProps } from 'react-youtube';
 import { Video, VideoOff, Play, Pause, RotateCcw, Edit2, Plus } from 'lucide-react';
 import { Cue, TimingSettings } from '../../types/script';
 import { extractYoutubeId, cn } from '../../lib/utils';
-import { findActiveCue, filterCues } from '../../lib/cueUtils';
+import { findActiveCue, filterCues, isCueActive } from '../../lib/cueUtils';
 import { UI_TOKENS } from '../../styles/tokens/ui';
 import { CuePaletteProfile } from '../../styles';
 import { DEFAULT_VIDEO_HEIGHT } from '../../hooks/useScriptPreferences';
@@ -189,11 +189,42 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
 
   // Discreet active cue calculation - evaluated against filtered cues so filtering by Action/Camera
   // tracks the active cue within that specific category rather than being masked by dialogue
+  const matchingCues = useMemo(() => {
+    return filterCues(cues, selectedCategories, searchQuery);
+  }, [cues, selectedCategories, searchQuery]);
+
+  // Primary active cue (furthest down the script / latest startTime) used for auto-scrolling
   const activeCue = useMemo(() => {
-    const matchingCues = filterCues(cues, selectedCategories, searchQuery);
     return findActiveCue(matchingCues, currentTime, settings);
-  }, [cues, currentTime, settings, selectedCategories, searchQuery]);
+  }, [matchingCues, currentTime, settings]);
   const activeCueId = activeCue?.id ?? null;
+
+  // Stabilized set of ALL active cue IDs at currentTime for multi-cue visual highlighting
+  const prevActiveCueIdsRef = React.useRef<Set<string>>(new Set());
+  const activeCueIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const cue of matchingCues) {
+      if (isCueActive(cue, currentTime, settings)) {
+        if (cue.id) ids.add(cue.id);
+      }
+    }
+
+    const prev = prevActiveCueIdsRef.current;
+    if (prev.size === ids.size) {
+      let isSame = true;
+      for (const id of ids) {
+        if (!prev.has(id)) {
+          isSame = false;
+          break;
+        }
+      }
+      if (isSame) {
+        return prev;
+      }
+    }
+    prevActiveCueIdsRef.current = ids;
+    return ids;
+  }, [matchingCues, currentTime, settings]);
 
   // Track backward seeks to reset forward monotonic auto-scroll guard
   const prevTimeRef = React.useRef<number>(currentTime);
@@ -430,6 +461,7 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
           cuePaletteProfile={cuePaletteProfile}
           selectedCueId={selectedCueId}
           activeCueId={activeCueId}
+          activeCueIds={activeCueIds}
           seekVersion={seekVersion}
           searchQuery={searchQuery}
           onSearchQueryChange={setSearchQuery}

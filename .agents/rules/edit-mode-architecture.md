@@ -100,10 +100,12 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
   - **Zero-Prop Portability**: `<CueEditorForm />` can be dropped anywhere inside the Edit Mode Provider tree (Right Panel header, Left Panel Studio, or popover modals) without prop-drilling through orchestrators.
 
 ## 11. Left Panel Performance-Shielded Auto-Scroll & Forward Monotonicity
-- **Tick Shield Boundary**:
+- **Tick Shield Boundary & Multi-Cue Active Resolution**:
   - `SyncCuesPanel` must never receive continuous `currentTime` from the playback clock loop. Continuous ticks would force re-rendering 100–300 cue cards/rows at 10–60Hz.
-  - Active cue resolution is computed at the `EditLeftPanel` boundary using `findActiveCue(matchingCues, currentTime, settings)`.
-  - Only discrete `activeCueId: string | null` and `seekVersion: number` are passed down to `SyncCuesPanel`, ensuring it only re-renders when crossing cue boundaries.
+  - Active cue resolution is computed at the `EditLeftPanel` boundary:
+    - `activeCueId: string | null`: Primary active cue target computed via `findActiveCue(matchingCues, currentTime, settings)` for viewport auto-scrolling.
+    - `activeCueIds: Set<string>`: All concurrently active cues firing at `currentTime` computed via `isCueActive()`.
+  - **Set Reference Stabilization**: `activeCueIds` is memoized and reference-stabilized using a `useRef` shallow-equality check (`prevActiveCueIdsRef`). When video ticks advance through the same active cues, the identical `Set` instance is returned, ensuring `SyncCuesPanel` experiences zero re-render overhead while media is running.
 - **Filter-Aware Active Cue Resolution**:
   - `EditLeftPanel` tracks filter state (`searchQuery`, `selectedCategories`) and evaluates `filterCues(cues, selectedCategories, searchQuery)` before passing cues to `findActiveCue`.
   - This ensures that when users filter by specific categories (e.g. Action, Camera, VFX) or search queries, auto-scroll accurately tracks visible items rather than losing focus due to unrendered dialogue cues.
@@ -128,7 +130,9 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
 - **Dialogue Minimum Width Safeguard**:
   - Spoken dialogue cues (`cue.type === 'dialogue'`) and text $> 40$ characters must never be rendered inside 1-column `MiniCueCard` components regardless of duration.
   - They must always render with at least 2 columns via `SyncCueCard` to preserve readability and prevent clipped dialogue.
-- **Theme-Harmonized Interactive States**:
+- **Two-Tier Visual Feedback Hierarchy (Theme-Harmonized States)**:
   - Never hardcode static colors (e.g. `border-blue-500`) for active or selected states.
-  - Derive borders and box-shadow glows from `rgba(${themed.rgb}, ...)`, ensuring interactive visual feedback matches the cue category stripe.
+  - **Scroll Focus Cue (`isPrimary = cue.id === activeCueId`)**: Renders with an active theme border (`rgba(${themed.rgb}, 0.65)`), outer halo box-shadow (`0 0 10px rgba(${themed.rgb}, 0.3), 0 0 0 1px rgba(${themed.rgb}, 0.35)`), expanded stripe (`w-1.5` with glow), and full directional ambient gradient wash (`25% → 7%`, `opacity-100`).
+  - **Secondary Co-Active Cues (`isActive && !isPrimary`)**: Renders with a clearly visible ambient gradient wash (`~16.2% → 4.5%`, `opacity-65`), but explicitly omits colored borders (retains default subtle border) and outer glow shadows to keep visual noise low during dense multi-track playback.
+  - **Selected Cue (`isSelected`)**: Maintains primary focus outline (`rgba(${themed.rgb}, 0.7)` with focus ring) for manual inspector editing.
 
