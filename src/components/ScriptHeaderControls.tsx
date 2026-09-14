@@ -7,7 +7,8 @@ import {
   Book, 
   Coffee, 
   Palette,
-  Edit2
+  Edit2,
+  PanelRight
 } from 'lucide-react';
 import { COLORS } from '../constants/script';
 import { EXTERNAL_LINKS } from '../constants/links';
@@ -18,34 +19,40 @@ import { UI_TOKENS } from '../styles/tokens/ui';
 
 interface ScriptHeaderControlsProps {
   mode: 'playback' | 'edit';
-  isAutoScrollEnabled: boolean;
-  setIsAutoScrollEnabled: (enabled: boolean) => void;
-  isAutoScrollDropdownOpen: boolean;
-  setIsAutoScrollDropdownOpen: (open: boolean) => void;
-  autoScrollTargets: string[];
-  setAutoScrollTargets: React.Dispatch<React.SetStateAction<string[]>>;
-  setIsLibraryOpen: (open: boolean) => void;
+  isAutoScrollEnabled?: boolean;
+  setIsAutoScrollEnabled?: (enabled: boolean) => void;
+  isAutoScrollDropdownOpen?: boolean;
+  setIsAutoScrollDropdownOpen?: (open: boolean) => void;
+  autoScrollTargets?: string[];
+  setAutoScrollTargets?: React.Dispatch<React.SetStateAction<string[]>>;
+  setIsLibraryOpen?: (open: boolean) => void;
   setIsColorModalOpen?: (open: boolean) => void;
   scriptThemeId?: string;
   cuePaletteProfile?: CuePaletteProfile;
   lineCount?: number;
   onOpenRawScriptModal?: () => void;
+  activeCueStatus?: 'drafting' | 'editing' | 'idle';
+  isInspectorOpen?: boolean;
+  onToggleInspector?: () => void;
 }
 
 export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = memo(({
   mode,
-  isAutoScrollEnabled,
-  setIsAutoScrollEnabled,
-  isAutoScrollDropdownOpen,
-  setIsAutoScrollDropdownOpen,
-  autoScrollTargets,
-  setAutoScrollTargets,
-  setIsLibraryOpen,
+  isAutoScrollEnabled = false,
+  setIsAutoScrollEnabled = (_: boolean) => {},
+  isAutoScrollDropdownOpen = false,
+  setIsAutoScrollDropdownOpen = (_: boolean) => {},
+  autoScrollTargets = [],
+  setAutoScrollTargets = (_: any) => {},
+  setIsLibraryOpen = (_: boolean) => {},
   setIsColorModalOpen,
   scriptThemeId,
   cuePaletteProfile = 'standard',
   lineCount,
   onOpenRawScriptModal,
+  activeCueStatus,
+  isInspectorOpen = true,
+  onToggleInspector,
 }) => {
   const autoScrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -178,13 +185,31 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = memo(({
             </a>
           </div>
         ) : (
-          onOpenRawScriptModal && (
-            <div className="flex items-center gap-2">
-              {lineCount !== undefined && (
-                <span className={cn(UI_TOKENS.badge.counterFaint, "hidden sm:inline")}>
-                  {lineCount} lines
-                </span>
-              )}
+          <div className="flex items-center gap-2">
+            {activeCueStatus === 'editing' && (
+              <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                Editing Cue
+              </span>
+            )}
+            {activeCueStatus === 'drafting' && (
+              <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                Drafting Cue
+              </span>
+            )}
+            {(!activeCueStatus || activeCueStatus === 'idle') && (
+              <span className="hidden md:flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[9px] font-bold tracking-wider text-text-faint bg-surface-muted border border-border-subtle shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-text-faint/40" />
+                Idle
+              </span>
+            )}
+            {lineCount !== undefined && (
+              <span className={cn(UI_TOKENS.badge.counterFaint, "hidden sm:inline")}>
+                {lineCount} lines
+              </span>
+            )}
+            {onOpenRawScriptModal && (
               <button 
                 type="button"
                 onClick={onOpenRawScriptModal}
@@ -193,8 +218,25 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = memo(({
               >
                 <Edit2 size={10} /> Edit Raw
               </button>
-            </div>
-          )
+            )}
+            {onToggleInspector && (
+              <button
+                type="button"
+                onClick={onToggleInspector}
+                title={isInspectorOpen ? "Collapse Inspector" : "Expand Inspector"}
+                aria-label={isInspectorOpen ? "Collapse Inspector" : "Expand Inspector"}
+                className={cn(
+                  "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border shadow-2xs",
+                  isInspectorOpen
+                    ? "bg-surface border-border-main text-text-main shadow-xs"
+                    : "bg-surface-muted hover:bg-surface-hover border-border-main text-text-muted hover:text-text-main"
+                )}
+              >
+                <PanelRight size={11} className={cn(isInspectorOpen && "text-blue-500")} />
+                <span className="hidden sm:inline">Inspector</span>
+              </button>
+            )}
+          </div>
         )}
       </div>
     </div>

@@ -19,8 +19,8 @@ import { MobileColorModal } from './components/MobileColorModal';
 import { AppInfoModal } from './components/AppInfoModal';
 import { AppHeader } from './components/AppHeader';
 import { PlaybackLeftPanel } from './components/playback/PlaybackLeftPanel';
-import { EditLeftPanel, CueEditorForm, CueEditorProvider, type CueEditorContextValue } from './components/edit';
-import { SplitPaneDivider } from './components/common/SplitPaneDivider';
+import { EditLeftPanel, EditRightPanel, CueEditorForm, CueEditorProvider, type CueEditorContextValue } from './components/edit';
+import { SplitPaneDivider, InspectorSplitDivider } from './components/common';
 import { ScriptHeaderControls } from './components/ScriptHeaderControls';
 import { cn, extractYoutubeId } from './lib/utils';
 import { UI_TOKENS } from './styles/tokens/ui';
@@ -109,6 +109,10 @@ export default function App() {
     splitRatio,
     setSplitRatio,
     commitSplitRatio,
+    inspectorWidth,
+    setInspectorWidth,
+    commitInspectorWidth,
+    resetInspectorWidth,
     resetViewLayout,
     isViewCustomized,
     isVideoCollapsed,
@@ -174,6 +178,18 @@ export default function App() {
     mode,
     player,
   });
+
+  const [isInspectorOpen, setIsInspectorOpen] = useState(true);
+
+  const handleScriptMouseUp = useCallback(() => {
+    handleSelection();
+    if (mode === 'edit') {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0 && !sel.isCollapsed && sel.toString().trim()) {
+        setIsInspectorOpen(true);
+      }
+    }
+  }, [handleSelection, mode]);
 
   const [resetConfirmation, setResetConfirmation] = useState<ResetConfirmationState>({
     isOpen: false,
@@ -483,51 +499,9 @@ export default function App() {
     });
   }, [setOverlapPicker]);
 
-  // Rendering the screenplay with memoized ScriptLine components
-  const renderedScript = useMemo(() => {
-    return processedLines.map((lineData) => {
-      const lineCues = cuesByLineIndex.get(lineData.lineIdx) || EMPTY_CUES_ARRAY;
-      return (
-        <ScriptLine
-          key={lineData.lineIdx}
-          lineData={lineData}
-          cues={lineCues}
-          mode={mode}
-          currentTime={lineCues.length > 0 ? currentTime : 0}
-          settings={state.settings}
-          hiddenCueTypes={hiddenCueTypes}
-          scriptThemeId={scriptThemeId}
-          cuePaletteProfile={cuePaletteProfile}
-          playerState={playerState}
-          isDesktop={isDesktop}
-          selection={selection}
-          editingCueId={newCue.id}
-          onSelectStaging={setActiveStaging}
-          onSelectCue={selectCueForEdit}
-          onOverlapPicker={handleOverlapPicker}
-        />
-      );
-    });
-  }, [
-    processedLines,
-    cuesByLineIndex,
-    EMPTY_CUES_ARRAY,
-    mode,
-    currentTime,
-    state.settings,
-    hiddenCueTypes,
-    scriptThemeId,
-    cuePaletteProfile,
-    playerState,
-    isDesktop,
-    selection,
-    newCue.id,
-    selectCueForEdit,
-    handleOverlapPicker,
-  ]);
-
   const handleSelectCueForEdit = useCallback((cue: Cue) => {
     selectCueForEdit(cue);
+    setIsInspectorOpen(true);
 
     // Cross-panel auto-center: smoothly scroll script container to the selected cue
     if (scriptRef.current) {
@@ -553,6 +527,49 @@ export default function App() {
       }
     }
   }, [selectCueForEdit, scriptRef]);
+
+  // Rendering the screenplay with memoized ScriptLine components
+  const renderedScript = useMemo(() => {
+    return processedLines.map((lineData) => {
+      const lineCues = cuesByLineIndex.get(lineData.lineIdx) || EMPTY_CUES_ARRAY;
+      return (
+        <ScriptLine
+          key={lineData.lineIdx}
+          lineData={lineData}
+          cues={lineCues}
+          mode={mode}
+          currentTime={lineCues.length > 0 ? currentTime : 0}
+          settings={state.settings}
+          hiddenCueTypes={hiddenCueTypes}
+          scriptThemeId={scriptThemeId}
+          cuePaletteProfile={cuePaletteProfile}
+          playerState={playerState}
+          isDesktop={isDesktop}
+          selection={selection}
+          editingCueId={newCue.id}
+          onSelectStaging={setActiveStaging}
+          onSelectCue={handleSelectCueForEdit}
+          onOverlapPicker={handleOverlapPicker}
+        />
+      );
+    });
+  }, [
+    processedLines,
+    cuesByLineIndex,
+    EMPTY_CUES_ARRAY,
+    mode,
+    currentTime,
+    state.settings,
+    hiddenCueTypes,
+    scriptThemeId,
+    cuePaletteProfile,
+    playerState,
+    isDesktop,
+    selection,
+    newCue.id,
+    handleSelectCueForEdit,
+    handleOverlapPicker,
+  ]);
 
   // Consolidate cue authoring context to eliminate prop-drilling
   const cueEditorContextValue = useMemo<CueEditorContextValue>(() => ({
@@ -713,13 +730,13 @@ export default function App() {
           />
         )}
 
-        {/* Right Panel: The Screenplay */}
+        {/* Center Panel: The Screenplay */}
         <div 
-          style={rightPanelStyle}
+          style={mode === 'playback' ? rightPanelStyle : undefined}
           className={cn(
             UI_TOKENS.layout.rightPanelBase,
             isScriptPureBlack && "!bg-black",
-            mode === 'edit' ? "hidden lg:flex w-full h-full" : "w-full flex-1"
+            mode === 'edit' ? "hidden lg:flex flex-1 min-w-0 h-full" : "w-full flex-1"
           )}
         >
           <ScriptHeaderControls
@@ -736,14 +753,14 @@ export default function App() {
             cuePaletteProfile={cuePaletteProfile}
             lineCount={processedLines.length}
             onOpenRawScriptModal={handleOpenRawScriptModal}
+            activeCueStatus={!selection ? 'idle' : (newCue.id ? 'editing' : 'drafting')}
+            isInspectorOpen={isInspectorOpen}
+            onToggleInspector={() => setIsInspectorOpen(prev => !prev)}
           />
 
-          {/* Create / Edit Cue Form in Edit Mode (Zero-prop consumption via CueEditorContext) */}
-          {mode === 'edit' && <CueEditorForm />}
-          
           <div 
             ref={scriptRef}
-            onMouseUp={handleSelection}
+            onMouseUp={handleScriptMouseUp}
             className={cn(
               "flex-1 overflow-y-auto font-serif text-[14px] leading-snug scrollbar-hide",
               isScriptPureBlack && "bg-black",
@@ -773,6 +790,26 @@ export default function App() {
             </div>
           </div>
         </div>
+
+        {/* Right Panel: Dedicated Cue Inspector in Edit Mode (Desktop Only) */}
+        {mode === 'edit' && isDesktop && isInspectorOpen && (
+          <>
+            <InspectorSplitDivider
+              width={inspectorWidth}
+              onWidthChange={setInspectorWidth}
+              onWidthCommit={commitInspectorWidth}
+              onReset={resetInspectorWidth}
+            />
+            <EditRightPanel
+              isOpen={isInspectorOpen}
+              width={inspectorWidth}
+              onClose={() => setIsInspectorOpen(false)}
+              cues={state.cues}
+              scriptThemeId={scriptThemeId}
+              cuePaletteProfile={cuePaletteProfile}
+            />
+          </>
+        )}
       </main>
     </CueEditorProvider>
 

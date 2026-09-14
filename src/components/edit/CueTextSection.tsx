@@ -1,11 +1,12 @@
 import React, { memo } from 'react';
 import { Search, Check } from 'lucide-react';
+import { AlternativeLocation } from '../../types/script';
 import { cn } from '../../lib/utils';
 
 export interface CueTextSectionProps {
   selectedText: string;
   onTextChange: (text: string) => void;
-  altLocations: Array<{ start: number; end: number; context: string }> | null;
+  altLocations: AlternativeLocation[] | null;
   onFindAlternatives: () => void;
   onSelectLocation: (start: number, end: number) => void;
   activeStartIndex?: number;
@@ -50,7 +51,7 @@ export const CueTextSection: React.FC<CueTextSectionProps> = memo(({
                   className={cn(
                     "w-full text-left p-1.5 rounded text-[9px] font-mono transition-all border",
                     isCurrent 
-                      ? "bg-blue-50 border-blue-200 text-blue-700 font-bold" 
+                      ? "bg-blue-500/15 border-blue-500/30 text-blue-600 dark:text-blue-400 font-bold" 
                       : "bg-surface border-border-main text-text-muted hover:bg-surface-hover"
                   )}
                 >
@@ -64,6 +65,12 @@ export const CueTextSection: React.FC<CueTextSectionProps> = memo(({
             })}
           </div>
         </div>
+      )}
+
+      {altLocations && altLocations.length <= 1 && (
+        <p className="text-[9px] text-text-faint italic pt-0.5">
+          No additional occurrences found in script.
+        </p>
       )}
     </div>
   );

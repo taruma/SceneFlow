@@ -196,6 +196,20 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 - **Unified "Reset View Layout" (`SettingsMenuDropdown`, <kbd>Shift+R</kbd>)**: Accessible inside Studio Settings (`[ ⚙️ Settings ▾ ]`), via the global <kbd>Shift+R</kbd> keyboard shortcut, or by double-clicking either split divider, immediately snapping both the 65:35 horizontal panel split and the 220px vertical video height back to defaults.
 - **Decoupled Persistence**: Changes commit to `localStorage` (`sceneflow_split_ratio`, `sceneflow_video_height`) only upon pointer release to eliminate main-thread disk I/O bottlenecks.
 
+### Desktop 3-Panel Edit Workstation & Draggable Cue Inspector
+- **Dedicated 3-Panel Workstation Layout**: Desktop Edit Mode organizes the workspace into three specialized vertical columns:
+  1. *Left Panel (`EditLeftPanel`)*: Houses the media preview with live timecode HUD badge, persistent transport controls, and the time-clustered Sync Cues fluid grid.
+  2. *Center Panel (Screenplay Canvas)*: An unobstructed reading canvas that flexes smoothly (`flex-1 min-w-0`), ensuring screenplay text editing never overlaps or collides with the cue inspector.
+  3. *Right Panel (`EditRightPanel`)*: A dedicated Cue Inspector panel featuring a 48px header matching the script toolbar, active status indicator (`Drafting`, `Editing`, `Idle`), collapsible toggle, embedded `CueEditorForm`, and an idle overview displaying cue statistics by category with quick editing shortcuts.
+- **Draggable Vertical Inspector Splitter (`InspectorSplitDivider`)**:
+  - Dragging the divider between the screenplay canvas and cue inspector resizes inspector width between `280px` (minimum) and `560px` (maximum), defaulting to `360px`.
+  - Enforces a minimum width floor for the left and center panels (`window.innerWidth - 650px`) so the script canvas is never collapsed.
+  - VSync-aligned `requestAnimationFrame` throttling and zero-transition suppression (`is-resizing-split`) deliver fluid 60–144fps dragging.
+  - Double-clicking the divider snaps inspector width back to default (`360px`).
+  - Keyboard accessible: <kbd>←</kbd> widens inspector, <kbd>→</kbd> narrows inspector, <kbd>Enter</kbd> / <kbd>Home</kbd> resets width.
+  - Persists preference in `localStorage` (`sceneflow_inspector_width`) upon drag release.
+- **Interactive Panel Toggling**: A dedicated `<PanelRight />` toggle in `ScriptHeaderControls` allows collapsing or expanding the inspector on demand. Selecting script text or clicking any sync cue card automatically opens the inspector.
+
 ### Collapsible Video Player (Screen Recording Mode)
 - **Unobstructed Timeline Viewport**: Playback mode features an interactive collapse toggle button in the `PLAYBACK` section header (`[ Hide Video ]` ⇋ `[ Show Video ]`) and a global keyboard shortcut (<kbd>V</kbd>) to collapse/hide the YouTube video player.
 - **Tailored for Screen Recording**: Collapsing the video player gives the entire left panel height to the Multi-Track Sync Timeline and Active Highlights, removing visual clutter when capturing clean sync recordings of the timeline alongside screenplay text.

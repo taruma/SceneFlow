@@ -7,10 +7,10 @@ export interface CueTimingInputsProps {
   endTime?: number;
   startIndex?: number;
   endIndex?: number;
-  onStartTimeChange: (time: number) => void;
-  onEndTimeChange: (time: number) => void;
-  onStartIndexChange: (index: number) => void;
-  onEndIndexChange: (index: number) => void;
+  onStartTimeChange: (time: number | undefined) => void;
+  onEndTimeChange: (time: number | undefined) => void;
+  onStartIndexChange: (index: number | undefined) => void;
+  onEndIndexChange: (index: number | undefined) => void;
   onCaptureStartTime: () => void;
   onCaptureEndTime: () => void;
 }
@@ -42,9 +42,18 @@ export const CueTimingInputs: React.FC<CueTimingInputsProps> = memo(({
             type="number"
             step="0.1"
             min="0"
-            value={startTime ?? ''}
-            onChange={(e) => onStartTimeChange(parseFloat(e.target.value) || 0)}
-            className="w-full bg-surface border border-border-main rounded-lg px-1.5 py-1 text-text-main font-mono text-[10px] focus:outline-none focus:ring-1 focus:ring-blue-500"
+            value={startTime !== undefined ? startTime : ''}
+            onChange={(e) => {
+              const raw = e.target.value.trim();
+              if (raw === '') {
+                onStartTimeChange(undefined);
+              } else {
+                const parsed = parseFloat(raw);
+                onStartTimeChange(isNaN(parsed) ? undefined : parsed);
+              }
+            }}
+            placeholder="0.0"
+            className="w-full bg-surface border border-border-main rounded-lg px-1.5 py-1 text-text-main font-mono text-[10px] focus:outline-none focus:ring-1 focus:ring-border-main transition-colors"
           />
           <button
             type="button"
@@ -70,9 +79,18 @@ export const CueTimingInputs: React.FC<CueTimingInputsProps> = memo(({
             type="number"
             step="0.1"
             min="0"
-            value={endTime ?? ''}
-            onChange={(e) => onEndTimeChange(parseFloat(e.target.value) || 0)}
-            className="w-full bg-surface border border-border-main rounded-lg px-1.5 py-1 text-text-main font-mono text-[10px] focus:outline-none focus:ring-1 focus:ring-blue-500"
+            value={endTime !== undefined ? endTime : ''}
+            onChange={(e) => {
+              const raw = e.target.value.trim();
+              if (raw === '') {
+                onEndTimeChange(undefined);
+              } else {
+                const parsed = parseFloat(raw);
+                onEndTimeChange(isNaN(parsed) ? undefined : parsed);
+              }
+            }}
+            placeholder="0.0"
+            className="w-full bg-surface border border-border-main rounded-lg px-1.5 py-1 text-text-main font-mono text-[10px] focus:outline-none focus:ring-1 focus:ring-border-main transition-colors"
           />
           <button
             type="button"
@@ -91,9 +109,18 @@ export const CueTimingInputs: React.FC<CueTimingInputsProps> = memo(({
         <input 
           type="number"
           min="0"
-          value={startIndex ?? ''}
-          onChange={(e) => onStartIndexChange(parseInt(e.target.value, 10) || 0)}
-          className="w-full bg-surface border border-border-main rounded-lg px-1.5 py-1 text-text-main font-mono text-[10px] focus:outline-none focus:ring-1 focus:ring-blue-500"
+          value={startIndex !== undefined ? startIndex : ''}
+          onChange={(e) => {
+            const raw = e.target.value.trim();
+            if (raw === '') {
+              onStartIndexChange(undefined);
+            } else {
+              const parsed = parseInt(raw, 10);
+              onStartIndexChange(isNaN(parsed) ? undefined : Math.max(0, parsed));
+            }
+          }}
+          placeholder="0"
+          className="w-full bg-surface border border-border-main rounded-lg px-1.5 py-1 text-text-main font-mono text-[10px] focus:outline-none focus:ring-1 focus:ring-border-main transition-colors"
         />
       </div>
 
@@ -103,9 +130,18 @@ export const CueTimingInputs: React.FC<CueTimingInputsProps> = memo(({
         <input 
           type="number"
           min="0"
-          value={endIndex ?? ''}
-          onChange={(e) => onEndIndexChange(parseInt(e.target.value, 10) || 0)}
-          className="w-full bg-surface border border-border-main rounded-lg px-1.5 py-1 text-text-main font-mono text-[10px] focus:outline-none focus:ring-1 focus:ring-blue-500"
+          value={endIndex !== undefined ? endIndex : ''}
+          onChange={(e) => {
+            const raw = e.target.value.trim();
+            if (raw === '') {
+              onEndIndexChange(undefined);
+            } else {
+              const parsed = parseInt(raw, 10);
+              onEndIndexChange(isNaN(parsed) ? undefined : Math.max(0, parsed));
+            }
+          }}
+          placeholder="0"
+          className="w-full bg-surface border border-border-main rounded-lg px-1.5 py-1 text-text-main font-mono text-[10px] focus:outline-none focus:ring-1 focus:ring-border-main transition-colors"
         />
       </div>
     </div>

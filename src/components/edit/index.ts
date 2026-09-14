@@ -1,6 +1,9 @@
 export { EditLeftPanel, YOUTUBE_PLAYER_OPTS } from './EditLeftPanel';
 export type { EditLeftPanelProps } from './EditLeftPanel';
 
+export { EditRightPanel } from './EditRightPanel';
+export type { EditRightPanelProps } from './EditRightPanel';
+
 export { LiveTimecodeBadge } from './LiveTimecodeBadge';
 export type { LiveTimecodeBadgeProps } from './LiveTimecodeBadge';
 

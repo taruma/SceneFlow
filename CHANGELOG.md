@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.4.0-dev] - Unreleased
 
 ### Added
+- **Desktop 3-Panel Edit Workstation & Dedicated Cue Inspector (`src/App.tsx`, `src/components/edit/EditRightPanel.tsx`, `src/components/common/InspectorSplitDivider.tsx`, `src/components/ScriptHeaderControls.tsx`, `src/hooks/useScriptPreferences.ts`)**:
+  - Transitioned Desktop Edit Mode into a dedicated 3-panel layout: Left Panel (Media Preview, transport controls, and time-clustered cue list), Center Panel (Screenplay canvas with unconstrained `flex-1 min-w-0` reading flow), and Right Panel (dedicated `EditRightPanel` Cue Inspector).
+  - Implemented `InspectorSplitDivider` with pointer-capture drag tracking (60–144fps via `requestAnimationFrame`), hardware transition suppression (`is-resizing-split`), iframe event guard overlay, double-click reset to default width (`360px`), keyboard accessibility (<kbd>←</kbd> / <kbd>→</kbd> / <kbd>Enter</kbd>), and boundary clamping (`280px` to `560px`).
+  - Added dynamic inspector toggling via `<PanelRight />` in `ScriptHeaderControls`, with automatic opening on script text selection or cue card click.
+  - Added `inspectorWidth` preference state and `sceneflow_inspector_width` persistence in `useScriptPreferences.ts`, unified with `Reset View Layout (Shift+R)`.
+- **Cue Timing Inputs Coercion & Backspace Deletion Bugfix (`src/components/edit/CueTimingInputs.tsx`)**:
+  - Fixed backspace input behavior on numeric start/end time and index inputs where clearing characters coerced empty strings into `0` (which previously dumped thousands of characters from offset 0 into the cue editor).
+  - Adopted semantic design tokens (`focus:ring-border-main`, `bg-surface`) replacing hardcoded Tailwind utilities.
+- **Cue Text Section Accessibility & Fallbacks (`src/components/edit/CueTextSection.tsx`)**:
+  - Upgraded dark mode contrast on active alternative match pills (`bg-blue-500/15 border-blue-500/30 text-blue-600 dark:text-blue-400 font-bold`).
+  - Added fallback feedback ("No additional occurrences found in script") when alternative search returns $\le 1$ match.
+  - Aligned parameter types with canonical `AlternativeLocation` interface.
 - **Two-Tier Active Cue Visual Hierarchy & Multi-Cue Highlighting (`src/components/edit/SyncCueCard.tsx`, `src/components/edit/MiniCueCard.tsx`, `src/components/edit/SyncCueRow.tsx`, `src/components/edit/SyncCuesPanel.tsx`, `src/components/edit/EditLeftPanel.tsx`, `src/lib/cueUtils.ts`)**:
   - Implemented `findActiveCues(cues, currentTime, settings)` utility in `src/lib/cueUtils.ts` to identify all concurrently active cues at the current playback timestamp.
   - Decoupled primary auto-scroll target tracking (`activeCueId: string | null`) from multi-cue active state (`activeCueIds: Set<string>`) in `EditLeftPanel.tsx`, using `useRef` reference stabilization to preserve the high-performance playback tick shield boundary (0 unnecessary re-renders while video is running).

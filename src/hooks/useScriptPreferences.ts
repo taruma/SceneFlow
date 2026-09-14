@@ -17,9 +17,14 @@ export const DEFAULT_VIDEO_HEIGHT = 220;
 export const MIN_VIDEO_HEIGHT = 160;
 export const MAX_VIDEO_HEIGHT = 480;
 
+export const DEFAULT_INSPECTOR_WIDTH = 360;
+export const MIN_INSPECTOR_WIDTH = 280;
+export const MAX_INSPECTOR_WIDTH = 560;
+
 export const SCRIPT_PREFERENCES_STORAGE_KEYS = {
   VIDEO_HEIGHT: 'sceneflow_video_height',
   SPLIT_RATIO: 'sceneflow_split_ratio',
+  INSPECTOR_WIDTH: 'sceneflow_inspector_width',
   VIDEO_COLLAPSED: 'sceneflow_playback_video_collapsed',
   SCRIPT_WIDTH_PRESET: 'sceneflow_script_width_preset',
   SCROLL_FOCUS_PRESET: 'sceneflow_scroll_focus_preset',
@@ -87,6 +92,42 @@ export function useScriptPreferences() {
     });
   }, []);
 
+  const [inspectorWidth, setInspectorWidthState] = useState<number>(() => {
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem(SCRIPT_PREFERENCES_STORAGE_KEYS.INSPECTOR_WIDTH);
+      if (saved) {
+        const parsed = parseInt(saved, 10);
+        if (!isNaN(parsed) && parsed >= MIN_INSPECTOR_WIDTH && parsed <= MAX_INSPECTOR_WIDTH) {
+          return parsed;
+        }
+      }
+    }
+    return DEFAULT_INSPECTOR_WIDTH;
+  });
+
+  const setInspectorWidth = useCallback((width: number) => {
+    const clamped = Math.min(MAX_INSPECTOR_WIDTH, Math.max(MIN_INSPECTOR_WIDTH, Math.round(width)));
+    setInspectorWidthState(clamped);
+  }, []);
+
+  const commitInspectorWidth = useCallback((width?: number) => {
+    setInspectorWidthState(prev => {
+      const target = typeof width === 'number' ? width : prev;
+      const clamped = Math.min(MAX_INSPECTOR_WIDTH, Math.max(MIN_INSPECTOR_WIDTH, Math.round(target)));
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(SCRIPT_PREFERENCES_STORAGE_KEYS.INSPECTOR_WIDTH, clamped.toString());
+      }
+      return clamped;
+    });
+  }, []);
+
+  const resetInspectorWidth = useCallback(() => {
+    setInspectorWidthState(DEFAULT_INSPECTOR_WIDTH);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(SCRIPT_PREFERENCES_STORAGE_KEYS.INSPECTOR_WIDTH);
+    }
+  }, []);
+
   const [isVideoCollapsed, setIsVideoCollapsedState] = useState<boolean>(() => {
     if (typeof localStorage !== 'undefined') {
       const saved = localStorage.getItem(SCRIPT_PREFERENCES_STORAGE_KEYS.VIDEO_COLLAPSED);
@@ -119,12 +160,14 @@ export function useScriptPreferences() {
     commitSplitRatio(DEFAULT_SPLIT_RATIO);
     setVideoHeight(DEFAULT_VIDEO_HEIGHT);
     commitVideoHeight(DEFAULT_VIDEO_HEIGHT);
+    resetInspectorWidth();
     setIsVideoCollapsed(false);
-  }, [setSplitRatio, commitSplitRatio, setVideoHeight, commitVideoHeight, setIsVideoCollapsed]);
+  }, [setSplitRatio, commitSplitRatio, setVideoHeight, commitVideoHeight, resetInspectorWidth, setIsVideoCollapsed]);
 
   const isViewCustomized = 
     Math.round(splitRatio) !== DEFAULT_SPLIT_RATIO || 
     videoHeight !== DEFAULT_VIDEO_HEIGHT ||
+    inspectorWidth !== DEFAULT_INSPECTOR_WIDTH ||
     isVideoCollapsed;
 
   const [scriptWidthPreset, setScriptWidthPresetState] = useState<ScriptWidthPresetId>(() => {
@@ -266,6 +309,10 @@ export function useScriptPreferences() {
     splitRatio,
     setSplitRatio,
     commitSplitRatio,
+    inspectorWidth,
+    setInspectorWidth,
+    commitInspectorWidth,
+    resetInspectorWidth,
     resetViewLayout,
     isViewCustomized,
     isVideoCollapsed,
