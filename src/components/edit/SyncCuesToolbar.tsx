@@ -8,7 +8,8 @@ import {
   X, 
   LayoutGrid, 
   List,
-  Target
+  Target,
+  ListChecks
 } from 'lucide-react';
 import { COLORS } from '../../constants/script';
 import { useScriptTheme } from '../../hooks/useScriptTheme';
@@ -90,9 +91,15 @@ export const SyncCuesToolbar: React.FC<SyncCuesToolbarProps> = memo(({
       isExpanded ? "space-y-2 pb-2.5 pt-1.5" : "py-2"
     )}>
       {/* Top Row: Title, Counter & Action Controls */}
-      <div className="flex items-center justify-between gap-2 px-1">
-        <div className="flex items-center gap-2">
-          <h3 className={UI_TOKENS.layout.sectionTitle}>Sync Cues</h3>
+      <div className="flex items-center justify-between gap-2 px-1 min-w-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 shrink-0">
+          <h3 
+            className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-1.5 shrink-0")}
+            title="Sync Cues"
+          >
+            <ListChecks size={13} className="text-text-muted shrink-0" />
+            <span className="sync-cues-title truncate">Sync Cues</span>
+          </h3>
           {isFiltering ? (
             <button
               type="button"
@@ -132,7 +139,7 @@ export const SyncCuesToolbar: React.FC<SyncCuesToolbarProps> = memo(({
               )}
             >
               <LayoutGrid size={10} className="shrink-0" />
-              <span className="header-btn-label">Cards</span>
+              <span className="sync-btn-label">Cards</span>
             </button>
             <button
               type="button"
@@ -147,7 +154,7 @@ export const SyncCuesToolbar: React.FC<SyncCuesToolbarProps> = memo(({
               )}
             >
               <List size={10} className="shrink-0" />
-              <span className="header-btn-label">Compact</span>
+              <span className="sync-btn-label">Compact</span>
             </button>
           </div>
 
@@ -166,7 +173,7 @@ export const SyncCuesToolbar: React.FC<SyncCuesToolbarProps> = memo(({
               )}
             >
               <Target size={10} className={cn("shrink-0", isAutoScrollEnabled && "text-blue-500 animate-pulse")} />
-              <span className="header-btn-label">Scroll</span>
+              <span className="sync-btn-label-scroll sync-btn-label">Scroll</span>
             </button>
           )}
 
@@ -186,7 +193,7 @@ export const SyncCuesToolbar: React.FC<SyncCuesToolbarProps> = memo(({
             )}
           >
             <Search size={10} className="shrink-0" />
-            <span className="header-btn-label">Filter</span>
+            <span className="sync-btn-label">Filter</span>
             {isFiltering && (
               <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_6px_rgba(59,130,246,0.6)] shrink-0" />
             )}
@@ -200,7 +207,7 @@ export const SyncCuesToolbar: React.FC<SyncCuesToolbarProps> = memo(({
             className="flex items-center gap-1 px-2 py-1 bg-surface-muted hover:bg-surface-hover border border-border-main text-text-muted hover:text-text-main rounded-lg text-[9px] font-black uppercase tracking-wider transition-all active:scale-95 shadow-2xs"
           >
             <Braces size={10} className="shrink-0 text-text-muted" />
-            <span className="header-btn-label">JSON</span>
+            <span className="sync-btn-label-secondary">JSON</span>
           </button>
 
           {/* Automated Realign Action */}
@@ -224,7 +231,7 @@ export const SyncCuesToolbar: React.FC<SyncCuesToolbarProps> = memo(({
               ) : (
                 <RefreshCw size={10} className="shrink-0" />
               )}
-              <span className="header-btn-label">
+              <span className="sync-btn-label-secondary">
                 {alignSuccess ? 'Synced' : 'Resync'}
               </span>
             </button>

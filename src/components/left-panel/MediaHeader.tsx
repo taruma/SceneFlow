@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Video, VideoOff, Play, Pause, RotateCcw, Plus, Edit2 } from 'lucide-react';
+import { Video, VideoOff, Play, Pause, RotateCcw, Plus, Edit2, Film } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { UI_TOKENS } from '../../styles/tokens/ui';
 import { LiveTimecodeBadge } from '../edit/LiveTimecodeBadge';
@@ -37,10 +37,20 @@ export const MediaHeader: React.FC<MediaHeaderProps> = memo(({
   duration,
 }) => {
   return (
-    <div className="flex items-center justify-between px-3 pt-2 pb-1 lg:px-0 lg:pt-0 lg:pb-0.5 gap-2 min-w-0">
+    <div className={cn(
+      "flex items-center justify-between px-3 pt-2 pb-1 lg:px-0 lg:pt-0 lg:pb-0.5 gap-2 min-w-0",
+      mode === 'playback' ? "media-header-playback" : "media-header-edit"
+    )}>
       <div className="flex items-center gap-1.5 min-w-0 shrink-0">
-        <h2 className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-2 shrink-0")}>
-          <Video size={14} className="text-text-muted shrink-0" />
+        <h2 
+          className={cn(UI_TOKENS.layout.sectionTitle, "flex items-center gap-2 shrink-0")}
+          title={mode === 'playback' ? 'Playback' : 'Media Preview'}
+        >
+          {mode === 'playback' ? (
+            <Film size={13} className="text-text-muted shrink-0" />
+          ) : (
+            <Video size={13} className="text-text-muted shrink-0" />
+          )}
           <span className="media-preview-title">
             {mode === 'playback' ? 'Playback' : 'Media Preview'}
           </span>
@@ -87,8 +97,8 @@ export const MediaHeader: React.FC<MediaHeaderProps> = memo(({
       </div>
 
       <div className="flex items-center gap-1.5 shrink-0">
-        {/* Live Precision Timecode Display (In Edit mode when player is available) */}
-        {mode === 'edit' && hasPlayer && (
+        {/* Live Precision Timecode Display (Available in Edit and Playback modes when player is connected) */}
+        {hasPlayer && (
           <LiveTimecodeBadge
             currentTime={currentTime}
             duration={duration}
@@ -96,48 +106,54 @@ export const MediaHeader: React.FC<MediaHeaderProps> = memo(({
           />
         )}
 
-        {/* Playback Transport Controls: Replay & Play/Pause */}
-        <div className="flex items-center gap-1">
-          {onReplay && (
-            <button
-              type="button"
-              onClick={onReplay}
-              aria-label="Replay from beginning"
-              title="Replay from start (0:00)"
-              className="group flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-150 border border-border-subtle bg-surface hover:bg-surface-subtle text-text-muted hover:text-text-main shadow-xs active:scale-95 select-none"
-            >
-              <RotateCcw size={11} className="shrink-0 transition-transform duration-200 group-hover:-rotate-45" />
-              <span className="header-btn-label">Replay</span>
-            </button>
-          )}
+        {/* Playback Transport Controls: Replay & Play/Pause in a unified pill */}
+        {(onReplay || onTogglePlayPause) && (
+          <div className="flex items-center p-0.5 bg-surface-subtle border border-border-subtle rounded-lg shadow-xs">
+            {onReplay && (
+              <button
+                type="button"
+                onClick={onReplay}
+                aria-label="Replay from beginning"
+                title="Replay from start (0:00)"
+                className="group flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-wider transition-all duration-150 text-text-muted hover:text-text-main hover:bg-surface active:scale-95 select-none"
+              >
+                <RotateCcw size={11} className="shrink-0 transition-transform duration-200 group-hover:-rotate-45" />
+                <span className="media-btn-label">Replay</span>
+              </button>
+            )}
 
-          {onTogglePlayPause && (
-            <button
-              type="button"
-              onClick={onTogglePlayPause}
-              aria-label={isPlaying ? "Pause" : "Play"}
-              title={isPlaying ? "Pause playback [Space]" : "Start playback [Space]"}
-              className={cn(
-                "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-150 border shadow-xs active:scale-95 select-none",
-                isPlaying
-                  ? "bg-blue-500 hover:bg-blue-600 border-blue-600 text-white shadow-blue-500/20"
-                  : "bg-surface hover:bg-surface-subtle border-border-subtle text-text-muted hover:text-text-main"
-              )}
-            >
-              {isPlaying ? (
-                <>
-                  <Pause size={11} className="shrink-0 fill-current" />
-                  <span className="header-btn-label">Pause</span>
-                </>
-              ) : (
-                <>
-                  <Play size={11} className="shrink-0 fill-current ml-0.5" />
-                  <span className="header-btn-label">Play</span>
-                </>
-              )}
-            </button>
-          )}
-        </div>
+            {onReplay && onTogglePlayPause && (
+              <div className="w-px h-3 bg-border-subtle mx-0.5" aria-hidden="true" />
+            )}
+
+            {onTogglePlayPause && (
+              <button
+                type="button"
+                onClick={onTogglePlayPause}
+                aria-label={isPlaying ? "Pause" : "Play"}
+                title={isPlaying ? "Pause playback [Space]" : "Start playback [Space]"}
+                className={cn(
+                  "flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider transition-all duration-150 select-none active:scale-95",
+                  isPlaying
+                    ? "bg-blue-500 hover:bg-blue-600 text-white shadow-xs"
+                    : "text-text-muted hover:text-text-main hover:bg-surface"
+                )}
+              >
+                {isPlaying ? (
+                  <>
+                    <Pause size={11} className="shrink-0 fill-current" />
+                    <span className="media-btn-label">Pause</span>
+                  </>
+                ) : (
+                  <>
+                    <Play size={11} className="shrink-0 fill-current ml-0.5" />
+                    <span className="media-btn-label">Play</span>
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Separator between transport and collapse controls */}
         {onToggleVideoCollapsed && (
@@ -158,19 +174,19 @@ export const MediaHeader: React.FC<MediaHeaderProps> = memo(({
             className={cn(
               "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-150 border shadow-xs active:scale-95 select-none",
               isVideoCollapsed
-                ? "bg-blue-500/10 hover:bg-blue-500/20 border-blue-500/30 text-blue-600 dark:text-blue-400 font-bold"
+                ? "bg-blue-500/15 hover:bg-blue-500/25 border-blue-500/40 text-blue-600 dark:text-blue-400 font-bold"
                 : "bg-surface hover:bg-surface-subtle border-border-subtle text-text-muted hover:text-text-main"
             )}
           >
             {isVideoCollapsed ? (
               <>
                 <Video size={12} className="text-blue-500 shrink-0" />
-                <span className="header-btn-label">Show Video</span>
+                <span className="media-btn-label">Show Video</span>
               </>
             ) : (
               <>
                 <VideoOff size={12} className="text-text-faint shrink-0" />
-                <span className="header-btn-label">Hide Video</span>
+                <span className="media-btn-label">Hide Video</span>
               </>
             )}
           </button>
