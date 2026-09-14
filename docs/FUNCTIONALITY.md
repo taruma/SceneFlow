@@ -209,6 +209,11 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
   - Keyboard accessible: <kbd>←</kbd> widens inspector, <kbd>→</kbd> narrows inspector, <kbd>Enter</kbd> / <kbd>Home</kbd> resets width.
   - Persists preference in `localStorage` (`sceneflow_inspector_width`) upon drag release.
 - **Interactive Panel Toggling**: A dedicated `<PanelRight />` toggle in `ScriptHeaderControls` allows collapsing or expanding the inspector on demand. Selecting script text or clicking any sync cue card automatically opens the inspector.
+- **Ergonomic Cue Inspector Workstation (`CueEditorForm`, `CueTimingCard`, `CueSceneContext`, `CueScriptAnchoring`)**:
+  - *Surrounding Scene Context Window*: Renders dimmed preceding (`PREV`) and following (`NEXT`) screenplay lines directly around the editable quote, providing instant narrative orientation.
+  - *Audio-Visual Timing Deck*: Symmetrical Start and End boundary cards featuring precision timecodes (`00:00.2`), single-click micro-nudge steppers (`-0.5s`, `-0.1s`, `+0.1s`, `+0.5s`), clock capture buttons, a live calculated duration badge (`⏱ 1.6s`), and an integrated `Play Cue [▶]` preview button with a `Loop [🔁]` toggle for repetitive sound/speech auditing that dynamically adapts to nudged timestamps in real time without restarting playback.
+  - *Script Anchoring Card*: Dedicated card retaining fully editable `Start Index` and `End Index` inputs (for manual cue drafting and pasting raw text), live character span counter (`54 chars`), and cue ID badge.
+  - *Pinned Sticky Bottom Action Bar*: Anchors `Update Cue` (<kbd>Ctrl+Enter</kbd>), `Cancel` (<kbd>Esc</kbd>), and `Delete` (trash can) permanently to the bottom of the inspector viewport, ensuring critical actions are always accessible without crowding the top header.
 
 ### Collapsible Video Player (Screen Recording Mode)
 - **Unobstructed Timeline Viewport**: Playback mode features an interactive collapse toggle button in the `PLAYBACK` section header (`[ Hide Video ]` ⇋ `[ Show Video ]`) and a global keyboard shortcut (<kbd>V</kbd>) to collapse/hide the YouTube video player.

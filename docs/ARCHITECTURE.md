@@ -38,7 +38,7 @@ SceneFlow follows a modular, 5-layer architecture that separates script parsing,
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
 │                              UI LAYER                                  │
-│  src/App.tsx (orchestrator)  •  src/components/* (25 sub-components)    │
+│  src/App.tsx (orchestrator)  •  src/components/* (28 sub-components)    │
 │  src/types/script.ts (14 domain interfaces)                            │
 └────────────────────────────────────────────────────────────────────────┘
 ```
@@ -257,9 +257,13 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
    - **`ModeSegmentedControl.tsx`**: Centered segmented mode switcher (`[ ▶ Playback | ✏️ Edit ]`) with mode-specific active accents, responsive icon collapsing, and ARIA group attributes.
 2. **`InitializingScreen.tsx`**: Branded initial load screen displaying the SceneFlow logo with subtle animation.
 3. **`YoutubeSourceInput.tsx`**: YouTube URL/ID input with live player connection indicator and automatic ID extraction using `UI_TOKENS.input`.
-4. **`CueEditorForm.tsx`, `CueEditorContext.tsx` & `EditRightPanel.tsx` (`src/components/edit/`)**: Dedicated cue authoring/editing workstation for Desktop Edit Mode.
+4. **`CueEditorForm.tsx`, `CueTimingCard.tsx`, `CueSceneContext.tsx`, `CueScriptAnchoring.tsx` & `EditRightPanel.tsx` (`src/components/edit/`)**: Dedicated cue authoring and inspection workstation for Desktop Edit Mode:
    - **`EditRightPanel.tsx`**: Standalone 3rd panel column anchored to the right side of the screen, featuring a 48px header with status badge (`Drafting`, `Editing`, `Idle`), collapse button, dynamic resizable width (`width?: number`), and studio idle overview displaying cue breakdown and quick tips when no cue is active.
-   - **`CueEditorForm.tsx`**: Embedded form with editable text area, cue type selector, start/end time inputs with clock capture buttons and precision timecodes, index editors, and "Find Alternative" button. Powered by compound `CueEditorContext` (`CueEditorProvider`) allowing zero-prop invocation with automatic fallback resolution across layout panels.
+   - **`CueEditorForm.tsx`**: Main editor orchestrator with a Pinned Sticky Bottom Action Bar permanently anchoring `Update Cue` (<kbd>Ctrl+Enter</kbd>), `Cancel` (<kbd>Esc</kbd>), and `Delete`.
+   - **`CueTimingCard.tsx`**: Dedicated audio-visual timing deck with symmetrical Start/End boundary cards, live precision timecode HUDs, single-click micro-nudge steppers (`-0.5s`, `-0.1s`, `+0.1s`, `+0.5s`), live calculated duration badge (`⏱ 1.6s`), and interactive `Play Cue` preview controller with a `Loop [🔁]` toggle.
+   - **`CueSceneContext.tsx`**: Screenplay context window rendering dimmed preceding (`PREV`) and following (`NEXT`) script lines around the selected quote.
+   - **`CueScriptAnchoring.tsx`**: Dedicated character offset card with editable `Start Index` and `End Index` inputs, live span counter (`54 chars`), and cue ID chip.
+   - **`CueTypeSelector.tsx`**: Theme-harmonized 8-category palette selector.
 5. **`EditLeftPanel.tsx` & `SyncCuesPanel.tsx`**: Studio-grade Two-Tier Flex Left Panel for Edit mode with adaptive container queries (`@container (max-width: 580px)`):
    - **Tier 1 (Media Viewport)**: Media header with persistent transport controls (`[Replay]`, `[Play/Pause]`, `[Hide/Show Video]`), live timecode HUD badge (`LiveTimecodeBadge.tsx`), collapsible YouTube source pill (`[ 🟢 {videoId} ✏️ ]` in `YoutubeSourceInput.tsx`), isolated memoized video viewport (`EditVideoViewport`) with static `YOUTUBE_PLAYER_OPTS` to shield iframe rendering from 10Hz timecode updates, and horizontal `VideoSplitDivider` (tightened `mt-2 mb-1`).
    - **Tier 2 (Sync Cues Studio)**: `flex-1 min-h-0` workspace featuring permanently docked `SyncCuesToolbar.tsx` (with `[ { } JSON ]`, `[ ↺ Resync ]`, `[ 🎯 Scroll ]` auto-scroll toggle with `localStorage` persistence, `[ ⊞ Cards | ≡ Compact ]` adaptive density switcher, collapsible search & multi-select category filter drawer with <kbd>Esc</kbd> shortcut and one-click reset counter badge, and balanced `py-2` vertical padding) and a dedicated scrollable container supporting both Cards view and high-density Compact view (`SyncCueRow.tsx`).

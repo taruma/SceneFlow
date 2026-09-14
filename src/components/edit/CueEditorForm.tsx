@@ -1,13 +1,14 @@
 import React, { memo, useCallback } from 'react';
-import { Edit2, Plus, X } from 'lucide-react';
+import { Edit2, Plus, X, Check, Trash2 } from 'lucide-react';
 import { Cue, TextSelection, AlternativeLocation } from '../../types/script';
 import { CuePaletteProfile } from '../../styles';
 import { cn } from '../../lib/utils';
 import { useEscapeKey } from '../../hooks';
 import { CueTextSection } from './CueTextSection';
-import { CueTimingInputs } from './CueTimingInputs';
+import { CueSceneContext } from './CueSceneContext';
+import { CueTimingCard } from './CueTimingCard';
 import { CueTypeSelector } from './CueTypeSelector';
-import { CueEditorActions } from './CueEditorActions';
+import { CueScriptAnchoring } from './CueScriptAnchoring';
 import { useOptionalCueEditorContext } from './CueEditorContext';
 
 export interface CueEditorFormProps {
@@ -141,56 +142,72 @@ export const CueEditorForm: React.FC<Partial<CueEditorFormProps>> = memo((props)
     return null;
   }
 
+  const isEditing = Boolean(newCue.id);
+
   return (
     <div 
       onKeyDown={handleKeyDown}
-      className={cn("p-4 space-y-4 text-text-main animate-in fade-in duration-200", props.className)}
+      className={cn("flex flex-col min-h-full justify-between text-text-main animate-in fade-in duration-200", props.className)}
     >
-      <div className="flex items-center justify-between border-b border-border-subtle pb-2.5">
-        <div className="flex items-center gap-2">
-          {newCue.id ? <Edit2 size={15} className="text-amber-500" /> : <Plus size={15} className="text-blue-500" />}
-          <h3 className="text-xs font-black uppercase tracking-wider text-text-main">
-            {newCue.id ? 'Edit Sync Cue' : 'New Sync Cue'}
-          </h3>
+      {/* Scrollable Form Cards Container */}
+      <div className="p-4 space-y-4">
+        {/* Form Title & Fast Cancel Header */}
+        <div className="flex items-center justify-between border-b border-border-subtle pb-2.5">
+          <div className="flex items-center gap-2">
+            {isEditing ? (
+              <Edit2 size={14} className="text-amber-500 shrink-0" />
+            ) : (
+              <Plus size={14} className="text-blue-500 shrink-0" />
+            )}
+            <h3 className="text-xs font-black uppercase tracking-wider text-text-main truncate">
+              {isEditing ? 'Edit Sync Cue' : 'New Sync Cue'}
+            </h3>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <span className="text-[9px] font-mono text-text-faint hidden sm:inline">Esc</span>
+            <button 
+              type="button"
+              onClick={cancelEdit}
+              className="p-1 text-text-faint hover:text-text-main hover:bg-surface-hover rounded-md transition-colors"
+              title="Cancel (Esc)"
+              aria-label="Cancel editing"
+            >
+              <X size={14} />
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-[9px] font-mono text-text-faint hidden sm:inline">Esc</span>
-          <button 
-            type="button"
-            onClick={cancelEdit}
-            className="p-1 text-text-faint hover:text-text-main hover:bg-surface-hover rounded-md transition-colors"
-            title="Cancel (Esc)"
-          >
-            <X size={14} />
-          </button>
-        </div>
-      </div>
 
-      <CueTextSection
-        selectedText={newCue.selectedText || ''}
-        onTextChange={handleTextChange}
-        altLocations={altLocations}
-        onFindAlternatives={findAlternativeLocations}
-        onSelectLocation={handleSelectLocation}
-        activeStartIndex={newCue.startIndex}
-      />
+        {/* Card 1: Surrounding Scene Context & Editable Quote */}
+        <CueSceneContext
+          scriptText={scriptText}
+          startIndex={newCue.startIndex}
+          endIndex={newCue.endIndex}
+        >
+          <CueTextSection
+            selectedText={newCue.selectedText || ''}
+            onTextChange={handleTextChange}
+            altLocations={altLocations}
+            onFindAlternatives={findAlternativeLocations}
+            onSelectLocation={handleSelectLocation}
+            activeStartIndex={newCue.startIndex}
+          />
+        </CueSceneContext>
 
-      <CueTimingInputs
-        startTime={newCue.startTime}
-        endTime={newCue.endTime}
-        startIndex={newCue.startIndex}
-        endIndex={newCue.endIndex}
-        onStartTimeChange={handleStartTimeChange}
-        onEndTimeChange={handleEndTimeChange}
-        onStartIndexChange={handleStartIndexChange}
-        onEndIndexChange={handleEndIndexChange}
-        onCaptureStartTime={handleCaptureStartTime}
-        onCaptureEndTime={handleCaptureEndTime}
-      />
+        {/* Card 2: Dedicated Audio-Visual Timing Deck & Loop Preview */}
+        <CueTimingCard
+          startTime={newCue.startTime}
+          endTime={newCue.endTime}
+          onStartTimeChange={handleStartTimeChange}
+          onEndTimeChange={handleEndTimeChange}
+          onCaptureStartTime={handleCaptureStartTime}
+          onCaptureEndTime={handleCaptureEndTime}
+          player={player}
+        />
 
-      <div className="space-y-3 pt-1">
-        <div>
-          <label className="text-[8px] font-black uppercase tracking-widest text-text-faint block mb-1.5">
+        {/* Card 3: Cue Category Palette */}
+        <div className="space-y-1.5">
+          <label className="text-[8px] font-black uppercase tracking-widest text-text-faint block">
             Cue Category
           </label>
           <CueTypeSelector
@@ -202,15 +219,59 @@ export const CueEditorForm: React.FC<Partial<CueEditorFormProps>> = memo((props)
           />
         </div>
 
-        <div className="flex items-center justify-between pt-2 border-t border-border-subtle">
-          <span className="text-[9px] font-mono text-text-faint">Ctrl+Enter to save</span>
-          <CueEditorActions
-            isEditing={!!newCue.id}
-            canSave={canSave}
-            onSave={saveCue}
-            onDelete={newCue.id ? handleDelete : undefined}
-          />
+        {/* Card 4: Dedicated Script Anchoring & Offsets */}
+        <CueScriptAnchoring
+          startIndex={newCue.startIndex}
+          endIndex={newCue.endIndex}
+          onStartIndexChange={handleStartIndexChange}
+          onEndIndexChange={handleEndIndexChange}
+          cueId={newCue.id}
+        />
+      </div>
+
+      {/* Pinned Sticky Bottom Action Bar */}
+      <div className="sticky bottom-0 bg-surface/95 backdrop-blur border-t border-border-subtle p-3 flex items-center justify-between z-20 shadow-xs">
+        <div className="flex items-center gap-1.5">
+          {isEditing && (
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="p-2 text-text-faint hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors active:scale-95"
+              title="Delete Cue"
+              aria-label="Delete this cue"
+            >
+              <Trash2 size={16} />
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={cancelEdit}
+            className="px-2.5 py-1.5 text-xs text-text-muted hover:text-text-main hover:bg-surface-hover rounded-lg transition-colors font-medium select-none"
+          >
+            Cancel <span className="text-[9px] font-mono text-text-faint ml-0.5">Esc</span>
+          </button>
         </div>
+
+        <button
+          type="button"
+          onClick={saveCue}
+          disabled={!canSave}
+          className={cn(
+            "flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-150 shadow-sm active:scale-95 select-none",
+            canSave
+              ? (isEditing 
+                  ? "bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/20" 
+                  : "bg-blue-500 hover:bg-blue-600 text-white shadow-blue-500/20")
+              : "bg-surface-muted text-text-faint cursor-not-allowed opacity-50"
+          )}
+          title={canSave ? "Save cue (Ctrl+Enter)" : "Fill required text and timing to save"}
+        >
+          <Check size={14} className="stroke-[3]" />
+          <span>{isEditing ? 'Update Cue' : 'Create Cue'}</span>
+          <kbd className="text-[9px] font-mono font-normal opacity-70 px-1 py-0.5 rounded bg-black/20 ml-0.5">
+            ^↵
+          </kbd>
+        </button>
       </div>
     </div>
   );
