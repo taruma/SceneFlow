@@ -1,4 +1,4 @@
-export { EditLeftPanel } from './EditLeftPanel';
+export { EditLeftPanel, YOUTUBE_PLAYER_OPTS } from './EditLeftPanel';
 export type { EditLeftPanelProps } from './EditLeftPanel';
 
 export { LiveTimecodeBadge } from './LiveTimecodeBadge';

@@ -3,8 +3,7 @@ import { Trash2 } from 'lucide-react';
 import { Cue } from '../../types/script';
 import { COLORS } from '../../constants/script';
 import { LEGACY_CLASS_MAP, type CuePaletteProfile } from '../../styles/tokens/cues';
-import { useScriptTheme } from '../../hooks/useScriptTheme';
-import { type CueThemeResolvedColor } from '../../styles';
+import { type CueThemeResolvedColor, getCueColorForTheme, type ScriptThemeId } from '../../styles';
 import { formatPrecisionTimecode, cn } from '../../lib/utils';
 import { UI_TOKENS } from '../../styles/tokens/ui';
 
@@ -27,10 +26,10 @@ export const SyncCueRow: React.FC<SyncCueRowProps> = memo(({
   cuePaletteProfile = 'standard',
   resolveCueColor: externalResolveCueColor,
 }) => {
-  const fallbackTheme = useScriptTheme(scriptThemeId as any, cuePaletteProfile);
-  const resolveCueColor = externalResolveCueColor || fallbackTheme.resolveCueColor;
   const cueType = cue.type || (cue.colorClass ? (LEGACY_CLASS_MAP[cue.colorClass] || COLORS.find(c => c.class === cue.colorClass)?.type) : 'dialogue') || 'dialogue';
-  const themed = resolveCueColor(cueType);
+  const themed = externalResolveCueColor
+    ? externalResolveCueColor(cueType)
+    : getCueColorForTheme(cueType, scriptThemeId as ScriptThemeId, cuePaletteProfile);
 
   const startTimeStr = (cue.startTime ?? 0).toFixed(1);
 

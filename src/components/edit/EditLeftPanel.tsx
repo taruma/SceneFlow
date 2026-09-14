@@ -1,5 +1,5 @@
-import React, { memo } from 'react';
-import YouTube from 'react-youtube';
+import React, { memo, useMemo } from 'react';
+import YouTube, { type YouTubeProps } from 'react-youtube';
 import { Video, VideoOff, Play, Pause, RotateCcw, Edit2, Plus } from 'lucide-react';
 import { Cue } from '../../types/script';
 import { extractYoutubeId, cn } from '../../lib/utils';
@@ -43,6 +43,82 @@ export interface EditLeftPanelProps {
   style?: React.CSSProperties;
   className?: string;
 }
+
+export const YOUTUBE_PLAYER_OPTS: YouTubeProps['opts'] = {
+  width: '100%',
+  height: '100%',
+  playerVars: {
+    autoplay: 0,
+    modestbranding: 1,
+    rel: 0,
+    controls: 1,
+    origin: typeof window !== 'undefined' ? window.location.origin : undefined,
+  },
+};
+
+interface EditVideoViewportProps {
+  youtubeId: string;
+  videoHeight: number;
+  isVideoCollapsed: boolean;
+  isDesktop: boolean;
+  onReady: (event: any) => void;
+  onStateChange: (event: any) => void;
+}
+
+/**
+ * Isolated, memoized Video Viewport for Edit mode.
+ * Shields the YouTube iframe and container from playback tick re-renders triggered by LiveTimecodeBadge.
+ */
+const EditVideoViewport: React.FC<EditVideoViewportProps> = memo(({
+  youtubeId,
+  videoHeight,
+  isVideoCollapsed,
+  isDesktop,
+  onReady,
+  onStateChange,
+}) => {
+  const extractedVideoId = useMemo(() => extractYoutubeId(youtubeId), [youtubeId]);
+
+  return (
+    <div 
+      className={cn(
+        "bg-black overflow-hidden shadow-xl ring-1 ring-border-main relative group pointer-events-auto rounded-none lg:rounded-2xl transition-all duration-300 flex items-center justify-center shrink-0",
+        isVideoCollapsed && "h-0 min-h-0 max-h-0 opacity-0 pointer-events-none ring-0 shadow-none border-none !m-0 !p-0 overflow-hidden"
+      )}
+      style={!isVideoCollapsed ? (isDesktop ? { 
+        height: `${videoHeight}px`, 
+        maxWidth: '100%', 
+        aspectRatio: '16 / 9', 
+        margin: '0 auto' 
+      } : { 
+        aspectRatio: '16 / 9',
+        width: '100%' 
+      }) : { 
+        height: 0, 
+        minHeight: 0, 
+        maxHeight: 0, 
+        margin: 0, 
+        padding: 0, 
+        opacity: 0, 
+        overflow: 'hidden', 
+        pointerEvents: 'none' 
+      }}
+      aria-hidden={isVideoCollapsed}
+    >
+      <YouTube
+        key={extractedVideoId}
+        videoId={extractedVideoId}
+        opts={YOUTUBE_PLAYER_OPTS}
+        onReady={onReady}
+        onStateChange={onStateChange}
+        className="w-full h-full bg-black"
+        iframeClassName="w-full h-full block border-0 bg-black"
+      />
+    </div>
+  );
+});
+
+EditVideoViewport.displayName = 'EditVideoViewport';
 
 /**
  * Dedicated Left Panel container for Edit mode.
@@ -277,52 +353,15 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
           />
         )}
 
-        {/* Video Player Viewport */}
-        <div 
-          className={cn(
-            "bg-black overflow-hidden shadow-xl ring-1 ring-border-main relative group pointer-events-auto rounded-none lg:rounded-2xl transition-all duration-300 flex items-center justify-center shrink-0",
-            isVideoCollapsed && "h-0 min-h-0 max-h-0 opacity-0 pointer-events-none ring-0 shadow-none border-none !m-0 !p-0 overflow-hidden"
-          )}
-          style={!isVideoCollapsed ? (isDesktop ? { 
-            height: `${videoHeight}px`, 
-            maxWidth: '100%', 
-            aspectRatio: '16 / 9', 
-            margin: '0 auto' 
-          } : { 
-            aspectRatio: '16 / 9',
-            width: '100%' 
-          }) : { 
-            height: 0, 
-            minHeight: 0, 
-            maxHeight: 0, 
-            margin: 0, 
-            padding: 0, 
-            opacity: 0, 
-            overflow: 'hidden', 
-            pointerEvents: 'none' 
-          }}
-          aria-hidden={isVideoCollapsed}
-        >
-          <YouTube
-            key={extractYoutubeId(youtubeId)}
-            videoId={extractYoutubeId(youtubeId)}
-            opts={{
-              width: '100%',
-              height: '100%',
-              playerVars: {
-                autoplay: 0,
-                modestbranding: 1,
-                rel: 0,
-                controls: 1,
-                origin: typeof window !== 'undefined' ? window.location.origin : undefined,
-              },
-            }}
-            onReady={onReady}
-            onStateChange={onStateChange}
-            className="w-full h-full bg-black"
-            iframeClassName="w-full h-full block border-0 bg-black"
-          />
-        </div>
+        {/* Video Player Viewport (Memoized to isolate YouTube iframe from playback tick badge re-renders) */}
+        <EditVideoViewport
+          youtubeId={youtubeId}
+          videoHeight={videoHeight}
+          isVideoCollapsed={isVideoCollapsed}
+          isDesktop={isDesktop}
+          onReady={onReady}
+          onStateChange={onStateChange}
+        />
 
         {/* Horizontal Video ⇕ Timeline Split Divider */}
         {isDesktop && !isVideoCollapsed && (

@@ -10,6 +10,7 @@ import { TimelineDensity } from '../active-highlights/types';
 
 import { DEFAULT_VIDEO_HEIGHT } from '../../hooks/useScriptPreferences';
 import { VideoSplitDivider } from './VideoSplitDivider';
+import { YOUTUBE_PLAYER_OPTS } from '../edit';
 
 export interface PlaybackLeftPanelProps {
   youtubeId: string;
@@ -220,17 +221,7 @@ export const PlaybackLeftPanel: React.FC<PlaybackLeftPanelProps> = ({
           <YouTube
             key={extractYoutubeId(youtubeId)}
             videoId={extractYoutubeId(youtubeId)}
-            opts={{
-              width: '100%',
-              height: '100%',
-              playerVars: {
-                autoplay: 0,
-                modestbranding: 1,
-                rel: 0,
-                controls: 1,
-                origin: typeof window !== 'undefined' ? window.location.origin : undefined,
-              },
-            }}
+            opts={YOUTUBE_PLAYER_OPTS}
             onReady={onReady}
             onStateChange={onStateChange}
             className="w-full h-full bg-black"
