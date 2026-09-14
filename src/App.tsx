@@ -105,6 +105,7 @@ export default function App() {
     togglePlayPause,
     jumpBy,
     seekTo,
+    resetPlayback,
   } = useYouTubePlayer({
     youtubeId: state.youtubeId,
     onPlay: () => setActiveStaging(null),
@@ -434,9 +435,9 @@ export default function App() {
 
   const resetState = async () => {
     try {
+      resetPlayback();
       await resetToDefault();
       setMode('playback');
-      setCurrentTime(0);
       setResetConfirmation({ isOpen: false, type: null, error: null });
     } catch (err) {
       console.error("Failed to reset to default script", err);
@@ -445,9 +446,9 @@ export default function App() {
 
   const createNewProject = async () => {
     try {
+      resetPlayback();
       await loadBlankStorage();
       setMode('edit');
-      setCurrentTime(0);
       setResetConfirmation({ isOpen: false, type: null, error: null });
     } catch (err) {
       console.error("Failed to create new project", err);
@@ -456,9 +457,9 @@ export default function App() {
 
   const loadGuide = async () => {
     try {
+      resetPlayback();
       const finalData = await loadGuideStorage();
       setMode('playback');
-      setCurrentTime(0);
       setResetConfirmation({ isOpen: false, type: null, error: null });
       realignCues(finalData);
     } catch (err) {
@@ -468,9 +469,9 @@ export default function App() {
 
   const loadExample = async (path: string) => {
     try {
+      resetPlayback();
       const finalData = await loadExampleStorage(path);
       setMode('playback');
-      setCurrentTime(0);
       setResetConfirmation({ isOpen: false, type: null, error: null });
       setIsLibraryOpen(false);
       realignCues(finalData);
@@ -482,9 +483,9 @@ export default function App() {
   const loadRemoteProject = async (url: string) => {
     setResetConfirmation(prev => ({ ...prev, error: null }));
     try {
+      resetPlayback();
       const finalData = await loadRemoteProjectStorage(url);
       setMode('playback');
-      setCurrentTime(0);
       setResetConfirmation({ isOpen: false, type: null, error: null });
       setIsLibraryOpen(false);
       realignCues(finalData);
@@ -514,6 +515,7 @@ export default function App() {
         const json = JSON.parse(event.target?.result as string);
         const validatedJson = validateImportedScriptJson(json);
 
+        resetPlayback();
         setState(validatedJson);
         // Automatically trigger alignment after import
         realignCues(validatedJson);
@@ -522,7 +524,7 @@ export default function App() {
       }
     };
     reader.readAsText(file);
-  }, [realignCues, setState]);
+  }, [realignCues, setState, resetPlayback]);
 
   const handleNewProject = useCallback(() => {
     setResetConfirmation({ isOpen: true, type: 'new', error: null });
