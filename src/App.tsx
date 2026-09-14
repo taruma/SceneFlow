@@ -28,6 +28,7 @@ import { useScriptStorage } from './hooks/useScriptStorage';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
 import { 
   useScriptPreferences,
+  SCRIPT_PREFERENCES_STORAGE_KEYS,
   MIN_EDIT_SPLIT_RATIO,
   MAX_EDIT_SPLIT_RATIO,
   MIN_SPLIT_RATIO,
@@ -56,7 +57,22 @@ import {
 
 export default function App() {
   const [activeStaging, setActiveStaging] = useState<{ label: string; content: string } | null>(null);
-  const [mode, setMode] = useState<AppMode>('playback');
+  const [mode, setModeState] = useState<AppMode>(() => {
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem(SCRIPT_PREFERENCES_STORAGE_KEYS.APP_MODE);
+      if (saved === 'playback' || saved === 'edit') {
+        return saved;
+      }
+    }
+    return 'playback';
+  });
+
+  const setMode = useCallback((newMode: AppMode) => {
+    setModeState(newMode);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(SCRIPT_PREFERENCES_STORAGE_KEYS.APP_MODE, newMode);
+    }
+  }, []);
   const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
   const [isCuesModalOpen, setIsCuesModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);

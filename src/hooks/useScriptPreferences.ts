@@ -42,6 +42,7 @@ export const SCRIPT_PREFERENCES_STORAGE_KEYS = {
   SCRIPT_THEME: 'sceneflow_script_theme',
   CUE_PALETTE_PROFILE: 'sceneflow_cue_palette_profile',
   PURE_BLACK_BG: 'sceneflow_pure_black_bg',
+  APP_MODE: 'sceneflow_app_mode',
 } as const;
 
 export function useScriptPreferences(mode: AppMode = 'playback') {
