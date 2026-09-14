@@ -106,6 +106,14 @@ Desktop Edit Mode features a dedicated Two-Tier studio workspace in the Left Pan
   - Left panels declare native CSS container queries. Action button labels (`.header-btn-label`) and YouTube source pill text (`.youtube-pill-text`) automatically collapse to compact icon buttons when the left panel is dragged narrow, preventing horizontal overflow or text wrapping without JavaScript resize listeners.
 - **Black-Screen-Free Cue Seeking**:
   - Clicking any cue in the list seeks the YouTube player directly to the cue's start time without premature `pauseVideo()` calls, ensuring the video decoding pipeline smoothly paints the target frame buffer on first load or paused scrub.
+- **Left Panel Performance-Shielded Auto-Scroll & Forward Monotonicity**:
+  - **`[ 🎯 Scroll ]` Toolbar Toggle**: Integrated auto-scroll toggle button in `SyncCuesToolbar` with persistent preference state in `localStorage` (`sceneflow_edit_autoscroll`). On narrow panels, the label gracefully collapses to `[ 🎯 ]` via container queries.
+  - **Context-Aware Active Cue Highlighting**: Active cue cards and compact rows automatically illuminate with a pulsing border ring and glowing active indicator dot as playback progresses.
+  - **High-Refresh Cubic Ease-Out Animator**: Uses display-refresh `smoothScrollTo` for fluid, non-blocking auto-scrolling with instant wheel/touch gesture cancellation so manual list scrolling is never fought.
+  - **Forward Monotonic Scrolling Guard**: Prevents irritating rubber-band / yo-yo scrolling when nested cues finish inside a long-duration cue (e.g. Action cue spanning 0:00 to 0:10 after nested dialogue cues at 0:05–0:09 finish). The cue list smoothly scrolls forward without snapping back up to older enclosing cues.
+  - **Backward Seek & Filter Reset**: Seeking backwards (`currentTime < prevTime - 0.3s`), toggling category filters, changing density, or clearing searches immediately resets the monotonic guard, providing complete bidirectional scrubbing responsiveness.
+  - **Filter-Aware Active Tracking**: When filtering cues by multi-select categories (e.g. Action, Camera, VFX) or typing search queries, active cue detection dynamically tracks the active cue among currently matching visible items, ensuring the panel scrolls to the active cue in the filtered set rather than being hidden or dropped due to unrendered dialogue.
+
 
 ---
 

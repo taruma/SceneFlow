@@ -98,3 +98,22 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
   - Cue draft state (`newCue`), timing inputs, DOM selection ranges, alternative locations, and save/delete callbacks are consolidated into `<CueEditorProvider value={cueEditorContextValue}>`.
   - `CueEditorForm` supports dual-mode operation: it accepts explicit props (for isolated testing or overrides) but falls back automatically to `useOptionalCueEditorContext()`.
   - **Zero-Prop Portability**: `<CueEditorForm />` can be dropped anywhere inside the Edit Mode Provider tree (Right Panel header, Left Panel Studio, or popover modals) without prop-drilling through orchestrators.
+
+## 11. Left Panel Performance-Shielded Auto-Scroll & Forward Monotonicity
+- **Tick Shield Boundary**:
+  - `SyncCuesPanel` must never receive continuous `currentTime` from the playback clock loop. Continuous ticks would force re-rendering 100–300 cue cards/rows at 10–60Hz.
+  - Active cue resolution is computed at the `EditLeftPanel` boundary using `findActiveCue(matchingCues, currentTime, settings)`.
+  - Only discrete `activeCueId: string | null` and `seekVersion: number` are passed down to `SyncCuesPanel`, ensuring it only re-renders when crossing cue boundaries.
+- **Filter-Aware Active Cue Resolution**:
+  - `EditLeftPanel` tracks filter state (`searchQuery`, `selectedCategories`) and evaluates `filterCues(cues, selectedCategories, searchQuery)` before passing cues to `findActiveCue`.
+  - This ensures that when users filter by specific categories (e.g. Action, Camera, VFX) or search queries, auto-scroll accurately tracks visible items rather than losing focus due to unrendered dialogue cues.
+- **Forward Monotonic Scrolling Guard (`furthestScrollTopRef`)**:
+  - During normal playback, nested cues frequently occur (e.g., an enclosing Action cue from 0:00 to 0:10 with multiple dialogue or sound cues from 0:02 to 0:08).
+  - Without a monotonic guard, when the nested cues end at 0:08, the active resolver would fall back to the still-active Action cue, causing an annoying upward "rubber-band" or yo-yo scroll.
+  - Forward monotonic tracking enforces that target scroll positions can only advance forward during forward playback (`targetScrollTop >= furthestScrollTopRef.current - 40px`).
+- **Backward Seek & Filter Invalidation (`seekVersion`)**:
+  - Backward seeks (`currentTime < prevTime - 0.3s`), category filter toggles, density switches, or search input changes increment or trigger a reset of `furthestScrollTopRef.current = 0`, restoring complete bidirectional scroll responsiveness immediately.
+- **Smooth Cubic Ease-Out Animator & Instant Gesture Interruption**:
+  - Uses `smoothScrollTo` (`requestAnimationFrame` cubic ease-out `1 - (1 - t)^3`) for high-refresh display animation.
+  - Viewport binds passive `wheel` and `touchmove` listeners that immediately abort any active auto-scroll animation, ensuring zero scroll fighting when the user manually scrolls the list.
+

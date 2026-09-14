@@ -2,10 +2,9 @@ import React, { memo, useMemo, useState, useEffect, useRef, useCallback } from '
 import { FilterX, Highlighter } from 'lucide-react';
 import { Cue } from '../../types/script';
 import { CuePaletteProfile } from '../../styles';
-import { COLORS } from '../../constants/script';
-import { LEGACY_CLASS_MAP } from '../../styles/tokens/cues';
 import { useScriptTheme } from '../../hooks/useScriptTheme';
 import { smoothScrollTo } from '../../hooks/useAutoScroll';
+import { filterCues } from '../../lib/cueUtils';
 import { cn } from '../../lib/utils';
 import { SyncCuesToolbar, CueDensityMode } from './SyncCuesToolbar';
 import { SyncCueCard } from './SyncCueCard';
@@ -21,6 +20,11 @@ export interface SyncCuesPanelProps {
   selectedCueId?: string;
   activeCueId?: string | null;
   seekVersion?: number;
+  searchQuery?: string;
+  onSearchQueryChange?: (query: string) => void;
+  selectedCategories?: Set<string>;
+  onToggleCategory?: (category: string | null) => void;
+  onResetFilters?: () => void;
   onSelectCue: (cue: Cue) => void;
   onDeleteCue: (id: string) => void;
   onOpenRawCuesModal: () => void;
@@ -42,6 +46,11 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
   selectedCueId,
   activeCueId,
   seekVersion = 0,
+  searchQuery: controlledSearchQuery,
+  onSearchQueryChange: controlledOnSearchQueryChange,
+  selectedCategories: controlledSelectedCategories,
+  onToggleCategory: controlledOnToggleCategory,
+  onResetFilters: controlledOnResetFilters,
   onSelectCue,
   onDeleteCue,
   onOpenRawCuesModal,
@@ -121,17 +130,21 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
     };
   }, []);
 
-  // Search & Category filter states
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
+  // Search & Category filter states (fallback to internal if not controlled from parent)
+  const [internalSearchQuery, setInternalSearchQuery] = useState('');
+  const [internalSelectedCategories, setInternalSelectedCategories] = useState<Set<string>>(new Set());
 
-  // Toggle category filter (multi-select, null clears to "ALL")
-  const handleToggleCategory = (category: string | null) => {
+  const searchQuery = controlledSearchQuery !== undefined ? controlledSearchQuery : internalSearchQuery;
+  const selectedCategories = controlledSelectedCategories !== undefined ? controlledSelectedCategories : internalSelectedCategories;
+
+  const handleSearchQueryChange = controlledOnSearchQueryChange || setInternalSearchQuery;
+
+  const handleToggleCategory = controlledOnToggleCategory || ((category: string | null) => {
     if (category === null) {
-      setSelectedCategories(new Set());
+      setInternalSelectedCategories(new Set());
       return;
     }
-    setSelectedCategories(prev => {
+    setInternalSelectedCategories(prev => {
       const next = new Set(prev);
       if (next.has(category)) {
         next.delete(category);
@@ -140,7 +153,16 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
       }
       return next;
     });
-  };
+  });
+
+  const handleClearFilters = controlledOnResetFilters || (() => {
+    handleSearchQueryChange('');
+    if (controlledOnToggleCategory) {
+      controlledOnToggleCategory(null);
+    } else {
+      setInternalSelectedCategories(new Set());
+    }
+  });
 
   // Chronologically sorted cues (ascending by startTime, secondary on startIndex)
   const sortedCues = useMemo(() => {
@@ -150,37 +172,10 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
     );
   }, [cues]);
 
-  // Filtered cues based on search query and multi-select categories
+  // Filtered cues based on search query and multi-select categories using shared filterCues
   const filteredCues = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-
-    return sortedCues.filter(cue => {
-      const cueType = cue.type || (cue.colorClass ? (LEGACY_CLASS_MAP[cue.colorClass] || COLORS.find(c => c.class === cue.colorClass)?.type) : 'dialogue') || 'dialogue';
-
-      // 1. Multi-select Category filter
-      if (selectedCategories.size > 0 && !selectedCategories.has(cueType)) {
-        return false;
-      }
-
-      // 2. Search query filter
-      if (q) {
-        const textMatch = cue.selectedText?.toLowerCase().includes(q);
-        const typeMatch = cueType.toLowerCase().includes(q);
-        const startStr = (cue.startTime ?? 0).toFixed(1);
-        const endStr = (cue.endTime ?? 0).toFixed(1);
-        const timeMatch = startStr.includes(q) || endStr.includes(q);
-
-        return textMatch || typeMatch || timeMatch;
-      }
-
-      return true;
-    });
+    return filterCues(sortedCues, selectedCategories, searchQuery);
   }, [sortedCues, searchQuery, selectedCategories]);
-
-  const handleClearFilters = () => {
-    setSearchQuery('');
-    setSelectedCategories(new Set());
-  };
 
   const furthestScrollTopRef = useRef<number>(0);
 
@@ -233,7 +228,7 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
         isAutoScrollEnabled={isAutoScrollEnabled}
         onToggleAutoScroll={handleToggleAutoScroll}
         searchQuery={searchQuery}
-        onSearchQueryChange={setSearchQuery}
+        onSearchQueryChange={handleSearchQueryChange}
         selectedCategories={selectedCategories}
         onToggleCategory={handleToggleCategory}
         onOpenRawCuesModal={onOpenRawCuesModal}

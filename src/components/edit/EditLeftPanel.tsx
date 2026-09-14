@@ -3,7 +3,7 @@ import YouTube, { type YouTubeProps } from 'react-youtube';
 import { Video, VideoOff, Play, Pause, RotateCcw, Edit2, Plus } from 'lucide-react';
 import { Cue, TimingSettings } from '../../types/script';
 import { extractYoutubeId, cn } from '../../lib/utils';
-import { findActiveCue } from '../../lib/cueUtils';
+import { findActiveCue, filterCues } from '../../lib/cueUtils';
 import { UI_TOKENS } from '../../styles/tokens/ui';
 import { CuePaletteProfile } from '../../styles';
 import { DEFAULT_VIDEO_HEIGHT } from '../../hooks/useScriptPreferences';
@@ -162,10 +162,37 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
 }) => {
   const isPlaying = playerState === 1;
 
-  // Discreet active cue calculation - only changes when a cue boundary is crossed
+  // Filter states for Sync Cues (lifted so activeCue tracking is filter-aware)
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [selectedCategories, setSelectedCategories] = React.useState<Set<string>>(new Set());
+
+  const handleToggleCategory = React.useCallback((category: string | null) => {
+    if (category === null) {
+      setSelectedCategories(new Set());
+      return;
+    }
+    setSelectedCategories(prev => {
+      const next = new Set(prev);
+      if (next.has(category)) {
+        next.delete(category);
+      } else {
+        next.add(category);
+      }
+      return next;
+    });
+  }, []);
+
+  const handleClearFilters = React.useCallback(() => {
+    setSearchQuery('');
+    setSelectedCategories(new Set());
+  }, []);
+
+  // Discreet active cue calculation - evaluated against filtered cues so filtering by Action/Camera
+  // tracks the active cue within that specific category rather than being masked by dialogue
   const activeCue = useMemo(() => {
-    return findActiveCue(cues, currentTime, settings);
-  }, [cues, currentTime, settings]);
+    const matchingCues = filterCues(cues, selectedCategories, searchQuery);
+    return findActiveCue(matchingCues, currentTime, settings);
+  }, [cues, currentTime, settings, selectedCategories, searchQuery]);
   const activeCueId = activeCue?.id ?? null;
 
   // Track backward seeks to reset forward monotonic auto-scroll guard
@@ -404,6 +431,11 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
           selectedCueId={selectedCueId}
           activeCueId={activeCueId}
           seekVersion={seekVersion}
+          searchQuery={searchQuery}
+          onSearchQueryChange={setSearchQuery}
+          selectedCategories={selectedCategories}
+          onToggleCategory={handleToggleCategory}
+          onResetFilters={handleClearFilters}
           onSelectCue={onSelectCue}
           onDeleteCue={onDeleteCue}
           onOpenRawCuesModal={onOpenRawCuesModal}

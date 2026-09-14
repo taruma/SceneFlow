@@ -438,6 +438,41 @@ export function findActiveCue(
 }
 
 /**
+ * Filters cues by multi-select category types and/or text search query.
+ */
+export function filterCues(
+  cues: Cue[],
+  selectedCategories?: Set<string>,
+  searchQuery?: string
+): Cue[] {
+  if (!cues || cues.length === 0) return [];
+  const q = searchQuery?.trim().toLowerCase() || '';
+  const hasCategories = Boolean(selectedCategories && selectedCategories.size > 0);
+
+  if (!q && !hasCategories) return cues;
+
+  return cues.filter(cue => {
+    const cueType = cue.type || (cue.colorClass ? (LEGACY_CLASS_MAP[cue.colorClass] || COLORS.find(c => c.class === cue.colorClass)?.type) : 'dialogue') || 'dialogue';
+
+    if (hasCategories && !selectedCategories!.has(cueType)) {
+      return false;
+    }
+
+    if (q) {
+      const textMatch = cue.selectedText?.toLowerCase().includes(q);
+      const typeMatch = cueType.toLowerCase().includes(q);
+      const startStr = (cue.startTime ?? 0).toFixed(1);
+      const endStr = (cue.endTime ?? 0).toFixed(1);
+      const timeMatch = startStr.includes(q) || endStr.includes(q);
+
+      return Boolean(textMatch || typeMatch || timeMatch);
+    }
+
+    return true;
+  });
+}
+
+/**
  * Calculates the opacity of a cue during playback with fade-in / fade-out offsets.
  */
 export function calculateCuePlaybackOpacity(

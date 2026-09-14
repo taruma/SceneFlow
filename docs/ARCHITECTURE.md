@@ -11,7 +11,7 @@ SceneFlow follows a modular, 5-layer architecture that separates script parsing,
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
 │                            UTILITY LAYER                               │
-│  src/lib/cueUtils.ts (9 pure functions) • src/lib/utils.ts •           │
+│  src/lib/cueUtils.ts (11 pure functions) • src/lib/utils.ts •          │
 │  src/constants/script.ts (COLORS, presets, DEFAULT_SETTINGS)           │
 └──────────────────────────────────┬─────────────────────────────────────┘
                                    │ sanitized cues, aligned offsets, theme configs
@@ -76,13 +76,15 @@ The processing layer extracts structure, metadata, and character positions from 
 The utility layer provides pure functions, shared constants, and data normalization that bridge processing output to the visuals and hooks layers.
 
 ### `src/lib/cueUtils.ts`
-A dedicated module containing nine exported pure functions for cue lifecycle management:
+A dedicated module containing eleven exported pure functions for cue lifecycle management:
 - **`sanitizeCues(cues)`**: ID deduplication and normalization engine that guarantees unique React keys, infers missing `type`/`colorClass` fields bidirectionally, and injects UUID-fallback IDs for malformed cues. Called by `useScriptStorage` across all five data-load paths and by `RawCuesModal` on JSON paste.
 - **`findTextInScript(fullText, text)`**: Three-tier text search (exact match → normalized whitespace/quotes regex → case-insensitive fallback) used by the cue editor.
 - **`findAlternativeLocations(scriptText, searchText)`**: Proximity-aware regex search returning matching text occurrences with context snippets while skipping `[[STAGING]]` blocks.
 - **`realignCuesList(cues, scriptText)`**: Chronological cue alignment engine recalculating `startIndex`/`endIndex` against updated script text using proximity matching and short-match fallbacks.
 - **`getCueTimingOffsets(cueType, settings)`**: Aggregates per-type and global lead-in/tail-out timing offsets.
 - **`isCueActive(cue, currentTime, settings)`**: High-frequency check determining if a cue falls within the active playback time window.
+- **`findActiveCue(cues, currentTime, settings)`**: Resolves the single most active cue for a given timestamp, prioritizing the latest chronological start time with highest start index. Used for performance-shielded Left Panel auto-scroll and playback tracking.
+- **`filterCues(cues, selectedCategories, searchQuery)`**: Pure filtering engine filtering a cue array by multi-select category types (`Set<string>`) and text queries (matching selected text, category type, or formatted timecodes).
 - **`calculateCuePlaybackOpacity(cue, currentTime, settings)`**: Dynamic fade-in/fade-out opacity calculation for playback transitions.
 - **`exportStateToJsonFile(state, fileName)`**: Triggers client-side formatted JSON state download.
 - **`validateImportedScriptJson(json)`**: Validates, normalizes, and injects default fallbacks for imported project files.
@@ -192,7 +194,7 @@ Real-time playback auto-scroll engine:
 - Filters active cues by multi-select focus types (`autoScrollTargets`).
 - Prioritizes the most recently started cue at the farthest script position.
 - Computes viewport scroll position using the pure `calculateTargetScrollTop(relativeTop, containerHeight, elementHeight, isDesktop, focusRatio)` helper, referencing active `ScrollFocusPreset.ratio` on desktop and center alignment on mobile.
-- Executes programmatic scrolling via a custom high-refresh `requestAnimationFrame` cubic ease-out (`1 - (1 - t)^3`) animator (`smoothScrollTo`), completely replacing browser-native `behavior: 'smooth'` (which is capped at 60Hz in Windows Chromium, causing frame pacing judder on 144Hz/120Hz displays and 60fps screen recordings).
+- Executes programmatic scrolling via a custom high-refresh `requestAnimationFrame` cubic ease-out (`1 - (1 - t)^3`) animator (`smoothScrollTo`, also exported for shared use across the Left Panel Sync Cues Studio), completely replacing browser-native `behavior: 'smooth'` (which is capped at 60Hz in Windows Chromium, causing frame pacing judder on 144Hz/120Hz displays and 60fps screen recordings).
 - Binds passive `wheel` and `touchmove` event listeners on the scroll container to immediately cancel in-flight auto-scroll animations upon manual user touch or mouse wheel interaction, eliminating scroll fighting.
 - Enforces a 10px deadband threshold (`Math.abs(container.scrollTop - targetScrollTop) > 10`) to eliminate micro-scroll jitter when consecutive cues activate on the same line, with lifecycle-guarded frame cancellation on rapid cue transitions.
 
@@ -257,7 +259,8 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 5. **`CueEditorForm.tsx` & `CueEditorContext.tsx` (`src/components/edit/`)**: Cue authoring/editing form with editable text area, cue type selector, start/end time inputs with clock buttons, index editors, and "Find Alternative" button. Powered by compound `CueEditorContext` (`CueEditorProvider`) allowing zero-prop invocation with automatic fallback resolution across layout panels.
 6. **`EditLeftPanel.tsx` & `SyncCuesPanel.tsx`**: Studio-grade Two-Tier Flex Left Panel for Edit mode with adaptive container queries (`@container (max-width: 580px)`):
    - **Tier 1 (Media Viewport)**: Media header with persistent transport controls (`[Replay]`, `[Play/Pause]`, `[Hide/Show Video]`), live timecode HUD badge (`LiveTimecodeBadge.tsx`), collapsible YouTube source pill (`[ 🟢 {videoId} ✏️ ]` in `YoutubeSourceInput.tsx`), isolated memoized video viewport (`EditVideoViewport`) with static `YOUTUBE_PLAYER_OPTS` to shield iframe rendering from 10Hz timecode updates, and horizontal `VideoSplitDivider` (tightened `mt-2 mb-1`).
-   - **Tier 2 (Sync Cues Studio)**: `flex-1 min-h-0` workspace featuring permanently docked `SyncCuesToolbar.tsx` (with `[ { } JSON ]`, `[ ↺ Resync ]`, `[ ⊞ Cards | ≡ Compact ]` adaptive density switcher, collapsible search & multi-select category filter drawer with <kbd>Esc</kbd> shortcut and one-click reset counter badge, and balanced `py-2` vertical padding) and a dedicated scrollable container rendering `SyncCueCard.tsx` or high-density `SyncCueRow.tsx` items optimized with hoisted `resolveCueColor` and `content-visibility: auto`.
+   - **Tier 2 (Sync Cues Studio)**: `flex-1 min-h-0` workspace featuring permanently docked `SyncCuesToolbar.tsx` (with `[ { } JSON ]`, `[ ↺ Resync ]`, `[ 🎯 Scroll ]` auto-scroll toggle with `localStorage` persistence, `[ ⊞ Cards | ≡ Compact ]` adaptive density switcher, collapsible search & multi-select category filter drawer with <kbd>Esc</kbd> shortcut and one-click reset counter badge, and balanced `py-2` vertical padding) and a dedicated scrollable container rendering `SyncCueCard.tsx` or high-density `SyncCueRow.tsx` items optimized with hoisted `resolveCueColor` and `content-visibility: auto`.
+   - **Performance-Shielded Auto-Scroll & Forward Monotonicity**: Shields the cue list from 10–60Hz playback ticks by computing discrete `activeCueId` at `EditLeftPanel` using `findActiveCue()`. Employs a Forward Monotonic Scrolling Guard (`furthestScrollTopRef`) to eliminate rubber-band scrolling when nested child cues end inside longer enclosing cues, resetting on backward seeks (`currentTime < prevTime - 0.3s`) and filter changes via `seekVersion`. Dynamically evaluates active cues against `filterCues(cues, selectedCategories, searchQuery)` so auto-scroll accurately tracks visible items when filtering by category or search text. Programmatic scrolling uses exported `smoothScrollTo` with instant passive `wheel`/`touchmove` cancellation.
    - **Cross-Panel Full Sync Jump**: Selecting any cue card/row executes a synchronized triple-action: seeks the video player (without premature pause calls), populates `CueEditorForm.tsx`, and smoothly scrolls the script canvas to center the corresponding line.
 7. **`RawScriptModal.tsx`**: Modal dialog for bulk editing raw screenplay text using `UI_TOKENS.modal` and `UI_TOKENS.input`.
 8. **`RawCuesModal.tsx`**: Modal dialog for viewing and editing raw cue data in JSON format, with `sanitizeCues()` applied on save and styled via `UI_TOKENS`.

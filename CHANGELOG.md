@@ -38,6 +38,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added multi-select category filtering (`Set<string>`) allowing users to filter by multiple cue types concurrently (e.g. `DIALOGUE` + `ACTION`).
   - Added an interactive filter counter badge (`{filteredCount}/{totalCount}`) that converts into an instant 1-click reset chip (`[ 12/297 ✕ ]`) when filtering is active.
   - Added keyboard shortcut support (<kbd>Escape</kbd> to clear query or dismiss bar) and smart auto-expansion whenever filters are active.
+- **Performance-Shielded Left Panel Auto-Scroll & Forward Monotonic Tracking (`src/components/edit/SyncCuesPanel.tsx`, `src/components/edit/SyncCuesToolbar.tsx`, `src/components/edit/SyncCueCard.tsx`, `src/components/edit/SyncCueRow.tsx`, `src/components/edit/EditLeftPanel.tsx`, `src/lib/cueUtils.ts`)**:
+  - Implemented high-performance auto-scrolling for the Edit Mode Left Panel Sync Cues Studio, tracking active cues during playback without impacting render performance.
+  - Engineered Tick Shielding boundaries: computed discrete `activeCueId` at `EditLeftPanel` using `findActiveCue()`, shielding `SyncCuesPanel` and 100–300 cue cards/rows from 10–60Hz playback tick re-renders.
+  - Added Forward Monotonic Scrolling Guard (`furthestScrollTopRef`) to mathematically eliminate annoying rubber-band / yo-yo scrolling when nested child cues finish inside longer enclosing cues (e.g. Action cue spanning 0:00 to 0:10 with nested dialogue from 0:05 to 0:09).
+  - Integrated backward seek detection (`currentTime < prevTime - 0.3s`) and filter change invalidation via `seekVersion` to seamlessly reset the monotonic guard during scrub and reverse navigation.
+  - Added filter-aware contextual active cue resolution: evaluates `findActiveCue` against `filterCues(cues, selectedCategories, searchQuery)`, ensuring auto-scroll accurately tracks visible cues when users filter by specific categories (e.g. Action, Camera, VFX) or text queries rather than dropping focus due to unrendered dialogue.
+  - Integrated container-query-responsive `[ 🎯 Scroll ]` toggle action in `SyncCuesToolbar` with persistent user preference in `localStorage` (`sceneflow_edit_autoscroll`).
+  - Added active cue pulsing rings and accent status pips across both Cards (`SyncCueCard`) and Compact (`SyncCueRow`) density modes.
+  - Exported pure `findActiveCue(cues, currentTime, settings)` and `filterCues(cues, selectedCategories, searchQuery)` in `src/lib/cueUtils.ts`, and exported `smoothScrollTo` from `src/hooks/useAutoScroll.ts` with passive wheel/touch cancellation for zero scroll fighting.
 - **Adaptive Container Queries for Split Panels (`src/index.css`, `src/components/edit/EditLeftPanel.tsx`, `src/components/playback/PlaybackLeftPanel.tsx`, `src/components/edit/SyncCuesToolbar.tsx`)**:
   - Introduced CSS container queries (`@container (max-width: 580px)`) across left panels.
   - Action button labels (`.header-btn-label`) and YouTube source pill text (`.youtube-pill-text`) automatically collapse to compact icon buttons on narrow panels, eliminating horizontal overflow and text wrapping without JavaScript resize listeners.
