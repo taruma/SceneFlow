@@ -331,12 +331,13 @@ export const EditLeftPanel: React.FC<EditLeftPanelProps> = memo(({
             onHeightChange={setVideoHeight}
             onHeightCommit={commitVideoHeight}
             onReset={handleResetVideoHeight}
+            className="mt-2 mb-1"
           />
         )}
       </div>
 
       {/* Tier 2: Dedicated Sync Cues Workspace (Fills remaining height) */}
-      <div className="flex-1 min-h-0 flex flex-col overflow-hidden pt-1.5">
+      <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
         <SyncCuesPanel
           cues={cues}
           scriptThemeId={scriptThemeId}

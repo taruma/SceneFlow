@@ -64,7 +64,24 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
 
   // Search & Category filter states
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
+
+  // Toggle category filter (multi-select, null clears to "ALL")
+  const handleToggleCategory = (category: string | null) => {
+    if (category === null) {
+      setSelectedCategories(new Set());
+      return;
+    }
+    setSelectedCategories(prev => {
+      const next = new Set(prev);
+      if (next.has(category)) {
+        next.delete(category);
+      } else {
+        next.add(category);
+      }
+      return next;
+    });
+  };
 
   // Chronologically sorted cues (ascending by startTime, secondary on startIndex)
   const sortedCues = useMemo(() => {
@@ -74,15 +91,15 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
     );
   }, [cues]);
 
-  // Filtered cues based on search query and selected category
+  // Filtered cues based on search query and multi-select categories
   const filteredCues = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
 
     return sortedCues.filter(cue => {
       const cueType = cue.type || (cue.colorClass ? (LEGACY_CLASS_MAP[cue.colorClass] || COLORS.find(c => c.class === cue.colorClass)?.type) : 'dialogue') || 'dialogue';
 
-      // 1. Category filter
-      if (selectedCategory && cueType !== selectedCategory) {
+      // 1. Multi-select Category filter
+      if (selectedCategories.size > 0 && !selectedCategories.has(cueType)) {
         return false;
       }
 
@@ -99,11 +116,11 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
 
       return true;
     });
-  }, [sortedCues, searchQuery, selectedCategory]);
+  }, [sortedCues, searchQuery, selectedCategories]);
 
   const handleClearFilters = () => {
     setSearchQuery('');
-    setSelectedCategory(null);
+    setSelectedCategories(new Set());
   };
 
   return (
@@ -116,18 +133,19 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
         onDensityModeChange={handleDensityChange}
         searchQuery={searchQuery}
         onSearchQueryChange={setSearchQuery}
-        selectedCategory={selectedCategory}
-        onSelectCategory={setSelectedCategory}
+        selectedCategories={selectedCategories}
+        onToggleCategory={handleToggleCategory}
         onOpenRawCuesModal={onOpenRawCuesModal}
         onRealignCues={onRealignCues}
         isAligning={isAligning}
         alignSuccess={alignSuccess}
         scriptThemeId={scriptThemeId}
         cuePaletteProfile={cuePaletteProfile}
+        onResetFilters={handleClearFilters}
       />
 
       {/* Dedicated Scrollable Cue Viewport */}
-      <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide py-2 px-0.5">
+      <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide pt-2.5 pb-2 px-0.5">
         {/* Render Cards Mode */}
         {densityMode === 'cards' && (
           <div className="grid gap-2">
