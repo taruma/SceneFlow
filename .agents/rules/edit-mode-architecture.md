@@ -139,13 +139,24 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
   - **Secondary Co-Active Cues (`isActive && !isPrimary`)**: Renders with a clearly visible ambient gradient wash (`~16.2% → 4.5%`, `opacity-65`), but explicitly omits colored borders (retains default subtle border) and outer glow shadows to keep visual noise low during dense multi-track playback.
   - **Selected Cue (`isSelected`)**: Maintains primary focus outline (`rgba(${themed.rgb}, 0.7)` with focus ring) for manual inspector editing.
 
-## 13. Desktop 3-Panel Workstation & Inspector Resizing Invariants
-- **Dedicated 3-Panel Workstation**: Edit mode on desktop organizes into three vertical columns: Left Panel (`EditLeftPanel`), Center Panel (Screenplay Canvas with `flex-1 min-w-0`), and Right Panel (`EditRightPanel`).
+## 13. Desktop 3-Panel Workstation & Mode-Aware Layout Invariants
+- **Calibrated 40 / 35 / 25 Workstation Distribution**:
+  - Desktop Edit Mode organizes into three specialized vertical columns:
+    1. **Left Panel (`EditLeftPanel`)**: Calibrated to **40%** default width (`editSplitRatio`, bounds 25%–55%), housing the video preview and time-clustered cue list.
+    2. **Center Panel (Screenplay Canvas)**: Naturally consumes **35%** default width (`flex-1 min-w-0`), providing an unconstrained reading canvas.
+    3. **Right Panel (`EditRightPanel`)**: Calibrated to **25%** default width (`inspectorRatio`, bounds 18%–45%), housing the dedicated Cue Inspector.
+- **Independent Multi-Mode Layout Decoupling**:
+  - Never share split ratios between Playback and Edit modes. Edit Mode maintains its own state and persistence keys (`sceneflow_edit_split_ratio`, `sceneflow_inspector_ratio`) separate from Playback Mode (`sceneflow_split_ratio`).
+  - Switching between modes must preserve each mode's distinct split ratios without cross-contamination.
+- **Mode-Aware "Reset View Layout" (<kbd>Shift+R</kbd>, Settings, Double-Click)**:
+  - In **Edit Mode**: Resets layout to **40 / 35 / 25**, restores 220px video height, expands collapsed video, and automatically re-opens the inspector panel if closed.
+  - In **Playback Mode**: Resets layout to **65 : 35** and restores 220px video height.
+  - Closing the Cue Inspector in Edit Mode counts as a customized layout state (`isEffectiveViewCustomized`), displaying the "Reset View" button in `AppHeader` for one-click restoration of the 40/35/25 workstation.
 - **Draggable Inspector Divider (`InspectorSplitDivider`)**:
-  - Measured from the right screen boundary (`window.innerWidth - clientX`), clamped between `280px` and `560px`.
-  - Must enforce a floor safeguard for left + center panels (`window.innerWidth - 650px`) so dragging the inspector wide can never collapse the center screenplay.
-  - Leverages pointer capture, `requestAnimationFrame` throttling, and `.is-resizing-split` transition suppression.
-  - Double-click resets to default `360px`; persists in `localStorage` (`sceneflow_inspector_width`).
+  - Resizes inspector ratio dynamically via pointer capture and VSync throttling (`requestAnimationFrame`), measuring `((windowWidth - clientX) / windowWidth) * 100`.
+  - Clamped between `18%` and `45%` with a strict `260px` pixel-floor safeguard (`minPixelWidth`) to prevent unreadable sidebars on smaller desktop viewports.
+  - Double-click or <kbd>Enter</kbd> / <kbd>Home</kbd> resets inspector ratio to default `25%`.
+  - Keyboard accessible: <kbd>←</kbd> widens inspector by 1%, <kbd>→</kbd> narrows inspector by 1%.
 
 ## 14. Cue Inspector Layout & Component Decoupling
 - **Decoupled Script Anchoring vs. Audio-Visual Timing**:
