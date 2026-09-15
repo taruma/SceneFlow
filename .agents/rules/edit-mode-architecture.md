@@ -124,6 +124,10 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
 - **Smooth Cubic Ease-Out Animator & Instant Gesture Interruption**:
   - Uses `smoothScrollTo` (`requestAnimationFrame` cubic ease-out `1 - (1 - t)^3`) for high-refresh display animation.
   - Viewport binds passive `wheel` and `touchmove` listeners that immediately abort any active auto-scroll animation, ensuring zero scroll fighting when the user manually scrolls the list.
+- **Center-Tracking Viewport Spacers (`spacerHeight`)**:
+  - Boundary cues positioned at the extreme start (first cue) and end (last cue) cannot normally reach the viewport vertical center (`H / 2`) because standard containers lack preceding and trailing scroll travel, clamping scroll positions to `0` or `maxScrollTop`.
+  - When auto-scroll is active (`isAutoScrollEnabled = true`) and cues exist, `SyncCuesPanel` renders dynamic `spacerHeight` elements (`Math.max(0, Math.floor(viewportHeight / 2))` measured via `useLayoutEffect` and `ResizeObserver`) above and below the cue items.
+  - Spacers automatically collapse to 0 (`spacerHeight = 0`) when auto-scroll is toggled off or when zero cues match filters, preserving tight top-alignment for manual inspection and centered empty states without scrollbars.
 
 ## 12. Time-Clustered Fluid Grid & Card Sizing Invariants
 - **Temporal Horizon Ceilings (`clusterCuesByTime`)**:

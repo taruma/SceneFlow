@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.4.1-dev] - Unreleased
 
 ### Added
+- **Auto-Scroll Center-Tracking Viewport Spacers (`src/components/edit/SyncCuesPanel.tsx`)**:
+  - Added dynamic `spacerHeight` (calculated as `Math.max(0, Math.floor(viewportHeight / 2))` measured via `useLayoutEffect` and `ResizeObserver` on the viewport container) rendered as top and bottom spacers before and after the cues list in both **Cards** and **Compact** density modes.
+  - Enables true vertical center-tracking (`scrollTop = relativeTop - H/2 + h/2`) for cues positioned at the extreme start (first cue) and end (last cue) of the timeline, eliminating viewport boundary clamping where boundary cues were previously restricted to the top or bottom edges due to lack of scroll travel.
+  - Automatically deactivates (`spacerHeight = 0`) when the `[ Scroll ]` toggle is disabled (`isAutoScrollEnabled === false`) or when zero cues match active filters, preserving snug top alignment for manual browsing and cleanly centered empty states without scrollbars.
+  - Added `viewportHeight` and `densityMode` to the auto-scroll dependency array, and `isAutoScrollEnabled` to the monotonic guard reset effect, ensuring instantaneous re-centering when resizing workstation panels, toggling density modes, or re-enabling auto-scroll.
 - **Updates on X Badge & Navigation Integration (`README.md`, `src/constants/links.ts`, `src/components/common/XIcon.tsx`, `src/components/AppHeader.tsx`, `src/components/ScriptHeaderControls.tsx`, `src/styles/tokens/ui.ts`)**:
   - **Hero Badge**: Added Shields.io "Updates on X" badge (`@tarumainfo`) to the `README.md` hero section alongside the Live App badge.
   - **`XIcon` Component (`src/components/common/XIcon.tsx`, `src/components/common/index.ts`)**: Created a dedicated SVG component for the official X brand mark.
