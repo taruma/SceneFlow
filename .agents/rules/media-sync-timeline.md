@@ -33,6 +33,11 @@ YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds
   - Differentiate container styling dynamically between modes:
     - **Edit Mode**: Uses `h-full overflow-hidden z-10 border-r` on mobile viewports so the cue list editor utilizes the full handheld display.
     - **Playback Mode**: Must **never** apply `h-full` or `overflow-hidden` on mobile (`< lg`). Apply `shrink-0 sticky top-0 z-30 shadow-md border-b` with natural height (`h-auto`), ensuring the pinned media player leaves the screenplay (Center Panel) immediately visible and scrollable underneath with synced auto-scrolling. Desktop viewports (`lg:`) consistently retain `lg:h-full lg:overflow-hidden lg:static lg:z-10 lg:shadow-none lg:border-r`.
+- **Component Unification & Mobile Viewport Preservation Rule**:
+  When consolidating layout components (such as unifying Playback and Edit panels into `WorkstationLeftPanel`):
+  1. **Audit Divergent Breakpoint Contracts**: Never copy outer wrapper classes (`h-full`, `overflow-hidden`, positioning) from one mode without verifying the other mode's handheld layout.
+  2. **Prevent Empty Ghost Containers**: When secondary tier content is hidden on mobile (`hidden lg:flex`), the container on mobile must use `shrink-0 h-auto` (natural height), never unconditional `h-full`.
+  3. **Preserve Mobile Playback Architecture**: Mobile playback requires a sticky top video bar (`shrink-0 sticky top-0 z-30 shadow-md border-b`) so the screenplay remains immediately visible and auto-scrollable underneath.
 
 ## 5. Timeline Density & Geometry Synchronization
 - Support `TimelineDensity` (`'comfortable' | 'compact'`) across timeline components for dynamic vertical scaling (32px vs 24px track heights).

@@ -172,6 +172,10 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
    - **Mobile Viewport Geometry Differentiation**: Differentiate root container classes between modes:
      - In Edit Mode (`mode === 'edit'`), use `h-full overflow-hidden z-10 border-r` so the mobile cue management workspace occupies the full screen.
      - In Playback Mode (`mode === 'playback'`), **never** apply `h-full` or `overflow-hidden` on mobile viewports (`< lg`). Use `shrink-0 sticky top-0 z-30 shadow-md border-b` with natural height (`h-auto`), ensuring the pinned video player leaves the screenplay (Center Panel) immediately visible and scrollable underneath with seamless auto-scrolling. Desktop viewports (`lg:`) consistently retain `lg:h-full lg:overflow-hidden lg:static lg:z-10 lg:shadow-none lg:border-r`.
+   - **Component Unification & 4-Quadrant Verification Invariant**:
+     - When consolidating layout components, audit divergent breakpoint contracts. Never inherit outer classes (`h-full`, `overflow-hidden`) from one mode without preserving the other's handheld contract.
+     - Prevent "Empty Ghost Containers": when lower-tier child content collapses on mobile (`hidden lg:flex`), the container on mobile must use `shrink-0 h-auto`, never unconditional `h-full`.
+     - Verify all workstation changes across 4 quadrants: Desktop Playback ($\ge 1024\text{px}$), Mobile Playback ($< 1024\text{px}$), Desktop Edit ($\ge 1024\text{px}$), and Mobile Edit ($< 1024\text{px}$).
 
 6. **Timeline Density & Geometry Synchronization**:
    - Support `TimelineDensity` (`'comfortable' | 'compact'`) across timeline components for dynamic vertical scaling (32px vs 24px track heights).
