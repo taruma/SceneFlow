@@ -7,7 +7,7 @@ import { cn } from '../../lib/utils';
 export interface CueTypeSelectorProps {
   selectedType?: string;
   selectedColorClass?: string;
-  onSelectType: (type: string, colorClass: string) => void;
+  onSelectType: (type: string, colorClass?: string) => void;
   scriptThemeId?: string;
   cuePaletteProfile?: CuePaletteProfile;
 }

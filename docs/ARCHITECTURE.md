@@ -77,11 +77,11 @@ The utility layer provides pure functions, shared constants, and data normalizat
 
 ### `src/lib/cueUtils.ts`
 A dedicated module containing twelve exported pure functions for cue lifecycle management:
-- **`sanitizeCues(cues)`**: ID deduplication and normalization engine that guarantees unique React keys, infers missing `type`/`colorClass` fields bidirectionally, and injects UUID-fallback IDs for malformed cues. Called by `useScriptStorage` across all five data-load paths and by `RawCuesModal` on JSON paste.
+- **`sanitizeCues(cues)`**: ID deduplication and normalization engine that guarantees unique React keys, migrates legacy `colorClass` to canonical semantic `type` while stripping deprecated `colorClass`, and injects UUID-fallback IDs for malformed cues. Called by `useScriptStorage` across all five data-load paths and by `RawCuesModal` on JSON paste.
 - **`findTextInScript(fullText, text)`**: Three-tier text search (exact match → normalized whitespace/quotes regex → case-insensitive fallback) used by the cue editor.
 - **`getSelectionIndicesFromDOM(sel, scriptText)`**: Accurately resolves character start and end offsets within the full script for line-anchored DOM text selections using `data-line-start` metadata, with fallback to `findTextInScript`.
 - **`findAlternativeLocations(scriptText, searchText)`**: Proximity-aware regex search returning matching text occurrences with context snippets while skipping `[[STAGING]]` blocks.
-- **`realignCuesList(cues, scriptText)`**: Chronological cue alignment engine recalculating `startIndex`/`endIndex` against updated script text using proximity matching and short-match fallbacks.
+- **`realignCuesList(cues, scriptText)`**: Chronological cue alignment engine recalculating `startIndex`/`endIndex` against updated script text using proximity matching and short-match fallbacks, while stripping any legacy `colorClass` fields.
 - **`getCueTimingOffsets(cueType, settings)`**: Aggregates per-type and global lead-in/tail-out timing offsets.
 - **`isCueActive(cue, currentTime, settings)`**: High-frequency check determining if a cue falls within the active playback time window.
 - **`findActiveCue(cues, currentTime, settings)`**: Resolves the single most active cue for a given timestamp, prioritizing the latest chronological start time with highest start index. Used for performance-shielded Left Panel auto-scroll and playback tracking.
@@ -252,7 +252,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 - **Sync Engine & Playback Diff Decoupling (`renderedScript` `useMemo`)**: Decouples script parsing into an independent `processedLines` memoized hook so full text parsing runs only on script text modifications. Pre-indexes overlapping cues into `cuesByLineIndex` for $O(1)$ line lookup. Crucially, passes static `currentTime={0}` to lines with zero overlapping cues (`lineCues.length === 0`), completely skipping React prop diffing and reconciliation across 85%+ of screenplay lines on every 100ms playback tick. Lines with cues are delegated to memoized `<ScriptLine />` components that isolate sub-second highlight opacity transitions to active lines only.
 - **Auto-Scroll Engine**: Delegates to `useAutoScroll`, which automatically scrolls the screenplay during playback, prioritizing the most recent active cue, supporting multi-selected focus categories, and aligning to the user's selected vertical focus ratio (35% Top, 50% Center, 65% Bottom).
 - **Proximity-Aware Alignment**: Delegates to `useCueAlignment`, which uses `realignCuesList()` from `cueUtils.ts` to re-map cue character start/end positions when screenplay text is edited.
-- **Cue Sanitization Pipeline**: All data ingress paths (localStorage restore, default load, blank, example, remote fetch) route through `sanitizeCues()` in `useScriptStorage`, guaranteeing deterministic IDs and `type`/`colorClass` normalization.
+- **Cue Sanitization Pipeline**: All data ingress paths (localStorage restore, default load, blank, example, remote fetch) route through `sanitizeCues()` in `useScriptStorage`, guaranteeing deterministic IDs, migration of legacy `colorClass` to modern semantic `type`, and omission of deprecated styling fields.
 
 ### Modular Sub-components (`src/components/`)
 1. **`AppHeader` Sub-Package (`src/components/AppHeader.tsx`, `src/components/header/`)**:
@@ -336,7 +336,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 3. processScript() ───────────► Builds ProcessedLine[] with line types & character offsets
    │
    ▼
-4. sanitizeCues() ────────────► Deduplicates IDs, normalizes type/colorClass on ingress
+4. sanitizeCues() ────────────► Deduplicates IDs, migrates legacy colorClass to type on ingress
    │
    ▼
 5. useAutoScroll / useCueEditor ─► Combine lines with Cues[], currentTime, TimingSettings

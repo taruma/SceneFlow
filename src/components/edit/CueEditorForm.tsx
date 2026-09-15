@@ -121,8 +121,11 @@ export const CueEditorForm: React.FC<Partial<CueEditorFormProps>> = memo((props)
     }
   }, [newCue.startIndex, newCue.selectedText, scriptText, setNewCue, setSelection]);
 
-  const handleSelectType = useCallback((type: string, colorClass: string) => {
-    setNewCue(prev => ({ ...prev, colorClass, type }));
+  const handleSelectType = useCallback((type: string) => {
+    setNewCue(prev => {
+      const { colorClass: _legacyColorClass, ...rest } = prev;
+      return { ...rest, type };
+    });
   }, [setNewCue]);
 
   const handleDelete = useCallback(() => {
@@ -209,7 +212,6 @@ export const CueEditorForm: React.FC<Partial<CueEditorFormProps>> = memo((props)
           </label>
           <CueTypeSelector
             selectedType={newCue.type}
-            selectedColorClass={newCue.colorClass}
             onSelectType={handleSelectType}
             scriptThemeId={scriptThemeId}
             cuePaletteProfile={cuePaletteProfile}

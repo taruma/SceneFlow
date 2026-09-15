@@ -120,7 +120,7 @@ SceneFlow maintains a curated library of built-in projects across 4 categories: 
    - Ensure the JSON conforms to `AppState`:
      - `youtubeId`: Valid YouTube video URL or ID.
      - `scriptText`: Clean script text formatted according to screenplay or auteur staging heuristics.
-     - `cues`: Array of valid cue objects (`id`, `type`, `selectedText`, `startTime`, `endTime`, `speaker`, `colorClass`, `startIndex`, `endIndex`).
+     - `cues`: Array of valid cue objects (`id`, `type`, `selectedText`, `startTime`, `endTime`, `speaker`, `startIndex`, `endIndex`; legacy `colorClass` automatically migrated to `type` and stripped).
      - `settings` (optional): Per-category timing buffer configuration.
 
 2. **Register in `src/examples.ts`**:

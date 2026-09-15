@@ -78,14 +78,14 @@ Supports eight color-coded cue categories, each calibrated with theme-specific R
 - **Clean Script Click Dismissal (`dismissIfClean`)**: Clicking anywhere on the clean screenplay canvas while in Edit mode safely dismisses the cue inspector back to the idle workstation overview when no unsaved changes exist (`!isDirty`), while strictly ignoring clicks on interactive buttons, input fields, staging markers, and active DOM text drag selections.
 - **Timestamp Capture & Live Precision Timecodes (`CueTimingInputs`)**: Start and End inputs display live formatted precision timecodes (`MM:SS.s`) above each field alongside `Clock` buttons to capture the player's current video time, or input manual values.
 - **Manual Monospace Textarea (`CueTextSection`)**: Users can directly edit a cue's selected text in-place within the Edit Sync Cue panel. This allows safe text corrections without manual JSON editing while preserving character synchronization.
-- **ID Sanitization**: All cues loaded from any source (localStorage, built-in examples, remote projects, or pasted JSON) are automatically run through `sanitizeCues()`, which deduplicates IDs, normalizes `type`/`colorClass` fields bidirectionally, and injects fallback UUIDs for malformed entries.
+- **ID Sanitization**: All cues loaded from any source (localStorage, built-in examples, remote projects, or pasted JSON) are automatically run through `sanitizeCues()`, which deduplicates IDs, migrates legacy `colorClass` to canonical semantic `type` while stripping the deprecated `colorClass` property, and injects fallback UUIDs for malformed entries.
 - **Duplicate Text & Alternative Location Finder**: When a phrase appears multiple times (e.g., `WIDE SHOT`), clicking "Find Alternative" scans the screenplay and presents a contextual list of all occurrences with character offsets and text snippets for instant snapping. Hidden `[[STAGING]]` block ranges are strictly excluded from search matches.
 
 ### Overlap Management
 Multiple cues can span the same character ranges. In Edit Mode, overlapping regions display an indicator dot. Clicking an overlapping segment opens the floating `OverlapPicker` context menu to select which cue to inspect or edit.
 
 ### Chronological Proximity Alignment (`realignCues`)
-When script text is edited or pasted, the "Align" tool sorts cues chronologically by time and uses proximity-aware regex matching to re-anchor cue indices to the nearest logical position, falling back to a 15-character prefix search if major edits occurred.
+When script text is edited or pasted, the "Resync" tool sorts cues chronologically by time, strips any legacy `colorClass` properties, and uses proximity-aware regex matching to re-anchor cue indices to the nearest logical position, falling back to a 15-character prefix search if major edits occurred.
 
 ### Edit Mode: Studio Workspace & Cue Management
 Desktop Edit Mode features a dedicated Two-Tier studio workspace in the Left Panel (`EditLeftPanel` & `SyncCuesPanel`) optimized for high-density cue inspection and authoring:

@@ -31,7 +31,6 @@ export function useCueEditor({
   const [selection, setSelection] = useState<TextSelection | null>(null);
   const [newCue, setNewCue] = useState<Partial<Cue>>({
     type: 'dialogue',
-    colorClass: COLORS[0].class,
   });
   const [originalCue, setOriginalCue] = useState<Cue | null>(null);
   const [altLocations, setAltLocations] = useState<AlternativeLocation[] | null>(null);
@@ -56,7 +55,7 @@ export function useCueEditor({
 
   const cancelEdit = useCallback(() => {
     setSelection(null);
-    setNewCue({ type: 'dialogue', colorClass: COLORS[0].class });
+    setNewCue({ type: 'dialogue' });
     setOriginalCue(null);
     setAltLocations(null);
     try {
@@ -86,7 +85,6 @@ export function useCueEditor({
       });
       setNewCue({
         type: 'dialogue',
-        colorClass: COLORS[0].class,
         selectedText: res.text,
         startIndex: res.start,
         endIndex: res.end,
@@ -117,7 +115,6 @@ export function useCueEditor({
         newCue.endTime !== originalCue.endTime ||
         newCue.selectedText !== originalCue.selectedText ||
         newCue.type !== originalCue.type ||
-        newCue.colorClass !== originalCue.colorClass ||
         (newCue.startIndex ?? 0) !== (originalCue.startIndex ?? 0) ||
         (newCue.endIndex ?? 0) !== (originalCue.endIndex ?? 0)
       );
@@ -148,7 +145,6 @@ export function useCueEditor({
     }
 
     const cueType = newCue.type || (newCue.colorClass ? (LEGACY_CLASS_MAP[newCue.colorClass] || COLORS.find(c => c.class === newCue.colorClass)?.type) : 'dialogue') || 'dialogue';
-    const colorClass = COLORS.find(c => c.type === cueType)?.class || newCue.colorClass || COLORS[0].class;
 
     const cue: Cue = {
       id: newCue.id || generateId(),
@@ -157,7 +153,6 @@ export function useCueEditor({
       endIndex: newCue.endIndex!,
       startTime: newCue.startTime,
       endTime: newCue.endTime,
-      colorClass: colorClass,
       type: cueType,
     };
 
@@ -205,11 +200,10 @@ export function useCueEditor({
 
   const selectCueForEdit = useCallback((cue: Cue) => {
     const cueType = cue.type || (cue.colorClass ? (LEGACY_CLASS_MAP[cue.colorClass] || COLORS.find(c => c.class === cue.colorClass)?.type) : 'dialogue') || 'dialogue';
-    const colorClass = COLORS.find(c => c.type === cueType)?.class || cue.colorClass || COLORS[0].class;
+    const { colorClass: _legacyColorClass, ...cleanCue } = cue;
     const normalizedCue: Cue = {
-      ...cue,
+      ...cleanCue,
       type: cueType,
-      colorClass,
       startIndex: cue.startIndex ?? 0,
       endIndex: cue.endIndex ?? 0,
     };

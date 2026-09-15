@@ -19,13 +19,14 @@ export function sanitizeCues(cues: any[]): Cue[] {
     seenIds.add(id);
 
     const cueType = c?.type || (c?.colorClass ? (LEGACY_CLASS_MAP[c.colorClass] || COLORS.find(col => col.class === c.colorClass)?.type) : 'dialogue') || 'dialogue';
-    const colorClass = COLORS.find(col => col.type === cueType)?.class || c?.colorClass || COLORS[0].class;
+
+    // Strip legacy colorClass so cues are modern and don't retain deprecated styling classes
+    const { colorClass: _legacyColorClass, ...rest } = c || {};
 
     return {
-      ...c,
+      ...rest,
       id,
       type: cueType,
-      colorClass
     };
   });
 }
@@ -312,8 +313,10 @@ export function realignCuesList(
   const sortedCues = [...cues].sort((a, b) => (a.startTime || 0) - (b.startTime || 0));
   
   const updatedCues = sortedCues.map(cue => {
-    const searchText = cue.selectedText.trim();
-    if (!searchText) return cue;
+    // Strip legacy colorClass so realigned cues remain clean
+    const { colorClass: _legacyColorClass, ...cleanCue } = cue;
+    const searchText = cleanCue.selectedText?.trim();
+    if (!searchText) return cleanCue;
 
     // Escape special characters for regex
     const escapedSearch = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -331,7 +334,7 @@ export function realignCuesList(
 
       if (matches.length > 0) {
         // Reference point: prefer existing index if valid, otherwise use lastIndex
-        const referenceIndex = (cue.startIndex !== undefined && cue.startIndex >= 0) ? cue.startIndex : lastIndex;
+        const referenceIndex = (cleanCue.startIndex !== undefined && cleanCue.startIndex >= 0) ? cleanCue.startIndex : lastIndex;
         
         // Find the match closest to our reference point
         const bestMatch = matches.reduce((prev, curr) => {
@@ -342,7 +345,7 @@ export function realignCuesList(
         const newEnd = newStart + bestMatch.length;
         lastIndex = newEnd;
         alignedCount++;
-        return { ...cue, startIndex: newStart, endIndex: newEnd };
+        return { ...cleanCue, startIndex: newStart, endIndex: newEnd };
       }
       
       // Last resort: try matching just the first 15 characters if the full text is not found
@@ -360,7 +363,7 @@ export function realignCuesList(
         }
 
         if (shortMatches.length > 0) {
-          const referenceIndex = (cue.startIndex !== undefined && cue.startIndex >= 0) ? cue.startIndex : lastIndex;
+          const referenceIndex = (cleanCue.startIndex !== undefined && cleanCue.startIndex >= 0) ? cleanCue.startIndex : lastIndex;
           const bestShortMatch = shortMatches.reduce((prev, curr) => {
             return Math.abs(curr.index - referenceIndex) < Math.abs(prev.index - referenceIndex) ? curr : prev;
           });
@@ -369,7 +372,7 @@ export function realignCuesList(
           const newEnd = newStart + searchText.length; // Approximate
           lastIndex = newEnd;
           alignedCount++;
-          return { ...cue, startIndex: newStart, endIndex: newEnd };
+          return { ...cleanCue, startIndex: newStart, endIndex: newEnd };
         }
       }
     } catch (e) {
@@ -377,7 +380,7 @@ export function realignCuesList(
     }
 
     console.warn(`Could not align cue: "${searchText}"`);
-    return cue;
+    return cleanCue;
   });
 
   return { updatedCues, alignedCount };

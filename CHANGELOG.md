@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Restored `shrink-0 sticky top-0 z-30 shadow-md border-b` on mobile in Playback Mode, preventing the unified workstation left panel from expanding to 100% viewport height with empty space while Tier 2 (`ActiveHighlightsPanel`) is hidden on handheld screens.
   - Restored instant visibility and uninterrupted auto-scrolling of the screenplay (Center Panel) directly beneath the pinned video player on mobile devices.
 
+### Changed
+- **Legacy `colorClass` Deprecation & Clean Cue Alignment (`src/lib/cueUtils.ts`, `src/hooks/useCueEditor.ts`, `src/components/edit/CueEditorForm.tsx`, `src/components/edit/CueTypeSelector.tsx`, `src/components/script/ScriptLine.tsx`)**:
+  - Deprecated and removed auto-injection of legacy `colorClass` across cue alignment (`realignCuesList`), cue sanitization (`sanitizeCues`), and cue drafting (`useCueEditor`).
+  - Stripped any lingering `colorClass` properties when realigning cues or ingesting JSON, producing cleaner and more compact cue models in state and exported files.
+  - Preserved backward-compatibility ingestion via `LEGACY_CLASS_MAP`: older script files containing `colorClass` without `type` automatically resolve to their canonical semantic category and cleanly drop the deprecated class on next sync/save.
+
 ### Added
 - **Studio-Grade Cues JSON Editor & LLM Sync Setup (`src/components/RawCuesModal.tsx`, `src/schemas/cues.schema.json`, `src/schemas/cues.prompt.ts`, `public/schema.json`, `public/sync-prompt.txt`)**:
   - **2-Column Studio Workstation (`RawCuesModal.tsx`)**: Revamped the raw cues modal into a comprehensive 2-column workstation featuring a live Schema Reference on the left (essential fields, collapsible auto-calc & optional fields, quick example snippet with copy and insert actions) and dual-tab workstation on the right.

@@ -185,7 +185,7 @@ function ScriptLineComponent({
       endIndex: selection.end,
       startTime: 0,
       endTime: 0,
-      colorClass: '',
+      type: 'dialogue',
       start: Math.max(0, selection.start - lineStart),
       end: Math.min(line.length, selection.end - lineStart),
       opacity: 1,
