@@ -1,7 +1,67 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import type { Cue, TimingSettings, ScrollFocusPresetId, AppMode } from '../types/script';
-import { SCROLL_FOCUS_PRESETS } from '../constants/script';
+import { getScrollFocusPreset } from '../constants/script';
 import { isCueActive } from '../lib/cueUtils';
+
+/**
+ * Calculates the target scrollTop offset within a script container
+ * given cue geometry, container dimensions, device profile, and target focus line ratio.
+ */
+export function calculateTargetScrollTop(
+  relativeTop: number,
+  containerHeight: number,
+  elementHeight: number,
+  isDesktop: boolean,
+  focusRatio: number
+): number {
+  const target = isDesktop
+    ? relativeTop - (containerHeight * focusRatio) + (elementHeight / 2)
+    : relativeTop - (containerHeight / 2) + (elementHeight / 2);
+  return Math.max(0, target);
+}
+
+/**
+ * Smoothly animates container.scrollTop at the display's native refresh rate
+ * using a cubic ease-out curve, avoiding browser-native smooth-scroll judder.
+ */
+export function smoothScrollTo(
+  container: HTMLElement,
+  targetTop: number,
+  duration: number = 380,
+  activeAnimRef: React.MutableRefObject<number | null>
+) {
+  if (activeAnimRef.current !== null) {
+    cancelAnimationFrame(activeAnimRef.current);
+    activeAnimRef.current = null;
+  }
+
+  const startTop = container.scrollTop;
+  const distance = targetTop - startTop;
+
+  // Deadband: If already within 2px of target, snap directly
+  if (Math.abs(distance) <= 2) {
+    container.scrollTop = targetTop;
+    return;
+  }
+
+  const startTime = performance.now();
+
+  const step = (now: number) => {
+    const elapsed = now - startTime;
+    const progress = Math.min(1, elapsed / duration);
+    // Cubic ease-out curve: 1 - (1 - t)^3
+    const ease = 1 - Math.pow(1 - progress, 3);
+    container.scrollTop = startTop + distance * ease;
+
+    if (progress < 1) {
+      activeAnimRef.current = requestAnimationFrame(step);
+    } else {
+      activeAnimRef.current = null;
+    }
+  };
+
+  activeAnimRef.current = requestAnimationFrame(step);
+}
 
 interface UseAutoScrollOptions {
   scriptRef: React.RefObject<HTMLDivElement | null>;
@@ -52,19 +112,42 @@ export function useAutoScroll({
         const containerRect = container.getBoundingClientRect();
         const elementRect = element.getBoundingClientRect();
         const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
-        const preset = SCROLL_FOCUS_PRESETS.find(p => p.id === presetId) || SCROLL_FOCUS_PRESETS[0];
-        const targetScrollTop = isDesktop
-          ? relativeTop - (containerRect.height * preset.ratio) + (elementRect.height / 2)
-          : relativeTop - (containerRect.height / 2) + (elementRect.height / 2);
-        container.scrollTo({
-          top: Math.max(0, targetScrollTop),
-          behavior: 'smooth',
-        });
+        const preset = getScrollFocusPreset(presetId);
+        const targetScrollTop = calculateTargetScrollTop(
+          relativeTop,
+          containerRect.height,
+          elementRect.height,
+          isDesktop,
+          preset.ratio
+        );
+        smoothScrollTo(container, targetScrollTop, 300, scrollAnimRef);
       }
     }
   }, [lastScrolledCueId, scriptRef, isDesktop, onScrollFocusChange]);
 
   const rafRef = React.useRef<number | null>(null);
+  const scrollAnimRef = React.useRef<number | null>(null);
+
+  // User manual scroll listener to cancel ongoing auto-scroll smoothly without fighting user
+  useEffect(() => {
+    const container = scriptRef.current;
+    if (!container) return;
+
+    const handleUserScroll = () => {
+      if (scrollAnimRef.current !== null) {
+        cancelAnimationFrame(scrollAnimRef.current);
+        scrollAnimRef.current = null;
+      }
+    };
+
+    container.addEventListener('wheel', handleUserScroll, { passive: true });
+    container.addEventListener('touchmove', handleUserScroll, { passive: true });
+
+    return () => {
+      container.removeEventListener('wheel', handleUserScroll);
+      container.removeEventListener('touchmove', handleUserScroll);
+    };
+  }, [scriptRef]);
 
   // Clean up pending animation frames on unmount
   useEffect(() => {
@@ -72,6 +155,10 @@ export function useAutoScroll({
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
+      }
+      if (scrollAnimRef.current !== null) {
+        cancelAnimationFrame(scrollAnimRef.current);
+        scrollAnimRef.current = null;
       }
     };
   }, []);
@@ -105,6 +192,7 @@ export function useAutoScroll({
         if (element && container) {
           if (rafRef.current !== null) {
             cancelAnimationFrame(rafRef.current);
+            rafRef.current = null;
           }
 
           rafRef.current = requestAnimationFrame(() => {
@@ -112,23 +200,17 @@ export function useAutoScroll({
             const elementRect = element.getBoundingClientRect();
             const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
             
-            const focusPreset = SCROLL_FOCUS_PRESETS.find(p => p.id === scrollFocusPreset) || SCROLL_FOCUS_PRESETS[0];
-            let targetScrollTop;
-            if (isDesktop) {
-              // Position active cue based on user-selected focus line preset (default 35% from top)
-              targetScrollTop = relativeTop - (containerRect.height * focusPreset.ratio) + (elementRect.height / 2);
-            } else {
-              // Position active cue exactly in the center for mobile/tablet screens
-              targetScrollTop = relativeTop - (containerRect.height / 2) + (elementRect.height / 2);
-            }
-            
-            const finalTarget = Math.max(0, targetScrollTop);
+            const focusPreset = getScrollFocusPreset(scrollFocusPreset);
+            const finalTarget = calculateTargetScrollTop(
+              relativeTop,
+              containerRect.height,
+              elementRect.height,
+              isDesktop,
+              focusPreset.ratio
+            );
             // Deadband guard: avoid micro-scroll jitter when consecutive cues are on the same line
             if (Math.abs(container.scrollTop - finalTarget) > 10) {
-              container.scrollTo({
-                top: finalTarget,
-                behavior: 'smooth',
-              });
+              smoothScrollTo(container, finalTarget, 380, scrollAnimRef);
             }
             rafRef.current = null;
           });

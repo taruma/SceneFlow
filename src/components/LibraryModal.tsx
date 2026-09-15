@@ -1,8 +1,9 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Search, BookOpen, Film, Notebook, Compass, ArrowUpRight, Lock, Clapperboard, Sparkles } from "lucide-react";
+import { X, Search, BookOpen, Film, Notebook, Compass, ArrowUpRight, Lock, Clapperboard, Sparkles, Newspaper } from "lucide-react";
 import { EXAMPLE_SECTIONS, Example } from "../examples";
 import { UI_TOKENS } from "../styles/tokens/ui";
+import { EXTERNAL_LINKS } from "../constants/links";
 import { useEscapeKey } from "../hooks/useEscapeKey";
 import { cn } from "../lib/utils";
 
@@ -20,9 +21,10 @@ interface LibraryModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectExample: (path: string, title: string) => void;
+  onOpenGuide?: () => void;
 }
 
-export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalProps) {
+export function LibraryModal({ isOpen, onClose, onSelectExample, onOpenGuide }: LibraryModalProps) {
   useEscapeKey(onClose, isOpen);
 
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -181,13 +183,25 @@ export function LibraryModal({ isOpen, onClose, onSelectExample }: LibraryModalP
                   <p className="text-[9px] text-text-faint font-mono tracking-wide mt-1">Explore scripts, interactive examples & custom volumes</p>
                 </div>
               </div>
-              <button
-                onClick={onClose}
-                className={UI_TOKENS.button.iconCloseSm}
-                aria-label="Close modal"
-              >
-                <X size={16} />
-              </button>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <a
+                  href={EXTERNAL_LINKS.article}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Read Introduction & Overview on Substack"
+                  className={cn(UI_TOKENS.button.actionPill, "hidden sm:flex px-2.5 py-1 text-[9px]")}
+                >
+                  <Newspaper size={11} className="text-text-muted" />
+                  <span>Introduction</span>
+                </a>
+                <button
+                  onClick={onClose}
+                  className={UI_TOKENS.button.iconCloseSm}
+                  aria-label="Close modal"
+                >
+                  <X size={16} />
+                </button>
+              </div>
             </div>
 
             {/* Filter bar: Live Search */}

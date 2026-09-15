@@ -2,6 +2,7 @@
  * Centralized External Links & Resources
  */
 export const EXTERNAL_LINKS = {
+  x: 'https://x.com/tarumainfo',
   article: 'https://taruma.substack.com/p/sceneflow-script-to-screen',
   articleTitle: 'Introducing SceneFlow: Script-to-Screen Synchronization',
   kofi: 'https://ko-fi.com/tarumainfo',

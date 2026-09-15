@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "cues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "dialogue",
+              "action",
+              "camera",
+              "shot",
+              "audio",
+              "vfx",
+              "transition",
+              "environment"
+            ]
+          },
+          "speaker": {
+            "type": "string",
+            "description": "Character name speaking. Null if non-dialogue.",
+            "nullable": true
+          },
+          "selectedText": {
+            "type": "string",
+            "description": "Verbatim substring copied exactly from the script."
+          },
+          "startTime": {
+            "type": "number",
+            "description": "Start time in seconds."
+          },
+          "endTime": {
+            "type": "number",
+            "description": "End time in seconds."
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "selectedText",
+          "startTime",
+          "endTime"
+        ]
+      }
+    }
+  },
+  "required": [
+    "cues"
+  ]
+}

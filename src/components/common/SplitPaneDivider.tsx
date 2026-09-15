@@ -17,7 +17,7 @@ export interface SplitPaneDividerProps {
  * Desktop-only draggable vertical split pane divider.
  * 
  * Features:
- * - Direct pointer-capture drag tracking with requestAnimationFrame throttling (60-144fps).
+ * - Direct pointer-capture drag tracking with requestAnimationFrame throttling (VSync-aligned).
  * - Disables all CSS transitions during drag via .is-resizing-split class on body to eliminate lag.
  * - Global iframe guard layer to prevent YouTube iframe event absorption during drag.
  * - Double-click to instantly snap back to default ratio.

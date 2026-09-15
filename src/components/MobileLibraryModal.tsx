@@ -1,7 +1,8 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Search, BookOpen, Film, ArrowUpRight, Sparkles } from "lucide-react";
+import { X, Search, BookOpen, Film, ArrowUpRight, Newspaper, Sparkles } from "lucide-react";
 import { EXAMPLE_SECTIONS, Example } from "../examples";
+import { EXTERNAL_LINKS } from "../constants/links";
 import { useEscapeKey } from "../hooks/useEscapeKey";
 import { cn } from "../lib/utils";
 
@@ -19,9 +20,10 @@ interface MobileLibraryModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectExample: (path: string, title: string) => void;
+  onOpenGuide?: () => void;
 }
 
-export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileLibraryModalProps) {
+export function MobileLibraryModal({ isOpen, onClose, onSelectExample, onOpenGuide }: MobileLibraryModalProps) {
   useEscapeKey(onClose, isOpen);
 
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -119,13 +121,25 @@ export function MobileLibraryModal({ isOpen, onClose, onSelectExample }: MobileL
                   </p>
                 </div>
               </div>
-              <button
-                onClick={onClose}
-                className="p-1.5 text-text-faint hover:text-text-main rounded-full bg-surface-muted hover:bg-surface-hover active:scale-95 transition-all"
-                aria-label="Close modal"
-              >
-                <X size={16} />
-              </button>
+              <div className="flex items-center gap-1.5">
+                <a
+                  href={EXTERNAL_LINKS.article}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Read Introduction & Overview on Substack"
+                  className="flex items-center gap-1 px-2 py-1 bg-surface-muted hover:bg-surface-hover rounded-lg text-[9px] font-black uppercase tracking-wider text-text-body border border-border-main transition-all active:scale-95"
+                >
+                  <Newspaper size={10} className="text-text-muted" />
+                  <span>Intro</span>
+                </a>
+                <button
+                  onClick={onClose}
+                  className="p-1.5 text-text-faint hover:text-text-main rounded-full bg-surface-muted hover:bg-surface-hover active:scale-95 transition-all"
+                  aria-label="Close modal"
+                >
+                  <X size={16} />
+                </button>
+              </div>
             </div>
 
             {/* Search Input */}

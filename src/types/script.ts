@@ -2,12 +2,15 @@
 export interface Cue {
   id: string;
   selectedText: string;
-  startIndex: number;
-  endIndex: number;
+  startIndex?: number;
+  endIndex?: number;
   startTime: number;
   endTime: number;
   colorClass?: string;
   type?: string;
+  speaker?: string | null;
+  matchStatus?: string;
+  [key: string]: any;
 }
 
 export interface TimingSettings {
@@ -60,7 +63,7 @@ export interface DeleteConfirmationState {
 
 export interface ResetConfirmationState {
   isOpen: boolean;
-  type: 'settings' | 'data' | 'blank' | 'example' | 'remote' | null;
+  type: 'settings' | 'data' | 'blank' | 'new' | 'guide' | 'example' | 'remote' | null;
   examplePath?: string;
   exampleTitle?: string;
   remoteUrl?: string;

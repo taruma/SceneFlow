@@ -27,7 +27,7 @@ export const TimelinePlayheadRuler = React.memo<TimelinePlayheadRulerProps>(({
         className="absolute top-0 bottom-6 w-px pointer-events-none z-30"
         style={{
           left: `${playheadPercent}%`,
-          transition: isPlaying ? 'left 100ms linear' : 'none',
+          willChange: 'left',
         }}
       >
         {/* Glowing playhead line */}
@@ -46,7 +46,6 @@ export const TimelinePlayheadRuler = React.memo<TimelinePlayheadRulerProps>(({
             style={{
               left: `${tick.leftPercent}%`,
               willChange: 'left',
-              transition: isPlaying ? 'left 100ms linear' : 'none',
             }}
           >
             {/* Tick pip */}

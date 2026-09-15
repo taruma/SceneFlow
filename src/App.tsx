@@ -8,8 +8,6 @@ import { StagingModal } from './components/StagingModal';
 import { LibraryModal } from './components/LibraryModal';
 import { MobileLibraryModal } from './components/MobileLibraryModal';
 import { InitializingScreen } from './components/InitializingScreen';
-import { YoutubeSourceInput } from './components/YoutubeSourceInput';
-import { ScriptManagementBar } from './components/ScriptManagementBar';
 import { RawScriptModal } from './components/RawScriptModal';
 import { RawCuesModal } from './components/RawCuesModal';
 import { OverlapPicker } from './components/OverlapPicker';
@@ -20,28 +18,35 @@ import { ScriptColorModal } from './components/ScriptColorModal';
 import { MobileColorModal } from './components/MobileColorModal';
 import { AppInfoModal } from './components/AppInfoModal';
 import { AppHeader } from './components/AppHeader';
-import { PlaybackLeftPanel } from './components/playback/PlaybackLeftPanel';
-import { SplitPaneDivider } from './components/common/SplitPaneDivider';
-import { ActiveHighlightsPanel } from './components/ActiveHighlightsPanel';
-import { TimelineCuesPanel } from './components/TimelineCuesPanel';
+import { WorkstationLeftPanel } from './components/left-panel';
+import { EditRightPanel, CueEditorForm, CueEditorProvider, type CueEditorContextValue } from './components/edit';
+import { SplitPaneDivider, InspectorSplitDivider } from './components/common';
 import { ScriptHeaderControls } from './components/ScriptHeaderControls';
-import { CueEditorForm } from './components/CueEditorForm';
 import { cn, extractYoutubeId } from './lib/utils';
 import { UI_TOKENS } from './styles/tokens/ui';
 import { useScriptStorage } from './hooks/useScriptStorage';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
-import { useScriptPreferences } from './hooks/useScriptPreferences';
+import { 
+  useScriptPreferences,
+  SCRIPT_PREFERENCES_STORAGE_KEYS,
+  MIN_EDIT_SPLIT_RATIO,
+  MAX_EDIT_SPLIT_RATIO,
+  MIN_SPLIT_RATIO,
+  MAX_SPLIT_RATIO,
+} from './hooks/useScriptPreferences';
 import { useScriptTheme } from './hooks/useScriptTheme';
 import { useAppShellTheme } from './hooks/useAppShellTheme';
 import { useAutoScroll } from './hooks/useAutoScroll';
 import { useCueEditor } from './hooks/useCueEditor';
 import { useCueAlignment } from './hooks/useCueAlignment';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import type { Cue, AppMode } from './types/script';
+import type { Cue, AppMode, ResetConfirmationState } from './types/script';
 import { 
   COLORS, 
   DEFAULT_SETTINGS, 
-  SCRIPT_WIDTH_PRESETS 
+  SCRIPT_WIDTH_PRESETS,
+  DEFAULT_SCROLL_FOCUS_PRESET_ID,
+  getScriptWidthPreset 
 } from './constants/script';
 import {
   sanitizeCues,
@@ -52,17 +57,30 @@ import {
 
 export default function App() {
   const [activeStaging, setActiveStaging] = useState<{ label: string; content: string } | null>(null);
-  const [mode, setMode] = useState<AppMode>('playback');
+  const [mode, setModeState] = useState<AppMode>(() => {
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem(SCRIPT_PREFERENCES_STORAGE_KEYS.APP_MODE);
+      if (saved === 'playback' || saved === 'edit') {
+        return saved;
+      }
+    }
+    return 'playback';
+  });
+
+  const setMode = useCallback((newMode: AppMode) => {
+    setModeState(newMode);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(SCRIPT_PREFERENCES_STORAGE_KEYS.APP_MODE, newMode);
+    }
+  }, []);
   const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
   const [isCuesModalOpen, setIsCuesModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [rawCuesText, setRawCuesText] = useState("");
-  const [leftPanelScroll, setLeftPanelScroll] = useState(0);
 
   const scriptRef = useRef<HTMLDivElement>(null);
-  const leftPanelRef = useRef<HTMLDivElement>(null);
 
   const {
     state,
@@ -71,6 +89,7 @@ export default function App() {
     isRemoteLoading,
     resetToDefault,
     loadBlank: loadBlankStorage,
+    loadGuide: loadGuideStorage,
     loadExample: loadExampleStorage,
     loadRemoteProject: loadRemoteProjectStorage,
   } = useScriptStorage();
@@ -80,11 +99,13 @@ export default function App() {
     playerState,
     currentTime,
     setCurrentTime,
+    duration,
     onReady,
     onStateChange,
     togglePlayPause,
     jumpBy,
     seekTo,
+    resetPlayback,
   } = useYouTubePlayer({
     youtubeId: state.youtubeId,
     onPlay: () => setActiveStaging(null),
@@ -96,12 +117,10 @@ export default function App() {
     commitVideoHeight,
     scriptWidthPreset,
     setScriptWidthPreset,
-    isWidthDropdownOpen,
-    setIsWidthDropdownOpen,
     scrollFocusPreset,
     setScrollFocusPreset,
-    isScrollFocusDropdownOpen,
-    setIsScrollFocusDropdownOpen,
+    isScriptPreferencesCustomized,
+    resetScriptPreferences,
     scriptThemeId,
     setScriptThemeId,
     cuePaletteProfile,
@@ -113,13 +132,24 @@ export default function App() {
     splitRatio,
     setSplitRatio,
     commitSplitRatio,
+    editSplitRatio,
+    setEditSplitRatio,
+    commitEditSplitRatio,
+    inspectorRatio,
+    setInspectorRatio,
+    commitInspectorRatio,
+    resetInspectorRatio,
+    inspectorWidth,
+    setInspectorWidth,
+    commitInspectorWidth,
+    resetInspectorWidth,
     resetViewLayout,
     isViewCustomized,
     isVideoCollapsed,
     toggleVideoCollapsed,
     pureBlackMode,
     setPureBlackMode,
-  } = useScriptPreferences();
+  } = useScriptPreferences(mode);
 
   const { theme: activeTheme } = useScriptTheme(scriptThemeId, cuePaletteProfile);
   const {
@@ -161,8 +191,6 @@ export default function App() {
     altLocations,
     deleteConfirmation,
     setDeleteConfirmation,
-    resetConfirmation,
-    setResetConfirmation,
     overlapPicker,
     setOverlapPicker,
     handleSelection,
@@ -172,12 +200,55 @@ export default function App() {
     deleteCue,
     confirmDelete,
     selectCueForEdit,
+    canSave,
+    isDirty,
+    dismissIfClean,
   } = useCueEditor({
     scriptText: state.scriptText,
     cues: state.cues,
     setState,
     mode,
     player,
+  });
+
+  const [isInspectorOpen, setIsInspectorOpen] = useState(true);
+
+  const handleScriptMouseUp = useCallback(() => {
+    handleSelection();
+    if (mode === 'edit') {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0 && !sel.isCollapsed && sel.toString().trim()) {
+        setIsInspectorOpen(true);
+      }
+    }
+  }, [handleSelection, mode]);
+
+  const handleScriptClick = useCallback((e: React.MouseEvent) => {
+    if (mode !== 'edit') return;
+
+    // If overlap picker was open, let its own click-outside handler dismiss it without closing cue edit
+    if (overlapPicker.isOpen) return;
+
+    // Ignore clicks on buttons, inputs, links, or staging markers
+    const target = e.target as HTMLElement | null;
+    if (target?.closest('button, [role="button"], a, input, textarea, select, [data-prevent-dismiss]')) {
+      return;
+    }
+
+    // Ignore if there is an active text drag selection
+    const sel = window.getSelection();
+    if (sel && !sel.isCollapsed && Boolean(sel.toString().trim())) {
+      return;
+    }
+
+    // Safely dismiss back to idle overview if no changes were made
+    dismissIfClean();
+  }, [mode, overlapPicker.isOpen, dismissIfClean]);
+
+  const [resetConfirmation, setResetConfirmation] = useState<ResetConfirmationState>({
+    isOpen: false,
+    type: null,
+    error: null,
   });
 
   const {
@@ -203,11 +274,21 @@ export default function App() {
     overlapPicker.isOpen
   );
 
+  const handleResetView = useCallback(() => {
+    resetViewLayout(mode);
+    if (mode === 'edit') {
+      setIsInspectorOpen(true);
+    }
+  }, [resetViewLayout, mode]);
+
   const { isDesktop } = useKeyboardShortcuts({
     player,
     togglePlayPause,
     jumpBy,
-    onToggleVideo: mode === 'playback' ? toggleVideoCollapsed : undefined,
+    onToggleVideo: toggleVideoCollapsed,
+    onOpenColors: () => setIsColorModalOpen(true),
+    onOpenTiming: () => setIsSettingsOpen(true),
+    onResetView: handleResetView,
     disabled: isAnyModalOpen,
   });
 
@@ -218,6 +299,7 @@ export default function App() {
     setAutoScrollTargets,
     isAutoScrollDropdownOpen,
     setIsAutoScrollDropdownOpen,
+    lastScrolledCueId,
     applyScrollFocus,
   } = useAutoScroll({
     scriptRef,
@@ -229,6 +311,67 @@ export default function App() {
     scrollFocusPreset,
     onScrollFocusChange: setScrollFocusPreset,
   });
+
+  const currentTimeRef = useRef(currentTime);
+  currentTimeRef.current = currentTime;
+  const lastScrolledCueIdRef = useRef(lastScrolledCueId);
+  lastScrolledCueIdRef.current = lastScrolledCueId;
+  const cuesRef = useRef(state.cues);
+  cuesRef.current = state.cues;
+  const settingsRef = useRef(state.settings);
+  settingsRef.current = state.settings;
+
+  // Seamlessly align screenplay to current playback position when transitioning into Edit mode
+  useEffect(() => {
+    if (mode === 'edit' && scriptRef.current && isDesktop) {
+      const cues = cuesRef.current || [];
+      const curTime = currentTimeRef.current;
+      const lastId = lastScrolledCueIdRef.current;
+      const curSettings = settingsRef.current;
+
+      const targetCue = (lastId && cues.find(c => c.id === lastId))
+        || cues.find(c => isCueActive(c, curTime, curSettings))
+        || cues.filter(c => c.startTime <= curTime).sort((a, b) => b.startTime - a.startTime)[0];
+
+      if (targetCue) {
+        requestAnimationFrame(() => {
+          const container = scriptRef.current;
+          if (!container) return;
+          const targetElement = document.getElementById(`cue-${targetCue.id}`) ||
+            (Array.from(container.querySelectorAll('[data-line-start]')) as HTMLElement[]).find(el => {
+              const start = parseInt(el.getAttribute('data-line-start') || '-1', 10);
+              const end = parseInt(el.getAttribute('data-line-end') || '-1', 10);
+              return start <= targetCue.startIndex && end >= targetCue.startIndex;
+            });
+
+          if (targetElement) {
+            const containerRect = container.getBoundingClientRect();
+            const elementRect = targetElement.getBoundingClientRect();
+            const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
+            const targetScrollTop = Math.max(0, relativeTop - (containerRect.height / 2) + (elementRect.height / 2));
+            container.scrollTo({
+              top: targetScrollTop,
+              behavior: 'instant',
+            });
+          }
+        });
+      }
+    }
+  }, [mode, isDesktop]);
+
+  const isEffectiveViewCustomized = isViewCustomized || (mode === 'edit' && !isInspectorOpen);
+
+  const isPreferencesCustomized = 
+    themeMode !== 'auto' ||
+    isScriptPreferencesCustomized ||
+    isEffectiveViewCustomized;
+
+  const handleResetAllPreferences = useCallback(() => {
+    setThemeMode('auto');
+    resetScriptPreferences();
+    applyScrollFocus(DEFAULT_SCROLL_FOCUS_PRESET_ID);
+    handleResetView();
+  }, [setThemeMode, resetScriptPreferences, applyScrollFocus, handleResetView]);
 
 
   const prevActiveCueTypesRef = useRef<Set<string>>(new Set());
@@ -303,45 +446,65 @@ export default function App() {
     }
   }, []);
 
-  const saveRawCues = () => {
+  const saveRawCues = (cuesOverride?: Cue[]) => {
     try {
-      const parsedCues = JSON.parse(rawCuesText);
-      if (!Array.isArray(parsedCues)) throw new Error("Must be an array");
-      setState(prev => ({ ...prev, cues: sanitizeCues(parsedCues) }));
+      let finalCues: Cue[];
+      if (cuesOverride && Array.isArray(cuesOverride)) {
+        finalCues = cuesOverride;
+      } else {
+        const parsed = JSON.parse(rawCuesText);
+        const extracted = Array.isArray(parsed)
+          ? parsed
+          : (parsed && typeof parsed === 'object' && Array.isArray(parsed.cues) ? parsed.cues : null);
+        if (!extracted) throw new Error("Must be an array or contain a cues array");
+        finalCues = sanitizeCues(extracted);
+      }
+      setState(prev => ({ ...prev, cues: finalCues }));
       setIsCuesModalOpen(false);
     } catch (err) {
-      alert("Invalid JSON format for cues. Please check your syntax.");
+      console.error("Failed to save cues JSON:", err);
     }
   };
 
   const resetState = async () => {
     try {
+      resetPlayback();
       await resetToDefault();
       setMode('playback');
-      setCurrentTime(0);
       setResetConfirmation({ isOpen: false, type: null, error: null });
     } catch (err) {
       console.error("Failed to reset to default script", err);
     }
   };
 
-  const loadBlank = async () => {
+  const createNewProject = async () => {
     try {
-      const finalData = await loadBlankStorage();
+      resetPlayback();
+      await loadBlankStorage();
+      setMode('edit');
+      setResetConfirmation({ isOpen: false, type: null, error: null });
+    } catch (err) {
+      console.error("Failed to create new project", err);
+    }
+  };
+
+  const loadGuide = async () => {
+    try {
+      resetPlayback();
+      const finalData = await loadGuideStorage();
       setMode('playback');
-      setCurrentTime(0);
       setResetConfirmation({ isOpen: false, type: null, error: null });
       realignCues(finalData);
     } catch (err) {
-      alert("Failed to load blank script.");
+      alert("Failed to load starter guide.");
     }
   };
 
   const loadExample = async (path: string) => {
     try {
+      resetPlayback();
       const finalData = await loadExampleStorage(path);
       setMode('playback');
-      setCurrentTime(0);
       setResetConfirmation({ isOpen: false, type: null, error: null });
       setIsLibraryOpen(false);
       realignCues(finalData);
@@ -353,9 +516,9 @@ export default function App() {
   const loadRemoteProject = async (url: string) => {
     setResetConfirmation(prev => ({ ...prev, error: null }));
     try {
+      resetPlayback();
       const finalData = await loadRemoteProjectStorage(url);
       setMode('playback');
-      setCurrentTime(0);
       setResetConfirmation({ isOpen: false, type: null, error: null });
       setIsLibraryOpen(false);
       realignCues(finalData);
@@ -372,11 +535,11 @@ export default function App() {
     return isCueActive(c, currentTime, state.settings);
   };
 
-  const exportJson = () => {
+  const exportJson = useCallback(() => {
     exportStateToJsonFile(state);
-  };
+  }, [state]);
 
-  const importJson = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const importJson = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
@@ -385,6 +548,7 @@ export default function App() {
         const json = JSON.parse(event.target?.result as string);
         const validatedJson = validateImportedScriptJson(json);
 
+        resetPlayback();
         setState(validatedJson);
         // Automatically trigger alignment after import
         realignCues(validatedJson);
@@ -393,12 +557,41 @@ export default function App() {
       }
     };
     reader.readAsText(file);
-  };
+  }, [realignCues, setState, resetPlayback]);
+
+  const handleNewProject = useCallback(() => {
+    setResetConfirmation({ isOpen: true, type: 'new', error: null });
+  }, [setResetConfirmation]);
+
+  const handleOpenGuide = useCallback(() => {
+    setResetConfirmation({ isOpen: true, type: 'guide', error: null });
+  }, [setResetConfirmation]);
 
   // Memoize script parsing independently of currentTime
   const processedLines = useMemo(() => {
     return processScript(state.scriptText || "");
   }, [state.scriptText]);
+
+  const handleOpenRawScriptModal = useCallback(() => {
+    setIsScriptModalOpen(true);
+  }, []);
+
+  const handleOpenRawCuesModal = useCallback(() => {
+    setRawCuesText(JSON.stringify(state.cues, null, 2));
+    setIsCuesModalOpen(true);
+  }, [state.cues]);
+
+  const handleChangeYoutubeId = useCallback((value: string) => {
+    setState(prev => ({ ...prev, youtubeId: value }));
+  }, [setState]);
+
+  const handleClearYoutubeId = useCallback(() => {
+    setState(prev => ({ ...prev, youtubeId: '' }));
+  }, [setState]);
+
+  const handleReplay = useCallback(() => {
+    seekTo(0, true, true);
+  }, [seekTo]);
 
   // Pre-index cues by overlapping line index to avoid O(N * M) filtering on every render tick
   const cuesByLineIndex = useMemo(() => {
@@ -427,28 +620,60 @@ export default function App() {
     });
   }, [setOverlapPicker]);
 
+  const handleSelectCueForEdit = useCallback((cue: Cue) => {
+    selectCueForEdit(cue);
+    setIsInspectorOpen(true);
+
+    // Cross-panel auto-center: smoothly scroll script container to the selected cue
+    if (scriptRef.current) {
+      const container = scriptRef.current;
+      const lineElements = Array.from(container.querySelectorAll('[data-line-start]')) as HTMLElement[];
+      const targetElement = document.getElementById(`cue-${cue.id}`) ||
+        lineElements.find(el => {
+          const start = parseInt(el.getAttribute('data-line-start') || '-1', 10);
+          const end = parseInt(el.getAttribute('data-line-end') || '-1', 10);
+          return start <= cue.startIndex && end >= cue.startIndex;
+        });
+
+      if (targetElement) {
+        const containerRect = container.getBoundingClientRect();
+        const elementRect = targetElement.getBoundingClientRect();
+        const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
+        const targetScrollTop = Math.max(0, relativeTop - (containerRect.height / 2) + (elementRect.height / 2));
+        
+        container.scrollTo({
+          top: targetScrollTop,
+          behavior: 'smooth',
+        });
+      }
+    }
+  }, [selectCueForEdit, scriptRef]);
+
   // Rendering the screenplay with memoized ScriptLine components
   const renderedScript = useMemo(() => {
-    return processedLines.map((lineData) => (
-      <ScriptLine
-        key={lineData.lineIdx}
-        lineData={lineData}
-        cues={cuesByLineIndex.get(lineData.lineIdx) || EMPTY_CUES_ARRAY}
-        mode={mode}
-        currentTime={currentTime}
-        settings={state.settings}
-        hiddenCueTypes={hiddenCueTypes}
-        scriptThemeId={scriptThemeId}
-        cuePaletteProfile={cuePaletteProfile}
-        playerState={playerState}
-        isDesktop={isDesktop}
-        selection={selection}
-        editingCueId={newCue.id}
-        onSelectStaging={setActiveStaging}
-        onSelectCue={selectCueForEdit}
-        onOverlapPicker={handleOverlapPicker}
-      />
-    ));
+    return processedLines.map((lineData) => {
+      const lineCues = cuesByLineIndex.get(lineData.lineIdx) || EMPTY_CUES_ARRAY;
+      return (
+        <ScriptLine
+          key={lineData.lineIdx}
+          lineData={lineData}
+          cues={lineCues}
+          mode={mode}
+          currentTime={lineCues.length > 0 ? currentTime : 0}
+          settings={state.settings}
+          hiddenCueTypes={hiddenCueTypes}
+          scriptThemeId={scriptThemeId}
+          cuePaletteProfile={cuePaletteProfile}
+          playerState={playerState}
+          isDesktop={isDesktop}
+          selection={selection}
+          editingCueId={newCue.id}
+          onSelectStaging={setActiveStaging}
+          onSelectCue={handleSelectCueForEdit}
+          onOverlapPicker={handleOverlapPicker}
+        />
+      );
+    });
   }, [
     processedLines,
     cuesByLineIndex,
@@ -463,11 +688,65 @@ export default function App() {
     isDesktop,
     selection,
     newCue.id,
-    selectCueForEdit,
+    handleSelectCueForEdit,
     handleOverlapPicker,
   ]);
 
-  const canSave = newCue.selectedText && newCue.startTime !== undefined && newCue.endTime !== undefined && newCue.startIndex !== undefined && newCue.endIndex !== undefined;
+  // Consolidate cue authoring context to eliminate prop-drilling
+  const cueEditorContextValue = useMemo<CueEditorContextValue>(() => ({
+    newCue,
+    setNewCue,
+    selection,
+    setSelection,
+    altLocations,
+    findAlternativeLocations,
+    cancelEdit,
+    saveCue,
+    deleteCue,
+    canSave,
+    isDirty,
+    dismissIfClean,
+    scriptText: state.scriptText,
+    scriptThemeId,
+    cuePaletteProfile,
+    player,
+    widthClass: getScriptWidthPreset(scriptWidthPreset).widthClass,
+    selectCueForEdit: handleSelectCueForEdit,
+  }), [
+    newCue,
+    setNewCue,
+    selection,
+    setSelection,
+    altLocations,
+    findAlternativeLocations,
+    cancelEdit,
+    saveCue,
+    deleteCue,
+    canSave,
+    isDirty,
+    dismissIfClean,
+    state.scriptText,
+    scriptThemeId,
+    cuePaletteProfile,
+    player,
+    scriptWidthPreset,
+    handleSelectCueForEdit,
+  ]);
+
+  // Memoize layout panel styles so playback currentTime updates never bust React.memo
+  const leftPanelStyle = useMemo(
+    () => {
+      if (!isDesktop) return undefined;
+      const ratio = mode === 'edit' ? editSplitRatio : splitRatio;
+      return { width: `${ratio}%` };
+    },
+    [isDesktop, mode, editSplitRatio, splitRatio]
+  );
+
+  const rightPanelStyle = useMemo(
+    () => (isDesktop ? { width: `${100 - splitRatio}%` } : undefined),
+    [isDesktop, splitRatio]
+  );
 
   if (!isInitialized) {
     return <InitializingScreen />;
@@ -479,10 +758,10 @@ export default function App() {
       <AppHeader
         mode={mode}
         setMode={setMode}
-        currentTime={currentTime}
         isLibraryOpen={isLibraryOpen}
         setIsLibraryOpen={setIsLibraryOpen}
-        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'blank', error: null })}
+        onNewProject={handleNewProject}
+        onOpenGuide={handleOpenGuide}
         isColorModalOpen={isColorModalOpen}
         setIsColorModalOpen={setIsColorModalOpen}
         isSettingsOpen={isSettingsOpen}
@@ -493,143 +772,80 @@ export default function App() {
         exportJson={exportJson}
         themeMode={themeMode}
         effectiveThemeCategory={effectiveCategory}
-        onCycleThemeMode={cycleThemeMode}
-        isViewCustomized={isViewCustomized}
-        onResetView={resetViewLayout}
+        onSetThemeMode={setThemeMode}
+        isViewCustomized={isEffectiveViewCustomized}
+        onResetView={handleResetView}
+        scriptWidthPreset={scriptWidthPreset}
+        setScriptWidthPreset={setScriptWidthPreset}
+        scrollFocusPreset={scrollFocusPreset}
+        applyScrollFocus={applyScrollFocus}
+        isPreferencesCustomized={isPreferencesCustomized}
+        onResetAll={handleResetAllPreferences}
       />
 
-      <main className={cn(
-        "flex flex-1 flex-col lg:flex-row overflow-hidden",
-        mode === 'playback' && "overflow-y-auto lg:overflow-hidden"
-      )}>
-        {/* Left Panel: Media & Controls */}
-        {mode === 'playback' ? (
-          <PlaybackLeftPanel
-            youtubeId={state.youtubeId}
-            videoHeight={videoHeight}
-            setVideoHeight={setVideoHeight}
-            commitVideoHeight={commitVideoHeight}
-            isVideoCollapsed={isVideoCollapsed}
-            onToggleVideoCollapsed={toggleVideoCollapsed}
-            onTogglePlayPause={togglePlayPause}
-            onReplay={() => seekTo(0, true, true)}
-            isDesktop={isDesktop}
-            playerState={playerState}
-            currentTime={currentTime}
-            onReady={onReady}
-            onStateChange={onStateChange}
-            seekTo={seekTo}
-            cues={state.cues}
-            settings={state.settings}
-            isCueVisible={isCueVisible}
-            activeCueTypes={activeCueTypes}
-            hiddenCueTypes={hiddenCueTypes}
-            toggleCueTypeVisibility={toggleCueTypeVisibility}
-            scriptThemeId={scriptThemeId}
-            cuePaletteProfile={cuePaletteProfile}
-            style={isDesktop ? { width: `${splitRatio}%` } : undefined}
-          />
-        ) : (
-          <div 
-            ref={leftPanelRef}
-            onScroll={(e) => setLeftPanelScroll(e.currentTarget.scrollTop)}
-            style={isDesktop ? { width: `${splitRatio}%` } : undefined}
-            className={cn(
-              UI_TOKENS.layout.leftPanelBase,
-              "w-full border-r p-4 lg:p-10 overflow-y-auto scrollbar-hide transition-all duration-300"
-            )}
-          >
-            {/* YouTube Source Input - Not Sticky in Edit Mode */}
-            <YoutubeSourceInput
-              youtubeId={state.youtubeId}
-              onChange={(value) => setState(prev => ({ ...prev, youtubeId: value }))}
-              onClear={() => setState(prev => ({ ...prev, youtubeId: '' }))}
-              hasPlayer={!!player}
-            />
-
-            {/* Video Player Section - Sticky in Edit Mode */}
-            <section className={cn(
-              "transition-all duration-300 z-30 sticky top-0 -mx-4 lg:-mx-10 px-4 lg:px-10", 
-              leftPanelScroll <= 80 && "bg-surface border-b border-border-subtle pb-6 mb-8 space-y-4",
-              leftPanelScroll > 80 && "bg-transparent pointer-events-none space-y-0 pb-0 mb-0"
-            )}>
-              <div className={cn(
-                "flex items-center justify-between transition-all duration-300", 
-                leftPanelScroll > 80 && "opacity-0 h-0 overflow-hidden mb-0"
-              )}>
-                <h2 className="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-text-faint flex items-center gap-2">
-                  <Video size={14} /> Media Preview
-                </h2>
-              </div>
-              
-              <div className={cn(
-                "aspect-video bg-black overflow-hidden shadow-2xl ring-1 ring-border-main relative group transition-all duration-500 origin-top-left pointer-events-auto rounded-3xl",
-                leftPanelScroll > 80 && "w-1/2 rounded-2xl shadow-2xl scale-90 -translate-y-2"
-              )}>
-                <YouTube
-                  key={extractYoutubeId(state.youtubeId)}
-                  videoId={extractYoutubeId(state.youtubeId)}
-                  opts={{
-                    width: '100%',
-                    height: '100%',
-                    playerVars: {
-                      autoplay: 0,
-                      modestbranding: 1,
-                      rel: 0,
-                      controls: 1,
-                      origin: typeof window !== 'undefined' ? window.location.origin : undefined,
-                    },
-                  }}
-                  onReady={onReady}
-                  onStateChange={onStateChange}
-                  className="w-full h-full bg-black"
-                  iframeClassName="w-full h-full block border-0 bg-black"
-                />
-              </div>
-            </section>
-
-            {/* Script Management Section - Only in Edit Mode */}
-            <ScriptManagementBar
-              lineCount={state.scriptText.split('\n').length}
-              onOpenRawScriptModal={() => setIsScriptModalOpen(true)}
-            />
-
-            {/* Edit Mode Controls */}
-            <TimelineCuesPanel
-              cues={state.cues}
-              scriptThemeId={scriptThemeId}
-              cuePaletteProfile={cuePaletteProfile}
-              selectedCueId={newCue.id}
-              onSelectCue={selectCueForEdit}
-              onDeleteCue={deleteCue}
-              onOpenRawCuesModal={() => {
-                setRawCuesText(JSON.stringify(state.cues, null, 2));
-                setIsCuesModalOpen(true);
-              }}
-              onRealignCues={realignCues}
-              isAligning={isAligning}
-              alignSuccess={alignSuccess}
-            />
-          </div>
-        )}
+      <CueEditorProvider value={cueEditorContextValue}>
+        <main className={cn(
+          "flex flex-1 flex-col lg:flex-row overflow-hidden",
+          mode === 'playback' && "overflow-y-auto lg:overflow-hidden"
+        )}>
+        {/* Left Panel: Unified Media Viewport & Workstation (Playback vs Edit) */}
+        <WorkstationLeftPanel
+          mode={mode}
+          youtubeId={state.youtubeId}
+          onChangeYoutubeId={handleChangeYoutubeId}
+          onClearYoutubeId={handleClearYoutubeId}
+          hasPlayer={!!player}
+          videoHeight={videoHeight}
+          setVideoHeight={setVideoHeight}
+          commitVideoHeight={commitVideoHeight}
+          isVideoCollapsed={isVideoCollapsed}
+          onToggleVideoCollapsed={toggleVideoCollapsed}
+          onTogglePlayPause={togglePlayPause}
+          onReplay={handleReplay}
+          isDesktop={isDesktop}
+          playerState={playerState}
+          currentTime={currentTime}
+          duration={duration}
+          onReady={onReady}
+          onStateChange={onStateChange}
+          seekTo={seekTo}
+          cues={state.cues}
+          settings={state.settings}
+          isCueVisible={isCueVisible}
+          activeCueTypes={activeCueTypes}
+          hiddenCueTypes={hiddenCueTypes}
+          toggleCueTypeVisibility={toggleCueTypeVisibility}
+          scriptThemeId={scriptThemeId}
+          cuePaletteProfile={cuePaletteProfile}
+          selectedCueId={newCue.id}
+          onSelectCue={handleSelectCueForEdit}
+          onDeleteCue={deleteCue}
+          onOpenRawCuesModal={handleOpenRawCuesModal}
+          onRealignCues={realignCues}
+          isAligning={isAligning}
+          alignSuccess={alignSuccess}
+          style={leftPanelStyle}
+        />
 
         {/* Desktop Resizable Split Pane Divider */}
         {isDesktop && (
           <SplitPaneDivider
-            splitRatio={splitRatio}
-            onSplitChange={setSplitRatio}
-            onSplitCommit={commitSplitRatio}
-            onReset={resetViewLayout}
+            splitRatio={mode === 'edit' ? editSplitRatio : splitRatio}
+            onSplitChange={mode === 'edit' ? setEditSplitRatio : setSplitRatio}
+            onSplitCommit={mode === 'edit' ? commitEditSplitRatio : commitSplitRatio}
+            minRatio={mode === 'edit' ? MIN_EDIT_SPLIT_RATIO : MIN_SPLIT_RATIO}
+            maxRatio={mode === 'edit' ? MAX_EDIT_SPLIT_RATIO : MAX_SPLIT_RATIO}
+            onReset={handleResetView}
           />
         )}
 
-        {/* Right Panel: The Screenplay */}
+        {/* Center Panel: The Screenplay */}
         <div 
-          style={isDesktop ? { width: `${100 - splitRatio}%` } : undefined}
+          style={mode === 'playback' ? rightPanelStyle : undefined}
           className={cn(
             UI_TOKENS.layout.rightPanelBase,
             isScriptPureBlack && "!bg-black",
-            mode === 'edit' ? "hidden lg:flex w-full h-full" : "w-full flex-1"
+            mode === 'edit' ? "hidden lg:flex flex-1 min-w-0 h-full" : "w-full flex-1"
           )}
         >
           <ScriptHeaderControls
@@ -642,42 +858,19 @@ export default function App() {
             setAutoScrollTargets={setAutoScrollTargets}
             setIsLibraryOpen={setIsLibraryOpen}
             setIsColorModalOpen={setIsColorModalOpen}
-            scriptWidthPreset={scriptWidthPreset}
-            setScriptWidthPreset={setScriptWidthPreset}
-            isWidthDropdownOpen={isWidthDropdownOpen}
-            setIsWidthDropdownOpen={setIsWidthDropdownOpen}
-            scrollFocusPreset={scrollFocusPreset}
-            applyScrollFocus={applyScrollFocus}
-            isScrollFocusDropdownOpen={isScrollFocusDropdownOpen}
-            setIsScrollFocusDropdownOpen={setIsScrollFocusDropdownOpen}
-            currentTime={currentTime}
             scriptThemeId={scriptThemeId}
             cuePaletteProfile={cuePaletteProfile}
+            lineCount={processedLines.length}
+            onOpenRawScriptModal={handleOpenRawScriptModal}
+            activeCueStatus={!selection ? 'idle' : (newCue.id ? 'editing' : 'drafting')}
+            isInspectorOpen={isInspectorOpen}
+            onToggleInspector={() => setIsInspectorOpen(prev => !prev)}
           />
 
-          {/* Create / Edit Cue Form in Edit Mode */}
-          {mode === 'edit' && (
-            <CueEditorForm
-              newCue={newCue}
-              setNewCue={setNewCue}
-              selection={selection}
-              setSelection={setSelection}
-              altLocations={altLocations}
-              findAlternativeLocations={findAlternativeLocations}
-              cancelEdit={cancelEdit}
-              saveCue={saveCue}
-              deleteCue={deleteCue}
-              canSave={canSave}
-              scriptText={state.scriptText}
-              scriptThemeId={scriptThemeId}
-              cuePaletteProfile={cuePaletteProfile}
-              player={player}
-            />
-          )}
-          
           <div 
             ref={scriptRef}
-            onMouseUp={handleSelection}
+            onClick={handleScriptClick}
+            onMouseUp={handleScriptMouseUp}
             className={cn(
               "flex-1 overflow-y-auto font-serif text-[14px] leading-snug scrollbar-hide",
               isScriptPureBlack && "bg-black",
@@ -685,16 +878,12 @@ export default function App() {
             )}
           >
             <div className={cn(
-              "script-paper-container mx-auto min-h-full rounded-sm relative transition-all duration-300",
+              "script-paper-container mx-auto min-h-full rounded-sm relative transition-colors duration-200",
               isScriptPureBlack ? "!bg-black !shadow-none" : cn(activeTheme.paperBg, activeTheme.paperShadow),
               activeTheme.paperBorder,
               activeTheme.textColor,
-              mode === 'edit' 
-                ? "max-w-xl p-6 md:p-8" 
-                : cn(
-                    SCRIPT_WIDTH_PRESETS.find(p => p.id === scriptWidthPreset)?.widthClass || "max-w-xl",
-                    "p-8 lg:p-12"
-                  )
+              getScriptWidthPreset(scriptWidthPreset).widthClass,
+              mode === 'edit' ? "p-6 md:p-8" : "p-8 lg:p-12"
             )}>
               {/* Page punch holes effect */}
               {!isScriptPureBlack && (
@@ -711,7 +900,28 @@ export default function App() {
             </div>
           </div>
         </div>
+
+        {/* Right Panel: Dedicated Cue Inspector in Edit Mode (Desktop Only) */}
+        {mode === 'edit' && isDesktop && isInspectorOpen && (
+          <>
+            <InspectorSplitDivider
+              ratio={inspectorRatio}
+              onRatioChange={setInspectorRatio}
+              onRatioCommit={commitInspectorRatio}
+              onReset={handleResetView}
+            />
+            <EditRightPanel
+              isOpen={isInspectorOpen}
+              ratio={inspectorRatio}
+              onClose={() => setIsInspectorOpen(false)}
+              cues={state.cues}
+              scriptThemeId={scriptThemeId}
+              cuePaletteProfile={cuePaletteProfile}
+            />
+          </>
+        )}
       </main>
+    </CueEditorProvider>
 
       <StagingModal
         isOpen={!!activeStaging}
@@ -723,6 +933,7 @@ export default function App() {
       <LibraryModal
         isOpen={isLibraryOpen}
         onClose={() => setIsLibraryOpen(false)}
+        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'guide', error: null })}
         onSelectExample={(path, title) => {
           setResetConfirmation({ 
             isOpen: true, 
@@ -737,6 +948,7 @@ export default function App() {
       <MobileLibraryModal
         isOpen={isLibraryOpen}
         onClose={() => setIsLibraryOpen(false)}
+        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'guide', error: null })}
         onSelectExample={(path, title) => {
           setResetConfirmation({ 
             isOpen: true, 
@@ -796,8 +1008,10 @@ export default function App() {
           if (resetConfirmation.type === 'settings') {
             setState(prev => ({ ...prev, settings: DEFAULT_SETTINGS }));
             setResetConfirmation({ isOpen: false, type: null, error: null });
-          } else if (resetConfirmation.type === 'blank') {
-            loadBlank();
+          } else if (resetConfirmation.type === 'new') {
+            createNewProject();
+          } else if (resetConfirmation.type === 'guide' || resetConfirmation.type === 'blank') {
+            loadGuide();
           } else if (resetConfirmation.type === 'data') {
             resetState();
           } else if (resetConfirmation.type === 'example' && resetConfirmation.examplePath) {
@@ -835,12 +1049,7 @@ export default function App() {
         isOpen={isColorModalOpen}
         onClose={() => setIsColorModalOpen(false)}
         currentThemeId={scriptThemeId}
-        onSelectTheme={(themeId) => {
-          setScriptThemeId(themeId);
-          if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('sceneflow_script_theme', themeId);
-          }
-        }}
+        onSelectTheme={setScriptThemeId}
         themeMode={themeMode}
         setThemeMode={setThemeMode}
         effectiveThemeCategory={effectiveCategory}
@@ -855,12 +1064,7 @@ export default function App() {
         isOpen={isColorModalOpen}
         onClose={() => setIsColorModalOpen(false)}
         currentThemeId={scriptThemeId}
-        onSelectTheme={(themeId) => {
-          setScriptThemeId(themeId);
-          if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('sceneflow_script_theme', themeId);
-          }
-        }}
+        onSelectTheme={setScriptThemeId}
         themeMode={themeMode}
         setThemeMode={setThemeMode}
         effectiveThemeCategory={effectiveCategory}

@@ -36,7 +36,7 @@ export function RawScriptModal({
                 <FileText size={24} className="text-text-body" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-text-main">Raw Screenplay</h3>
+                <h3 className="text-xl font-bold text-text-main">Source Screenplay</h3>
                 <p className="text-xs text-text-faint uppercase tracking-[0.2em] font-black">Initial Input & Bulk Edit</p>
               </div>
             </div>

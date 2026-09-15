@@ -21,7 +21,7 @@ export interface VideoSplitDividerProps {
  * Desktop-only draggable horizontal split divider between the Video Player and Active Highlights.
  * 
  * Features:
- * - Direct pointer-capture drag tracking with requestAnimationFrame throttling (60-144fps).
+ * - Direct pointer-capture drag tracking with requestAnimationFrame throttling (VSync-aligned).
  * - Disables all CSS transitions during drag via .is-resizing-split class on body to eliminate lag.
  * - Global iframe guard layer to prevent YouTube iframe event absorption during drag.
  * - Double-click to instantly snap back to default 240px height.

@@ -55,8 +55,7 @@ export const TimelineCueBlock = React.memo<TimelineCueBlockProps>(({
         height: blockHeight,
         backgroundColor: `rgba(${rgb}, ${isPlayheadInside ? 0.35 : 0.18})`,
         borderColor: `rgba(${rgb}, ${isPlayheadInside ? 0.9 : 0.45})`,
-        willChange: 'left, width',
-        transition: isPlaying ? 'left 100ms linear, width 100ms linear' : 'none',
+        willChange: 'left',
       }}
       className={cn(
         "absolute flex items-center rounded-md border font-sans transition-colors duration-150 cursor-pointer select-none overflow-hidden",

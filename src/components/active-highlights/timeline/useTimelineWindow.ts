@@ -145,11 +145,8 @@ export function useTimelineWindow({
       const totalSubLanes = subLanesByCategory.get(cat.type) || 1;
 
       const calculatedList: TimelineCalculatedCue[] = visiblePacked.map(({ cue, subLaneIndex }) => {
-        const startClamped = Math.max(cue.startTime, windowStart);
-        const endClamped = Math.min(cue.endTime, windowEnd);
-
-        const leftPercent = ((startClamped - windowStart) / totalSpanSeconds) * 100;
-        const rawWidthPercent = ((endClamped - startClamped) / totalSpanSeconds) * 100;
+        const leftPercent = ((cue.startTime - windowStart) / totalSpanSeconds) * 100;
+        const rawWidthPercent = ((cue.endTime - cue.startTime) / totalSpanSeconds) * 100;
         const widthPercent = Math.max(1.8, rawWidthPercent);
 
         const isPlayheadInside = isCueActive(cue, currentTime, settings);
