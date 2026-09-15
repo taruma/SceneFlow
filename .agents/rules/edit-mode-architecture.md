@@ -68,7 +68,7 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
       - Standardized symmetric padding (`py-2` collapsed, `pt-1.5 pb-2.5` expanded) and `ListChecks` icon in the title for visual parity with Playback Highlights.
       - **Action Nomenclature**: `[ { } JSON ]` for raw cue modal and `[ ↺ Resync ]` for proximity realignment with animated `[ ✓ Synced ]` feedback.
       - **Adaptive Density Toggle**: `[ ⊞ Cards | ≡ Compact ]` with responsive text labels collapsing cleanly to icons via container queries.
-      - **Collapsible Search & Multi-Select Filters**: Rested in a slim single-row by default with a `[ 🔍 Filter ]` toggle button, keyboard shortcuts (<kbd>Escape</kbd> to clear/close), autofocus, and multi-select category pills (`Set<string>`) allowing concurrent filtering across categories (e.g. Dialogue + Action).
+      - **Collapsible Search & Multi-Select Filters**: Rested in a slim single-row by default with a `[ 🔍 Filter ]` toggle button, keyboard shortcuts (<kbd>Escape</kbd> to clear/close), autofocus, and multi-select category pills (`Set<string>`) allowing concurrent filtering across categories (e.g. Dialogue + Action). Auto-expands on active filter transitions while allowing manual collapse to reclaim vertical space with active filter dot indicators.
       - **One-Click Filter Reset**: Counter badge (`{filteredCount}/{totalCount}`) converts into an interactive reset chip with `X` whenever filters are active.
     - Dedicated internal scrollable viewport (`SyncCueCard` in Cards mode, `SyncCueRow` in Compact mode) with `pt-2.5 pb-2` padding and `content-visibility: auto` rendering optimization.
 - **Cross-Panel Full Sync Jump**:

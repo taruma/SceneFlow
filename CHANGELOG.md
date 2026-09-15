@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Header Tip Action Pill (`src/components/AppHeader.tsx`, `src/components/ScriptHeaderControls.tsx`)**:
   - Renamed the header Ko-fi pill label from `Support` to `Tip` (with updated tooltip `Tip on Ko-fi`), eliminating semantic confusion with customer/technical support while matching Ko-fi's gratuity model with a compact 3-character footprint.
 
+### Fixed
+- **Collapsible Filter Section State Decoupling (`src/components/edit/SyncCuesToolbar.tsx`)**:
+  - Fixed a logic defect where the search and category filter drawer in `SyncCuesToolbar` could not be collapsed via the `[ Filter ]` button or <kbd>Escape</kbd> shortcut when any active search query or category filters were applied.
+  - Decoupled drawer expansion (`isExpanded`) from active filter state (`isFiltering`), allowing users to collapse the drawer to reclaim vertical screen space while preserving active filters, cue list narrowing, and the pulsing blue indicator dot on the collapsed filter button.
+  - Preserved smart auto-expansion when filters transition from inactive to active, and added container-level <kbd>Escape</kbd> dismissal for keyboard navigation inside the filter drawer.
+
 ## [2.4.0] - 2026-09-15
 
 ### Added
