@@ -127,6 +127,31 @@ Desktop Edit Mode features a dedicated Two-Tier studio workspace in the Left Pan
   - **Backward Seek & Filter Reset**: Seeking backwards (`currentTime < prevTime - 0.3s`), toggling category filters, changing density, or clearing searches immediately resets the monotonic guard, providing complete bidirectional scrubbing responsiveness.
   - **Filter-Aware Active Tracking**: When filtering cues by multi-select categories (e.g. Action, Camera, VFX) or typing search queries, active cue detection dynamically tracks the active cue among currently matching visible items, ensuring the panel scrolls to the active cue in the filtered set rather than being hidden or dropped due to unrendered dialogue.
 
+### Studio-Grade Cues JSON Editor & LLM Sync Setup (`RawCuesModal`)
+Accessible via `[ { } JSON ]` on the `SyncCuesToolbar`, the Raw Cues modal provides a studio-grade 2-column workstation for inspecting, formatting, and synchronizing cues directly with LLM structured outputs:
+
+- **Two-Column Workstation Architecture**:
+  - **Left Column (Schema Reference & Guide)**:
+    - **Live Field Directory**: Detailed reference for Essential Fields (`startTime`, `endTime`, `selectedText`, `type`) with requirement badges and typing constraints.
+    - **Collapsible Optional & Auto-Calc Fields**: Expandable accordion detailing `startIndex`, `endIndex`, `id`, `speaker`, and legacy `colorClass` mappings.
+    - **Quick Example Snippet**: Copyable JSON payload with 1-click **Insert** button when the editor is empty.
+  - **Right Column (Dual-Tab Workstation)**:
+    - **`{ } JSON Data` Tab**: Spacious monospace code editor supporting direct arrays `[...]` or wrapped project objects `{ cues: [...] }`.
+      - **Live Non-Blocking Validation Pill**: Instantly reports `{ cues } detected` or cue count (`108 cues ready`) in green, or specific syntax/schema error details in amber without blocking browser `alert()` popups. Disables the apply action while invalid.
+      - **`[ ✨ Format JSON ]` Standardizer**: Cleans and normalizes indentation to 2 spaces and automatically unrolls wrapped `{ cues: [...] }` objects into direct cue arrays.
+    - **`🤖 Sync Prompt & Schema` Tab**:
+      - **Lightweight Gemini Setup Guide**: Integrated step-by-step workflow for generating cues with Google AI Studio or Gemini API:
+        1. *Set System Prompt*: Paste the Sync Prompt into Gemini's *System Instructions*. Attach video and wrap screenplay text in `<ScriptText>...</ScriptText>`.
+        2. *Set Output Schema*: Provide the cues JSON schema under Gemini *Structured Output* (or API `responseSchema`).
+        3. *Import Cues*: Copy the model's generated JSON response and paste directly into the **JSON Data** tab.
+      - **Draft Baseline Guidance**: Clearly positioned outside the markdown prompt to emphasize that the template provides a baseline draft that users are encouraged to customize for their specific workflow.
+      - **Standalone Public Asset Links**: Clickable chips linking directly to [sync-prompt.txt](/sync-prompt.txt) and [schema.json](/schema.json) for easy downloading or external referencing.
+      - **Segmented Sub-View Switcher**: Instant switching between `[ 📄 Sync Prompt ]`, `[ 🤖 Gemini Schema ]`, and `[ ◫ Split ]`. In standard single-view mode, the active file takes the full ~650px container width, completely eliminating horizontal scrollbars on JSON schema lines.
+      - **Prompt Enforcement Rules**: Enforces strict verbatim extraction from `<ScriptText>` and explicit `(minutes * 60) + seconds` timecode math with negative counter-examples (`01:23.3 is 83.3, NOT 123.3`).
+- **Context-Aware Modal Footer**:
+  - Automatically switches actions based on the active tab:
+    - In **`JSON Data`**: Displays `Cancel` and `Apply Cues ({count})` (disabled when invalid or empty).
+    - In **`Sync Prompt & Schema`**: Displays `Close` and an active `Go to JSON Data →` shortcut, with Title Case typography and `whitespace-nowrap` to prevent button height distortion.
 
 ---
 
