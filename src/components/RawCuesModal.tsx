@@ -10,13 +10,15 @@ import {
   Check, 
   FileText,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Bot
 } from 'lucide-react';
 import { Cue } from '../types/script';
 import { sanitizeCues } from '../lib/cueUtils';
 import { UI_TOKENS } from '../styles/tokens/ui';
 import { useEscapeKey } from '../hooks/useEscapeKey';
 import { cn } from '../lib/utils';
+import cuesSchemaJson from '../schemas/cues.schema.json';
 
 interface RawCuesModalProps {
   isOpen: boolean;
@@ -34,6 +36,8 @@ const EXAMPLE_CUE_SCHEMA = `[
     "endTime": 18.2
   }
 ]`;
+
+const GEMINI_CUE_SCHEMA = JSON.stringify(cuesSchemaJson, null, 2);
 
 interface CueSchemaField {
   name: string;
@@ -101,6 +105,8 @@ export function RawCuesModal({
 
   const [formatSuccess, setFormatSuccess] = useState(false);
   const [copiedTemplate, setCopiedTemplate] = useState(false);
+  const [copiedSchema, setCopiedSchema] = useState(false);
+  const [activeTab, setActiveTab] = useState<'data' | 'schema'>('data');
   const [isOptionalFieldsOpen, setIsOptionalFieldsOpen] = useState(false);
 
   // Live validation of the JSON input
@@ -182,6 +188,16 @@ export function RawCuesModal({
     }
   }, []);
 
+  // Copy Gemini Structured Output Schema
+  const handleCopySchema = useCallback(() => {
+    if (navigator?.clipboard) {
+      navigator.clipboard.writeText(GEMINI_CUE_SCHEMA).then(() => {
+        setCopiedSchema(true);
+        setTimeout(() => setCopiedSchema(false), 1500);
+      });
+    }
+  }, []);
+
   // Insert template when empty
   const handleInsertTemplate = useCallback(() => {
     onChangeRawCuesText(EXAMPLE_CUE_SCHEMA);
@@ -216,7 +232,7 @@ export function RawCuesModal({
                 Cues JSON Editor
               </h2>
               <p className="text-[9px] font-bold text-text-faint uppercase tracking-wider">
-                SceneFlow Cue Schema & Data Editor
+                Screenplay Sync Cues
               </p>
             </div>
           </div>
@@ -248,9 +264,9 @@ export function RawCuesModal({
             </div>
 
             {/* Compact Overview Card */}
-            <div className="p-2.5 bg-surface rounded-xl border border-border-subtle text-[10px] text-text-muted leading-snug space-y-1 shadow-2xs">
+            <div className="p-2.5 bg-surface rounded-xl border border-border-subtle text-[10px] text-text-muted leading-snug shadow-2xs">
               <p>
-                Each cue synchronizes a screenplay excerpt with a video timecode window. Accepts direct arrays <code className="text-[9px] text-blue-500">[...]</code> or wrapped objects <code className="text-[9px] text-blue-500">{'{ cues: [...] }'}</code> (e.g. from LLM structured outputs).
+                Accepts direct arrays <code className="text-[9px] text-blue-500 font-mono">[...]</code> or wrapped objects <code className="text-[9px] text-blue-500 font-mono">{'{ cues: [...] }'}</code>.
               </p>
             </div>
 
@@ -351,11 +367,11 @@ export function RawCuesModal({
               )}
             </div>
 
-            {/* Example JSON Snippet */}
-            <div className="space-y-1">
+            {/* Quick Example Snippet */}
+            <div className="space-y-1.5 pt-1">
               <div className="flex items-center justify-between px-0.5">
                 <span className="text-[9px] font-black uppercase tracking-wider text-text-faint">
-                  Example Payload
+                  Quick Example
                 </span>
                 <div className="flex items-center gap-1.5">
                   {rawCuesText.trim() === '' && (
@@ -372,7 +388,7 @@ export function RawCuesModal({
                   <button
                     type="button"
                     onClick={handleCopyExample}
-                    title="Copy example to clipboard"
+                    title="Copy example payload to clipboard"
                     className="text-[9px] font-bold text-text-muted hover:text-text-main flex items-center gap-0.5"
                   >
                     {copiedTemplate ? (
@@ -397,77 +413,142 @@ export function RawCuesModal({
 
           </div>
 
-          {/* Right Column: Code Editor & Live Controls */}
+          {/* Right Column: Code Editor & Live Controls / Gemini Schema */}
           <div className="flex-1 flex flex-col min-h-0 bg-surface overflow-hidden">
             
-            {/* Editor Action Toolbar */}
-            <div className="px-5 py-2.5 border-b border-border-subtle flex items-center justify-between gap-3 shrink-0 flex-wrap bg-surface">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-black uppercase tracking-wider text-text-main">
-                  JSON Data
-                </span>
-                <span className="text-[9px] font-mono font-bold text-text-faint bg-surface-muted px-1.5 py-0.5 rounded-full">
-                  {lineCount} {lineCount === 1 ? 'line' : 'lines'}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {/* Live Validation Pill */}
-                {validationResult.isValid ? (
-                  <div className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg text-[10px] font-bold">
-                    <CheckCircle2 size={12} className="stroke-[2.5]" />
-                    <span>
-                      {validationResult.count} {validationResult.count === 1 ? 'cue' : 'cues'} ready
-                    </span>
-                    {validationResult.wasObjectWrapper && (
-                      <span className="text-[8px] font-mono uppercase bg-emerald-500/20 px-1 py-0.2 rounded text-emerald-700 dark:text-emerald-300">
-                        {'{ cues } detected'}
-                      </span>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-1.5 px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 rounded-lg text-[10px] font-bold">
-                    <AlertCircle size={12} />
-                    <span className="truncate max-w-[180px] sm:max-w-[260px]" title={validationResult.error || 'Invalid JSON'}>
-                      {validationResult.error || 'Invalid JSON'}
-                    </span>
-                  </div>
-                )}
-
-                {/* Prettify Button */}
+            {/* Action Toolbar with Tab Toggle */}
+            <div className="px-4 py-2 border-b border-border-subtle flex items-center justify-between gap-3 shrink-0 flex-wrap bg-surface">
+              {/* Toggle: JSON Data <-> Gemini Schema */}
+              <div className="flex items-center gap-1 bg-surface-muted p-0.5 rounded-xl border border-border-subtle shadow-2xs">
                 <button
                   type="button"
-                  onClick={handleFormatJson}
-                  disabled={!validationResult.isValid}
-                  title="Format & indent JSON to 2 spaces"
+                  onClick={() => setActiveTab('data')}
                   className={cn(
-                    "flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bold transition-all active:scale-95 border shadow-2xs",
-                    formatSuccess
-                      ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
-                      : "bg-surface-subtle hover:bg-surface-hover border-border-subtle text-text-muted hover:text-text-main disabled:opacity-40 disabled:cursor-not-allowed"
+                    "flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all",
+                    activeTab === 'data'
+                      ? "bg-surface text-text-main shadow-xs border border-border-subtle/60"
+                      : "text-text-muted hover:text-text-main"
                   )}
                 >
-                  {formatSuccess ? <Check size={12} /> : <Sparkles size={12} />}
-                  <span>{formatSuccess ? 'Formatted' : 'Format JSON'}</span>
+                  <Braces size={12} className={activeTab === 'data' ? "text-blue-500" : "text-text-faint"} />
+                  <span>JSON Data</span>
+                  <span className="text-[9px] font-mono font-bold text-text-faint bg-surface-subtle px-1.5 py-0.2 rounded-full ml-0.5">
+                    {lineCount}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('schema')}
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all",
+                    activeTab === 'schema'
+                      ? "bg-surface text-text-main shadow-xs border border-border-subtle/60"
+                      : "text-text-muted hover:text-text-main"
+                  )}
+                >
+                  <Bot size={12} className={activeTab === 'schema' ? "text-purple-500" : "text-text-faint"} />
+                  <span>Gemini Schema</span>
                 </button>
               </div>
+
+              {/* Right Side Header Controls */}
+              {activeTab === 'data' ? (
+                <div className="flex items-center gap-2">
+                  {/* Live Validation Pill */}
+                  {validationResult.isValid ? (
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg text-[10px] font-bold">
+                      <CheckCircle2 size={12} className="stroke-[2.5]" />
+                      <span>
+                        {validationResult.count} {validationResult.count === 1 ? 'cue' : 'cues'} ready
+                      </span>
+                      {validationResult.wasObjectWrapper && (
+                        <span className="text-[8px] font-mono uppercase bg-emerald-500/20 px-1 py-0.2 rounded text-emerald-700 dark:text-emerald-300">
+                          {'{ cues } detected'}
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 rounded-lg text-[10px] font-bold">
+                      <AlertCircle size={12} />
+                      <span className="truncate max-w-[180px] sm:max-w-[240px]" title={validationResult.error || 'Invalid JSON'}>
+                        {validationResult.error || 'Invalid JSON'}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Prettify Button */}
+                  <button
+                    type="button"
+                    onClick={handleFormatJson}
+                    disabled={!validationResult.isValid}
+                    title="Format & indent JSON to 2 spaces"
+                    className={cn(
+                      "flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bold transition-all active:scale-95 border shadow-2xs",
+                      formatSuccess
+                        ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+                        : "bg-surface-subtle hover:bg-surface-hover border-border-subtle text-text-muted hover:text-text-main disabled:opacity-40 disabled:cursor-not-allowed"
+                    )}
+                  >
+                    {formatSuccess ? <Check size={12} /> : <Sparkles size={12} />}
+                    <span>{formatSuccess ? 'Formatted' : 'Format JSON'}</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleCopySchema}
+                    title="Copy Gemini JSON Schema to clipboard"
+                    className={cn(
+                      "flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all active:scale-95 border shadow-2xs",
+                      copiedSchema
+                        ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+                        : "bg-purple-600 hover:bg-purple-700 text-white border-purple-600/30 shadow-purple-600/20"
+                    )}
+                  >
+                    {copiedSchema ? <Check size={12} /> : <Copy size={12} />}
+                    <span>{copiedSchema ? 'Copied' : 'Copy Schema'}</span>
+                  </button>
+                </div>
+              )}
             </div>
 
-            {/* Code Editor Body */}
-            <div className="p-4 flex-1 flex flex-col min-h-0 bg-surface">
-              <textarea
-                value={rawCuesText}
-                onChange={(e) => onChangeRawCuesText(e.target.value)}
-                className="w-full flex-1 min-h-[220px] bg-surface-subtle border border-border-subtle rounded-xl p-3.5 font-mono text-xs text-text-body focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none leading-relaxed custom-scrollbar"
-                placeholder={EXAMPLE_CUE_SCHEMA}
-                spellCheck={false}
-              />
-            </div>
+            {/* Main Panel Content */}
+            {activeTab === 'data' ? (
+              <div className="p-4 flex-1 flex flex-col min-h-0 bg-surface">
+                <textarea
+                  value={rawCuesText}
+                  onChange={(e) => onChangeRawCuesText(e.target.value)}
+                  className="w-full flex-1 min-h-[220px] bg-surface-subtle border border-border-subtle rounded-xl p-3.5 font-mono text-xs text-text-body focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none leading-relaxed custom-scrollbar"
+                  placeholder={EXAMPLE_CUE_SCHEMA}
+                  spellCheck={false}
+                />
+              </div>
+            ) : (
+              <div className="p-4 flex-1 flex flex-col min-h-0 bg-surface">
+                <div className="flex-1 min-h-0 relative rounded-xl border border-border-subtle bg-surface-subtle overflow-hidden flex flex-col shadow-inner">
+                  <div className="flex items-center justify-between px-3.5 py-1.5 bg-surface border-b border-border-subtle text-[10px] text-text-faint font-mono shrink-0">
+                    <span>schema.json</span>
+                    <button
+                      type="button"
+                      onClick={handleCopySchema}
+                      className="hover:text-text-main flex items-center gap-1 font-sans text-[10px] font-bold transition-colors"
+                    >
+                      {copiedSchema ? <Check size={11} className="text-emerald-500" /> : <Copy size={11} />}
+                      <span>{copiedSchema ? 'Copied' : 'Copy'}</span>
+                    </button>
+                  </div>
+                  <pre className="w-full flex-1 p-3.5 font-mono text-[10.5px] text-text-body overflow-auto custom-scrollbar leading-relaxed select-text">
+                    {GEMINI_CUE_SCHEMA}
+                  </pre>
+                </div>
+              </div>
+            )}
 
             {/* Right Column Footer */}
             <div className="px-5 py-3 border-t border-border-subtle bg-surface-subtle flex items-center justify-between gap-4 shrink-0">
               <p className="text-[11px] text-text-muted hidden sm:block">
-                Applying updates will replace all current project cues.
+                Applying updates will replace current project cues.
               </p>
 
               <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
