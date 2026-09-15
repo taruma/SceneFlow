@@ -203,7 +203,7 @@ export const SyncCuesToolbar: React.FC<SyncCuesToolbarProps> = memo(({
           <button
             type="button"
             onClick={onOpenRawCuesModal}
-            title="View & edit raw cues JSON data"
+            title="View, edit, or import cues JSON"
             className="flex items-center gap-1 px-2 py-1 bg-surface-muted hover:bg-surface-hover border border-border-main text-text-muted hover:text-text-main rounded-lg text-[9px] font-black uppercase tracking-wider transition-all active:scale-95 shadow-2xs"
           >
             <Braces size={10} className="shrink-0 text-text-muted" />

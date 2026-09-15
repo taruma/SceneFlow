@@ -446,14 +446,23 @@ export default function App() {
     }
   }, []);
 
-  const saveRawCues = () => {
+  const saveRawCues = (cuesOverride?: Cue[]) => {
     try {
-      const parsedCues = JSON.parse(rawCuesText);
-      if (!Array.isArray(parsedCues)) throw new Error("Must be an array");
-      setState(prev => ({ ...prev, cues: sanitizeCues(parsedCues) }));
+      let finalCues: Cue[];
+      if (cuesOverride && Array.isArray(cuesOverride)) {
+        finalCues = cuesOverride;
+      } else {
+        const parsed = JSON.parse(rawCuesText);
+        const extracted = Array.isArray(parsed)
+          ? parsed
+          : (parsed && typeof parsed === 'object' && Array.isArray(parsed.cues) ? parsed.cues : null);
+        if (!extracted) throw new Error("Must be an array or contain a cues array");
+        finalCues = sanitizeCues(extracted);
+      }
+      setState(prev => ({ ...prev, cues: finalCues }));
       setIsCuesModalOpen(false);
     } catch (err) {
-      alert("Invalid JSON format for cues. Please check your syntax.");
+      console.error("Failed to save cues JSON:", err);
     }
   };
 
