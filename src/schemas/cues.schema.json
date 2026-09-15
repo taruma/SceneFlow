@@ -1,22 +1,17 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
-  "description": "Container object holding an array of synchronized script cues matched against video or audio timestamps.",
   "properties": {
     "cues": {
       "type": "array",
-      "description": "Ordered list of script synchronization cues, sorted chronologically by startTime.",
       "items": {
         "type": "object",
-        "description": "A single synchronized cue linking a script excerpt with a playback timecode window.",
         "properties": {
           "id": {
-            "type": "string",
-            "description": "Unique identifier for the cue (e.g. 'cue_001', 'cue_002'). Must be unique across all cues."
+            "type": "string"
           },
           "type": {
             "type": "string",
-            "description": "Semantic classification of the cue. Options: 'dialogue' (spoken lines / speech), 'action' (scene description, character actions, physical movement), 'camera' (camera directions / movements like PAN, TILT, POV), 'shot' (shot framing like CLOSE UP, WIDE SHOT), 'audio' (sound effects, SFX, music cues), 'vfx' (visual effects, CGI, on-screen graphics), 'transition' (cuts, dissolve, scene transitions), 'environment' (ambient setting, background atmosphere, lighting). Defaults to 'dialogue' if unspecified.",
             "enum": [
               "dialogue",
               "action",
@@ -30,20 +25,20 @@
           },
           "speaker": {
             "type": "string",
-            "description": "The uppercase name of the character speaking (e.g. 'MARK', 'ELENA'). Must be null if the cue is not dialogue or if no specific character is speaking.",
+            "description": "Character name speaking. Null if non-dialogue.",
             "nullable": true
           },
           "selectedText": {
             "type": "string",
-            "description": "The exact, verbatim, contiguous substring copied directly from the script (e.g. text inside <ScriptText>...</ScriptText>). Can be a single word, a phrase, or a full sentence. Must match the script text identically without paraphrasing, summarizing, or altering casing or punctuation."
+            "description": "Verbatim substring copied exactly from the script."
           },
           "startTime": {
             "type": "number",
-            "description": "Playback start time in total elapsed seconds as a decimal number (e.g. 83.5 for 1 minute 23.5 seconds, NOT 123.5). IMPORTANT: Convert all timecodes (mm:ss or hh:mm:ss) into total seconds (minutes * 60 + seconds). Never output colon-stripped numbers. Must be >= 0 and strictly less than endTime."
+            "description": "Start time in seconds."
           },
           "endTime": {
             "type": "number",
-            "description": "Playback end time in total elapsed seconds as a decimal number (e.g. 87.2 for 1 minute 27.2 seconds, NOT 127.2). IMPORTANT: Convert all timecodes (mm:ss or hh:mm:ss) into total seconds (minutes * 60 + seconds). Must be strictly greater than startTime."
+            "description": "End time in seconds."
           }
         },
         "required": [

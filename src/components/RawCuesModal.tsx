@@ -19,6 +19,7 @@ import { UI_TOKENS } from '../styles/tokens/ui';
 import { useEscapeKey } from '../hooks/useEscapeKey';
 import { cn } from '../lib/utils';
 import cuesSchemaJson from '../schemas/cues.schema.json';
+import { CUES_SYSTEM_PROMPT } from '../schemas/cues.prompt';
 
 interface RawCuesModalProps {
   isOpen: boolean;
@@ -106,7 +107,8 @@ export function RawCuesModal({
   const [formatSuccess, setFormatSuccess] = useState(false);
   const [copiedTemplate, setCopiedTemplate] = useState(false);
   const [copiedSchema, setCopiedSchema] = useState(false);
-  const [activeTab, setActiveTab] = useState<'data' | 'schema'>('data');
+  const [copiedPrompt, setCopiedPrompt] = useState(false);
+  const [activeTab, setActiveTab] = useState<'data' | 'schema' | 'prompt'>('data');
   const [isOptionalFieldsOpen, setIsOptionalFieldsOpen] = useState(false);
 
   // Live validation of the JSON input
@@ -194,6 +196,16 @@ export function RawCuesModal({
       navigator.clipboard.writeText(GEMINI_CUE_SCHEMA).then(() => {
         setCopiedSchema(true);
         setTimeout(() => setCopiedSchema(false), 1500);
+      });
+    }
+  }, []);
+
+  // Copy System Prompt
+  const handleCopyPrompt = useCallback(() => {
+    if (navigator?.clipboard) {
+      navigator.clipboard.writeText(CUES_SYSTEM_PROMPT).then(() => {
+        setCopiedPrompt(true);
+        setTimeout(() => setCopiedPrompt(false), 1500);
       });
     }
   }, []);
@@ -449,6 +461,19 @@ export function RawCuesModal({
                   <Bot size={12} className={activeTab === 'schema' ? "text-purple-500" : "text-text-faint"} />
                   <span>Gemini Schema</span>
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('prompt')}
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all",
+                    activeTab === 'prompt'
+                      ? "bg-surface text-text-main shadow-xs border border-border-subtle/60"
+                      : "text-text-muted hover:text-text-main"
+                  )}
+                >
+                  <FileText size={12} className={activeTab === 'prompt' ? "text-amber-500" : "text-text-faint"} />
+                  <span>System Prompt</span>
+                </button>
               </div>
 
               {/* Right Side Header Controls */}
@@ -493,7 +518,7 @@ export function RawCuesModal({
                     <span>{formatSuccess ? 'Formatted' : 'Format JSON'}</span>
                   </button>
                 </div>
-              ) : (
+              ) : activeTab === 'schema' ? (
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
@@ -510,6 +535,23 @@ export function RawCuesModal({
                     <span>{copiedSchema ? 'Copied' : 'Copy Schema'}</span>
                   </button>
                 </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleCopyPrompt}
+                    title="Copy System Prompt to clipboard"
+                    className={cn(
+                      "flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all active:scale-95 border shadow-2xs",
+                      copiedPrompt
+                        ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+                        : "bg-amber-600 hover:bg-amber-700 text-white border-amber-600/30 shadow-amber-600/20"
+                    )}
+                  >
+                    {copiedPrompt ? <Check size={12} /> : <Copy size={12} />}
+                    <span>{copiedPrompt ? 'Copied' : 'Copy Prompt'}</span>
+                  </button>
+                </div>
               )}
             </div>
 
@@ -524,7 +566,7 @@ export function RawCuesModal({
                   spellCheck={false}
                 />
               </div>
-            ) : (
+            ) : activeTab === 'schema' ? (
               <div className="p-4 flex-1 flex flex-col min-h-0 bg-surface">
                 <div className="flex-1 min-h-0 relative rounded-xl border border-border-subtle bg-surface-subtle overflow-hidden flex flex-col shadow-inner">
                   <div className="flex items-center justify-between px-3.5 py-1.5 bg-surface border-b border-border-subtle text-[10px] text-text-faint font-mono shrink-0">
@@ -540,6 +582,25 @@ export function RawCuesModal({
                   </div>
                   <pre className="w-full flex-1 p-3.5 font-mono text-[10.5px] text-text-body overflow-auto custom-scrollbar leading-relaxed select-text">
                     {GEMINI_CUE_SCHEMA}
+                  </pre>
+                </div>
+              </div>
+            ) : (
+              <div className="p-4 flex-1 flex flex-col min-h-0 bg-surface">
+                <div className="flex-1 min-h-0 relative rounded-xl border border-border-subtle bg-surface-subtle overflow-hidden flex flex-col shadow-inner">
+                  <div className="flex items-center justify-between px-3.5 py-1.5 bg-surface border-b border-border-subtle text-[10px] text-text-faint font-mono shrink-0">
+                    <span>system_prompt.txt</span>
+                    <button
+                      type="button"
+                      onClick={handleCopyPrompt}
+                      className="hover:text-text-main flex items-center gap-1 font-sans text-[10px] font-bold transition-colors"
+                    >
+                      {copiedPrompt ? <Check size={11} className="text-emerald-500" /> : <Copy size={11} />}
+                      <span>{copiedPrompt ? 'Copied' : 'Copy'}</span>
+                    </button>
+                  </div>
+                  <pre className="w-full flex-1 p-3.5 font-mono text-[10.5px] text-text-body overflow-auto custom-scrollbar leading-relaxed whitespace-pre-wrap select-text">
+                    {CUES_SYSTEM_PROMPT}
                   </pre>
                 </div>
               </div>
