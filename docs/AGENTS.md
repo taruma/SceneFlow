@@ -169,6 +169,9 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
    - The unified Left Panel (`src/components/left-panel/WorkstationLeftPanel.tsx`) permanently houses Tier 1 (`MediaViewport` and `MediaHeader`), ensuring the `<YouTube>` player iframe is **never unmounted** when switching between Playback and Edit modes.
    - Maintain strict Tier 2 container separation between Playback mode (`ActiveHighlightsPanel`) and Edit mode (`SyncCuesPanel`).
    - Never cross-contaminate playback containers with edit-mode sticky scroll animations, form paddings, or modal listeners.
+   - **Mobile Viewport Geometry Differentiation**: Differentiate root container classes between modes:
+     - In Edit Mode (`mode === 'edit'`), use `h-full overflow-hidden z-10 border-r` so the mobile cue management workspace occupies the full screen.
+     - In Playback Mode (`mode === 'playback'`), **never** apply `h-full` or `overflow-hidden` on mobile viewports (`< lg`). Use `shrink-0 sticky top-0 z-30 shadow-md border-b` with natural height (`h-auto`), ensuring the pinned video player leaves the screenplay (Center Panel) immediately visible and scrollable underneath with seamless auto-scrolling. Desktop viewports (`lg:`) consistently retain `lg:h-full lg:overflow-hidden lg:static lg:z-10 lg:shadow-none lg:border-r`.
 
 6. **Timeline Density & Geometry Synchronization**:
    - Support `TimelineDensity` (`'comfortable' | 'compact'`) across timeline components for dynamic vertical scaling (32px vs 24px track heights).

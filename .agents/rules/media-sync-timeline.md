@@ -29,6 +29,10 @@ YouTube's iframe player tends to auto-play unbuffered video when `seekTo(seconds
 - Delegate left panels in both Playback and Edit modes to `WorkstationLeftPanel.tsx` (`src/components/left-panel/`), which houses the permanent `MediaViewport` and `MediaHeader`. This guarantees single-instance YouTube iframe persistence with zero player teardown across mode toggles.
 - Maintain strict Tier 2 container separation between Playback mode (`ActiveHighlightsPanel`) and Edit mode (`SyncCuesPanel`).
 - Never cross-contaminate playback containers with edit-mode sticky scroll animations, form paddings, or modal listeners.
+- **Mobile Viewport Geometry Invariant**:
+  - Differentiate container styling dynamically between modes:
+    - **Edit Mode**: Uses `h-full overflow-hidden z-10 border-r` on mobile viewports so the cue list editor utilizes the full handheld display.
+    - **Playback Mode**: Must **never** apply `h-full` or `overflow-hidden` on mobile (`< lg`). Apply `shrink-0 sticky top-0 z-30 shadow-md border-b` with natural height (`h-auto`), ensuring the pinned media player leaves the screenplay (Center Panel) immediately visible and scrollable underneath with synced auto-scrolling. Desktop viewports (`lg:`) consistently retain `lg:h-full lg:overflow-hidden lg:static lg:z-10 lg:shadow-none lg:border-r`.
 
 ## 5. Timeline Density & Geometry Synchronization
 - Support `TimelineDensity` (`'comfortable' | 'compact'`) across timeline components for dynamic vertical scaling (32px vs 24px track heights).

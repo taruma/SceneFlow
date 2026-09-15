@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.4.0-dev] - Unreleased
 
+### Fixed
+- **Mobile Playback Viewport & Script Visibility Fix (`src/components/left-panel/WorkstationLeftPanel.tsx`)**:
+  - Scoped `h-full overflow-hidden` strictly to Edit Mode (which requires full-height on mobile to display cue management) and desktop viewports (`lg:h-full lg:overflow-hidden`).
+  - Restored `shrink-0 sticky top-0 z-30 shadow-md border-b` on mobile in Playback Mode, preventing the unified workstation left panel from expanding to 100% viewport height with empty space while Tier 2 (`ActiveHighlightsPanel`) is hidden on handheld screens.
+  - Restored instant visibility and uninterrupted auto-scrolling of the screenplay (Center Panel) directly beneath the pinned video player on mobile devices.
+
 ### Added
 - **Dynamic Dirty Tracking & Clean Script Click Dismissal (`src/hooks/useCueEditor.ts`, `src/App.tsx`, `src/components/edit/EditRightPanel.tsx`, `src/components/edit/CueEditorContext.tsx`, `src/components/script/ScriptLine.tsx`)**:
   - **Snapshot Change Detection**: Tracked an `originalCue` baseline snapshot in `useCueEditor` and derived dynamic `isDirty` state, detecting changes to start/end times, text content, category types, and script character offsets for existing cues, as well as customized timings or edited quote text in new cue drafts.

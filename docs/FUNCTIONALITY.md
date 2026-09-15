@@ -250,6 +250,9 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 - **Truthful Shortcuts & Streamlined Badges**: All menus strictly display truthful functionality without non-existing keyboard shortcut annotations (<kbd>Ctrl+O</kbd>, <kbd>Ctrl+S</kbd>, <kbd>?</kbd>) or decorative pseudo-badges, ensuring clean, focused typography.
 - **Decoupled Playback Performance (0 Hz Header Re-Render)**: Both global header chrome (`AppHeader`) and screenplay preview controls (`ScriptHeaderControls`) are completely decoupled from playback time updates, eliminating high-frequency virtual DOM diffing across the application shell during media playback. Timecode feedback is delegated exclusively to the video player transport and Timeline ruler.
 - **Strict Mobile Exclusion**: Declared with unconditional `hidden lg:flex` to ensure desktop-only cue editing controls never leak into mobile playback viewports.
+- **Mobile Workstation Layout Ergonomics (Playback vs. Edit)**:
+  - **Playback Mode on Mobile**: The unified workstation header and media viewport pin to the top of the mobile screen (`sticky top-0 z-30 shadow-md border-b`) with natural content height, ensuring the screenplay Center Panel renders immediately below with full visibility, touch scrolling, and automatic dialogue tracking.
+  - **Edit Mode on Mobile**: Expands the workstation to full height (`h-full overflow-hidden`), dedicating the entire handheld viewport to cue selection, category filtering, search, and timestamp editing.
 
 
 ---
