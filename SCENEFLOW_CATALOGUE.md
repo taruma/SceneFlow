@@ -60,12 +60,13 @@ To load a remote project, use `?project=URL`.
 | 2026-01-27 | `frame_02` | Wandering Souls | Kling 2.6 |
 | 2026-01-25 | `frame_01` | Distant | Kling 2.6 |
 
-## AI Clips (15)
+## AI Clips (16)
 
 *Hidden from the "All" library view — accessible via direct link or AI Clips tab.*
 
 | Date | ID | Title | Video Model |
 |---|---|---|---|
+| 2026-09-15 | `clip_circuit_drop` | Circuit Drop | Seedance 2.5 |
 | 2026-09-06 | `clip_khemia` | Khemia | Seedance 2.5 |
 | 2026-08-28 | `clip_cold_purge` | Cold Purge | Seedance 2.5 |
 | 2026-08-25 | `clip_screaming_la` | Screaming Amber Wood (Live Action) | Seedance 2.5 |

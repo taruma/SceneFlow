@@ -439,6 +439,14 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         description: 'A new generation of casters ventures beyond sanctuary walls into a vast, uncharted Mediterranean realm of sky and stone.',
         releaseDate: '2026-09-06',
         tags: ['auteur script', 'seedance 2.5'],
+      },
+      {
+        id: 'clip_circuit_drop',
+        title: 'Circuit Drop',
+        path: '/examples/ai_clips/clip_circuit_drop.json',
+        description: 'A compilation of Seedance 2.5 music experiments made from text, lip sync, and existing tracks.',
+        releaseDate: '2026-09-15',
+        tags: ['auteur script', 'seedance 2.5', 'music video'],
       }
     ]
   }
