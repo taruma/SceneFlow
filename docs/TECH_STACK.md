@@ -51,6 +51,7 @@ SceneFlow is built with a modern, lightweight, and performant web stack designed
 - **React Hooks**: Local component state orchestrated via `useState`, `useEffect`, `useRef`, and memoized highlighting through `useMemo`. Eleven modular custom hooks (`useAppShellTheme`, `useScriptStorage`, `useYouTubePlayer`, `useScriptPreferences`, `useAutoScroll`, `useCueEditor`, `useCueAlignment`, `useKeyboardShortcuts`, `useScriptTheme`, `useEscapeKey`, `useClickOutside`) with a unified `src/hooks/index.ts` barrel encapsulate state lifecycle, playback control, theme resolution, and side effects, keeping `App.tsx` as a lightweight orchestrator.
 - **LocalStorage**: Client-side persistence for:
   - `'screenplay_sync_state'`: Video source, screenplay raw text, cues array, and timing offsets.
+  - `'sceneflow_app_mode'`: Active workflow mode (`AppMode`: `'playback' | 'edit'`).
   - `'sceneflow_app_theme_mode'`: Active application shell theme mode (`AppThemeMode`: `'auto' | 'light' | 'warm' | 'dark'`).
   - `'sceneflow_script_theme'`: Active script viewer theme ID (`ScriptThemeId`).
   - `'sceneflow_cue_palette_profile'`: Active cue palette accessibility profile (`CuePaletteProfile`: `'standard' | 'protanopia'`).
@@ -61,6 +62,9 @@ SceneFlow is built with a modern, lightweight, and performant web stack designed
   - `'sceneflow_timeline_zoom_preset'`: Active timeline visible window zoom preset (`TimelineZoomPreset`: `'4s' | '8s' | '16s'`).
   - `'sceneflow_timeline_height_mode'`: Active timeline track height mode (`TimelineHeightMode`: `'flexible' | 'fixed'`).
   - `'sceneflow_split_ratio'`: Active desktop split pane ratio (`number`).
+  - `'sceneflow_edit_split_ratio'`: Active desktop edit mode left split ratio (`number`).
+  - `'sceneflow_inspector_ratio'`: Active desktop cue inspector width ratio (`number`).
+  - `'sceneflow_inspector_width'`: Active desktop cue inspector pixel width fallback (`number`).
   - `'sceneflow_video_height'`: Active playback video player height in pixels (`number`).
   - `'sceneflow_playback_video_collapsed'`: Video player collapsed/hidden state in Playback mode (`boolean`).
   - `'sceneflow_pure_black_bg'`: Pure Black Canvas / Video Overlay mode toggle state (`boolean`).

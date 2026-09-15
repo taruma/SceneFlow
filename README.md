@@ -22,15 +22,18 @@ https://github.com/user-attachments/assets/e2469136-4224-4192-affc-d19d7e403f74
 
 Built for evaluating how AI video models visualize prompt instructions, it supports both traditional **Screenplay formatting** and high-precision, state-driven **Auteur Script formatting** with 5-part staging metadata. SceneFlow helps you compare instructions against what was actually generated — essential for assessing prompt adherence and iterating on AI cinema projects.
 
-> **Note on Cue Creation**: SceneFlow does not automatically extract or generate video sync cues for you. Cues must be mapped **manually** (by highlighting text in Edit Mode and setting timestamps) or generated externally using **multimodal AI models** (such as Gemini) that analyze video frames against script timecodes.
+> **Note on Cue Creation**: SceneFlow does not automatically extract video sync cues in the background. Cues can be authored **manually** in the dedicated 3-Panel Edit Workstation or generated externally using **multimodal AI models** (such as Google Gemini). SceneFlow includes a built-in **Cues JSON Editor & LLM Sync Setup** with a ready-to-copy **Gemini Sync Prompt** and minimal **JSON Schema** for fast 1-click structured cue generation.
 
 ### What It Does
 
 - **Script-to-Screen Tracking** — Highlights which parts of your script are playing in real-time
 - **Dual Script Workflows** — Seamlessly handles both human-readable screenplays and state-chained Auteur Scripts
+- **Desktop 3-Panel Studio Workstation** — Integrated media preview, time-clustered cue grid, reading canvas, and draggable cue inspector
+- **Continuous Multi-Track Timeline** — Smooth display-synchronized (VSync) timeline tracking with stationary 35% anticipation playhead
 - **Color-Coded Cues** — 8 element types: dialogue, action, camera, shots, audio, VFX, transitions, environments
 - **Adherence Analysis** — Pinpoint missed prompt elements, camera drift, or continuity deviations against the generated video
-- **Timing Controls** — Adjustable buffers to fine-tune when highlights appear
+- **LLM Sync Setup** — Built-in Gemini system prompt and JSON schema generator for structured cue outputs
+- **Timing Controls** — Micro-nudge steppers (`±0.1s`, `±0.5s`), interactive loop previews, and adjustable per-category buffers
 - **Portable** — JSON-based projects you can save, share, and version-control
 
 ---
@@ -67,39 +70,66 @@ https://github.com/user-attachments/assets/cf3a7fec-2a4b-48d8-9028-245eba49934c
 ### 📊 Multi-Track Sync Timeline & Playback Workspace
 
 - **Horizontal Multi-Track Timeline** — Visual NLE/DAW-inspired horizontal lanes for each cue category with deterministic sub-lane stacking
+- **Sub-Frame Clock Extrapolation** — Continuous timeline clock advancement (`useSmoothTimelineTime`) running via `requestAnimationFrame` and `performance.now()`, eliminating jittery ~100ms API polling delays and fixed-step CSS transition stutter
 - **Stationary Anticipation Playhead** — Laser marker anchored at 35% with a continuous sliding timecode ruler for upcoming cue anticipation
+- **Adaptive Single-Row Header** — Stepped label collapsing with live active cue counter, 8-slot category LED VU meter strip, and compact `[ ↕ Fixed ]` / `[ ↕ Flex ]` track height toggle
 - **Docked Paused Inspector** — Detailed cue inspection card with quotes, timestamps, category badges, and instant replay when paused
 - **Persistent Transport Controls** — Header-mounted Play, Pause, and Replay (0:00) controls operable even when video is hidden
+- **Live Timecode HUD Badge** — Real-time `MM:SS.s` precision timecode and media duration indicator active in both modes
+- **Collapsible YouTube Source Header Pill** — Replaces bulky inputs with a sleek `[ 🟢 {videoId} ✏️ ]` pill, saving vertical space
 - **Collapsible Video Player** — Hide video frame with zero-height clipping for clean timeline screen recording while keeping background audio and clock continuity (`V`)
-- **Dual-Axis Draggable Split Panes** — Custom panel split ratio (default 65:35) and 16:9 proportional video height with 1-click Reset View
-- **Studio VU Meter** — 8-slot category LED strip illuminating dynamically with zero layout shift during playback
+- **Mode-Aware Layout Reset** — Snaps split panes to calibrated distributions (40/35/25 in Edit Mode, 65/35 in Playback Mode) with 1-click or `Shift+R`
 - **Timeline Zoom & Height Modes** — Discrete zoom presets (4s, 8s, 16s) and Fixed vs. Flexible track height allocation
+
+### ✏️ Desktop 3-Panel Edit Workstation & Cue Studio
+
+- **Calibrated 40 / 35 / 25 Distribution** — Dedicated 3-panel layout: Left Media & Cues Studio (40%), Center Screenplay Canvas (35%), and Right Draggable Cue Inspector (25%)
+- **Draggable Vertical Inspector Splitter** — Fluid percentage-based resizing (18% to 45% with 260px safety floor), double-click reset to 25%, and keyboard accessibility (<kbd>←</kbd> / <kbd>→</kbd> / <kbd>Enter</kbd>)
+- **Time-Clustered Fluid Grid (Cards View)** — Chronological cue grouping ($\le 2.5$s proximity, max 10s span) with frosted sticky timecode landmark rulers and dense auto-fill packing
+- **Mini Cue Cards & Dialogue Safeguard** — Compact 1-column cards for quick audio/shot bursts ($\le 1.8$s, $\le 40$ch), while character dialogue (`type === 'dialogue'`) and longer text are guaranteed at least 2 columns
+- **Ergonomic Cue Inspector** — Symmetrical Start/End audio-visual timing deck with live timecode HUDs (`MM:SS.s`), micro-nudge steppers (`-0.5s`, `-0.1s`, `+0.1s`, `+0.5s`), clock capture, live duration chips (`⏱ 1.6s`), and interactive `Play Cue [▶]` preview with a dynamic `Loop [🔁]` controller
+- **Surrounding Scene Context Window** — Displays screenplay lines immediately preceding (`PREV`) and following (`NEXT`) the selected text for instant narrative orientation
+- **Script Anchoring Card** — Decoupled card retaining editable character offsets (`Start Index`, `End Index`), live span counter, and cue ID badge
+- **Pinned Sticky Bottom Action Bar** — Anchors `Update Cue` (<kbd>Ctrl+Enter</kbd>), `Cancel` (<kbd>Esc</kbd>), and `Delete` permanently to the inspector bottom
+- **Two-Tier Theme-Harmonized Highlights** — Primary scroll focus cue commands attention with radiant ambient glow, halo, and active border; secondary co-active cues render with subtle ambient wash
+- **Performance-Shielded Auto-Scroll** — Forward monotonic scrolling guard eliminating rubber-band jitter, with instant touch/wheel cancellation and filter-aware visible cue tracking
+- **Cross-Mode Playback Continuity** — Single persistent media viewport prevents YouTube player destruction, audio cutoffs, or timestamp resets when toggling between Playback and Edit modes
+- **Clean Script Click Dismissal** — Clicking clean script canvas safely dismisses inspector back to idle overview when no unsaved changes exist (`dismissIfClean`), with reactive `Saved` vs `Unsaved` status badging
+
+### 🤖 Studio Cues JSON Editor & LLM Sync Setup (`RawCuesModal`)
+
+- **Two-Column Workstation Architecture** — Left column visual Schema Reference (essential, auto-calc, and optional fields with copy/insert snippets); right column dual-tab editor
+- **`JSON Data` Tab** — Live non-blocking syntax validation pill (`{ cues } detected`, `N cues ready`), error diagnostics without browser alerts, and `[ ✨ Format JSON ]` 2-space indentation standardizer with automatic `{ cues: [...] }` unwrapping
+- **`Sync Prompt & Schema` Tab** — Integrated 3-step Gemini setup guide with standalone public asset links (`/sync-prompt.txt`, `/schema.json`)
+- **Segmented Sub-View Switcher** — Full-width views (`[ 📄 Sync Prompt ]`, `[ 🤖 Gemini Schema ]`) eliminating horizontal scrollbars, and `[ ◫ Split ]` side-by-side mode
+- **Token-Optimized Minimal Schema** — Modular schema contract strictly focused on data types and enums without noisy descriptions that degrade LLM token generation
+- **Context-Aware Footer Actions** — Tab-specific actions (`Apply Cues (N)` vs `Go to JSON Data →`) with wrap-resistant Title Case styling
 
 ### Data Management
 
 - **Import/Export** — Save and load projects as JSON files
 - **Remote Sharing** — Share projects via URL using query parameters
 - **Raw Editing** — Direct access to screenplay text and cue data
-- **Example Library** — Pre-built demos to get started quickly
+- **Separated Blank Canvas & Starter Guide** — Authentic blank project template (`blank.json`) for starting fresh, alongside dedicated 1,200+ line interactive tutorial script (`guide.json`)
 - **Local Storage** — Automatic saving of your work
 
 ### Script Viewer Customization & Dynamic Theming
 
+- **3-Zone Studio Header Architecture** — Balanced layout: Left Wing tiered `[ File ▾ ]` dropdown (Project I/O, Blank Canvas, Starter Guide, Library), Center Stage segmented mode switcher (`[ ▶ Playback | ✏️ Edit ]`), and Right Wing Studio Preferences
+- **Consolidated Studio Preferences (`[ ⚙️ Settings ▾ ]`)** — 4-theme quick selector grid (`Auto`, `Light`, `Warm`, `Dark`), dedicated "Reading Canvas & Viewport" section with 5-segment Script Width row and 3-segment Focus Line row, `<kbd>` shortcut badges, dynamic `Custom` layout badge, and 1-click `[ ↺ Reset All ]` action
 - **Dynamic App Theming** — Full workspace theming in **Light**, **Warm**, and **Dark** modes with seamless 250ms CSS variable switching
 - **Auto-Sync Mode** — Application shell automatically adapts to match the active screenplay paper category
 - **Pure Black Canvas (Video Overlay Mode)** — Absolute `#000000` luminance and shadow stripping for NLE Screen/Lighten blend compositing and screen capture
 - **Theme Presets** — 6 screenplay paper themes: Studio Crisp, Warm Parchment, Midnight Slate, OLED Blackout, Navy Slate, Newsprint
 - **Mobile Theme Drawer** — Native bottom-sheet drawer with 4-segment mode switcher and compact swatch cards
 - **Adaptive Logo** — Automatic dark/white logo switching across light, warm, and dark surfaces
-- **Width Presets** — 5 reading column widths from Narrow (384px) to Expanded (1024px)
-- **Scroll Focus** — 3 viewport alignment anchors (Top, Center, Bottom) for auto-scroll positioning
 - **In-Place Cue Editing** — Edit cue text directly without touching raw JSON
 
 ### Platform
 
-- **Mobile-Responsive** — Native bottom-sheet drawers for library and themes with adaptive staging badges
-- **App Info & Attribution** — Desktop information modal with dynamic versioning (`v2.3.2`), author attribution, and documentation resource links
-- **Keyboard Shortcuts** — Desktop hotkeys for playback (`Space`, `K`), seeking (`← / →`, `J / L`), video collapse (`V`), and universal modal dismissal (`Esc`)
+- **Mobile-Responsive** — Native bottom-sheet drawers for library and themes with adaptive staging badges and sticky mobile video transport
+- **App Info & Attribution** — Desktop information modal with dynamic versioning (`v2.4.0`), author attribution, and documentation resource links
+- **Keyboard Shortcuts** — Hotkeys for playback (`Space`, `K`), seeking (`← / →`, `J / L`), video collapse (`V`), studio preferences (`Shift+C`, `Shift+T`, `Shift+R`), cue saving (`Ctrl+Enter`), and universal modal dismissal (`Esc`)
 - **Vercel Analytics** — Audience traffic insights and real-time Web Vitals monitoring
 - **PWA-Ready** — Web manifest and icon suite for standalone app installation
 
@@ -169,35 +199,52 @@ npm run dev
 
 ### Playback Mode
 
-1. **Load a Script** — Use the built-in Library (`?example=ID`), load a remote URL (`?project=URL`), or import a JSON project file.
-2. **Play the Video** — The script highlights in real-time as the video timeline progresses.
+1. **Load a Script** — Use the top-level **[ File ▾ ]** menu to open a project, browse the built-in Library (`?example=ID`), load a remote URL (`?project=URL`), or explore the official **Starter Guide**.
+2. **Play the Video** — The script highlights in real-time as the video timeline progresses with smooth, display-synchronized playhead tracking.
 3. **Auto-Scroll & Focus Mode** — Script automatically follows active cues. Click the **Focus Mode** dropdown next to Auto-Scroll to filter which cue types trigger scrolling (e.g., track *Dialogue* only).
-4. **Scroll Focus Line** — Choose where the active cue centers in your viewport (Top 35%, Center 50%, or Bottom 65%).
-5. **Script Width Presets** — Toggle between 5 reading column widths (Narrow to Expanded) for side-by-side video review.
-6. **Script Themes** — Switch between 6 light, warm, and OLED dark themes via the theme picker.
+4. **Studio Preferences (`[ ⚙️ Settings ▾ ]`)**:
+   - **Scroll Focus Line**: Choose where the active cue centers in your viewport (Top 35%, Center 50%, or Bottom 65%).
+   - **Script Width Presets**: Toggle between 5 reading column widths (Narrow 384px to Expanded 1024px) for side-by-side video review.
+   - **Shell & Script Themes**: Quick 4-theme picker (`Auto`, `Light`, `Warm`, `Dark`) and full palette modal (<kbd>Shift+C</kbd>).
+   - **Reset View Layout**: Snap back to default split layout (<kbd>Shift+R</kbd>).
+5. **Timeline Inspection** — Click any cue block in the Multi-Track Timeline or pause playback to reveal the docked Cue Inspector card with quotes, timestamps, and instant replay.
+6. **Screen Recording Mode** — Collapse the video player with zero-height clipping (<kbd>V</kbd>) to capture clean, distraction-free recordings of the timeline alongside the screenplay.
 
 ### Edit Mode
 
-1. **Switch to Edit** — Click the "Edit" toggle in the header.
-2. **Set Video Source** — Paste any YouTube video URL, short ID, or direct video link.
-3. **Edit Script Text** — Click "Edit Raw" to modify the complete script and staging blocks.
-4. **Create & Adjust Cues**:
-   - Highlight any text in the script preview to open the Cue Editor.
-   - Snap start/end timestamps using the clock button or manual inputs.
-   - Choose a cue category (Dialogue, Action, Camera, Shot, Audio, VFX, Transition, Environment).
-   - Edit the selected cue text directly in-place using the monospace editor without touching raw JSON.
-5. **Handle Overlaps** — Click overlapping highlights in the script to select specific cues via the Overlap Picker.
-6. **Align Cues** — Click "Align" to automatically re-anchor highlights if script text changes; use "Find Alternative" to resolve duplicate phrase occurrences.
-7. **Export** — Download a portable JSON project file via "Save Sync".
+1. **Switch to Edit Mode** — Click the centered `[ ✏️ Edit ]` toggle in the header. The workspace seamlessly snaps to the **40 / 35 / 25** studio workstation (Left Media/Cues, Center Screenplay Canvas, Right Cue Inspector) with continuous video playback.
+2. **Set Video Source** — Click the compact `[ 🟢 {videoId} ✏️ ]` header pill to paste any YouTube video URL, short ID, or direct video link.
+3. **Edit Script Text** — Click **[Edit Source]** in the screenplay header to modify the raw script and staging blocks.
+4. **Author & Inspect Cues**:
+   - Highlight any text in the screenplay canvas to populate a new cue draft, or click any cue card in the left panel to inspect an existing cue.
+   - Use the **Audio-Visual Timing Deck** to capture live playback timestamps (`Clock` icon), or fine-tune boundaries using single-click micro-nudge steppers (`-0.5s`, `-0.1s`, `+0.1s`, `+0.5s`).
+   - Audition cue timing in real-time using `Play Cue [▶]` and the dynamic `Loop [🔁]` toggle.
+   - Review the **Surrounding Scene Context** (`PREV` and `NEXT` script lines) to anchor the quote without looking away.
+   - Edit the quote text directly in-place or adjust character index offsets in the Script Anchoring card.
+   - Save changes via **Update Cue** (<kbd>Ctrl+Enter</kbd>), cancel with <kbd>Esc</kbd>, or safely dismiss by clicking clean screenplay canvas space.
+5. **Fluid Cue Grid & Search**:
+   - Browse cues in the **Time-Clustered Fluid Grid** (`Cards` view) with sticky timecode landmark rulers, or switch to high-density `Compact` view.
+   - Toggle the collapsible `[ 🔍 Filter ]` bar to search text or filter by multiple categories simultaneously.
+   - Toggle Left Panel auto-scroll (`[ 🎯 Scroll ]`) to follow the active cue during playback.
+6. **Align & Proximity Matching** — Click **[ ↺ Resync ]** to automatically re-anchor highlights if script text changes; use "Find Alternative" to resolve duplicate phrase occurrences.
+7. **Studio Cues JSON Editor & LLM Sync** — Click **[ { } JSON ]** to open the 2-column workstation:
+   - Validate and prettify raw cue JSON with live feedback (`{ cues } detected`).
+   - Copy the standardized **Gemini Sync Prompt** and minimal **JSON Schema** to generate synchronized cues directly from video models in Google AI Studio.
+8. **Export Project** — Download a portable JSON project file via **[ File ▾ ] → Save Project**.
 
 ### Keyboard Shortcuts
 
-| Key | Action |
-|-----|--------|
-| `Space` / `K` | Play / Pause video |
-| `←` / `J` | Rewind 5 seconds |
-| `→` / `L` | Forward 5 seconds |
-| `Esc` | Close active modal / dialog |
+| Key | Action | Context |
+|-----|--------|---------|
+| `Space` / `K` | Play / Pause video | Global (Playback active) |
+| `←` / `J` | Rewind 5 seconds | Global (Playback active) |
+| `→` / `L` | Forward 5 seconds | Global (Playback active) |
+| `V` | Toggle video collapse (Screen Recording) | Playback Mode |
+| `Shift + C` | Open Script Paper & Colors modal | Global |
+| `Shift + T` | Open Timing & Durations modal | Global |
+| `Shift + R` | Reset View Layout (Mode-Aware: 40/35/25 in Edit, 65/35 in Playback) | Global |
+| `Ctrl + Enter` | Save / Update cue draft | Cue Inspector |
+| `Esc` | Cancel cue edit / Close active modal | Global |
 
 
 ---

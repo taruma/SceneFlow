@@ -79,7 +79,7 @@ SceneFlow strictly enforces a dual-layer script architecture:
 SceneFlow features two purpose-built desktop modes:
 - **Playback Mode (Review & Analysis)**:
   - Designed for evaluating AI video model fidelity and prompt adherence.
-  - Multi-track horizontal NLE timeline (`HighlightTimelineView`) with stationary 35% anticipation playhead and 144Hz continuous clock extrapolation (`useSmoothTimelineTime`).
+  - Multi-track horizontal NLE timeline (`HighlightTimelineView`) with stationary 35% anticipation playhead and continuous sub-frame clock extrapolation (`useSmoothTimelineTime`).
   - High-refresh auto-scrolling (`useAutoScroll`) with user-configurable focus anchor lines (35% Top, 50% Center, 65% Bottom).
   - One-click video collapse (<kbd>V</kbd>) with zero-height background audio continuity for screen recording clean timeline overlays.
 - **Edit Mode (Authoring & Synchronization)**:

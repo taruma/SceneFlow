@@ -11,7 +11,7 @@ SceneFlow follows a modular, 5-layer architecture that separates script parsing,
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
 │                            UTILITY LAYER                               │
-│  src/lib/cueUtils.ts (12 pure functions) • src/lib/utils.ts •          │
+│  src/lib/cueUtils.ts (14 pure functions) • src/lib/utils.ts •          │
 │  src/constants/script.ts (COLORS, presets, DEFAULT_SETTINGS)           │
 └──────────────────────────────────┬─────────────────────────────────────┘
                                    │ sanitized cues, aligned offsets, theme configs
@@ -38,7 +38,7 @@ SceneFlow follows a modular, 5-layer architecture that separates script parsing,
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
 │                              UI LAYER                                  │
-│  src/App.tsx (orchestrator)  •  src/components/* (28 sub-components)    │
+│  src/App.tsx (orchestrator)  •  src/components/* (23 modular components)│
 │  src/types/script.ts (14 domain interfaces)                            │
 └────────────────────────────────────────────────────────────────────────┘
 ```
@@ -76,7 +76,7 @@ The processing layer extracts structure, metadata, and character positions from 
 The utility layer provides pure functions, shared constants, and data normalization that bridge processing output to the visuals and hooks layers.
 
 ### `src/lib/cueUtils.ts`
-A dedicated module containing twelve exported pure functions for cue lifecycle management:
+A dedicated module containing fourteen exported pure functions for cue lifecycle management:
 - **`sanitizeCues(cues)`**: ID deduplication and normalization engine that guarantees unique React keys, migrates legacy `colorClass` to canonical semantic `type` while stripping deprecated `colorClass`, and injects UUID-fallback IDs for malformed cues. Called by `useScriptStorage` across all five data-load paths and by `RawCuesModal` on JSON paste.
 - **`findTextInScript(fullText, text)`**: Three-tier text search (exact match → normalized whitespace/quotes regex → case-insensitive fallback) used by the cue editor.
 - **`getSelectionIndicesFromDOM(sel, scriptText)`**: Accurately resolves character start and end offsets within the full script for line-anchored DOM text selections using `data-line-start` metadata, with fallback to `findTextInScript`.
@@ -85,6 +85,7 @@ A dedicated module containing twelve exported pure functions for cue lifecycle m
 - **`getCueTimingOffsets(cueType, settings)`**: Aggregates per-type and global lead-in/tail-out timing offsets.
 - **`isCueActive(cue, currentTime, settings)`**: High-frequency check determining if a cue falls within the active playback time window.
 - **`findActiveCue(cues, currentTime, settings)`**: Resolves the single most active cue for a given timestamp, prioritizing the latest chronological start time with highest start index. Used for performance-shielded Left Panel auto-scroll and playback tracking.
+- **`findActiveCues(cues, currentTime, settings)`**: Resolves all concurrently active cues firing at the current timestamp by evaluating `isCueActive()` against each cue.
 - **`filterCues(cues, selectedCategories, searchQuery)`**: Pure filtering engine filtering a cue array by multi-select category types (`Set<string>`) and text queries (matching selected text, category type, or formatted timecodes).
 - **`clusterCuesByTime(cues, maxGapSeconds, maxClusterSpanSeconds, maxCuesPerCluster)`**: Temporal clustering engine grouping chronological cues into proximity windows (`maxGapSeconds = 2.5`) with hard ceiling caps (`maxClusterSpanSeconds = 10.0`, `maxCuesPerCluster = 8`) to guarantee bite-sized time clusters for the Edit Mode fluid grid.
 - **`calculateCuePlaybackOpacity(cue, currentTime, settings)`**: Dynamic fade-in/fade-out opacity calculation for playback transitions.
@@ -95,6 +96,7 @@ A dedicated module containing twelve exported pure functions for cue lifecycle m
 Shared utility functions extracted from `App.tsx`:
 - **`cn(...inputs)`**: Merges Tailwind utility classes safely using `clsx` and `tailwind-merge`.
 - **`extractYoutubeId(url)`**: Extracts an 11-character YouTube video ID from various URL formats (standard, shortened `youtu.be`, embeds, shorts, mobile).
+- **`formatTimecode(seconds)`**: Formats seconds into standard `MM:SS` (or `H:MM:SS` for $\ge 1\text{h}$) timecode strings.
 - **`formatPrecisionTimecode(seconds)`**: Formats raw seconds into standardized `MM:SS.s` (or `HH:MM:SS.s` for $\ge 1\text{h}$) precision timecodes for live playback badges, cue editors, and cue card tags.
 - **`generateId()`**: UUID generator utilizing `crypto.randomUUID()` with fallback.
 
@@ -169,6 +171,13 @@ Defines the eight cue categories with theme-calibrated RGB palettes under two di
 
 The hooks layer encapsulates all side effects, state lifecycle, dynamic theme resolution, and playback orchestration into eleven modular custom hooks, keeping `App.tsx` as a lightweight orchestrator. All hooks are consolidated in the canonical `src/hooks/index.ts` barrel.
 
+### `useAppShellTheme`
+Application shell theme resolution and persistence:
+- Manages active shell theme mode (`'auto' | 'light' | 'warm' | 'dark'`) persisted to `localStorage` under `sceneflow_app_theme_mode`.
+- Automatically computes `effectiveCategory` by referencing the active script theme when in `'auto'` mode.
+- Applies `data-theme-category` attributes to `document.documentElement` and `document.body` for global CSS variable scoping.
+- Exposes `themeMode`, `setThemeMode`, `cycleThemeMode`, and `effectiveCategory`.
+
 ### `useScriptStorage`
 State initialization and persistence engine:
 - Reads/writes `AppState` to `localStorage` under key `screenplay_sync_state`.
@@ -199,7 +208,7 @@ Real-time playback auto-scroll engine:
 - Filters active cues by multi-select focus types (`autoScrollTargets`).
 - Prioritizes the most recently started cue at the farthest script position.
 - Computes viewport scroll position using the pure `calculateTargetScrollTop(relativeTop, containerHeight, elementHeight, isDesktop, focusRatio)` helper, referencing active `ScrollFocusPreset.ratio` on desktop and center alignment on mobile.
-- Executes programmatic scrolling via a custom high-refresh `requestAnimationFrame` cubic ease-out (`1 - (1 - t)^3`) animator (`smoothScrollTo`, also exported for shared use across the Left Panel Sync Cues Studio), completely replacing browser-native `behavior: 'smooth'` (which is capped at 60Hz in Windows Chromium, causing frame pacing judder on 144Hz/120Hz displays and 60fps screen recordings).
+- Executes programmatic scrolling via a custom high-refresh `requestAnimationFrame` cubic ease-out (`1 - (1 - t)^3`) animator (`smoothScrollTo`, also exported for shared use across the Left Panel Sync Cues Studio), completely replacing browser-native `behavior: 'smooth'` (which is capped at 60Hz in Windows Chromium, causing frame pacing judder on high-refresh displays and in 60fps screen recordings).
 - Binds passive `wheel` and `touchmove` event listeners on the scroll container to immediately cancel in-flight auto-scroll animations upon manual user touch or mouse wheel interaction, eliminating scroll fighting.
 - Enforces a 10px deadband threshold (`Math.abs(container.scrollTop - targetScrollTop) > 10`) to eliminate micro-scroll jitter when consecutive cues activate on the same line, with lifecycle-guarded frame cancellation on rapid cue transitions.
 
@@ -247,7 +256,7 @@ Outside-click detection hook for floating menus and dropdown panels:
 The UI layer coordinates video playback, real-time highlighting, user interaction, and modal dialogs.
 
 ### Core Orchestrator (`src/App.tsx`)
-- **Lightweight Composition**: `App.tsx` imports the custom hook suite and twenty-four sub-components, composing them into the full application shell while keeping its own logic to a minimum (mode toggling, library state, modal visibility).
+- **Lightweight Composition**: `App.tsx` imports the custom hook suite and 21 modular sub-components and providers, composing them into the full application shell while keeping its own logic to a minimum (mode toggling, library state, modal visibility).
 - **Hook Integration**: State, playback, preferences, auto-scroll, cue editing, alignment, keyboard shortcuts, and active script theme are fully delegated to the hooks layer. `App.tsx` only wires hook return values to component props.
 - **Sync Engine & Playback Diff Decoupling (`renderedScript` `useMemo`)**: Decouples script parsing into an independent `processedLines` memoized hook so full text parsing runs only on script text modifications. Pre-indexes overlapping cues into `cuesByLineIndex` for $O(1)$ line lookup. Crucially, passes static `currentTime={0}` to lines with zero overlapping cues (`lineCues.length === 0`), completely skipping React prop diffing and reconciliation across 85%+ of screenplay lines on every 100ms playback tick. Lines with cues are delegated to memoized `<ScriptLine />` components that isolate sub-second highlight opacity transitions to active lines only.
 - **Auto-Scroll Engine**: Delegates to `useAutoScroll`, which automatically scrolls the screenplay during playback, prioritizing the most recent active cue, supporting multi-selected focus categories, and aligning to the user's selected vertical focus ratio (35% Top, 50% Center, 65% Bottom).
@@ -298,7 +307,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
     - **`ActiveHighlightsPanel.tsx`**: Main orchestrator featuring an **Adaptive Single-Row Header** layout with stepped label collapsing: consolidates controls into a single adaptive row across all widths with progressive stepped label hiding (`Sparkles` icon with collapsible title `Highlights`), strictly preserving the live active cue count and 8-slot category LED VU meter strip, compact single toggle `[ ↕ Fixed ]` / `[ ↕ Flex ]` with dedicated icons and tooltips, Zoom presets (`[ 4s | 8s | 16s ]`), Filter toggle, and segmented View Switcher.
     - **`HighlightTimelineView.tsx`**: Multi-Track Sync Timeline view with dynamic density scaling (`TimelineDensity`: `'comfortable'` 32px vs. `'compact'` 24px), timeline zoom preset integration (`zoomPreset`), height mode integration (`heightMode`: `'flexible' | 'fixed'`), stationary 35% anticipation playhead, and docked inspector card.
     - **`HighlightCardsView.tsx`**: Classic floating cards presentation for legacy playback visualization.
-    - **`useSmoothTimelineTime.ts`**: High-precision timeline clock extrapolation hook utilizing `requestAnimationFrame` and `performance.now()` to advance horizontal playhead and cue coordinates continuously at native display refresh rates (144Hz, 120Hz, 60Hz). Incorporates soft-sync drift compensation against ~100ms YouTube timecode ticks, instant snapping on seeking (>0.35s), and 0 idle CPU overhead when paused.
+    - **`useSmoothTimelineTime.ts`**: High-precision timeline clock extrapolation hook utilizing `requestAnimationFrame` and `performance.now()` to advance horizontal playhead and cue coordinates continuously at the display's native refresh rate (60Hz, 120Hz, etc.). Incorporates soft-sync drift compensation against ~100ms YouTube timecode ticks, instant snapping on seeking (>0.35s), and 0 idle CPU overhead when paused.
     - **`useTimelineWindow.ts`**: Headless rolling window hook with global greedy interval scheduling for sub-lanes, per-category sub-lane pre-allocation (`subLanesByCategory`), adaptive timecode tick marks, exposure of `scriptCategories`, and stabilized cue block duration geometry (`widthPercent` derived directly from `cue.endTime - cue.startTime` without boundary clamping, eliminating accordion layout reflows as blocks cross window boundaries).
     - **`TimelineLane.tsx` & `TimelineCueBlock.tsx`**: Isolated track components with continuous sub-frame rendering via `displayTime` (with fixed `100ms linear` transitions eliminated to prevent stop-and-go stutter when YouTube ticks jitter), compact track header geometry (`w-18` / 72px), theme coloring, synchronized density offsets, stable category-level sub-lane height preservation (`totalSubLanes`), narrow block label elision (`widthPercent < 3.5%`), and interactive lane headers that toggle category visibility.
     - **`TimelinePlayheadRuler.tsx`**: Gliding timecode ruler and glowing vertical playhead marker continuously rendered at display refresh rates via `displayTime` without CSS timer interpolation lag.

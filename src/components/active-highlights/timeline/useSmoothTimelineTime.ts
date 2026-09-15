@@ -7,7 +7,7 @@ interface UseSmoothTimelineTimeOptions {
 }
 
 /**
- * High-precision timeline clock extrapolator for 144Hz/high-refresh displays.
+ * High-precision timeline clock extrapolator for display-rate (VSync) playback.
  *
  * In web media players, external sources (such as YouTube IFrame API) report `currentTime`
  * in coarse, jittery 100ms intervals. This hook bridges the gap by running a continuous

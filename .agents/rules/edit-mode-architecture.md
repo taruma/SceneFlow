@@ -83,7 +83,7 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
     - **Edit MediaHeader**: `@container (max-width: 580px)` hides title; `@container (max-width: 510px)` hides transport labels; `@container (max-width: 430px)` hides YouTube pill text (`.youtube-pill-text`) and timecode duration.
     - **Sync Cues Toolbar**: `@container (max-width: 510px)` hides title (`.sync-cues-title`), secondary action labels (`.sync-btn-label-secondary`), and scroll label (`.sync-btn-label-scroll`); `@container (max-width: 420px)` hides primary density and filter button labels (`.sync-btn-label`).
     - **Center Script Panel**: `@container (max-width: 480px)` hides cue status text (`.cue-status-text`); `@container (max-width: 420px)` hides script action button labels (`.script-btn-label`) and line count badge (`.script-line-count`); `@container (max-width: 320px)` hides script title (`.script-header-title`).
-  - Guarantees zero text wrapping, zero horizontal overflow, and 144Hz drag-smooth responsiveness with zero JavaScript overhead.
+  - Guarantees zero text wrapping, zero horizontal overflow, and fluid drag-smooth responsiveness with zero JavaScript overhead.
 
 ## 8. Vertical Boundary Hygiene & Flex Margin Anti-Accumulation
 - **No Compounding Flex Margins**:

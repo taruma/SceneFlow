@@ -21,8 +21,8 @@ export function calculateTargetScrollTop(
 }
 
 /**
- * Smoothly animates container.scrollTop at native display refresh rate (144Hz/60Hz)
- * using a cubic ease-out curve, avoiding Windows Chrome's 60Hz native smooth-scroll judder.
+ * Smoothly animates container.scrollTop at the display's native refresh rate
+ * using a cubic ease-out curve, avoiding browser-native smooth-scroll judder.
  */
 export function smoothScrollTo(
   container: HTMLElement,

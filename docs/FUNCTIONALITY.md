@@ -165,8 +165,7 @@ Inspired by professional Non-Linear Editors (NLEs), the timeline maps cues onto 
 - **Continuous Real-Time Timecode Ruler**: Glides underneath the tracks in real-time, displaying 1-second ticks and major `MM:SS` timecode labels.
 - **Dynamic Density Scaling (`TimelineDensity`)**: Supports `'comfortable'` (32px track height) and `'compact'` (24px track height) modes, optimizing vertical space across varying screen sizes.
 - **Interactive Lane Header Toggles**: Track headers on `TimelineLane` (`[• CATEGORY]`) serve as interactive buttons to mute/unmute that category directly, showing pulsing active glow or dimmed strikethrough styling when hidden.
-- **Global Greedy Interval Scheduling**: Multiple overlapping cues within the same category automatically stack into stable sub-lanes (`subLaneIndex`), calculated globally across the script to prevent any row-jumping or vertical layout shifting during scrubbing.
-- **Zero Layout Shift & Continuous 144Hz Micro-Performance**: Replaced fixed 100ms linear CSS transitions with continuous display time extrapolation (`useSmoothTimelineTime`) running at native display refresh rates (144Hz, 120Hz, 60Hz). Stabilized cue block duration geometry (`useTimelineWindow`) by calculating fixed duration widths without boundary clamping, letting track container `overflow-hidden` handle edge clipping and eliminating continuous layout reflows.
+- **Zero Layout Shift & Sub-Frame Display Extrapolation**: Replaced fixed 100ms linear CSS transitions with continuous display time extrapolation (`useSmoothTimelineTime`) running via `requestAnimationFrame` at the monitor's native refresh rate (60Hz, 120Hz, etc.). Stabilized cue block duration geometry (`useTimelineWindow`) by calculating fixed duration widths without boundary clamping, letting track container `overflow-hidden` handle edge clipping and eliminating continuous layout reflows.
 - **Seek Without Unwanted Playback**: Clicking any cue block seeks the player to that timestamp while preserving the paused state without triggering YouTube's unbuffered autoplay quirk.
 
 ### Docked Paused Cue Inspector (`PausedInspectorCard`)
@@ -215,7 +214,7 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
   - Dragging up shrinks the video height (down to 160px), allocating maximum vertical space to multi-track timeline lanes.
   - Automatic 16:9 aspect scaling (`aspect-video` + `maxWidth: 100%`) ensures zero video distortion and completely eliminates lateral empty gutters.
 - **Clean Headroom**: The redundant "NOW PLAYING" header row and percentage slider have been completely eliminated, reclaiming ~28px of top vertical space.
-- **Hardware VSync Dragging (60–144fps) & Gesture Safety**: Pointer movements are throttled via `requestAnimationFrame` with global `window`-level event subscriptions, `touch-action: none` gesture protection against Windows/touchpad scroll collisions, dynamic boundary deadband re-anchoring, and `.is-resizing-split` CSS transition suppression on `document.body` for rock-solid, uninterrupted cursor tracking.
+- **Hardware VSync Dragging & Gesture Safety**: Pointer movements are throttled via `requestAnimationFrame` with global `window`-level event subscriptions, `touch-action: none` gesture protection against Windows/touchpad scroll collisions, dynamic boundary deadband re-anchoring, and `.is-resizing-split` CSS transition suppression on `document.body` for rock-solid, uninterrupted cursor tracking.
 - **Unified Mode-Aware "Reset View Layout" (`SettingsMenuDropdown`, <kbd>Shift+R</kbd>)**: Accessible inside Studio Settings (`[ ⚙️ Settings ▾ ]`), via the global <kbd>Shift+R</kbd> keyboard shortcut, or by double-clicking split dividers:
   - **In Edit Mode**: Snaps the 3-panel workstation to a calibrated **40 / 35 / 25** distribution (40% Left Media/Cues, 35% Center Screenplay, 25% Right Cue Inspector), restores the 220px vertical video height, expands collapsed video, and re-opens the cue inspector.
   - **In Playback Mode**: Snaps the 2-panel player to a **65 : 35** horizontal split (65% Left Player/Timeline, 35% Screenplay) and restores the 220px video height.
@@ -229,7 +228,7 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 - **Draggable Vertical Inspector Splitter (`InspectorSplitDivider`)**:
   - Dragging the divider between the screenplay canvas and cue inspector resizes inspector ratio between `18%` (minimum, pixel floor `260px`) and `45%` (maximum), defaulting to `25%`.
   - Enforces minimum width floors so neither the script canvas nor inspector are ever crushed.
-  - VSync-aligned `requestAnimationFrame` throttling and zero-transition suppression (`is-resizing-split`) deliver fluid 60–144fps dragging.
+  - VSync-aligned `requestAnimationFrame` throttling and zero-transition suppression (`is-resizing-split`) deliver fluid, judder-free dragging.
   - Double-clicking the divider snaps inspector back to default layout (`25%`).
   - Keyboard accessible: <kbd>←</kbd> widens inspector by 1%, <kbd>→</kbd> narrows inspector by 1%, <kbd>Enter</kbd> / <kbd>Home</kbd> resets to default.
   - Persists preference in `localStorage` (`sceneflow_inspector_ratio`) upon drag release.
@@ -310,7 +309,7 @@ Selectable directly within Studio Settings (`[ ⚙️ Settings ▾ ]`) via a 3-s
 - Mobile and tablet viewports use native viewport centering for screen economy.
 
 ### VSync Frame-Aligned Scheduling & Layout Reflow Elimination
-- **144Hz Native Auto-Scroll Animator (`smoothScrollTo`)**: Replaces browser-native `behavior: 'smooth'` (which is capped at 60Hz in Windows Chromium, causing frame pacing judder on 144Hz/120Hz displays and 60fps screen captures) with a custom `requestAnimationFrame` cubic ease-out (`1 - (1 - t)^3`) animator.
+- **Display-Rate Auto-Scroll Animator (`smoothScrollTo`)**: Replaces browser-native `behavior: 'smooth'` (which is capped at 60Hz in Windows Chromium, causing frame pacing judder on high-refresh displays and in 60fps screen captures) with a custom `requestAnimationFrame` cubic ease-out (`1 - (1 - t)^3`) animator.
 - **User Gesture Interruption**: Passive `wheel` and `touchmove` listeners on the scroll container cancel active auto-scroll animations immediately upon manual user interaction without scroll fighting.
 - **Stale Frame Cancellation & Deadband Guard**: Rapid cue transitions cancel pending animation frames before scheduling a new target, while a 10px scroll distance deadband (`Math.abs(container.scrollTop - targetScrollTop) > 10`) suppresses micro-scroll jitter when consecutive cues activate on the same line.
 

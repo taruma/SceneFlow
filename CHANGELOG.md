@@ -7,18 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.4.0-dev] - Unreleased
 
-### Fixed
-- **Mobile Playback Viewport & Script Visibility Fix (`src/components/left-panel/WorkstationLeftPanel.tsx`)**:
-  - Scoped `h-full overflow-hidden` strictly to Edit Mode (which requires full-height on mobile to display cue management) and desktop viewports (`lg:h-full lg:overflow-hidden`).
-  - Restored `shrink-0 sticky top-0 z-30 shadow-md border-b` on mobile in Playback Mode, preventing the unified workstation left panel from expanding to 100% viewport height with empty space while Tier 2 (`ActiveHighlightsPanel`) is hidden on handheld screens.
-  - Restored instant visibility and uninterrupted auto-scrolling of the screenplay (Center Panel) directly beneath the pinned video player on mobile devices.
-
-### Changed
-- **Legacy `colorClass` Deprecation & Clean Cue Alignment (`src/lib/cueUtils.ts`, `src/hooks/useCueEditor.ts`, `src/components/edit/CueEditorForm.tsx`, `src/components/edit/CueTypeSelector.tsx`, `src/components/script/ScriptLine.tsx`)**:
-  - Deprecated and removed auto-injection of legacy `colorClass` across cue alignment (`realignCuesList`), cue sanitization (`sanitizeCues`), and cue drafting (`useCueEditor`).
-  - Stripped any lingering `colorClass` properties when realigning cues or ingesting JSON, producing cleaner and more compact cue models in state and exported files.
-  - Preserved backward-compatibility ingestion via `LEGACY_CLASS_MAP`: older script files containing `colorClass` without `type` automatically resolve to their canonical semantic category and cleanly drop the deprecated class on next sync/save.
-
 ### Added
 - **Studio-Grade Cues JSON Editor & LLM Sync Setup (`src/components/RawCuesModal.tsx`, `src/schemas/cues.schema.json`, `src/schemas/cues.prompt.ts`, `public/schema.json`, `public/sync-prompt.txt`)**:
   - **2-Column Studio Workstation (`RawCuesModal.tsx`)**: Revamped the raw cues modal into a comprehensive 2-column workstation featuring a live Schema Reference on the left (essential fields, collapsible auto-calc & optional fields, quick example snippet with copy and insert actions) and dual-tab workstation on the right.
@@ -62,13 +50,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Implemented `InspectorSplitDivider` with pointer-capture drag tracking (60–144fps via `requestAnimationFrame`), hardware transition suppression (`is-resizing-split`), iframe event guard overlay, double-click reset to default width (`360px`), keyboard accessibility (<kbd>←</kbd> / <kbd>→</kbd> / <kbd>Enter</kbd>), and boundary clamping (`280px` to `560px`).
   - Added dynamic inspector toggling via `<PanelRight />` in `ScriptHeaderControls`, with automatic opening on script text selection or cue card click.
   - Added `inspectorWidth` preference state and `sceneflow_inspector_width` persistence in `useScriptPreferences.ts`, unified with `Reset View Layout (Shift+R)`.
-- **Cue Timing Inputs Coercion & Backspace Deletion Bugfix (`src/components/edit/CueTimingInputs.tsx`)**:
-  - Fixed backspace input behavior on numeric start/end time and index inputs where clearing characters coerced empty strings into `0` (which previously dumped thousands of characters from offset 0 into the cue editor).
-  - Adopted semantic design tokens (`focus:ring-border-main`, `bg-surface`) replacing hardcoded Tailwind utilities.
-- **Cue Text Section Accessibility & Fallbacks (`src/components/edit/CueTextSection.tsx`)**:
-  - Upgraded dark mode contrast on active alternative match pills (`bg-blue-500/15 border-blue-500/30 text-blue-600 dark:text-blue-400 font-bold`).
-  - Added fallback feedback ("No additional occurrences found in script") when alternative search returns $\le 1$ match.
-  - Aligned parameter types with canonical `AlternativeLocation` interface.
 - **Two-Tier Active Cue Visual Hierarchy & Multi-Cue Highlighting (`src/components/edit/SyncCueCard.tsx`, `src/components/edit/MiniCueCard.tsx`, `src/components/edit/SyncCueRow.tsx`, `src/components/edit/SyncCuesPanel.tsx`, `src/components/edit/EditLeftPanel.tsx`, `src/lib/cueUtils.ts`)**:
   - Implemented `findActiveCues(cues, currentTime, settings)` utility in `src/lib/cueUtils.ts` to identify all concurrently active cues at the current playback timestamp.
   - Decoupled primary auto-scroll target tracking (`activeCueId: string | null`) from multi-cue active state (`activeCueIds: Set<string>`) in `EditLeftPanel.tsx`, using `useRef` reference stabilization to preserve the high-performance playback tick shield boundary (0 unnecessary re-renders while video is running).
@@ -104,8 +85,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added a discrete `[↺ Reset All]` action in the header of the Studio Preferences dropdown (`SettingsMenuDropdown.tsx`), appearing dynamically whenever any preference or layout option is non-default.
   - Instantly restores App Theme (`auto`), Script Width (`standard` / 576px), Scroll Focus (`top` / 35%), and View Layout (50% split, 240px video height, uncollapsed) to factory defaults in a single click.
   - Harmoniously complements the focused `Reset View Layout (Shift+R)` action, which enables resetting window pan geometry without affecting chosen color themes or reading widths.
-- **144Hz Smooth Timeline Clock Extrapolator (`src/components/active-highlights/timeline/useSmoothTimelineTime.ts`, `src/components/active-highlights/index.ts`)**:
-  - Implemented high-precision `useSmoothTimelineTime` hook leveraging `requestAnimationFrame` and `performance.now()` to advance timeline time continuously at native display refresh rates (144Hz, 120Hz, 60Hz).
+- **Sub-Frame Smooth Timeline Clock Extrapolator (`src/components/active-highlights/timeline/useSmoothTimelineTime.ts`, `src/components/active-highlights/index.ts`)**:
+  - Implemented high-precision `useSmoothTimelineTime` hook leveraging `requestAnimationFrame` and `performance.now()` to advance timeline time continuously at the display's native refresh rate (60Hz, 120Hz, etc.).
   - Integrated soft-sync drift compensation against 100ms YouTube timecode ticks with instant snapping on seeking (>0.35s) and zero idle overhead when paused.
 - **Live Timecode HUD Badge & Precision Formatter (`src/components/edit/LiveTimecodeBadge.tsx`, `src/components/edit/EditLeftPanel.tsx`, `src/components/edit/CueTimingInputs.tsx`, `src/lib/utils.ts`)**:
   - Added pure `formatPrecisionTimecode(seconds)` utility formatting timestamps into `MM:SS.s` (or `HH:MM:SS.s` for $\ge 1\text{h}$).
@@ -136,6 +117,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Tier 1 (Media Preview)**: Persistent transport bar (`Replay`, `Play/Pause`, `Hide/Show Video`), live timecode HUD badge, collapsible YouTube source pill, resizable 16:9 video player, and horizontal split divider (`VideoSplitDivider`).
   - **Tier 2 (Sync Cues Studio)**: Permanently docked `SyncCuesToolbar` and dedicated scrollable cue list supporting both Cards (`SyncCueCard`) and Compact (`SyncCueRow`) density presentations with chronological ordering and `content-visibility: auto` paint acceleration.
   - **Cross-Panel Synchronized Jump**: Clicking any cue card or row smoothly seeks the video player (without premature pause calls), populates `CueEditorForm`, and scrolls the script reading canvas to center the corresponding line.
+
+### Changed
+- **Legacy `colorClass` Deprecation & Clean Cue Alignment (`src/lib/cueUtils.ts`, `src/hooks/useCueEditor.ts`, `src/components/edit/CueEditorForm.tsx`, `src/components/edit/CueTypeSelector.tsx`, `src/components/script/ScriptLine.tsx`)**:
+  - Deprecated and removed auto-injection of legacy `colorClass` across cue alignment (`realignCuesList`), cue sanitization (`sanitizeCues`), and cue drafting (`useCueEditor`).
+  - Stripped any lingering `colorClass` properties when realigning cues or ingesting JSON, producing cleaner and more compact cue models in state and exported files.
+  - Preserved backward-compatibility ingestion via `LEGACY_CLASS_MAP`: older script files containing `colorClass` without `type` automatically resolve to their canonical semantic category and cleanly drop the deprecated class on next sync/save.
+- **Cue Inspector Action & Destructive Styling Refinements (`src/components/edit/CueEditorForm.tsx`)**:
+  - Removed loose "Esc" text beside the close button in `CueEditorForm` header to eliminate visual noise.
+  - Added resting destructive red styling (`text-red-500/80 bg-red-500/10 border-red-500/20`) to the Cue Delete button in the pinned sticky bottom action bar.
+  - Formatted the <kbd>Esc</kbd> shortcut badge on the Cancel button consistently with design system keyboard badges.
+- **Sync Cues Action Nomenclature & Density Badging (`src/components/edit/SyncCuesToolbar.tsx`)**:
+  - Replaced ambiguous `"RAW"` and `"ALIGN"` button labels with self-describing `"JSON"` (with `{ }` braces icon and tooltip) and `"Resync"` (with `↺` refresh icon and animated `"Synced"` success state).
+  - Added responsive `"Cards"` and `"Compact"` text labels to the view density switcher that automatically collapse to clean icon glyphs (`[ ⊞ | ≡ ]`) via container queries on narrow panels.
+- **Script Preview Header Streamlining & Decluttering (`src/components/ScriptHeaderControls.tsx`, `src/styles/tokens/ui.ts`)**:
+  - Removed the redundant, non-clickable `[PLAYBACK]` / `[EDIT]` mode badge, eliminating toolbar crowding on tablets/wide mobile (`sm:block`) and restoring clean visual clustering of reading controls on desktop.
+  - Added symmetrical `"Script Editor"` header title, loaded line count badge (`{lineCount} lines`), and direct `[Edit Raw]` action button when in Edit mode, cleanly replacing the old standalone `ScriptManagementBar`.
+  - Removed the redundant mobile `TIME 0.0s` pill (`UI_TOKENS.badge.currentTimePillSm`), maximizing reading canvas breathing room and relying on the sticky video player and timeline playhead for timecode feedback.
+  - Pruned unused `currentTimePill` and `currentTimePillSm` badge design tokens from `src/styles/tokens/ui.ts`.
+- **3-Zone Studio Header Architecture & Decluttering (`src/components/AppHeader.tsx`, `src/styles/tokens/ui.ts`)**:
+  - Replaced the cluttered 14-button header with a balanced, studio-grade 3-zone layout (Left: Brand & File System, Center: Workflow Mode, Right: Content, Community & Studio Tools).
+  - **Left Wing (`[ File ▾ ]` Tiered Dropdown Menu)**: Replaced the raw document icon pair with a dedicated desktop `[ File ▾ ]` dropdown pill (`UI_TOKENS.button.filePill`), organized into three functional tiers separated by hairline dividers:
+    1. *Project I/O (Top Section)*: Immediate cursor access to `Open Project...` and `Save Project` for the primary inspect-and-sync workflow.
+    2. *Blank Canvas (Middle Section)*: `New Project` to clear the workspace for writing or pasting a new script.
+    3. *Resources & Discovery (Bottom Section)*: `Starter Guide` (amber sparkles) and `Browse Library...` (amber book).
+  - **Zero Non-Existing Shortcuts & Noise Reduction**: Completely audited and removed non-existing keyboard shortcut annotations (`Ctrl+O`, `Ctrl+S`) and tooltip shortcuts (`(?)` on Info button), while dropping visual noise badges (`Catalog`, `Presets`, `Overlaps`, `65:35`) across menus to keep typography focused and truthful.
+  - **Center Stage**: Introduced a centered segmented control (`[ ▶ Playback | ✏️ Edit ]`) with mode-specific active accents (soft blue for Playback, soft amber for Edit) and responsive icon collapse, providing immediate discoverability of the application's dual-mode architecture.
+  - **Right Wing**: Standardized the standalone Library gateway (`[ 📚 LIBRARY ]`) on a clean neutral surface pill (`UI_TOKENS.button.libraryPop`) featuring the amber book icon and uppercase tracking typography, alongside the Ko-fi support pill, unified Studio Preferences dropdown (`[ ⚙️ Settings ▾ ]`), and dedicated Info modal trigger.
+  - **Studio Preferences Dropdown**: Consolidated loose floating utility icons into a single settings dropdown featuring a direct 4-theme quick-selector grid (`Auto`, `Light`, `Warm`, `Dark`), Script Paper & Colors modal trigger, Timing & Durations modal trigger, and Reset View Layout trigger (with a live customized layout pulse dot and dynamic `Custom` state badge).
+  - **Timecode Removal from Global Header**: Removed floating timecode from the top app chrome, cleanly delegating playback timing to the Video Player transport bar and Timeline window underneath.
+- **Library Modal Onboarding & External Links Decluttering (`src/components/LibraryModal.tsx`, `src/components/MobileLibraryModal.tsx`, `src/components/ScriptHeaderControls.tsx`)**:
+  - Renamed the Substack publication link from `"Article"` to **`"Introduction"`** (`[ Introduction ]` on desktop `LibraryModal`, `[ Intro ]` on `MobileLibraryModal`), clarifying its purpose as a foundational overview of SceneFlow and script-to-screen synchronization.
+  - Removed the redundant `Starter Guide` button from the modal headers across desktop and mobile, centralizing starter guide loading inside the desktop `[ File ▾ ]` dropdown menu.
+  - Removed the redundant standalone article icon button (`<Newspaper />`) from the mobile screenplay header controls (`ScriptHeaderControls.tsx`), maximizing horizontal breathing room for theme colors, library, and support controls on phones.
 
 ### Refactored
 - **Cue Authoring State Consolidation & Zero-Prop `CueEditorForm` (`src/components/edit/CueEditorContext.tsx`, `src/components/edit/CueEditorForm.tsx`, `src/components/edit/index.ts`, `src/App.tsx`)**:
@@ -197,6 +211,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Removed vestigial `onCycleThemeMode` prop through `AppHeader` and `SettingsMenuDropdown` (superseded by the 4-theme segmented picker).
 
 ### Fixed
+- **Mobile Playback Viewport & Script Visibility Fix (`src/components/left-panel/WorkstationLeftPanel.tsx`)**:
+  - Scoped `h-full overflow-hidden` strictly to Edit Mode (which requires full-height on mobile to display cue management) and desktop viewports (`lg:h-full lg:overflow-hidden`).
+  - Restored `shrink-0 sticky top-0 z-30 shadow-md border-b` on mobile in Playback Mode, preventing the unified workstation left panel from expanding to 100% viewport height with empty space while Tier 2 (`ActiveHighlightsPanel`) is hidden on handheld screens.
+  - Restored instant visibility and uninterrupted auto-scrolling of the screenplay (Center Panel) directly beneath the pinned video player on mobile devices.
+- **Cue Timing Inputs Coercion & Backspace Deletion Bugfix (`src/components/edit/CueTimingInputs.tsx`)**:
+  - Fixed backspace input behavior on numeric start/end time and index inputs where clearing characters coerced empty strings into `0` (which previously dumped thousands of characters from offset 0 into the cue editor).
+  - Adopted semantic design tokens (`focus:ring-border-main`, `bg-surface`) replacing hardcoded Tailwind utilities.
+- **Cue Text Section Accessibility & Fallbacks (`src/components/edit/CueTextSection.tsx`)**:
+  - Upgraded dark mode contrast on active alternative match pills (`bg-blue-500/15 border-blue-500/30 text-blue-600 dark:text-blue-400 font-bold`).
+  - Added fallback feedback ("No additional occurrences found in script") when alternative search returns $\le 1$ match.
+  - Aligned parameter types with canonical `AlternativeLocation` interface.
 - **Player Timing & State Reset on Project Load (`src/hooks/useYouTubePlayer.ts`, `src/App.tsx`)**:
   - Implemented `resetPlayback` in `useYouTubePlayer` to clear running interval timers, zero `currentTime`, reset `playerState` to idle (-1), and pause and seek the active player to 0:00.
   - Tracked active player instance via mutable `playerRef` to prevent stale interval closures from polling and restoring previous playback timestamps.
@@ -234,35 +259,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Tightened divider bottom margin (`className="mt-2 mb-1"`), eliminated redundant Tier 2 top padding (`pt-0`), balanced toolbar padding to symmetric `py-2`, and matched cue list top padding (`pt-2.5`) to create harmonious, proportional vertical separation.
 - **Narrow Split Panel Horizontal Overflow (`src/components/playback/PlaybackLeftPanel.tsx`)**:
   - Removed duplicate static `Video Hidden` badge in `PlaybackLeftPanel` header that caused horizontal text squishing and overflow when the panel was dragged narrow.
-
-### Changed
-- **Cue Inspector Action & Destructive Styling Refinements (`src/components/edit/CueEditorForm.tsx`)**:
-  - Removed loose "Esc" text beside the close button in `CueEditorForm` header to eliminate visual noise.
-  - Added resting destructive red styling (`text-red-500/80 bg-red-500/10 border-red-500/20`) to the Cue Delete button in the pinned sticky bottom action bar.
-  - Formatted the <kbd>Esc</kbd> shortcut badge on the Cancel button consistently with design system keyboard badges.
-- **Sync Cues Action Nomenclature & Density Badging (`src/components/edit/SyncCuesToolbar.tsx`)**:
-  - Replaced ambiguous `"RAW"` and `"ALIGN"` button labels with self-describing `"JSON"` (with `{ }` braces icon and tooltip) and `"Resync"` (with `↺` refresh icon and animated `"Synced"` success state).
-  - Added responsive `"Cards"` and `"Compact"` text labels to the view density switcher that automatically collapse to clean icon glyphs (`[ ⊞ | ≡ ]`) via container queries on narrow panels.
-- **Script Preview Header Streamlining & Decluttering (`src/components/ScriptHeaderControls.tsx`, `src/styles/tokens/ui.ts`)**:
-  - Removed the redundant, non-clickable `[PLAYBACK]` / `[EDIT]` mode badge, eliminating toolbar crowding on tablets/wide mobile (`sm:block`) and restoring clean visual clustering of reading controls on desktop.
-  - Added symmetrical `"Script Editor"` header title, loaded line count badge (`{lineCount} lines`), and direct `[Edit Raw]` action button when in Edit mode, cleanly replacing the old standalone `ScriptManagementBar`.
-  - Removed the redundant mobile `TIME 0.0s` pill (`UI_TOKENS.badge.currentTimePillSm`), maximizing reading canvas breathing room and relying on the sticky video player and timeline playhead for timecode feedback.
-  - Pruned unused `currentTimePill` and `currentTimePillSm` badge design tokens from `src/styles/tokens/ui.ts`.
-- **3-Zone Studio Header Architecture & Decluttering (`src/components/AppHeader.tsx`, `src/styles/tokens/ui.ts`)**:
-  - Replaced the cluttered 14-button header with a balanced, studio-grade 3-zone layout (Left: Brand & File System, Center: Workflow Mode, Right: Content, Community & Studio Tools).
-  - **Left Wing (`[ File ▾ ]` Tiered Dropdown Menu)**: Replaced the raw document icon pair with a dedicated desktop `[ File ▾ ]` dropdown pill (`UI_TOKENS.button.filePill`), organized into three functional tiers separated by hairline dividers:
-    1. *Project I/O (Top Section)*: Immediate cursor access to `Open Project...` and `Save Project` for the primary inspect-and-sync workflow.
-    2. *Blank Canvas (Middle Section)*: `New Project` to clear the workspace for writing or pasting a new script.
-    3. *Resources & Discovery (Bottom Section)*: `Starter Guide` (amber sparkles) and `Browse Library...` (amber book).
-  - **Zero Non-Existing Shortcuts & Noise Reduction**: Completely audited and removed non-existing keyboard shortcut annotations (`Ctrl+O`, `Ctrl+S`) and tooltip shortcuts (`(?)` on Info button), while dropping visual noise badges (`Catalog`, `Presets`, `Overlaps`, `65:35`) across menus to keep typography focused and truthful.
-  - **Center Stage**: Introduced a centered segmented control (`[ ▶ Playback | ✏️ Edit ]`) with mode-specific active accents (soft blue for Playback, soft amber for Edit) and responsive icon collapse, providing immediate discoverability of the application's dual-mode architecture.
-  - **Right Wing**: Standardized the standalone Library gateway (`[ 📚 LIBRARY ]`) on a clean neutral surface pill (`UI_TOKENS.button.libraryPop`) featuring the amber book icon and uppercase tracking typography, alongside the Ko-fi support pill, unified Studio Preferences dropdown (`[ ⚙️ Settings ▾ ]`), and dedicated Info modal trigger.
-  - **Studio Preferences Dropdown**: Consolidated loose floating utility icons into a single settings dropdown featuring a direct 4-theme quick-selector grid (`Auto`, `Light`, `Warm`, `Dark`), Script Paper & Colors modal trigger, Timing & Durations modal trigger, and Reset View Layout trigger (with a live customized layout pulse dot and dynamic `Custom` state badge).
-  - **Timecode Removal from Global Header**: Removed floating timecode from the top app chrome, cleanly delegating playback timing to the Video Player transport bar and Timeline window underneath.
-- **Library Modal Onboarding & External Links Decluttering (`src/components/LibraryModal.tsx`, `src/components/MobileLibraryModal.tsx`, `src/components/ScriptHeaderControls.tsx`)**:
-  - Renamed the Substack publication link from `"Article"` to **`"Introduction"`** (`[ Introduction ]` on desktop `LibraryModal`, `[ Intro ]` on `MobileLibraryModal`), clarifying its purpose as a foundational overview of SceneFlow and script-to-screen synchronization.
-  - Removed the redundant `Starter Guide` button from the modal headers across desktop and mobile, centralizing starter guide loading inside the desktop `[ File ▾ ]` dropdown menu.
-  - Removed the redundant standalone article icon button (`<Newspaper />`) from the mobile screenplay header controls (`ScriptHeaderControls.tsx`), maximizing horizontal breathing room for theme colors, library, and support controls on phones.
 
 ## [2.3.2] - 2026-09-12
 
