@@ -425,7 +425,7 @@ For a complete and up-to-date list of all available sceneflow projects, release 
 - **Sorting Controls**: Toggle lists by "Latest" (newest release date), "Oldest", or "A-Z" alphabetical order. Inactive/draft scripts are automatically placed at the bottom.
 - **Dual Modal Architecture**: Full modal dialog on desktop viewports (`LibraryModal`), touch-friendly bottom-sheet drawer on mobile viewports (`MobileLibraryModal`).
 - **Foundational Introduction Link**: Direct link to the official introductory publication on Substack accessible in modal headers (`[ Introduction ]` on desktop, `[ Intro ]` on mobile).
-- **Community Support**: Direct Ko-fi donation link (`https://ko-fi.com/tarumainfo`) integrated into desktop and mobile headers.
+- **Updates on X & Creator Tip**: Direct links to the creator's X profile (`@tarumainfo`) for project updates (`[ 𝕏 Updates ]` pill on desktop, `[ 𝕏 ]` icon on mobile) and Ko-fi creator tip link (`[ ☕ Tip ]` pill on desktop, `[ ☕ ]` icon on mobile).
 
 ---
 

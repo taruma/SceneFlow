@@ -30,7 +30,7 @@ If you need to add a new script line type (e.g., `lyrics`, `transition`, or a sp
 **DO NOT** write hardcoded Tailwind color classes directly into `src/App.tsx` or components for screenplay text, cue highlights, or modal containers.
 
 - **Modular Design Tokens (`src/styles/tokens/`)**:
-  - `ui.ts`: Centralized `UI_TOKENS` for layout shells (`layout`), modals & overlays (`modal`), dropdown menus (`dropdown`), buttons & action pills (`button`), form controls (`input`), badges & time tags (`badge`, including `counter`, `timeCompact`, and `shortcut`), panel cards (`panel`), swatches (`swatch`), and alert containers (`alert`).
+  - `ui.ts`: Centralized `UI_TOKENS` for layout shells (`layout`), modals & overlays (`modal`), dropdown menus (`dropdown`), buttons & action pills (`button`, including `supportPill` for creator tips and `xPill` for social updates), form controls (`input`), badges & time tags (`badge`, including `counter`, `timeCompact`, and `shortcut`), panel cards (`panel`), swatches (`swatch`), and alert containers (`alert`).
   - `src/index.css`: Semantic CSS custom properties defined in `:root` (`--app-bg`, `--surface`, `--border-main`, `--text-main`, `--overlay-bg`, `--color-support`) and mapped into Tailwind CSS v4's `@theme` directive.
   - `themes.ts`: Six visual themes configured in `SCRIPT_THEMES` (`light`, `warm`, `dark`).
   - `cues.ts`: Theme-calibrated RGB strings (`lightRgb`, `warmRgb`, `darkRgb`) defined across two curated palette profiles: `CUE_COLOR_DEFINITIONS_STANDARD` (360° balanced cinema spectrum) and `CUE_COLOR_DEFINITIONS_PROTANOPIA` (Red-Green Color Vision Deficiency safe mode with Deep Wine Shot). Resolved via `getCueColorForTheme(typeOrClass, themeId, paletteProfile)` with fallback normalization in `LEGACY_CLASS_MAP`.

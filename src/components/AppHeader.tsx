@@ -7,6 +7,7 @@ import {
 import { cn } from '../lib/utils';
 import { UI_TOKENS } from '../styles/tokens/ui';
 import { EXTERNAL_LINKS } from '../constants/links';
+import { XIcon } from './common';
 import type { AppThemeMode, AppThemeCategory } from '../hooks/useAppShellTheme';
 import type { ScriptWidthPresetId, ScrollFocusPresetId } from '../types/script';
 import { 
@@ -142,16 +143,28 @@ export const AppHeader: React.FC<AppHeaderProps> = memo(({
           <span className="font-black uppercase tracking-wider text-[10px]">Library</span>
         </button>
 
-        {/* Support on Ko-fi */}
+        {/* Updates on X */}
+        <a
+          href={EXTERNAL_LINKS.x}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Follow @tarumainfo on X for updates"
+          className={UI_TOKENS.button.xPill}
+        >
+          <XIcon size={11} className="shrink-0" />
+          <span>Updates</span>
+        </a>
+
+        {/* Tip on Ko-fi */}
         <a
           href={EXTERNAL_LINKS.kofi}
           target="_blank"
           rel="noopener noreferrer"
-          title="Support SceneFlow on Ko-fi"
+          title="Tip on Ko-fi"
           className={UI_TOKENS.button.supportPill}
         >
           <Coffee size={12} />
-          <span>Support</span>
+          <span>Tip</span>
         </a>
 
         {/* Studio Preferences Dropdown Menu */}

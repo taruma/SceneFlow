@@ -6,6 +6,7 @@
   **Script-to-screen synchronization for AI filmmakers.**
   
   [![Live App](https://img.shields.io/badge/Live_App-Visit_Site-black?style=flat-square&logo=vercel)](https://sceneflow.taruma.my.id/)
+  [![Updates on X](https://img.shields.io/badge/Updates_on_X-%40tarumainfo-black?style=flat-square&logo=x&logoColor=white)](https://x.com/tarumainfo)
   
   <p>
     <strong>Sync scripts and screenplays with video. Evaluate AI-generated footage. Analyze script-to-screen fidelity.</strong>

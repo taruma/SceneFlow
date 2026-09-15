@@ -16,6 +16,7 @@ import { getCueColorForTheme, type CuePaletteProfile } from '../lib/scriptStyles
 import { useClickOutside, useEscapeKey } from '../hooks';
 import { cn } from '../lib/utils';
 import { UI_TOKENS } from '../styles/tokens/ui';
+import { XIcon } from './common';
 
 interface ScriptHeaderControlsProps {
   mode: 'playback' | 'edit';
@@ -207,10 +208,19 @@ export const ScriptHeaderControls: React.FC<ScriptHeaderControlsProps> = memo(({
               <Book size={10} /> Library
             </button>
             <a 
+              href={EXTERNAL_LINKS.x}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Follow @tarumainfo on X for updates"
+              className={cn("lg:hidden", UI_TOKENS.button.xPill)}
+            >
+              <XIcon size={10} />
+            </a>
+            <a 
               href={EXTERNAL_LINKS.kofi}
               target="_blank"
               rel="noopener noreferrer"
-              title="Support on Ko-fi"
+              title="Tip on Ko-fi"
               className={cn("lg:hidden", UI_TOKENS.button.supportPill)}
             >
               <Coffee size={10} />

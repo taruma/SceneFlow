@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.1-dev] - Unreleased
+
+### Added
+- **Updates on X Badge & Navigation Integration (`README.md`, `src/constants/links.ts`, `src/components/common/XIcon.tsx`, `src/components/AppHeader.tsx`, `src/components/ScriptHeaderControls.tsx`, `src/styles/tokens/ui.ts`)**:
+  - **Hero Badge**: Added Shields.io "Updates on X" badge (`@tarumainfo`) to the `README.md` hero section alongside the Live App badge.
+  - **`XIcon` Component (`src/components/common/XIcon.tsx`, `src/components/common/index.ts`)**: Created a dedicated SVG component for the official X brand mark.
+  - **Centralized Link**: Registered `x: 'https://x.com/tarumainfo'` in `EXTERNAL_LINKS` (`src/constants/links.ts`).
+  - **Desktop Navigation Pill**: Added `[𝕏 Updates]` action pill to `AppHeader.tsx` styled via `UI_TOKENS.button.xPill`.
+  - **Mobile Navigation Parity**: Added mobile `[𝕏]` icon button in `ScriptHeaderControls.tsx`.
+
+### Changed
+- **Header Tip Action Pill (`src/components/AppHeader.tsx`, `src/components/ScriptHeaderControls.tsx`)**:
+  - Renamed the header Ko-fi pill label from `Support` to `Tip` (with updated tooltip `Tip on Ko-fi`), eliminating semantic confusion with customer/technical support while matching Ko-fi's gratuity model with a compact 3-character footprint.
+
 ## [2.4.0] - 2026-09-15
 
 ### Added

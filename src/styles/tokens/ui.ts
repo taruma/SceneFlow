@@ -65,6 +65,7 @@ export const UI_TOKENS = {
     actionPillActive: "flex items-center gap-2 px-3 py-1.5 bg-btn-primary-bg text-btn-primary-text rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border border-btn-primary-bg shadow-sm",
     headerControl: "px-3 py-2 bg-surface-muted hover:bg-surface-hover text-text-body rounded-xl text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 flex items-center gap-2 border border-border-subtle-trans shadow-xs",
     supportPill: "flex items-center gap-1 px-1.5 py-1.5 lg:gap-1.5 lg:px-2 xl:px-2.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 bg-support hover:bg-support-hover text-white shadow-sm",
+    xPill: "flex items-center gap-1 px-1.5 py-1.5 lg:gap-1.5 lg:px-2 xl:px-2.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 bg-surface hover:bg-surface-hover text-text-main border border-border-main shadow-2xs",
     headerIconButton: "p-2 rounded-xl transition-all border shadow-sm active:scale-95 flex items-center justify-center bg-surface text-text-muted hover:text-text-main border-border-main",
     headerIconButtonActive: "p-2 rounded-xl transition-all border shadow-sm active:scale-95 flex items-center justify-center bg-btn-primary-bg text-btn-primary-text border-btn-primary-bg",
     modeSwitchContainer: "flex bg-surface-muted p-0.5 lg:p-1 rounded-lg lg:rounded-xl ring-1 ring-border-main scale-90 xl:scale-100",
