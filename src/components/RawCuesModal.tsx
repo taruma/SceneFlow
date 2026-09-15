@@ -7,8 +7,7 @@ import {
   AlertCircle, 
   BookOpen, 
   Copy, 
-  Check,
-  Code2,
+  Check, 
   FileText,
   ChevronDown,
   ChevronUp
@@ -29,20 +28,17 @@ interface RawCuesModalProps {
 
 const EXAMPLE_CUE_SCHEMA = `[
   {
-    "id": "cue_01",
     "type": "dialogue",
-    "selectedText": "I think we need to talk about what happened.",
+    "selectedText": "We need to talk.",
     "startTime": 14.5,
-    "endTime": 18.2,
-    "startIndex": 120,
-    "endIndex": 164
+    "endTime": 18.2
   }
 ]`;
 
 interface CueSchemaField {
   name: string;
   type: string;
-  requirement: 'Required' | 'Optional' | 'Auto-Calc';
+  requirement: 'Required' | 'Optional' | 'Auto-Calc' | 'Legacy';
   desc: string;
 }
 
@@ -58,6 +54,12 @@ const ESSENTIAL_FIELDS: CueSchemaField[] = [
     type: 'string',
     requirement: 'Required',
     desc: 'Screenplay text excerpt to highlight on the paper canvas and align character offsets.',
+  },
+  {
+    name: 'type',
+    type: 'string',
+    requirement: 'Optional',
+    desc: 'Category: dialogue, action, shot, camera, audio, vfx, etc. Defaults to "dialogue" if omitted.',
   },
 ];
 
@@ -75,10 +77,10 @@ const OPTIONAL_FIELDS: CueSchemaField[] = [
     desc: 'Unique cue ID (e.g. "cue_01"). If omitted, SceneFlow auto-generates a unique ID.',
   },
   {
-    name: 'type',
+    name: 'colorClass',
     type: 'string',
-    requirement: 'Optional',
-    desc: 'Category: dialogue, action, scene, character, parenthetical, transition, shot. Defaults to "dialogue".',
+    requirement: 'Legacy',
+    desc: 'Legacy Tailwind class. Modern SceneFlow dynamically themes highlights based on "type".',
   },
   {
     name: 'speaker',
@@ -110,27 +112,27 @@ export function RawCuesModal({
         error: 'JSON data is empty.',
         cues: [] as Cue[],
         count: 0,
-        wasProjectObject: false,
+        wasObjectWrapper: false,
       };
     }
 
     try {
       const parsed = JSON.parse(trimmed);
       let extracted: any[] | null = null;
-      let wasProjectObject = false;
+      let wasObjectWrapper = false;
 
       if (Array.isArray(parsed)) {
         extracted = parsed;
       } else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.cues)) {
         extracted = parsed.cues;
-        wasProjectObject = true;
+        wasObjectWrapper = true;
       } else {
         return {
           isValid: false,
-          error: 'Expected a JSON array ([...]) or a project object ({ cues: [...] }).',
+          error: 'Expected a JSON array ([...]) or wrapped cues object ({ cues: [...] }).',
           cues: [] as Cue[],
           count: 0,
-          wasProjectObject: false,
+          wasObjectWrapper: false,
         };
       }
 
@@ -140,7 +142,7 @@ export function RawCuesModal({
         error: null,
         cues: sanitized,
         count: sanitized.length,
-        wasProjectObject,
+        wasObjectWrapper,
       };
     } catch (err: any) {
       return {
@@ -148,7 +150,7 @@ export function RawCuesModal({
         error: err?.message || 'Invalid JSON syntax.',
         cues: [] as Cue[],
         count: 0,
-        wasProjectObject: false,
+        wasObjectWrapper: false,
       };
     }
   }, [rawCuesText]);
@@ -201,29 +203,29 @@ export function RawCuesModal({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="bg-surface w-full max-w-5xl rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-border-main text-text-main h-[88vh] max-h-[820px] flex flex-col">
+      <div className="bg-surface w-full max-w-5xl rounded-[1.75rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border-main text-text-main h-[80vh] max-h-[740px] flex flex-col">
         
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-subtle shrink-0">
-          <div className="flex items-center gap-3.5">
-            <div className={UI_TOKENS.iconWrapper.blue}>
-              <Braces size={20} className="text-blue-500" />
+        <div className="flex items-center justify-between px-5 py-3 border-b border-border-subtle bg-surface-subtle shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500 shrink-0">
+              <Braces size={16} />
             </div>
             <div>
-              <h2 className="text-base font-black uppercase tracking-widest text-text-main flex items-center gap-2">
+              <h2 className="text-sm font-black uppercase tracking-wider text-text-main flex items-center gap-2">
                 Cues JSON Editor
               </h2>
-              <p className="text-[10px] font-bold text-text-faint uppercase tracking-wider">
-                SceneFlow Cue Schema & Direct JSON Import
+              <p className="text-[9px] font-bold text-text-faint uppercase tracking-wider">
+                SceneFlow Cue Schema & Data Editor
               </p>
             </div>
           </div>
           <button 
             onClick={onClose}
             title="Close modal"
-            className={UI_TOKENS.button.iconCloseSquare}
+            className="p-1.5 text-text-faint hover:text-text-main hover:bg-surface-hover rounded-lg transition-colors"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
@@ -231,61 +233,61 @@ export function RawCuesModal({
         <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden divide-y md:divide-y-0 md:divide-x divide-border-subtle">
           
           {/* Left Column: Schema Reference & Educational Guide */}
-          <div className="w-full md:w-80 lg:w-96 bg-surface-subtle/50 flex flex-col shrink-0 overflow-y-auto custom-scrollbar p-5 space-y-4">
+          <div className="w-full md:w-72 lg:w-80 bg-surface-subtle/50 flex flex-col shrink-0 overflow-y-auto custom-scrollbar p-3.5 space-y-2.5">
             
-            <div className="flex items-center gap-2">
-              <BookOpen size={16} className="text-blue-500 shrink-0" />
-              <div>
-                <h3 className="text-xs font-black uppercase tracking-wider text-text-main">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <BookOpen size={14} className="text-blue-500 shrink-0" />
+                <h3 className="text-[11px] font-black uppercase tracking-wider text-text-main">
                   Schema Reference
                 </h3>
-                <p className="text-[10px] text-text-muted">
-                  How SceneFlow structures sync cues
-                </p>
               </div>
+              <span className="text-[8.5px] font-mono text-text-faint uppercase bg-surface px-1.5 py-0.5 rounded border border-border-subtle">
+                Array&lt;Cue&gt;
+              </span>
             </div>
 
-            {/* Overview Card */}
-            <div className="p-3 bg-surface rounded-2xl border border-border-subtle text-[11px] text-text-muted leading-relaxed space-y-1.5 shadow-2xs">
-              <p className="font-semibold text-text-main flex items-center gap-1.5">
-                <Code2 size={12} className="text-blue-500" />
-                <span>Array&lt;Cue&gt; Structure</span>
-              </p>
+            {/* Compact Overview Card */}
+            <div className="p-2.5 bg-surface rounded-xl border border-border-subtle text-[10px] text-text-muted leading-snug space-y-1 shadow-2xs">
               <p>
-                Each cue maps a highlighted screenplay section to a video timecode window. Both standalone arrays and full project JSON files are supported.
+                Each cue synchronizes a screenplay excerpt with a video timecode window. Accepts direct arrays <code className="text-[9px] text-blue-500">[...]</code> or wrapped objects <code className="text-[9px] text-blue-500">{'{ cues: [...] }'}</code> (e.g. from LLM structured outputs).
               </p>
             </div>
 
             {/* Essential Fields */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <div className="flex items-center justify-between px-0.5">
-                <span className="text-[10px] font-black uppercase tracking-wider text-text-faint">
+                <span className="text-[9px] font-black uppercase tracking-wider text-text-faint">
                   Essential Fields
                 </span>
-                <span className="text-[9px] font-mono text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider">
-                  2 required
+                <span className="text-[8.5px] font-mono text-text-faint font-bold uppercase tracking-wider">
+                  3 core fields
                 </span>
               </div>
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 {ESSENTIAL_FIELDS.map((field) => (
                   <div 
                     key={field.name}
-                    className="p-2.5 rounded-xl bg-surface border border-border-subtle space-y-1 shadow-2xs text-[11px]"
+                    className="p-2 rounded-xl bg-surface border border-border-subtle space-y-0.5 shadow-2xs text-[10px]"
                   >
-                    <div className="flex items-center justify-between gap-1.5">
-                      <span className="font-mono font-bold text-blue-600 dark:text-blue-400 truncate">
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="font-mono font-bold text-blue-600 dark:text-blue-400 truncate text-[10.5px]">
                         {field.name}
                       </span>
                       <div className="flex items-center gap-1 shrink-0">
-                        <span className="text-[8px] font-mono font-bold uppercase px-1.5 py-0.5 rounded border tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/25">
+                        <span className={cn(
+                          "text-[7.5px] font-mono font-bold uppercase px-1 py-0.2 rounded border tracking-wider",
+                          field.requirement === 'Required' && "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/25",
+                          field.requirement === 'Optional' && "bg-surface-muted text-text-faint border-border-subtle"
+                        )}>
                           {field.requirement}
                         </span>
-                        <span className="text-[8px] font-mono uppercase bg-surface-muted px-1.5 py-0.5 rounded text-text-faint border border-border-subtle">
+                        <span className="text-[7.5px] font-mono uppercase bg-surface-muted px-1 py-0.2 rounded text-text-faint border border-border-subtle">
                           {field.type}
                         </span>
                       </div>
                     </div>
-                    <p className="text-text-muted text-[10px] leading-snug">
+                    <p className="text-text-muted text-[9.5px] leading-tight">
                       {field.desc}
                     </p>
                   </div>
@@ -294,52 +296,53 @@ export function RawCuesModal({
             </div>
 
             {/* Collapsible Optional & Auto-Calc Fields */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <button
                 type="button"
                 onClick={() => setIsOptionalFieldsOpen(prev => !prev)}
-                className="w-full flex items-center justify-between p-2.5 rounded-xl bg-surface border border-border-subtle hover:bg-surface-hover text-text-main text-xs transition-colors shadow-2xs group"
+                className="w-full flex items-center justify-between px-2 py-1.5 rounded-xl bg-surface border border-border-subtle hover:bg-surface-hover text-text-main text-[10px] transition-colors shadow-2xs group"
               >
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-text-faint group-hover:text-text-main transition-colors">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-black uppercase tracking-wider text-text-faint group-hover:text-text-main transition-colors text-[9px]">
                     Optional & Auto-Calc Fields
                   </span>
-                  <span className="text-[9px] font-mono bg-surface-muted text-text-faint px-1.5 py-0.2 rounded-full font-bold">
+                  <span className="text-[8px] font-mono bg-surface-muted text-text-faint px-1.5 py-0.2 rounded-full font-bold">
                     {OPTIONAL_FIELDS.length}
                   </span>
                 </div>
                 {isOptionalFieldsOpen ? (
-                  <ChevronUp size={13} className="text-text-faint group-hover:text-text-main" />
+                  <ChevronUp size={11} className="text-text-faint group-hover:text-text-main" />
                 ) : (
-                  <ChevronDown size={13} className="text-text-faint group-hover:text-text-main" />
+                  <ChevronDown size={11} className="text-text-faint group-hover:text-text-main" />
                 )}
               </button>
 
               {isOptionalFieldsOpen && (
-                <div className="space-y-1.5 animate-in slide-in-from-top-1 duration-150">
+                <div className="space-y-1 animate-in slide-in-from-top-1 duration-150">
                   {OPTIONAL_FIELDS.map((field) => (
                     <div 
                       key={field.name}
-                      className="p-2.5 rounded-xl bg-surface border border-border-subtle space-y-1 shadow-2xs text-[11px]"
+                      className="p-2 rounded-xl bg-surface border border-border-subtle space-y-0.5 shadow-2xs text-[10px]"
                     >
-                      <div className="flex items-center justify-between gap-1.5">
-                        <span className="font-mono font-bold text-blue-600 dark:text-blue-400 truncate">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="font-mono font-bold text-blue-600 dark:text-blue-400 truncate text-[10.5px]">
                           {field.name}
                         </span>
                         <div className="flex items-center gap-1 shrink-0">
                           <span className={cn(
-                            "text-[8px] font-mono font-bold uppercase px-1.5 py-0.5 rounded border tracking-wider",
+                            "text-[7.5px] font-mono font-bold uppercase px-1 py-0.2 rounded border tracking-wider",
                             field.requirement === 'Auto-Calc' && "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/25",
+                            field.requirement === 'Legacy' && "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/25",
                             field.requirement === 'Optional' && "bg-surface-muted text-text-faint border-border-subtle"
                           )}>
                             {field.requirement}
                           </span>
-                          <span className="text-[8px] font-mono uppercase bg-surface-muted px-1.5 py-0.5 rounded text-text-faint border border-border-subtle">
+                          <span className="text-[7.5px] font-mono uppercase bg-surface-muted px-1 py-0.2 rounded text-text-faint border border-border-subtle">
                             {field.type}
                           </span>
                         </div>
                       </div>
-                      <p className="text-text-muted text-[10px] leading-snug">
+                      <p className="text-text-muted text-[9.5px] leading-tight">
                         {field.desc}
                       </p>
                     </div>
@@ -349,9 +352,9 @@ export function RawCuesModal({
             </div>
 
             {/* Example JSON Snippet */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <div className="flex items-center justify-between px-0.5">
-                <span className="text-[10px] font-black uppercase tracking-wider text-text-faint">
+                <span className="text-[9px] font-black uppercase tracking-wider text-text-faint">
                   Example Payload
                 </span>
                 <div className="flex items-center gap-1.5">
@@ -360,9 +363,9 @@ export function RawCuesModal({
                       type="button"
                       onClick={handleInsertTemplate}
                       title="Load example payload into editor"
-                      className="text-[10px] font-bold text-blue-500 hover:text-blue-600 flex items-center gap-1"
+                      className="text-[9px] font-bold text-blue-500 hover:text-blue-600 flex items-center gap-0.5"
                     >
-                      <FileText size={10} />
+                      <FileText size={9} />
                       Insert
                     </button>
                   )}
@@ -370,16 +373,16 @@ export function RawCuesModal({
                     type="button"
                     onClick={handleCopyExample}
                     title="Copy example to clipboard"
-                    className="text-[10px] font-bold text-text-muted hover:text-text-main flex items-center gap-1"
+                    className="text-[9px] font-bold text-text-muted hover:text-text-main flex items-center gap-0.5"
                   >
                     {copiedTemplate ? (
                       <>
-                        <Check size={10} className="text-emerald-500" />
+                        <Check size={9} className="text-emerald-500" />
                         <span className="text-emerald-500">Copied</span>
                       </>
                     ) : (
                       <>
-                        <Copy size={10} />
+                        <Copy size={9} />
                         <span>Copy</span>
                       </>
                     )}
@@ -387,17 +390,9 @@ export function RawCuesModal({
                 </div>
               </div>
 
-              <pre className="p-3 bg-surface border border-border-subtle rounded-xl font-mono text-[10px] text-text-muted overflow-x-auto leading-relaxed custom-scrollbar shadow-2xs">
+              <pre className="p-2 bg-surface border border-border-subtle rounded-xl font-mono text-[9px] text-text-muted leading-tight overflow-hidden shadow-2xs">
                 {EXAMPLE_CUE_SCHEMA}
               </pre>
-            </div>
-
-            {/* Tip Footer */}
-            <div className="p-3 bg-blue-500/5 rounded-xl border border-blue-500/20 text-[10px] text-text-muted space-y-1">
-              <p className="font-bold text-blue-600 dark:text-blue-400">💡 Import Tip</p>
-              <p className="leading-snug">
-                Pasting a full project JSON (`{'{ youtubeId, scriptText, cues }'}`) will automatically extract the cues array without errors.
-              </p>
             </div>
 
           </div>
@@ -406,34 +401,34 @@ export function RawCuesModal({
           <div className="flex-1 flex flex-col min-h-0 bg-surface overflow-hidden">
             
             {/* Editor Action Toolbar */}
-            <div className="px-6 py-3 border-b border-border-subtle flex items-center justify-between gap-3 shrink-0 flex-wrap bg-surface">
+            <div className="px-5 py-2.5 border-b border-border-subtle flex items-center justify-between gap-3 shrink-0 flex-wrap bg-surface">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-black uppercase tracking-wider text-text-main">
                   JSON Data
                 </span>
-                <span className="text-[10px] font-mono font-bold text-text-faint bg-surface-muted px-2 py-0.5 rounded-full">
+                <span className="text-[9px] font-mono font-bold text-text-faint bg-surface-muted px-1.5 py-0.5 rounded-full">
                   {lineCount} {lineCount === 1 ? 'line' : 'lines'}
                 </span>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 {/* Live Validation Pill */}
                 {validationResult.isValid ? (
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg text-[11px] font-bold">
-                    <CheckCircle2 size={13} className="stroke-[2.5]" />
+                  <div className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg text-[10px] font-bold">
+                    <CheckCircle2 size={12} className="stroke-[2.5]" />
                     <span>
                       {validationResult.count} {validationResult.count === 1 ? 'cue' : 'cues'} ready
                     </span>
-                    {validationResult.wasProjectObject && (
-                      <span className="text-[9px] font-mono uppercase bg-emerald-500/20 px-1 py-0.5 rounded text-emerald-700 dark:text-emerald-300">
-                        From Project
+                    {validationResult.wasObjectWrapper && (
+                      <span className="text-[8px] font-mono uppercase bg-emerald-500/20 px-1 py-0.2 rounded text-emerald-700 dark:text-emerald-300">
+                        {'{ cues } detected'}
                       </span>
                     )}
                   </div>
                 ) : (
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 rounded-lg text-[11px] font-bold">
-                    <AlertCircle size={13} />
-                    <span className="truncate max-w-[200px] sm:max-w-[280px]" title={validationResult.error || 'Invalid JSON'}>
+                  <div className="flex items-center gap-1.5 px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 rounded-lg text-[10px] font-bold">
+                    <AlertCircle size={12} />
+                    <span className="truncate max-w-[180px] sm:max-w-[260px]" title={validationResult.error || 'Invalid JSON'}>
                       {validationResult.error || 'Invalid JSON'}
                     </span>
                   </div>
@@ -446,40 +441,40 @@ export function RawCuesModal({
                   disabled={!validationResult.isValid}
                   title="Format & indent JSON to 2 spaces"
                   className={cn(
-                    "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all active:scale-95 border shadow-2xs",
+                    "flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bold transition-all active:scale-95 border shadow-2xs",
                     formatSuccess
                       ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
                       : "bg-surface-subtle hover:bg-surface-hover border-border-subtle text-text-muted hover:text-text-main disabled:opacity-40 disabled:cursor-not-allowed"
                   )}
                 >
-                  {formatSuccess ? <Check size={13} /> : <Sparkles size={13} />}
+                  {formatSuccess ? <Check size={12} /> : <Sparkles size={12} />}
                   <span>{formatSuccess ? 'Formatted' : 'Format JSON'}</span>
                 </button>
               </div>
             </div>
 
             {/* Code Editor Body */}
-            <div className="p-6 flex-1 flex flex-col min-h-0 bg-surface">
+            <div className="p-4 flex-1 flex flex-col min-h-0 bg-surface">
               <textarea
                 value={rawCuesText}
                 onChange={(e) => onChangeRawCuesText(e.target.value)}
-                className="w-full flex-1 min-h-[280px] bg-surface-subtle border-2 border-border-subtle rounded-2xl p-4 lg:p-5 font-mono text-xs text-text-body focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none leading-relaxed custom-scrollbar"
+                className="w-full flex-1 min-h-[220px] bg-surface-subtle border border-border-subtle rounded-xl p-3.5 font-mono text-xs text-text-body focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none leading-relaxed custom-scrollbar"
                 placeholder={EXAMPLE_CUE_SCHEMA}
                 spellCheck={false}
               />
             </div>
 
             {/* Right Column Footer */}
-            <div className="px-6 py-4 border-t border-border-subtle bg-surface-subtle flex items-center justify-between gap-4 shrink-0">
-              <p className="text-xs text-text-muted hidden sm:block">
+            <div className="px-5 py-3 border-t border-border-subtle bg-surface-subtle flex items-center justify-between gap-4 shrink-0">
+              <p className="text-[11px] text-text-muted hidden sm:block">
                 Applying updates will replace all current project cues.
               </p>
 
-              <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+              <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-5 py-2.5 rounded-xl border border-border-main bg-surface hover:bg-surface-hover text-text-main text-xs font-bold transition-all active:scale-95"
+                  className="px-4 py-2 rounded-xl border border-border-main bg-surface hover:bg-surface-hover text-text-main text-xs font-bold transition-all active:scale-95"
                 >
                   Cancel
                 </button>
@@ -488,7 +483,7 @@ export function RawCuesModal({
                   onClick={handleSave}
                   disabled={!validationResult.isValid || validationResult.count === 0}
                   className={cn(
-                    "px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider text-white transition-all active:scale-95 shadow-md",
+                    "px-5 py-2 rounded-xl text-xs font-black uppercase tracking-wider text-white transition-all active:scale-95 shadow-md",
                     validationResult.isValid && validationResult.count > 0
                       ? "bg-blue-500 hover:bg-blue-600 shadow-blue-500/20"
                       : "bg-blue-500/40 opacity-50 cursor-not-allowed shadow-none"
