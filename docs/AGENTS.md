@@ -330,5 +330,18 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
       - `dismissIfClean()` safely resets `useCueEditor` back to idle workstation overview if no edits have been made (`!isDirty`).
       - In `App.tsx`, `handleScriptClick` is bound to the screenplay reading canvas, safely closing clean cue inspections on click while strictly ignoring clicks on interactive buttons, input fields, staging markers (`e.stopPropagation()` in `ScriptLine`), or active DOM text selections.
 
-
-
+18. **Cues JSON Editor & LLM Sync Schema Invariants (`RawCuesModal.tsx`, `cues.schema.json`, `cues.prompt.ts`)**:
+    - **Minimal Canonical Schema vs. Prompt Domain Rules**:
+      - `cues.schema.json` (and `public/schema.json`) must remain strictly a minimal structural data contract defining types, enums (`type: dialogue | action | sound | ...`), and required properties (`startTime`, `endTime`, `selectedText`, `type`).
+      - Avoid embedding conversational descriptions or instructions in JSON schema field `description` tags; excessive meta-text degrades token sampling quality during LLM constrained decoding (e.g. Gemini JSON Schema mode).
+      - Business logic—such as verbatim substring copying from `<ScriptText>` and `(minutes * 60) + seconds` timecode math—belongs strictly in `cues.prompt.ts` (`CUES_SYNC_PROMPT` / `public/sync-prompt.txt`).
+    - **External Draft Guidance Separation**:
+      - Draft baseline notices ("This prompt provides a baseline draft. You are encouraged to customize it...") must reside cleanly outside the markdown prompt text in the UI to keep copied prompts pure and ready for system instructions.
+    - **Segmented Sub-View Architecture (`prompt` | `schema` | `split`)**:
+      - Provide a top-level segmented sub-view switcher within the Prompt & Schema tab. Full-width views (`prompt` or `schema`) allow single-column reading with zero horizontal scrollbar clipping on schema lines; `split` remains available for side-by-side inspection on wide screens.
+    - **Modal Footer Action Stability & Text Wrap Prevention**:
+      - Modal footer actions must use `whitespace-nowrap`, matching vertical padding (`py-2`), and Title Case typography (e.g., `Go to JSON Data →`) to guarantee buttons never wrap across multiple lines or distort footer height.
+      - Footer buttons are context-aware: displaying `Cancel` & `Apply Cues (N)` on the `JSON Data` tab, and `Close` & `Go to JSON Data →` on the `Sync Prompt & Schema` tab.
+    - **Live Non-Blocking Validation & Indentation Standardizer**:
+      - JSON textarea editing must feature real-time syntax and schema validation pills reporting cue counts or actionable error diagnostic messages without triggering blocking browser `alert()` dialogs.
+      - `[ ✨ Format JSON ]` standardizer formats indentation to 2 spaces and automatically unrolls `{ cues: [...] }` wrappers into direct cue arrays.

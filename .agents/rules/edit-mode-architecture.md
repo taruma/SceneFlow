@@ -181,4 +181,22 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
   - `dismissIfClean()` safely resets `useCueEditor` back to idle workstation overview if no edits have been made (`!isDirty`).
   - In `App.tsx`, `handleScriptClick` is bound to the screenplay reading canvas, safely closing clean cue inspections on click while strictly ignoring clicks on interactive buttons, input fields, staging markers (`e.stopPropagation()`), or active DOM text selections.
 
-
+## 15. Cues JSON Editor & LLM Sync Schema Architecture (`RawCuesModal.tsx`)
+- **Two-Column Workstation Layout**:
+  - The raw cues modal provides a comprehensive 2-column workstation (`RawCuesModal.tsx`):
+    - **Left Column**: Live schema reference with essential fields (`startTime`, `endTime`, `selectedText`, `type`), collapsible optional/auto-calculated fields, and quick copyable example snippet with 1-click insertion.
+    - **Right Column**: Dual-tab workspace housing the `{ } JSON Data` editor and `🤖 Sync Prompt & Schema` AI integration deck.
+- **Minimal Canonical Schema Contract (`cues.schema.json`, `public/schema.json`)**:
+  - JSON schema must remain strictly a structural data contract (types, enums, required fields).
+  - Avoid verbose descriptions inside schema properties, as excessive natural language degrades token sampling quality during LLM constrained decoding.
+  - Business logic—such as verbatim `<ScriptText>` excerpt copying and `(minutes * 60) + seconds` timecode math—is enforced within `cues.prompt.ts` (`public/sync-prompt.txt`).
+- **Draft Baseline UI Separation**:
+  - Guidance indicating that prompts provide a draft baseline for user customization must reside cleanly outside the markdown prompt text in the UI to keep copied prompts ready for Gemini/LLM system instructions.
+- **Segmented Sub-View Switcher (`prompt` | `schema` | `split`)**:
+  - Supports switching between full-width views (`prompt` or `schema`) to ensure zero horizontal scrollbars on JSON schema lines, while preserving a `split` option for side-by-side comparison on wide screens.
+- **Context-Aware Footer & Wrap-Resistant Buttons**:
+  - Footers adapt actions dynamically per tab: `Cancel` and `Apply Cues (N)` on JSON Data; `Close` and `Go to JSON Data →` on Sync Prompt & Schema.
+  - Buttons must declare `whitespace-nowrap`, matching vertical padding (`py-2`), and Title Case labels to eliminate multi-line wrapping and container height distortion.
+- **Live Non-Blocking Validation & Auto-Unwrapping**:
+  - Real-time syntax and schema validation pills report cue counts or actionable error diagnostic messages without triggering blocking browser `alert()` dialogs.
+  - `[ ✨ Format JSON ]` standardizer formats indentation to 2 spaces and automatically unrolls `{ cues: [...] }` wrappers into direct cue arrays.

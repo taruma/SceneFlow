@@ -282,7 +282,12 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
    - **Performance-Shielded Auto-Scroll & Forward Monotonicity**: Shields the cue list from 10–60Hz playback ticks by computing discrete `activeCueId` (for auto-scrolling) and memoized, reference-stabilized `activeCueIds: Set<string>` (for multi-cue highlighting) at `EditLeftPanel`. Employs a Forward Monotonic Scrolling Guard (`furthestScrollTopRef`) to eliminate rubber-band scrolling when nested child cues end inside longer enclosing cues, resetting on backward seeks (`currentTime < prevTime - 0.3s`) and filter changes via `seekVersion`. Dynamically evaluates active cues against `filterCues(cues, selectedCategories, searchQuery)` so auto-scroll accurately tracks visible items when filtering by category or search text. Programmatic scrolling uses exported `smoothScrollTo` with instant passive `wheel`/`touchmove` cancellation.
    - **Cross-Panel Full Sync Jump**: Selecting any cue card/row executes a synchronized triple-action: seeks the video player (without premature pause calls), populates `CueEditorForm.tsx`, and smoothly scrolls the script canvas to center the corresponding line.
 6. **`RawScriptModal.tsx`**: Modal dialog for bulk editing raw screenplay text using `UI_TOKENS.modal` and `UI_TOKENS.input`.
-7. **`RawCuesModal.tsx`**: Modal dialog for viewing and editing raw cue data in JSON format, with `sanitizeCues()` applied on save and styled via `UI_TOKENS`.
+7. **`RawCuesModal.tsx`**: Studio-grade Two-Column Cues JSON Editor and LLM Sync Workstation:
+   - **Left Column (Schema Reference & Guide)**: Displays compact visual cue schema reference (Essential Fields `startTime`, `endTime`, `selectedText`, `type`; collapsible Optional & Auto-Calc Fields; and quick example payload with copy and insert actions).
+   - **Right Column (Dual-Tab Workstation)**:
+     - **`JSON Data` Tab**: Full-height textarea with line counter, live schema validation pill (`{ cues } detected`, `N cues ready`, error diagnostics without blocking `alert()`), and `[ ✨ Format JSON ]` 2-space indentation standardizer with automatic `{ cues: [...] }` unwrapping.
+     - **`Sync Prompt & Schema` Tab**: Dedicated AI/Gemini synchronization workspace featuring a compact 3-step setup guide with public file links (`/sync-prompt.txt`, `/schema.json`), inline draft baseline guidance, segmented full-width code viewports (`[ 📄 Sync Prompt ]`, `[ 🤖 Gemini Schema ]`, and `[ ◫ Split ]`), and synchronized 1-click copy actions.
+   - **Context-Aware Footer**: Adapts footer actions per tab (`Cancel` & `Apply Cues (N)` on JSON Data; `Close` & `Go to JSON Data →` on Sync Prompt & Schema), styled with `whitespace-nowrap` and Title Case typography.
 8. **`OverlapPicker.tsx`**: Floating context popup for selecting which overlapping cue to edit at a shared position.
 9. **`DeleteConfirmationModal.tsx`**: Confirmation dialog with cue text preview prior to permanent deletion styled via `UI_TOKENS`.
 10. **`ResetConfirmationModal.tsx`**: Multi-purpose confirmation dialog for resetting settings, starting a clean blank project (`new`), loading the interactive starter guide (`guide`), loading examples, or fetching remote projects, featuring integrated CORS error reporting and styled via `UI_TOKENS`.
@@ -313,6 +318,8 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 
 ### Type Definitions & Data Schemas
 - **`src/types/script.ts`**: Defines 14 domain interfaces and types: `Cue`, `TimingSettings`, `ColorCategory`, `AppState`, `ScriptWidthPresetId`, `ScriptWidthPreset`, `ScrollFocusPresetId`, `ScrollFocusPreset`, `TextSelection`, `DeleteConfirmationState`, `ResetConfirmationState`, `OverlapPickerState`, `AlternativeLocation`, and `AppMode`.
+- **`src/schemas/cues.schema.json` & `public/schema.json`**: Modular JSON schema contract defining the canonical cue data structure for LLM structured output decoding (array of objects with `id`, `type`, `speaker`, `selectedText`, `startTime`, `endTime`).
+- **`src/schemas/cues.prompt.ts` & `public/sync-prompt.txt`**: Canonical video-to-script synchronization prompt (`CUES_SYNC_PROMPT`) enforcing strict verbatim `<ScriptText>` substring copying and `(minutes * 60) + seconds` timecode math.
 - **`src/examples.ts`**: Defines the `Example` and `ExampleSection` schemas and holds the built-in catalogue metadata.
 
 ---
