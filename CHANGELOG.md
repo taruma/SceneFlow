@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.4.0-dev] - Unreleased
+## [2.4.0] - 2026-09-15
 
 ### Added
 - **Studio-Grade Cues JSON Editor & LLM Sync Setup (`src/components/RawCuesModal.tsx`, `src/schemas/cues.schema.json`, `src/schemas/cues.prompt.ts`, `public/schema.json`, `public/sync-prompt.txt`)**:
