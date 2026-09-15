@@ -9,7 +9,7 @@ import { DEFAULT_VIDEO_HEIGHT } from '../../hooks/useScriptPreferences';
 import { VideoSplitDivider } from '../playback/VideoSplitDivider';
 import { YoutubeSourceInput } from '../YoutubeSourceInput';
 import { SyncCuesPanel } from '../edit/SyncCuesPanel';
-import { filterCues, findActiveCue, isCueActive } from '../../lib/cueUtils';
+import { filterCues, findActiveCue, findScrollTargetCue, isCueActive } from '../../lib/cueUtils';
 import { MediaViewport } from './MediaViewport';
 import { MediaHeader } from './MediaHeader';
 
@@ -136,12 +136,19 @@ export const WorkstationLeftPanel: React.FC<WorkstationLeftPanelProps> = memo(({
     return filterCues(cues, selectedCategories, searchQuery);
   }, [mode, cues, selectedCategories, searchQuery]);
 
-  // Primary active cue used for Edit mode Left Panel auto-scrolling
+  // Primary active cue used for Edit mode visual feedback (halo, gradient wash)
   const activeCue = useMemo(() => {
     if (mode !== 'edit') return null;
     return findActiveCue(matchingCues, currentTime, settings);
   }, [mode, matchingCues, currentTime, settings]);
   const activeCueId = activeCue?.id ?? null;
+
+  // Scroll target cue used for Edit mode auto-scrolling (with upcoming cue fallback in gaps)
+  const scrollTargetCue = useMemo(() => {
+    if (mode !== 'edit') return null;
+    return findScrollTargetCue(matchingCues, currentTime, settings);
+  }, [mode, matchingCues, currentTime, settings]);
+  const scrollTargetCueId = scrollTargetCue?.id ?? null;
 
   // Multi-cue active tracking for Edit mode
   const prevActiveCueIdsRef = useRef<Set<string>>(new Set());
@@ -171,16 +178,24 @@ export const WorkstationLeftPanel: React.FC<WorkstationLeftPanelProps> = memo(({
     return ids;
   }, [mode, matchingCues, currentTime, settings]);
 
-  // Track backward seeks to reset forward monotonic auto-scroll guard
+  // Track seeks and mode transitions to reset forward monotonic auto-scroll guard
   const prevTimeRef = useRef<number>(currentTime);
+  const prevModeRef = useRef<string>(mode);
   const [seekVersion, setSeekVersion] = useState<number>(0);
 
   useEffect(() => {
-    if (currentTime < prevTimeRef.current - 0.3) {
+    // Mode transition into edit mode should always provide a fresh scroll horizon
+    const modeChangedToEdit = mode === 'edit' && prevModeRef.current !== 'edit';
+    prevModeRef.current = mode;
+
+    // Detect playhead scrubber jumps (backward seek > 0.3s or forward jump > 1.5s)
+    const isScrubJump = currentTime < prevTimeRef.current - 0.3 || (currentTime - prevTimeRef.current > 1.5);
+
+    if (modeChangedToEdit || isScrubJump) {
       setSeekVersion(v => v + 1);
     }
     prevTimeRef.current = currentTime;
-  }, [currentTime]);
+  }, [currentTime, mode]);
 
   const [isSourceInputOpen, setIsSourceInputOpen] = useState<boolean>(() => !youtubeId);
   const prevYoutubeIdRef = useRef(youtubeId);
@@ -303,6 +318,7 @@ export const WorkstationLeftPanel: React.FC<WorkstationLeftPanelProps> = memo(({
           cuePaletteProfile={cuePaletteProfile}
           selectedCueId={selectedCueId}
           activeCueId={activeCueId}
+          scrollTargetCueId={scrollTargetCueId}
           activeCueIds={activeCueIds}
           seekVersion={seekVersion}
           searchQuery={searchQuery}

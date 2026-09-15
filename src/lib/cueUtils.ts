@@ -453,6 +453,47 @@ export function findActiveCues(
 }
 
 /**
+ * Finds the optimal target cue for auto-scrolling the viewport at a given timestamp.
+ * If one or more cues are currently active, delegates to findActiveCue() to track the primary active cue.
+ * If no cue is active (e.g. paused in an inter-cue silence gap or between lines), falls back to:
+ * 1. The immediate next upcoming cue (cue.startTime >= currentTime).
+ * 2. If past all cues, anchors to the last cue in chronological order.
+ * 3. If before all cues, anchors to the first cue.
+ */
+export function findScrollTargetCue(
+  cues: Cue[],
+  currentTime: number,
+  settings?: Record<string, TimingSettings>
+): Cue | null {
+  if (!cues || cues.length === 0) return null;
+
+  const activeCue = findActiveCue(cues, currentTime, settings);
+  if (activeCue) return activeCue;
+
+  // Inter-cue gap fallback: find the next upcoming cue
+  let upcomingCue: Cue | null = null;
+  for (let i = 0; i < cues.length; i++) {
+    const cue = cues[i];
+    if ((cue.startTime ?? 0) >= currentTime) {
+      if (!upcomingCue || (cue.startTime ?? 0) < (upcomingCue.startTime ?? 0)) {
+        upcomingCue = cue;
+      }
+    }
+  }
+
+  if (upcomingCue) return upcomingCue;
+
+  // If past all cues, anchor to the last cue in chronological order
+  let lastCue: Cue = cues[0];
+  for (let i = 1; i < cues.length; i++) {
+    if ((cues[i].startTime ?? 0) > (lastCue.startTime ?? 0)) {
+      lastCue = cues[i];
+    }
+  }
+  return lastCue;
+}
+
+/**
  * Filters cues by multi-select category types and/or text search query.
  */
 export function filterCues(

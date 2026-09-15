@@ -112,15 +112,17 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
     - `activeCueId: string | null`: Primary active cue target computed via `findActiveCue(matchingCues, currentTime, settings)` for viewport auto-scrolling.
     - `activeCueIds: Set<string>`: All concurrently active cues firing at `currentTime` computed via `isCueActive()`.
   - **Set Reference Stabilization**: `activeCueIds` is memoized and reference-stabilized using a `useRef` shallow-equality check (`prevActiveCueIdsRef`). When video ticks advance through the same active cues, the identical `Set` instance is returned, ensuring `SyncCuesPanel` experiences zero re-render overhead while media is running.
-- **Filter-Aware Active Cue Resolution**:
-  - `EditLeftPanel` tracks filter state (`searchQuery`, `selectedCategories`) and evaluates `filterCues(cues, selectedCategories, searchQuery)` before passing cues to `findActiveCue`.
+- **Filter-Aware Active Cue Resolution & Upcoming Cue Fallback**:
+  - `WorkstationLeftPanel` evaluates `filterCues(cues, selectedCategories, searchQuery)` and resolves two decoupled cue anchors:
+    - `activeCueId: string | null`: Strict active cue resolver via `findActiveCue()` driving `isPrimary` halo glow and category ambient wash without false illumination during gaps.
+    - `scrollTargetCueId: string | null`: Primary auto-scroll anchor via `findScrollTargetCue()`. When playback falls into an inter-cue silence gap or pause between lines (`activeCue === null`), it automatically falls back to the immediate next upcoming cue (`cue.startTime >= currentTime`), centering the viewport on upcoming lines without stranding the list at `scrollTop = 0`.
   - This ensures that when users filter by specific categories (e.g. Action, Camera, VFX) or search queries, auto-scroll accurately tracks visible items rather than losing focus due to unrendered dialogue cues.
 - **Forward Monotonic Scrolling Guard (`furthestScrollTopRef`)**:
   - During normal playback, nested cues frequently occur (e.g., an enclosing Action cue from 0:00 to 0:10 with multiple dialogue or sound cues from 0:02 to 0:08).
   - Without a monotonic guard, when the nested cues end at 0:08, the active resolver would fall back to the still-active Action cue, causing an annoying upward "rubber-band" or yo-yo scroll.
   - Forward monotonic tracking enforces that target scroll positions can only advance forward during forward playback (`targetScrollTop >= furthestScrollTopRef.current - 40px`).
-- **Backward Seek & Filter Invalidation (`seekVersion`)**:
-  - Backward seeks (`currentTime < prevTime - 0.3s`), category filter toggles, density switches, or search input changes increment or trigger a reset of `furthestScrollTopRef.current = 0`, restoring complete bidirectional scroll responsiveness immediately.
+- **Backward Seek, Scrub & Mode Horizon Reset (`seekVersion`)**:
+  - Switching modes into Edit mode (`prevMode !== 'edit' && mode === 'edit'`), playhead scrubber jumps (`currentTime < prevTime - 0.3s` or forward jump $> 1.5$s), manual cue selection (`selectedCueId`), category filter toggles, density switches, or search input changes increment or trigger a reset of `furthestScrollTopRef.current = 0`, restoring complete bidirectional scroll responsiveness immediately and preventing viewport lockouts by downstream cues.
 - **Smooth Cubic Ease-Out Animator & Instant Gesture Interruption**:
   - Uses `smoothScrollTo` (`requestAnimationFrame` cubic ease-out `1 - (1 - t)^3`) for high-refresh display animation.
   - Viewport binds passive `wheel` and `touchmove` listeners that immediately abort any active auto-scroll animation, ensuring zero scroll fighting when the user manually scrolls the list.

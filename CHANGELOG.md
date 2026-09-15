@@ -25,6 +25,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Renamed the header Ko-fi pill label from `Support` to `Tip` (with updated tooltip `Tip on Ko-fi`), eliminating semantic confusion with customer/technical support while matching Ko-fi's gratuity model with a compact 3-character footprint.
 
 ### Fixed
+- **Sync Cues Auto-Scroll Re-Anchoring & Upcoming Cue Fallback (`src/lib/cueUtils.ts`, `src/components/left-panel/WorkstationLeftPanel.tsx`, `src/components/edit/SyncCuesPanel.tsx`)**:
+  - Added `findScrollTargetCue` utility to provide an intelligent upcoming cue fallback when playback is in an inter-cue silence gap or paused between lines (`activeCue === null`), centering the viewport on the next upcoming cue (`cue.startTime >= currentTime`) rather than remaining stranded at `scrollTop = 0`.
+  - Decoupled visual cue illumination (`activeCueId` / `activeCueIds`) from viewport positioning (`scrollTargetCueId`), ensuring fallback cues in gaps do not show premature active halo glow or gradient wash styling.
+  - Automatically resets the Forward Monotonic Scrolling Guard (`furthestScrollTopRef.current = 0`) on mode transition into Edit mode (`prevMode !== 'edit' && mode === 'edit'`), playhead scrubber jumps (`currentTime < prevTime - 0.3` or forward jump $> 1.5$s), and manual cue selection (`selectedCueId`), eliminating delays where auto-scroll was previously frozen waiting for playback to catch up to an older downstream scroll horizon.
 - **Collapsible Filter Section State Decoupling (`src/components/edit/SyncCuesToolbar.tsx`)**:
   - Fixed a logic defect where the search and category filter drawer in `SyncCuesToolbar` could not be collapsed via the `[ Filter ]` button or <kbd>Escape</kbd> shortcut when any active search query or category filters were applied.
   - Decoupled drawer expansion (`isExpanded`) from active filter state (`isFiltering`), allowing users to collapse the drawer to reclaim vertical screen space while preserving active filters, cue list narrowing, and the pulsing blue indicator dot on the collapsed filter button.

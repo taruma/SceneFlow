@@ -20,6 +20,7 @@ export interface SyncCuesPanelProps {
   cuePaletteProfile?: CuePaletteProfile;
   selectedCueId?: string;
   activeCueId?: string | null;
+  scrollTargetCueId?: string | null;
   activeCueIds?: Set<string>;
   seekVersion?: number;
   searchQuery?: string;
@@ -47,6 +48,7 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
   cuePaletteProfile = 'standard',
   selectedCueId,
   activeCueId,
+  scrollTargetCueId,
   activeCueIds,
   seekVersion = 0,
   searchQuery: controlledSearchQuery,
@@ -215,20 +217,24 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
 
   const furthestScrollTopRef = useRef<number>(0);
 
-  // Reset forward scroll guard when user seeks backwards, or changes density/filters/autoscroll
+  // Reset forward scroll guard when user seeks, selects a cue, or changes density/filters/autoscroll
   useEffect(() => {
     furthestScrollTopRef.current = 0;
-  }, [seekVersion, densityMode, filteredCues, isAutoScrollEnabled]);
+  }, [seekVersion, selectedCueId, densityMode, filteredCues, isAutoScrollEnabled]);
 
-  // Auto-scroll logic when activeCueId changes
+  // Effective auto-scroll anchor: prefers scrollTargetCueId (which includes upcoming cue fallback in silence gaps),
+  // falling back to activeCueId.
+  const effectiveTargetCueId = scrollTargetCueId ?? activeCueId;
+
+  // Auto-scroll logic when target cue changes
   useEffect(() => {
-    if (!isAutoScrollEnabled || !activeCueId || !viewportRef.current) return;
+    if (!isAutoScrollEnabled || !effectiveTargetCueId || !viewportRef.current) return;
 
     // Graceful check: ensure cue is visible in current filtered list
-    const isCueVisibleInFiltered = filteredCues.some(c => c.id === activeCueId);
+    const isCueVisibleInFiltered = filteredCues.some(c => c.id === effectiveTargetCueId);
     if (!isCueVisibleInFiltered) return;
 
-    const element = document.getElementById(`sync-cue-${activeCueId}`);
+    const element = document.getElementById(`sync-cue-${effectiveTargetCueId}`);
     const container = viewportRef.current;
     if (!element || !container) return;
 
@@ -236,7 +242,7 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
     const elementRect = element.getBoundingClientRect();
     const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
 
-    // Center the active cue card in the viewport
+    // Center the target cue card in the viewport
     const targetScrollTop = Math.max(0, relativeTop - (containerRect.height / 2) + (elementRect.height / 2));
 
     // Forward Monotonic Guard: During forward playback, never scroll backwards to an
@@ -251,7 +257,7 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
     if (Math.abs(container.scrollTop - targetScrollTop) > 6) {
       smoothScrollTo(container, targetScrollTop, 350, scrollAnimRef);
     }
-  }, [activeCueId, isAutoScrollEnabled, filteredCues, viewportHeight, densityMode]);
+  }, [effectiveTargetCueId, isAutoScrollEnabled, filteredCues, viewportHeight, densityMode]);
 
   return (
     <div className={cn("flex flex-col h-full overflow-hidden select-none", className)}>
