@@ -12,6 +12,7 @@ import {
   Redo2, 
   ListTree, 
   TextWrap, 
+  BookOpen,
   X 
 } from 'lucide-react';
 import { CORE_DIRECTIVE_PRESETS } from '../types';
@@ -23,6 +24,8 @@ interface ScriptEditorToolbarProps {
   tocCount: number;
   wordWrap: boolean;
   onToggleWordWrap: () => void;
+  showGuide: boolean;
+  onToggleGuide: () => void;
   onWrapSelection: (tagName: string) => void;
   onWrapBrief: () => void;
   customTags: string[];
@@ -47,6 +50,8 @@ export function ScriptEditorToolbar({
   tocCount,
   wordWrap,
   onToggleWordWrap,
+  showGuide,
+  onToggleGuide,
   onWrapSelection,
   onWrapBrief,
   customTags,
@@ -65,58 +70,76 @@ export function ScriptEditorToolbar({
   onClear,
 }: ScriptEditorToolbarProps) {
   return (
-    <div className="px-4 py-2 border-b border-border-subtle flex items-center justify-between gap-2 shrink-0 flex-wrap bg-surface text-xs">
+    <div className="h-10 px-3 border-b border-border-subtle bg-surface flex items-center justify-between gap-2 shrink-0 overflow-x-auto custom-scrollbar select-none text-xs flex-nowrap">
       
-      {/* Left Group: Outline Toggle & Wrap in Staging Labels */}
-      <div className="flex items-center gap-1.5 flex-wrap">
-        {/* Outline / TOC Toggle Button */}
-        <button
-          type="button"
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={onToggleToc}
-          title={showToc ? "Hide Outline" : "Show Outline"}
-          className={cn(
-            "flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all border shadow-2xs active:scale-95 mr-0.5",
-            showToc
-              ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30 font-black"
-              : "bg-surface-muted hover:bg-surface-hover text-text-muted hover:text-text-main border-border-subtle"
-          )}
-        >
-          <ListTree size={12} className={showToc ? "text-purple-600 dark:text-purple-400" : "text-text-faint"} />
-          <span>Outline</span>
-          {tocCount > 0 && (
-            <span className="ml-0.5 text-[8.5px] px-1 py-0.2 rounded bg-surface border border-border-subtle text-text-faint font-mono">
-              {tocCount}
-            </span>
-          )}
-        </button>
+      {/* Left Group: View Mode Segmented Control + Containers + Directorial Tags */}
+      <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
+        
+        {/* Unified View Mode Segmented Control */}
+        <div className="inline-flex items-center p-0.5 rounded-lg bg-surface-muted/60 border border-border-subtle/80 shrink-0">
+          <button
+            type="button"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={onToggleToc}
+            title={showToc ? "Hide Outline" : "Show Outline"}
+            className={cn(
+              "flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all",
+              showToc
+                ? "bg-surface text-purple-600 dark:text-purple-400 shadow-2xs font-black"
+                : "text-text-muted hover:text-text-main"
+            )}
+          >
+            <ListTree size={11} className={showToc ? "text-purple-500" : "text-text-faint"} />
+            <span>Outline</span>
+            {tocCount > 0 && (
+              <span className="text-[8px] px-1 rounded bg-surface-muted font-mono text-text-faint">
+                {tocCount}
+              </span>
+            )}
+          </button>
 
-        {/* Word Wrap Toggle Button */}
-        <button
-          type="button"
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={onToggleWordWrap}
-          title={wordWrap ? "Disable Word Wrap (Alt+Z)" : "Enable Word Wrap (Alt+Z)"}
-          className={cn(
-            "flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all border shadow-2xs active:scale-95 mr-1",
-            wordWrap
-              ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30 font-black"
-              : "bg-surface-muted hover:bg-surface-hover text-text-muted hover:text-text-main border-border-subtle"
-          )}
-        >
-          <TextWrap size={12} className={wordWrap ? "text-purple-600 dark:text-purple-400" : "text-text-faint"} />
-          <span>Wrap</span>
-        </button>
+          <button
+            type="button"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={onToggleWordWrap}
+            title={wordWrap ? "Disable Word Wrap (Alt+Z)" : "Enable Word Wrap (Alt+Z)"}
+            className={cn(
+              "flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all",
+              wordWrap
+                ? "bg-surface text-purple-600 dark:text-purple-400 shadow-2xs font-black"
+                : "text-text-muted hover:text-text-main"
+            )}
+          >
+            <TextWrap size={11} className={wordWrap ? "text-purple-500" : "text-text-faint"} />
+            <span>Wrap</span>
+          </button>
 
-        <div className="w-px h-3.5 bg-border-subtle mx-0.5 hidden sm:block" />
+          <button
+            type="button"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={onToggleGuide}
+            title={showGuide ? "Hide Formatting Guide" : "Show Formatting Guide"}
+            className={cn(
+              "flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all",
+              showGuide
+                ? "bg-surface text-purple-600 dark:text-purple-400 shadow-2xs font-black"
+                : "text-text-muted hover:text-text-main"
+            )}
+          >
+            <BookOpen size={11} className={showGuide ? "text-purple-500" : "text-text-faint"} />
+            <span>Guide</span>
+          </button>
+        </div>
 
-        {/* Staging & Brief Containers */}
+        <div className="w-px h-3.5 bg-border-subtle mx-0.5 shrink-0" />
+
+        {/* Containers: [[STAGING]] and [<BRIEF>] */}
         <button
           type="button"
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => onWrapSelection('STAGING')}
           title="Wrap selected text in [[STAGING]]...[[/STAGING]] container"
-          className="px-2 py-1 bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/30 rounded-lg text-[10px] font-mono font-bold transition-all shadow-2xs active:scale-95"
+          className="px-2 py-0.5 bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/30 rounded-md text-[10px] font-mono font-bold transition-all shadow-2xs active:scale-95 shrink-0"
         >
           [[STAGING]]
         </button>
@@ -126,15 +149,15 @@ export function ScriptEditorToolbar({
           onMouseDown={(e) => e.preventDefault()}
           onClick={onWrapBrief}
           title="Wrap selection in [<BRIEF>]...[</BRIEF>] or insert brief sequence template"
-          className="px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-lg text-[10px] font-mono font-bold transition-all shadow-2xs active:scale-95"
+          className="px-2 py-0.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-md text-[10px] font-mono font-bold transition-all shadow-2xs active:scale-95 shrink-0"
         >
           [&lt;BRIEF&gt;]
         </button>
 
-        <div className="w-px h-3.5 bg-border-subtle mx-0.5 hidden sm:block" />
+        <div className="w-px h-3.5 bg-border-subtle mx-0.5 shrink-0" />
 
-        <span className="text-[9px] font-black uppercase tracking-widest text-text-faint flex items-center gap-1 mr-0.5">
-          <Bookmark size={10} className="text-purple-500" />
+        <span className="text-[9px] font-black uppercase tracking-wider text-text-faint flex items-center gap-1 shrink-0">
+          <Bookmark size={9} className="text-purple-500" />
           Tags:
         </span>
 
@@ -145,8 +168,8 @@ export function ScriptEditorToolbar({
             type="button"
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => onWrapSelection(tag)}
-            title={`Wrap selected text in [[${tag}]]...[[/${tag}]]`}
-            className="px-2 py-1 bg-surface-muted hover:bg-surface-hover hover:border-purple-500/40 text-text-body hover:text-purple-600 dark:hover:text-purple-400 rounded-lg text-[10px] font-mono font-bold transition-all border border-border-subtle shadow-2xs active:scale-95"
+            title={`Wrap selection in [[${tag}]]...[[/${tag}]]`}
+            className="px-1.5 py-0.5 bg-surface-muted hover:bg-surface-hover hover:border-purple-500/40 text-text-body hover:text-purple-600 dark:hover:text-purple-400 rounded-md text-[10px] font-mono font-bold transition-all border border-border-subtle shadow-2xs active:scale-95 shrink-0"
           >
             [[{tag}]]
           </button>
@@ -154,13 +177,13 @@ export function ScriptEditorToolbar({
 
         {/* User-Stored Custom Tags */}
         {customTags.map((tag) => (
-          <div key={tag} className="group/tag inline-flex items-center">
+          <div key={tag} className="group/tag inline-flex items-center shrink-0">
             <button
               type="button"
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => onWrapSelection(tag)}
               title={`Wrap selection in [[${tag}]]...[[/${tag}]]`}
-              className="px-2 py-1 bg-surface-muted hover:bg-surface-hover hover:border-purple-500/40 text-text-body hover:text-purple-600 dark:hover:text-purple-400 rounded-l-lg text-[10px] font-mono font-bold transition-all border-y border-l border-border-subtle shadow-2xs active:scale-95"
+              className="px-1.5 py-0.5 bg-surface-muted hover:bg-surface-hover hover:border-purple-500/40 text-text-body hover:text-purple-600 dark:hover:text-purple-400 rounded-l-md text-[10px] font-mono font-bold transition-all border-y border-l border-border-subtle shadow-2xs active:scale-95"
             >
               [[{tag}]]
             </button>
@@ -171,10 +194,10 @@ export function ScriptEditorToolbar({
                 e.stopPropagation();
                 onRemoveCustomTag(tag);
               }}
-              title={`Remove [[${tag}]] from your saved tags`}
-              className="px-1 py-1 bg-surface-muted hover:bg-red-500/15 text-text-faint hover:text-red-500 border border-border-subtle border-l-0 rounded-r-lg transition-colors text-[9px]"
+              title={`Remove [[${tag}]] from saved tags`}
+              className="px-1 py-0.5 bg-surface-muted hover:bg-red-500/15 text-text-faint hover:text-red-500 border border-border-subtle border-l-0 rounded-r-md transition-colors text-[8px]"
             >
-              <X size={10} />
+              <X size={8} />
             </button>
           </div>
         ))}
@@ -185,15 +208,15 @@ export function ScriptEditorToolbar({
           onMouseDown={(e) => e.preventDefault()}
           onClick={onAddCustomTag}
           title="Add a custom tag and save it to your toolbar"
-          className="flex items-center gap-1 px-2 py-1 bg-surface-muted hover:bg-surface-hover text-text-muted hover:text-text-main rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all border border-border-subtle shadow-2xs active:scale-95"
+          className="flex items-center gap-1 px-1.5 py-0.5 bg-surface-muted hover:bg-surface-hover text-text-muted hover:text-text-main rounded-md text-[9.5px] font-bold uppercase tracking-wider transition-all border border-border-subtle shadow-2xs active:scale-95 shrink-0"
         >
-          <Plus size={10} />
+          <Plus size={9} />
           <span>Tag...</span>
         </button>
       </div>
 
       {/* Right Group: Undo/Redo, Import, Export, Copy & Cleanup */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-0.5 shrink-0 ml-auto pl-2">
         <button
           type="button"
           onMouseDown={(e) => e.preventDefault()}
@@ -202,7 +225,7 @@ export function ScriptEditorToolbar({
           title="Undo (Ctrl+Z)"
           className="p-1.5 text-text-faint hover:text-text-main hover:bg-surface-hover disabled:opacity-25 disabled:pointer-events-none rounded-lg transition-colors"
         >
-          <Undo2 size={14} />
+          <Undo2 size={13} />
         </button>
 
         <button
@@ -213,10 +236,10 @@ export function ScriptEditorToolbar({
           title="Redo (Ctrl+Y / Ctrl+Shift+Z)"
           className="p-1.5 text-text-faint hover:text-text-main hover:bg-surface-hover disabled:opacity-25 disabled:pointer-events-none rounded-lg transition-colors"
         >
-          <Redo2 size={14} />
+          <Redo2 size={13} />
         </button>
 
-        <div className="w-px h-3.5 bg-border-subtle mx-1" />
+        <div className="w-px h-3.5 bg-border-subtle mx-1 shrink-0" />
 
         <input 
           type="file"
@@ -232,7 +255,7 @@ export function ScriptEditorToolbar({
           title="Import script text from file"
           className="p-1.5 text-text-faint hover:text-text-main hover:bg-surface-hover rounded-lg transition-colors"
         >
-          <Upload size={14} />
+          <Upload size={13} />
         </button>
 
         <button
@@ -241,7 +264,7 @@ export function ScriptEditorToolbar({
           title="Download script (.txt)"
           className="p-1.5 text-text-faint hover:text-text-main hover:bg-surface-hover rounded-lg transition-colors"
         >
-          <Download size={14} />
+          <Download size={13} />
         </button>
 
         <button
@@ -250,7 +273,7 @@ export function ScriptEditorToolbar({
           title="Copy script to clipboard"
           className="p-1.5 text-text-faint hover:text-text-main hover:bg-surface-hover rounded-lg transition-colors relative"
         >
-          {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+          {copied ? <Check size={13} className="text-emerald-500" /> : <Copy size={13} />}
           {copied && (
             <span className="absolute -top-7 right-0 px-2 py-0.5 bg-surface-dark text-surface-light text-[9px] font-bold rounded shadow-lg animate-in fade-in slide-in-from-bottom-1">
               Copied!
@@ -264,7 +287,7 @@ export function ScriptEditorToolbar({
           title="Format whitespace (trims trailing spaces, collapses extra blank lines)"
           className="p-1.5 text-text-faint hover:text-text-main hover:bg-surface-hover rounded-lg transition-colors"
         >
-          <Wand2 size={14} />
+          <Wand2 size={13} />
         </button>
 
         <button
@@ -273,9 +296,10 @@ export function ScriptEditorToolbar({
           title="Clear editor text"
           className="p-1.5 text-text-faint hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
         >
-          <Trash2 size={14} />
+          <Trash2 size={13} />
         </button>
       </div>
+
     </div>
   );
 }

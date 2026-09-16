@@ -13,6 +13,7 @@ import {
   ScriptEditorToolbar,
   ScriptEditorCanvas,
   ScriptEditorFooter,
+  ScriptFormattingGuide,
 } from './raw-script';
 
 export type { TocItem, RawScriptModalProps } from './raw-script';
@@ -28,6 +29,7 @@ export function RawScriptModal({
   const [autoRealign, setAutoRealign] = useState(true);
   const [copied, setCopied] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const lineNumbersRef = useRef<HTMLDivElement>(null);
@@ -115,6 +117,29 @@ export function RawScriptModal({
   });
 
   const isDirty = draftText !== (scriptText || '');
+
+  // Insert snippet from formatting guide directly into editor
+  const handleInsertSnippet = useCallback((snippet: string) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart ?? draftText.length;
+    const end = textarea.selectionEnd ?? draftText.length;
+    const before = draftText.substring(0, start);
+    const after = draftText.substring(end);
+    const newText = before + snippet + after;
+    const newPos = start + snippet.length;
+
+    setDraftText(newText);
+    pushHistory(newText, newPos, newPos, textarea.scrollTop);
+
+    requestAnimationFrame(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus({ preventScroll: true });
+        textareaRef.current.setSelectionRange(newPos, newPos);
+      }
+    });
+  }, [draftText, setDraftText, pushHistory]);
 
   // File Import Logic
   const handleFileImport = useCallback((file: File) => {
@@ -242,7 +267,7 @@ export function RawScriptModal({
 
   return (
     <div className={UI_TOKENS.modal.overlayHeavy}>
-      <div className="bg-surface w-[96vw] max-w-6xl h-[90vh] md:h-[92vh] rounded-[1.75rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border-main text-text-main flex flex-col">
+      <div className="bg-surface w-[96vw] max-w-7xl h-[90vh] md:h-[92vh] rounded-[1.75rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border-main text-text-main flex flex-col">
         
         {/* Modal Header */}
         <ScriptModalHeader isDirty={isDirty} onClose={handleClose} />
@@ -254,6 +279,8 @@ export function RawScriptModal({
           tocCount={tocItems.length}
           wordWrap={wordWrap}
           onToggleWordWrap={toggleWordWrap}
+          showGuide={showGuide}
+          onToggleGuide={() => setShowGuide(prev => !prev)}
           onWrapSelection={handleWrapSelection}
           onWrapBrief={handleWrapBrief}
           customTags={customTags}
@@ -272,7 +299,7 @@ export function RawScriptModal({
           onClear={handleClear}
         />
 
-        {/* Modal Workstation: Table of Contents Sidebar + Script Editor */}
+        {/* Modal Workstation: Table of Contents Sidebar + Script Editor + Formatting Guide */}
         <div className="flex-1 flex min-h-0 overflow-hidden divide-x divide-border-subtle">
           
           {/* Left Column: Outline Sidebar */}
@@ -290,7 +317,7 @@ export function RawScriptModal({
             handleNavigateToSection={handleNavigateToSection}
           />
 
-          {/* Right Column: Script Editor Canvas with Line Numbers */}
+          {/* Center Column: Script Editor Canvas with Line Numbers */}
           <ScriptEditorCanvas
             textareaRef={textareaRef}
             lineNumbersRef={lineNumbersRef}
@@ -312,6 +339,13 @@ export function RawScriptModal({
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
+          />
+
+          {/* Right Column: Formatting Guide Sidebar */}
+          <ScriptFormattingGuide
+            isOpen={showGuide}
+            onClose={() => setShowGuide(false)}
+            onInsertSnippet={handleInsertSnippet}
           />
 
         </div>

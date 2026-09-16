@@ -8,3 +8,4 @@ export * from './components/ScriptOutlineSidebar';
 export * from './components/ScriptEditorToolbar';
 export * from './components/ScriptEditorCanvas';
 export * from './components/ScriptEditorFooter';
+export * from './components/ScriptFormattingGuide';

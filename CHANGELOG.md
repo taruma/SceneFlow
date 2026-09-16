@@ -33,6 +33,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Desktop Navigation Pill**: Added `[𝕏 Updates]` action pill to `AppHeader.tsx` styled via `UI_TOKENS.button.xPill`.
   - **Mobile Navigation Parity**: Added mobile `[𝕏]` icon button in `ScriptHeaderControls.tsx`.
 
+- **Studio Script Editor with Collapsible Outline, Soft Word-Wrap, Formatting Guide & Single-Tier Toolbar (`src/components/RawScriptModal.tsx`, `src/components/raw-script/*`)**:
+  - **Collapsible Hierarchical Script Outline (`useScriptOutline.ts`, `ScriptOutlineSidebar.tsx`)**: 4-rank stack parser that organizes scripts by `PART`, Roman numeral acts (`I. ...`), scene headings (`INT./EXT.`), staging containers, brief execution blocks, and directive tags. Includes per-section item count pills, chevron toggles, and unified "Collapse All / Expand All" controls. Clicking any outline node automatically unfolds any collapsed ancestors and smooth-scrolls the caret directly to the target line.
+  - **Soft Word-Wrap with Pixel-Perfect Gutter Alignment (`useWordWrap.ts`, `ScriptEditorCanvas.tsx`)**: Toggleable via `[ Wrap ]` or <kbd>Alt+Z</kbd>. Utilizes an off-screen measurement mirror container (`lineHeights`) with identical monospace font and padding metrics to compute exact rendered line heights, maintaining 1:1 pixel alignment between line numbers and wrapped text rows with zero vertical drift during deep scrolling.
+  - **Searchable Formatting Guide Sidebar (`ScriptFormattingGuide.tsx`)**: Integrated right-hand cheat sheet (`[ Guide ]` toggle) with live search and category filtering (`Structure`, `Directives`, `Dialogue`, `Effects`). Provides 1-click **Insert** and **Copy** snippets alongside live visual preview badges that mirror SceneFlow's screenplay rendering engine.
+  - **Single-Tier Streamlined Toolbar (`ScriptEditorToolbar.tsx`)**: Streamlined into a single 40px row (`h-10`, `flex-nowrap overflow-x-auto`) that permanently eliminates awkward two-tier button wrapping. Features a segmented view switcher (`Outline`, `Wrap`, `Guide`), container wrapping buttons (`[[STAGING]]`, `[<BRIEF>]`), core directive presets (`INTENT`, `LOGIC`, `AESTHETIC`, `OPENING`), persistent custom directive tags with removal pips, custom tag creator modal, and right-aligned history (Undo/Redo) and document actions (Import, Export, Copy, Whitespace cleanup, and Clear).
+  - **Synchronized Top Horizons & Expansive Canvas**: Locked a uniform `h-9` (36px) subheader height across all three panels (Outline, Canvas, and Guide) to establish a clean horizontal baseline, and expanded modal max-width to `max-w-7xl` (1280px) to guarantee a generous 700px+ editor viewport.
+  - **Debounced Undo/Redo Engine (`useScriptHistory.ts`)**: Full keyboard (<kbd>Ctrl+Z</kbd>, <kbd>Ctrl+Y</kbd>, <kbd>Ctrl+Shift+Z</kbd>) and toolbar history engine with 300ms input debouncing that preserves precise caret indices and scroll positions across undo/redo operations.
+  - **Persistent Custom Tags Engine (`useCustomTags.ts`)**: Stores user-defined directive tags in `localStorage` (`sceneflow_custom_script_tags`), with smart selection wrapping (`[[TAG]]...[[/TAG]]`) and seamless insertion at cursor.
+
+### Refactored
+- **Script Editor Modularization & Subpackage Architecture (`src/components/raw-script/`, `src/components/RawScriptModal.tsx`)**:
+  - Decoupled the monolithic 700+ line `RawScriptModal.tsx` into a modular subpackage (`src/components/raw-script/`) with zero regression:
+    - `types.ts`: Clean interface definitions for outline nodes, history snapshots, and core directive presets.
+    - `hooks/`: Isolated state machines for history (`useScriptHistory`), outline parsing and collapse states (`useScriptOutline`), word wrap measurement (`useWordWrap`), and tag persistence (`useCustomTags`).
+    - `components/`: Specialized UI components (`ScriptModalHeader`, `ScriptOutlineSidebar`, `ScriptEditorToolbar`, `ScriptEditorCanvas`, `ScriptFormattingGuide`, `ScriptEditorFooter`).
+    - `index.ts`: Unified barrel export providing clean public integration for `RawScriptModal.tsx`.
+
 ### Changed
 - **Header Tip Action Pill (`src/components/AppHeader.tsx`, `src/components/ScriptHeaderControls.tsx`)**:
   - Renamed the header Ko-fi pill label from `Support` to `Tip` (with updated tooltip `Tip on Ko-fi`), eliminating semantic confusion with customer/technical support while matching Ko-fi's gratuity model with a compact 3-character footprint.

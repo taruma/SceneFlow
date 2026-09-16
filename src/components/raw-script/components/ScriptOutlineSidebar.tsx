@@ -35,8 +35,8 @@ export function ScriptOutlineSidebar({
   return (
     <div className="w-56 sm:w-60 md:w-64 bg-surface-subtle/30 flex flex-col shrink-0 overflow-hidden animate-in slide-in-from-left-2 duration-200">
       
-      {/* Outline Header */}
-      <div className="px-3 py-2 border-b border-border-subtle bg-surface-subtle/50 flex items-center justify-between shrink-0">
+      {/* Outline Header (Exact h-9 to lock horizon) */}
+      <div className="h-9 px-3 border-b border-border-subtle bg-surface-subtle/50 flex items-center justify-between shrink-0 select-none">
         <div className="flex items-center gap-1.5 text-text-muted">
           <ListTree size={12} className="text-purple-500" />
           <span className="text-[10px] font-bold uppercase tracking-wider text-text-main">

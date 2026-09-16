@@ -350,3 +350,30 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
     - **Live Non-Blocking Validation & Indentation Standardizer**:
       - JSON textarea editing must feature real-time syntax and schema validation pills reporting cue counts or actionable error diagnostic messages without triggering blocking browser `alert()` dialogs.
       - `[ ✨ Format JSON ]` standardizer formats indentation to 2 spaces and automatically unrolls `{ cues: [...] }` wrappers into direct cue arrays.
+
+19. **Studio Script Editor Architecture & Subcomponent Invariants (`src/components/raw-script/`, `RawScriptModal.tsx`)**:
+    - **Modular Subpackage Decomposition**:
+      - The raw screenplay editor is decoupled into a dedicated subpackage (`src/components/raw-script/`) with zero regression:
+        - `types.ts`: Clean interfaces for outline items (`TocItem`), history snapshots (`HistoryEntry`), core directive presets (`CORE_DIRECTIVE_PRESETS`), and modal contracts (`RawScriptModalProps`).
+        - `hooks/`: Isolated state machines for debounced history (`useScriptHistory`), 4-rank outline hierarchy and collapse states (`useScriptOutline`), soft word-wrap measurement mirror (`useWordWrap`), and persistent custom tags (`useCustomTags`).
+        - `components/`: Specialized, single-responsibility UI subcomponents (`ScriptModalHeader`, `ScriptOutlineSidebar`, `ScriptEditorToolbar`, `ScriptEditorCanvas`, `ScriptFormattingGuide`, `ScriptEditorFooter`).
+        - `index.ts`: Unified barrel export providing clean public integration for `RawScriptModal.tsx`.
+    - **Collapsible Hierarchical Script Outline (`useScriptOutline.ts`, `ScriptOutlineSidebar.tsx`)**:
+      - Employs a 4-rank hierarchical stack parser: Rank 1 (`PART`), Rank 2 (Roman numerals `I. ...`), Rank 3 (Scene headings `INT./EXT.`), and Rank 4 (Staging containers, Brief blocks, and Directive tags).
+      - Tracks section collapse state via `collapsedSectionIds: Set<string>` with chevron indicators and section item count badges.
+      - Provides unified "Collapse All / Expand All" controls. Selecting any outline entry auto-unfolds any collapsed parent sections and smooth-scrolls the caret directly to the target line.
+    - **Off-Screen Measurement Mirror Soft Word-Wrap (`useWordWrap.ts`, `ScriptEditorCanvas.tsx`)**:
+      - Toggleable via the toolbar `[ Wrap ]` button or global <kbd>Alt+Z</kbd> keyboard shortcut.
+      - Renders an off-screen measurement mirror container (`pre-wrap` with identical monospace font family, size, line-height, and padding) to calculate exact per-line rendered pixel heights (`lineHeights: number[]`).
+      - Line numbers in the gutter dynamically bind matching heights (`style={{ height: `${lineHeights[idx]}px` }}`), guaranteeing 1:1 pixel alignment between line numbers and wrapped text rows with zero vertical drift during deep scrolling.
+    - **Formatting Syntax Guide & Live Preview Fidelity (`ScriptFormattingGuide.tsx`)**:
+      - Dedicated right-hand cheat sheet sidebar toggleable via `[ Guide ]` with live search and category filtering (`Structure`, `Directives`, `Dialogue`, `Effects`).
+      - Provides 1-click **Insert** and **Copy** snippets alongside live visual preview badges that mirror SceneFlow's screenplay rendering engine (e.g. `STAGING: INTENT`, `[<BRIEF>]` waterfall preview, italicized parentheticals, and uppercase dialogue headers).
+    - **Single-Tier Toolbar Invariant (`ScriptEditorToolbar.tsx`)**:
+      - The editor toolbar must declare `h-10 flex-nowrap overflow-x-auto select-none` to prevent awkward two-tier button wrapping regardless of viewport width.
+      - Consolidates segmented view toggles (`Outline`, `Wrap`, `Guide`), container pills (`[[STAGING]]`, `[<BRIEF>]`), core directive presets (`INTENT`, `LOGIC`, `AESTHETIC`, `OPENING`), saved custom tags (`localStorage`), and right-aligned history/file actions into one continuous horizontal row.
+    - **Top Horizon Baseline Invariant**:
+      - All three column headers (Left Outline, Center Canvas, and Right Formatting Guide) must share an exact `h-9` (36px) subheader height with matching hairline bottom borders to lock a seamless visual baseline across the workstation.
+    - **Debounced Undo/Redo Engine (`useScriptHistory.ts`)**:
+      - Debounces keystroke history snapshots at 300ms, preserving precise caret indices and scroll offsets across <kbd>Ctrl+Z</kbd>, <kbd>Ctrl+Y</kbd>, and <kbd>Ctrl+Shift+Z</kbd> operations.
+
