@@ -140,12 +140,13 @@ export const FileMenuDropdown: React.FC<FileMenuDropdownProps> = memo(({
                     onOpenRawCuesModal();
                   }}
                   className={UI_TOKENS.dropdown.item}
-                  title="View, edit, or import sync cues JSON & AI prompt schema"
+                  title="View, edit, or import sync cues JSON & AI prompt schema (Shift+E)"
                 >
                   <div className="flex items-center gap-2">
                     <Braces size={14} className="text-text-muted" />
                     <span>Sync Cues (JSON)...</span>
                   </div>
+                  <kbd className={UI_TOKENS.badge.shortcut}>Shift+E</kbd>
                 </button>
               )}
 
@@ -157,12 +158,13 @@ export const FileMenuDropdown: React.FC<FileMenuDropdownProps> = memo(({
                     onOpenRawScriptModal();
                   }}
                   className={UI_TOKENS.dropdown.item}
-                  title="Edit source script text"
+                  title="Edit source script text (Shift+S)"
                 >
                   <div className="flex items-center gap-2">
                     <FileText size={14} className="text-text-muted" />
                     <span>Source Script...</span>
                   </div>
+                  <kbd className={UI_TOKENS.badge.shortcut}>Shift+S</kbd>
                 </button>
               )}
             </div>

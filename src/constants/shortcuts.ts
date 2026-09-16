@@ -20,6 +20,7 @@ export type ShortcutCategoryId =
 export interface ShortcutCategory {
   id: ShortcutCategoryId;
   label: string;
+  tabLabel: string;
   description: string;
   iconName: 'Play' | 'Sliders' | 'FileText' | 'CheckSquare' | 'Split' | 'HelpCircle';
 }
@@ -44,36 +45,42 @@ export const SHORTCUT_CATEGORIES: ShortcutCategory[] = [
   {
     id: 'playback',
     label: 'Playback & Media',
+    tabLabel: 'Playback',
     description: 'Control YouTube video transport, seek time, and layout',
     iconName: 'Play',
   },
   {
     id: 'studio',
     label: 'Studio Preferences',
+    tabLabel: 'Studio',
     description: 'Customize colors, timings, and viewport layout',
     iconName: 'Sliders',
   },
   {
     id: 'editor',
-    label: 'Screenplay Editor',
+    label: 'Script Editor',
+    tabLabel: 'Script',
     description: 'Directorial markup, undo/redo history, and word wrap',
     iconName: 'FileText',
   },
   {
     id: 'inspector',
     label: 'Cue Inspector',
+    tabLabel: 'Cue',
     description: 'Fast cue authoring, save, and draft cancellation',
     iconName: 'CheckSquare',
   },
   {
     id: 'dividers',
     label: 'Splitters & Layout',
+    tabLabel: 'Splitters',
     description: 'Resize panels and dividers via keyboard',
     iconName: 'Split',
   },
   {
     id: 'general',
     label: 'General & Navigation',
+    tabLabel: 'General',
     description: 'Modal dismissal, quick cheat-sheet, and search',
     iconName: 'HelpCircle',
   },
@@ -210,6 +217,28 @@ export const SHORTCUTS_REGISTRY: ShortcutItem[] = [
     },
     context: 'Inside Raw Script Editor',
   },
+  {
+    id: 'editor.openRawScript',
+    category: 'editor',
+    label: 'Open Source Script',
+    description: 'Open raw script text editor modal',
+    keys: {
+      win: ['Shift', 'S'],
+      mac: ['Shift', 'S'],
+    },
+    context: 'Global',
+  },
+  {
+    id: 'editor.openRawCues',
+    category: 'editor',
+    label: 'Open Cue Editor',
+    description: 'Open sync cues JSON editor modal',
+    keys: {
+      win: ['Shift', 'E'],
+      mac: ['Shift', 'E'],
+    },
+    context: 'Global',
+  },
 
   // --- Cue Inspector ---
   {
@@ -251,7 +280,7 @@ export const SHORTCUTS_REGISTRY: ShortcutItem[] = [
     id: 'dividers.splitRatio',
     category: 'dividers',
     label: 'Adjust Split Ratio',
-    description: 'Shift screenplay / video split ratio by 1%',
+    description: 'Shift script / video split ratio by 1%',
     keys: {
       win: ['←', '→'],
       mac: ['←', '→'],
@@ -306,6 +335,29 @@ export const SHORTCUTS_REGISTRY: ShortcutItem[] = [
     },
     aliases: ['Space'],
     context: 'When list card or outline row is focused',
+  },
+  {
+    id: 'general.fileMenu',
+    category: 'general',
+    label: 'Toggle File Menu',
+    description: 'Open or close the header File menu dropdown',
+    keys: {
+      win: ['Shift', 'F'],
+      mac: ['Shift', 'F'],
+    },
+    aliases: ['Alt+F'],
+    context: 'Global',
+  },
+  {
+    id: 'general.library',
+    category: 'general',
+    label: 'Open Script Library',
+    description: 'Browse starter scripts and sample screenplay templates',
+    keys: {
+      win: ['Shift', 'L'],
+      mac: ['Shift', 'L'],
+    },
+    context: 'Global',
   },
 ];
 

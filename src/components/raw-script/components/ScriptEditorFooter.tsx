@@ -83,7 +83,7 @@ export function ScriptEditorFooter({
         <button
           type="button"
           onClick={onApply}
-          title="Apply and commit screenplay changes (Ctrl+Enter)"
+          title="Apply and commit script changes (Ctrl+Enter)"
           className={cn(
             "px-5 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all active:scale-95 shadow-md flex items-center gap-2",
             isDirty

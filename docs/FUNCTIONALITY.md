@@ -474,20 +474,47 @@ Accessible via the `i` (Info) icon button in the desktop header toolbar:
 - **Author Attribution**: Features creator credit for **Taruma Sakti** in header and footer linking directly to [Linktree](https://linktr.ee/tarumainfo).
 - **Featured Substack Deep Dive**: Prominent hero card showcasing the official introductory article (*Introducing SceneFlow: Script-to-Screen Synchronization* on Substack) with a dedicated header badge, full-width summary, and direct article link.
 - **Interactive Resource Grid**: 2x2 resource links for GitHub Repository, Documentation / Guide, Release Notes (Changelog), and Ko-fi Support.
+- **Dynamic Quick Shortcuts Table**: Displays essential shortcuts pulled directly from the centralized registry, with a direct **Full Cheat-Sheet (?)** action button to launch the comprehensive shortcuts modal.
 - **MIT License**: License status indicator.
 
-### Global Keyboard Shortcuts & Modal Dismissal
-Available on desktop across both Playback and Edit modes with automatic input/textarea and modal guards:
-- `Space` / `K`: Toggle YouTube video playback (Play / Pause).
-- `←` / `→` (ArrowLeft / ArrowRight): Seek -5s / +5s.
-- `J` / `L`: Seek -5s / +5s (YouTube standard navigation hotkeys).
-- `V`: Toggle video player visibility / collapse (Playback and Edit modes).
-- `Shift + C`: Open Script Paper & Colors modal.
-- `Shift + T`: Open Timing & Durations modal.
-- `Shift + R`: Reset View Layout & Video Size to defaults.
-- `Esc`: Close any active modal or popover (`ScriptColorModal`, `TimingSettingsModal`, `LibraryModal`, `MobileLibraryModal`, `RawScriptModal`, `RawCuesModal`, `DeleteConfirmationModal`, `ResetConfirmationModal`, `StagingModal`, `AppInfoModal`, `OverlapPicker`).
-- **Backdrop Dismissal**: Clicking outside modal content on the backdrop overlay dismisses the active modal.
-- **Shortcuts Safeguard**: All playback and studio hotkeys are automatically gated and disabled whenever any modal or confirmation prompt is open, or when typing inside inputs, textareas, or contentEditable elements.
+### Centralized Keyboard Shortcuts Modal (`KeyboardShortcutsModal`)
+Accessible from anywhere in the app via the global <kbd>?</kbd> (<kbd>Shift+/</kbd>) shortcut, through Studio Preferences (`[ ⚙️ Settings ▾ ]`), or via `AppInfoModal`:
+- **Real-Time Multi-Attribute Search**: Live filtering matching shortcut labels, descriptions, key combinations, and secondary aliases.
+- **Category Filter Tabs**: 6 dedicated categories with count badges and icons: **Playback**, **Studio**, **Script**, **Cue**, **Splitters**, and **General**.
+- **Platform-Aware Key Glyphs**: Automatically detects client operating system, rendering Apple glyphs (<kbd>⌘</kbd>, <kbd>⌥ Option</kbd>, <kbd>⇧ Shift</kbd>) on macOS and PC labels (<kbd>Ctrl</kbd>, <kbd>Alt</kbd>, <kbd>Shift</kbd>) on Windows and Linux.
+- **Layout Stabilization**: Employs a locked `h-[620px] max-h-[85vh]` container geometry, permanently eliminating vertical jumping and dialog re-centering when switching between tabs with different item counts.
+
+### Comprehensive Keyboard Shortcuts Reference
+
+| Category | Shortcut (Win / Linux) | Shortcut (macOS) | Action / Description | Context |
+| :--- | :--- | :--- | :--- | :--- |
+| **Playback** | <kbd>Space</kbd> / <kbd>K</kbd> | <kbd>Space</kbd> / <kbd>K</kbd> | Toggle YouTube video playback (Play / Pause) | Global |
+| **Playback** | <kbd>←</kbd> / <kbd>→</kbd> | <kbd>←</kbd> / <kbd>→</kbd> | Jump backward / forward 5 seconds | Global |
+| **Playback** | <kbd>J</kbd> / <kbd>L</kbd> | <kbd>J</kbd> / <kbd>L</kbd> | Jump backward / forward 5 seconds (YouTube standard) | Global |
+| **Playback** | <kbd>V</kbd> | <kbd>V</kbd> | Toggle video player collapse / visibility | Global |
+| **Studio** | <kbd>Shift + C</kbd> | <kbd>Shift + C</kbd> | Open Script Paper & Colors modal | Global |
+| **Studio** | <kbd>Shift + T</kbd> | <kbd>Shift + T</kbd> | Open Timing & Durations settings modal | Global |
+| **Studio** | <kbd>Shift + R</kbd> | <kbd>Shift + R</kbd> | Reset View Layout, split ratios, and video height | Global |
+| **Navigation** | <kbd>Shift + F</kbd> / <kbd>Alt + F</kbd> | <kbd>Shift + F</kbd> / <kbd>Alt + F</kbd> | Toggle desktop File dropdown menu | Global |
+| **Navigation** | <kbd>Shift + S</kbd> | <kbd>Shift + S</kbd> | Open Source Script editor modal (badged in File menu) | Global |
+| **Navigation** | <kbd>Shift + E</kbd> | <kbd>Shift + E</kbd> | Open Cue Editor JSON modal (badged in File menu) | Global |
+| **Navigation** | <kbd>Shift + L</kbd> | <kbd>Shift + L</kbd> | Open Script Library catalogue | Global |
+| **Navigation** | <kbd>?</kbd> (<kbd>Shift + /</kbd>) | <kbd>?</kbd> (<kbd>Shift + /</kbd>) | Open Keyboard Shortcuts cheat-sheet modal | Global |
+| **Authoring** | <kbd>Ctrl + Enter</kbd> | <kbd>⌘ + Enter</kbd> | Commit and apply script changes (badged in footer) | Inside Script Modal |
+| **Authoring** | <kbd>Ctrl + Enter</kbd> | <kbd>⌘ + Enter</kbd> | Save or update cue draft | Cue Inspector |
+| **Authoring** | <kbd>Alt + Z</kbd> | <kbd>⌥ + Z</kbd> | Toggle soft word-wrap with pixel-aligned gutter | Inside Script Modal |
+| **Authoring** | <kbd>Ctrl + Z</kbd> | <kbd>⌘ + Z</kbd> | Undo text edit with 300ms debounce | Inside Script Modal |
+| **Authoring** | <kbd>Ctrl + Y</kbd> / <kbd>Ctrl+Shift+Z</kbd> | <kbd>⌘ + Shift + Z</kbd> | Redo text edit | Inside Script Modal |
+| **Splitters** | <kbd>←</kbd> / <kbd>→</kbd> | <kbd>←</kbd> / <kbd>→</kbd> | Shift panel split ratio by 1% | Focused Divider |
+| **Splitters** | <kbd>↑</kbd> / <kbd>↓</kbd> | <kbd>↑</kbd> / <kbd>↓</kbd> | Adjust video height by 10px | Focused Divider |
+| **Splitters** | <kbd>Enter</kbd> / <kbd>Home</kbd> | <kbd>Enter</kbd> / <kbd>Home</kbd> | Reset split ratio to default | Focused Divider |
+| **General** | <kbd>Esc</kbd> | <kbd>Esc</kbd> | Dismiss active modal, close search drawer, or cancel cue draft | Modal / Drawer |
+
+### Safeguards & Input Suppression
+- **Input Suppression Guard**: Single-character hotkeys and global modifier hotkeys are strictly suppressed whenever focus is inside an `<input>`, `<textarea>`, or `contentEditable` element (`isTypingInInput`), ensuring typing never accidentally triggers video jumps or launches dialogs.
+- **Modal Stack Isolation**: When any modal dialog is mounted (`disabled={isAnyModalOpen}`), global navigation and playback hotkeys are deactivated, allowing modal-internal hotkeys (<kbd>Esc</kbd>, <kbd>Ctrl+Enter</kbd>, <kbd>Ctrl+Z</kbd>) to operate without global interference.
+- **Truthful Badging Discipline**: Visual `<kbd>` shortcut badges are rendered only for actions with active event listeners. In the File dropdown, badges are cleanly scoped to "Source Script..." (<kbd>Shift+S</kbd>) and "Sync Cues (JSON)..." (<kbd>Shift+E</kbd>), leaving top-level and library navigation uncluttered.
+
 
 
 

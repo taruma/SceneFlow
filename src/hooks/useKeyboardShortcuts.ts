@@ -9,6 +9,10 @@ interface UseKeyboardShortcutsOptions {
   onOpenTiming?: () => void;
   onResetView?: () => void;
   onOpenShortcuts?: () => void;
+  onToggleFileMenu?: () => void;
+  onOpenRawScript?: () => void;
+  onOpenRawCues?: () => void;
+  onOpenLibrary?: () => void;
   disabled?: boolean;
 }
 
@@ -21,6 +25,10 @@ export function useKeyboardShortcuts({
   onOpenTiming,
   onResetView,
   onOpenShortcuts,
+  onToggleFileMenu,
+  onOpenRawScript,
+  onOpenRawCues,
+  onOpenLibrary,
   disabled = false,
 }: UseKeyboardShortcutsOptions) {
   const [isDesktop, setIsDesktop] = useState(
@@ -80,6 +88,35 @@ export function useKeyboardShortcuts({
           onResetView();
           return;
         }
+        if ((e.code === 'KeyF' || e.key.toLowerCase() === 'f') && onToggleFileMenu) {
+          e.preventDefault();
+          onToggleFileMenu();
+          return;
+        }
+        if ((e.code === 'KeyS' || e.key.toLowerCase() === 's') && onOpenRawScript) {
+          e.preventDefault();
+          onOpenRawScript();
+          return;
+        }
+        if ((e.code === 'KeyE' || e.key.toLowerCase() === 'e') && onOpenRawCues) {
+          e.preventDefault();
+          onOpenRawCues();
+          return;
+        }
+        if ((e.code === 'KeyL' || e.key.toLowerCase() === 'l') && onOpenLibrary) {
+          e.preventDefault();
+          onOpenLibrary();
+          return;
+        }
+      }
+
+      // Classic Alt+F to toggle file menu
+      if (e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
+        if ((e.code === 'KeyF' || e.key.toLowerCase() === 'f') && onToggleFileMenu) {
+          e.preventDefault();
+          onToggleFileMenu();
+          return;
+        }
       }
 
       // Playback shortcuts require an active video player instance
@@ -112,7 +149,21 @@ export function useKeyboardShortcuts({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [player, togglePlayPause, jumpBy, disabled, onToggleVideo, onOpenColors, onOpenTiming, onResetView, onOpenShortcuts]);
+  }, [
+    player, 
+    togglePlayPause, 
+    jumpBy, 
+    disabled, 
+    onToggleVideo, 
+    onOpenColors, 
+    onOpenTiming, 
+    onResetView, 
+    onOpenShortcuts,
+    onToggleFileMenu,
+    onOpenRawScript,
+    onOpenRawCues,
+    onOpenLibrary
+  ]);
 
   return { isDesktop };
 }

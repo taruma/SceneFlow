@@ -19,7 +19,7 @@ import { ScriptColorModal } from './components/ScriptColorModal';
 import { MobileColorModal } from './components/MobileColorModal';
 import { AppInfoModal } from './components/AppInfoModal';
 import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
-import { AppHeader } from './components/AppHeader';
+import { AppHeader, type HeaderMenuId } from './components/AppHeader';
 import { WorkstationLeftPanel } from './components/left-panel';
 import { EditRightPanel, CueEditorForm, CueEditorProvider, type CueEditorContextValue } from './components/edit';
 import { SplitPaneDivider, InspectorSplitDivider } from './components/common';
@@ -81,6 +81,7 @@ export default function App() {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+  const [activeHeaderMenu, setActiveHeaderMenu] = useState<HeaderMenuId | null>(null);
   const [rawCuesText, setRawCuesText] = useState("");
 
   const scriptRef = useRef<HTMLDivElement>(null);
@@ -285,6 +286,10 @@ export default function App() {
     }
   }, [resetViewLayout, mode]);
 
+  const toggleHeaderMenu = useCallback((menuId: HeaderMenuId) => {
+    setActiveHeaderMenu(prev => prev === menuId ? null : menuId);
+  }, []);
+
   const { isDesktop } = useKeyboardShortcuts({
     player,
     togglePlayPause,
@@ -294,6 +299,10 @@ export default function App() {
     onOpenTiming: () => setIsSettingsOpen(true),
     onResetView: handleResetView,
     onOpenShortcuts: () => setIsShortcutsModalOpen(true),
+    onToggleFileMenu: () => toggleHeaderMenu('file'),
+    onOpenRawScript: () => handleOpenRawScriptModal(),
+    onOpenRawCues: () => handleOpenRawCuesModal(),
+    onOpenLibrary: () => setIsLibraryOpen(true),
     disabled: isAnyModalOpen,
   });
 
@@ -800,6 +809,9 @@ export default function App() {
         onOpenRawScriptModal={handleOpenRawScriptModal}
         isCuesModalOpen={isCuesModalOpen}
         isScriptModalOpen={isScriptModalOpen}
+        activeMenu={activeHeaderMenu}
+        onToggleMenu={toggleHeaderMenu}
+        onCloseMenu={() => setActiveHeaderMenu(null)}
       />
 
       <CueEditorProvider value={cueEditorContextValue}>

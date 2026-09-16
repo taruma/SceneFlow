@@ -66,7 +66,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
         aria-label="Keyboard Shortcuts"
         className={cn(
           UI_TOKENS.modal.containerLg, 
-          "max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+          "h-[620px] max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
         )}
       >
         {/* Header */}
@@ -85,7 +85,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
                 </kbd>
               </div>
               <p className="text-[11px] text-text-muted mt-0.5">
-                Quick reference guide for fast screenplay synchronization & editing
+                Quick reference guide for fast script synchronization & editing
               </p>
             </div>
           </div>
@@ -162,7 +162,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
                   )}
                 >
                   <Icon size={11} className={isSelected ? "text-btn-primary-text" : "text-text-faint"} />
-                  <span>{cat.label.split(' ')[0]}</span>
+                  <span>{cat.tabLabel || cat.label.split(' ')[0]}</span>
                 </button>
               );
             })}
