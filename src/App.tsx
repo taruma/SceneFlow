@@ -1,23 +1,26 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback, Suspense, lazy } from 'react';
 import YouTube from 'react-youtube';
 import { Video } from 'lucide-react';
 import { EXAMPLE_SECTIONS } from './examples';
 import { processScript } from './lib/scriptProcessor';
+import { realignCuesList } from './lib/cueUtils';
 import { ScriptLine } from './components/script/ScriptLine';
-import { StagingModal } from './components/StagingModal';
-import { LibraryModal } from './components/LibraryModal';
-import { MobileLibraryModal } from './components/MobileLibraryModal';
 import { InitializingScreen } from './components/InitializingScreen';
-import { RawScriptModal } from './components/RawScriptModal';
-import { RawCuesModal } from './components/RawCuesModal';
 import { OverlapPicker } from './components/OverlapPicker';
 import { DeleteConfirmationModal } from './components/DeleteConfirmationModal';
 import { ResetConfirmationModal } from './components/ResetConfirmationModal';
-import { TimingSettingsModal } from './components/TimingSettingsModal';
-import { ScriptColorModal } from './components/ScriptColorModal';
-import { MobileColorModal } from './components/MobileColorModal';
-import { AppInfoModal } from './components/AppInfoModal';
-import { AppHeader } from './components/AppHeader';
+import { AppHeader, type HeaderMenuId } from './components/AppHeader';
+// Lazy-loaded secondary dialogs to optimize initial bundle size
+const StagingModal = lazy(() => import('./components/StagingModal').then(m => ({ default: m.StagingModal })));
+const LibraryModal = lazy(() => import('./components/LibraryModal').then(m => ({ default: m.LibraryModal })));
+const MobileLibraryModal = lazy(() => import('./components/MobileLibraryModal').then(m => ({ default: m.MobileLibraryModal })));
+const RawScriptModal = lazy(() => import('./components/RawScriptModal').then(m => ({ default: m.RawScriptModal })));
+const RawCuesModal = lazy(() => import('./components/RawCuesModal').then(m => ({ default: m.RawCuesModal })));
+const TimingSettingsModal = lazy(() => import('./components/TimingSettingsModal').then(m => ({ default: m.TimingSettingsModal })));
+const ScriptColorModal = lazy(() => import('./components/ScriptColorModal').then(m => ({ default: m.ScriptColorModal })));
+const MobileColorModal = lazy(() => import('./components/MobileColorModal').then(m => ({ default: m.MobileColorModal })));
+const AppInfoModal = lazy(() => import('./components/AppInfoModal').then(m => ({ default: m.AppInfoModal })));
+const KeyboardShortcutsModal = lazy(() => import('./components/KeyboardShortcutsModal').then(m => ({ default: m.KeyboardShortcutsModal })));
 import { WorkstationLeftPanel } from './components/left-panel';
 import { EditRightPanel, CueEditorForm, CueEditorProvider, type CueEditorContextValue } from './components/edit';
 import { SplitPaneDivider, InspectorSplitDivider } from './components/common';
@@ -35,7 +38,7 @@ import {
   MAX_SPLIT_RATIO,
 } from './hooks/useScriptPreferences';
 import { useScriptTheme } from './hooks/useScriptTheme';
-import { useAppShellTheme } from './hooks/useAppShellTheme';
+import { useAppShellTheme, disableTransitionsTemporarily } from './hooks/useAppShellTheme';
 import { useAutoScroll } from './hooks/useAutoScroll';
 import { useCueEditor } from './hooks/useCueEditor';
 import { useCueAlignment } from './hooks/useCueAlignment';
@@ -77,7 +80,9 @@ export default function App() {
   const [isCuesModalOpen, setIsCuesModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+  const [activeHeaderMenu, setActiveHeaderMenu] = useState<HeaderMenuId | null>(null);
   const [rawCuesText, setRawCuesText] = useState("");
 
   const scriptRef = useRef<HTMLDivElement>(null);
@@ -164,6 +169,7 @@ export default function App() {
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
+      disableTransitionsTemporarily();
       if (isScriptPureBlack) {
         document.documentElement.setAttribute('data-pure-black-script', 'true');
         document.body.setAttribute('data-pure-black-script', 'true');
@@ -265,6 +271,7 @@ export default function App() {
     isColorModalOpen ||
     isSettingsOpen ||
     isInfoModalOpen ||
+    isShortcutsModalOpen ||
     isScriptModalOpen ||
     isCuesModalOpen ||
     isLibraryOpen ||
@@ -281,6 +288,10 @@ export default function App() {
     }
   }, [resetViewLayout, mode]);
 
+  const toggleHeaderMenu = useCallback((menuId: HeaderMenuId) => {
+    setActiveHeaderMenu(prev => prev === menuId ? null : menuId);
+  }, []);
+
   const { isDesktop } = useKeyboardShortcuts({
     player,
     togglePlayPause,
@@ -289,6 +300,11 @@ export default function App() {
     onOpenColors: () => setIsColorModalOpen(true),
     onOpenTiming: () => setIsSettingsOpen(true),
     onResetView: handleResetView,
+    onOpenShortcuts: () => setIsShortcutsModalOpen(true),
+    onToggleFileMenu: () => toggleHeaderMenu('file'),
+    onOpenRawScript: () => handleOpenRawScriptModal(),
+    onOpenRawCues: () => handleOpenRawCuesModal(),
+    onOpenLibrary: () => setIsLibraryOpen(true),
     disabled: isAnyModalOpen,
   });
 
@@ -576,6 +592,15 @@ export default function App() {
     setIsScriptModalOpen(true);
   }, []);
 
+  const handleSaveScript = useCallback((newScriptText: string, shouldRealign?: boolean) => {
+    if (shouldRealign && state.cues && state.cues.length > 0) {
+      const { updatedCues } = realignCuesList(state.cues, newScriptText);
+      setState(prev => ({ ...prev, scriptText: newScriptText, cues: updatedCues }));
+    } else {
+      setState(prev => ({ ...prev, scriptText: newScriptText }));
+    }
+  }, [state.cues, setState]);
+
   const handleOpenRawCuesModal = useCallback(() => {
     setRawCuesText(JSON.stringify(state.cues, null, 2));
     setIsCuesModalOpen(true);
@@ -775,12 +800,20 @@ export default function App() {
         onSetThemeMode={setThemeMode}
         isViewCustomized={isEffectiveViewCustomized}
         onResetView={handleResetView}
+        onOpenShortcuts={() => setIsShortcutsModalOpen(true)}
         scriptWidthPreset={scriptWidthPreset}
         setScriptWidthPreset={setScriptWidthPreset}
         scrollFocusPreset={scrollFocusPreset}
         applyScrollFocus={applyScrollFocus}
         isPreferencesCustomized={isPreferencesCustomized}
         onResetAll={handleResetAllPreferences}
+        onOpenRawCuesModal={handleOpenRawCuesModal}
+        onOpenRawScriptModal={handleOpenRawScriptModal}
+        isCuesModalOpen={isCuesModalOpen}
+        isScriptModalOpen={isScriptModalOpen}
+        activeMenu={activeHeaderMenu}
+        onToggleMenu={toggleHeaderMenu}
+        onCloseMenu={() => setActiveHeaderMenu(null)}
       />
 
       <CueEditorProvider value={cueEditorContextValue}>
@@ -878,7 +911,7 @@ export default function App() {
             )}
           >
             <div className={cn(
-              "script-paper-container mx-auto min-h-full rounded-sm relative transition-colors duration-200",
+              "script-paper-container mx-auto min-h-full rounded-sm relative",
               isScriptPureBlack ? "!bg-black !shadow-none" : cn(activeTheme.paperBg, activeTheme.paperShadow),
               activeTheme.paperBorder,
               activeTheme.textColor,
@@ -915,6 +948,7 @@ export default function App() {
               ratio={inspectorRatio}
               onClose={() => setIsInspectorOpen(false)}
               cues={state.cues}
+              processedLines={processedLines}
               scriptThemeId={scriptThemeId}
               cuePaletteProfile={cuePaletteProfile}
             />
@@ -922,60 +956,6 @@ export default function App() {
         )}
       </main>
     </CueEditorProvider>
-
-      <StagingModal
-        isOpen={!!activeStaging}
-        onClose={() => setActiveStaging(null)}
-        label={activeStaging?.label || ""}
-        content={activeStaging?.content || ""}
-      />
-
-      <LibraryModal
-        isOpen={isLibraryOpen}
-        onClose={() => setIsLibraryOpen(false)}
-        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'guide', error: null })}
-        onSelectExample={(path, title) => {
-          setResetConfirmation({ 
-            isOpen: true, 
-            type: 'example', 
-            examplePath: path, 
-            exampleTitle: title,
-            error: null,
-          });
-        }}
-      />
-
-      <MobileLibraryModal
-        isOpen={isLibraryOpen}
-        onClose={() => setIsLibraryOpen(false)}
-        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'guide', error: null })}
-        onSelectExample={(path, title) => {
-          setResetConfirmation({ 
-            isOpen: true, 
-            type: 'example', 
-            examplePath: path, 
-            exampleTitle: title,
-            error: null,
-          });
-        }}
-      />
-
-      {/* Raw Script Modal */}
-      <RawScriptModal
-        isOpen={isScriptModalOpen}
-        onClose={() => setIsScriptModalOpen(false)}
-        scriptText={state.scriptText}
-        onChangeScriptText={(text) => setState(prev => ({ ...prev, scriptText: text }))}
-      />
-
-      {/* Raw Cues Modal */}
-      <RawCuesModal
-        isOpen={isCuesModalOpen}
-        onClose={() => setIsCuesModalOpen(false)}
-        rawCuesText={rawCuesText}
-        onChangeRawCuesText={setRawCuesText}
-        onSave={saveRawCues}
-      />
 
       {/* Overlap Picker Menu */}
       <OverlapPicker
@@ -1022,63 +1002,133 @@ export default function App() {
         }}
       />
 
-      {/* Timing Settings Modal */}
-      <TimingSettingsModal
-        isOpen={isSettingsOpen}
-        settings={state.settings}
-        colors={COLORS}
-        scriptThemeId={scriptThemeId}
-        cuePaletteProfile={cuePaletteProfile}
-        onClose={() => setIsSettingsOpen(false)}
-        onResetClick={() => setResetConfirmation({ isOpen: true, type: 'settings', error: null })}
-        onUpdateSetting={(category, field, value) => {
-          setState(prev => ({
-            ...prev,
-            settings: {
-              ...prev.settings,
-              [category]: {
-                ...(prev.settings?.[category] || { before: 0, after: 0 }),
-                [field]: value,
+      <Suspense fallback={null}>
+        {/* Staging Modal */}
+        <StagingModal
+          isOpen={!!activeStaging}
+          onClose={() => setActiveStaging(null)}
+          label={activeStaging?.label || ""}
+          content={activeStaging?.content || ""}
+        />
+
+        {/* Examples Library Modal (Desktop vs Mobile) */}
+        {isDesktop ? (
+          <LibraryModal
+            isOpen={isLibraryOpen}
+            onClose={() => setIsLibraryOpen(false)}
+            onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'guide', error: null })}
+            onSelectExample={(path, title) => {
+              setResetConfirmation({ 
+                isOpen: true, 
+                type: 'example', 
+                examplePath: path, 
+                exampleTitle: title, 
+                error: null,
+              });
+            }}
+          />
+        ) : (
+          <MobileLibraryModal
+            isOpen={isLibraryOpen}
+            onClose={() => setIsLibraryOpen(false)}
+            onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'guide', error: null })}
+            onSelectExample={(path, title) => {
+              setResetConfirmation({ 
+                isOpen: true, 
+                type: 'example', 
+                examplePath: path, 
+                exampleTitle: title, 
+                error: null,
+              });
+            }}
+          />
+        )}
+
+        {/* Raw Script Modal */}
+        <RawScriptModal
+          isOpen={isScriptModalOpen}
+          onClose={() => setIsScriptModalOpen(false)}
+          scriptText={state.scriptText}
+          onSaveScript={handleSaveScript}
+          activeCuesCount={state.cues?.length || 0}
+        />
+
+        {/* Raw Cues Modal */}
+        <RawCuesModal
+          isOpen={isCuesModalOpen}
+          onClose={() => setIsCuesModalOpen(false)}
+          rawCuesText={rawCuesText}
+          onChangeRawCuesText={setRawCuesText}
+          onSave={saveRawCues}
+        />
+
+        {/* Timing Settings Modal */}
+        <TimingSettingsModal
+          isOpen={isSettingsOpen}
+          settings={state.settings}
+          colors={COLORS}
+          scriptThemeId={scriptThemeId}
+          cuePaletteProfile={cuePaletteProfile}
+          onClose={() => setIsSettingsOpen(false)}
+          onResetClick={() => setResetConfirmation({ isOpen: true, type: 'settings', error: null })}
+          onUpdateSetting={(category, field, value) => {
+            setState(prev => ({
+              ...prev,
+              settings: {
+                ...prev.settings,
+                [category]: {
+                  ...(prev.settings?.[category] || { before: 0, after: 0 }),
+                  [field]: value,
+                },
               },
-            },
-          }));
-        }}
-      />
-      {/* Script Color & Theme Modal */}
-      <ScriptColorModal
-        isOpen={isColorModalOpen}
-        onClose={() => setIsColorModalOpen(false)}
-        currentThemeId={scriptThemeId}
-        onSelectTheme={setScriptThemeId}
-        themeMode={themeMode}
-        setThemeMode={setThemeMode}
-        effectiveThemeCategory={effectiveCategory}
-        pureBlackMode={pureBlackMode}
-        setPureBlackMode={setPureBlackMode}
-        cuePaletteProfile={cuePaletteProfile}
-        onSelectPaletteProfile={setCuePaletteProfile}
-      />
+            }));
+          }}
+        />
 
-      {/* Mobile Script Color & Theme Drawer */}
-      <MobileColorModal
-        isOpen={isColorModalOpen}
-        onClose={() => setIsColorModalOpen(false)}
-        currentThemeId={scriptThemeId}
-        onSelectTheme={setScriptThemeId}
-        themeMode={themeMode}
-        setThemeMode={setThemeMode}
-        effectiveThemeCategory={effectiveCategory}
-        pureBlackMode={pureBlackMode}
-        setPureBlackMode={setPureBlackMode}
-        cuePaletteProfile={cuePaletteProfile}
-        onSelectPaletteProfile={setCuePaletteProfile}
-      />
+        {/* Script Color & Theme Modal (Desktop vs Mobile) */}
+        {isDesktop ? (
+          <ScriptColorModal
+            isOpen={isColorModalOpen}
+            onClose={() => setIsColorModalOpen(false)}
+            currentThemeId={scriptThemeId}
+            onSelectTheme={setScriptThemeId}
+            themeMode={themeMode}
+            setThemeMode={setThemeMode}
+            effectiveThemeCategory={effectiveCategory}
+            pureBlackMode={pureBlackMode}
+            setPureBlackMode={setPureBlackMode}
+            cuePaletteProfile={cuePaletteProfile}
+            onSelectPaletteProfile={setCuePaletteProfile}
+          />
+        ) : (
+          <MobileColorModal
+            isOpen={isColorModalOpen}
+            onClose={() => setIsColorModalOpen(false)}
+            currentThemeId={scriptThemeId}
+            onSelectTheme={setScriptThemeId}
+            themeMode={themeMode}
+            setThemeMode={setThemeMode}
+            effectiveThemeCategory={effectiveCategory}
+            pureBlackMode={pureBlackMode}
+            setPureBlackMode={setPureBlackMode}
+            cuePaletteProfile={cuePaletteProfile}
+            onSelectPaletteProfile={setCuePaletteProfile}
+          />
+        )}
 
-      {/* App Info / About Modal */}
-      <AppInfoModal
-        isOpen={isInfoModalOpen}
-        onClose={() => setIsInfoModalOpen(false)}
-      />
+        {/* App Info / About Modal */}
+        <AppInfoModal
+          isOpen={isInfoModalOpen}
+          onClose={() => setIsInfoModalOpen(false)}
+          onOpenShortcuts={() => setIsShortcutsModalOpen(true)}
+        />
+
+        {/* Keyboard Shortcuts Palette / Guide Modal */}
+        <KeyboardShortcutsModal
+          isOpen={isShortcutsModalOpen}
+          onClose={() => setIsShortcutsModalOpen(false)}
+        />
+      </Suspense>
     </div>
   );
 }

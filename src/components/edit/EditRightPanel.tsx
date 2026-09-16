@@ -1,11 +1,13 @@
 import React, { memo, useMemo } from 'react';
-import { SlidersHorizontal, PanelRightClose, Sparkles, Clock, CheckCircle2, Bookmark } from 'lucide-react';
+import { SlidersHorizontal, PanelRightClose, Sparkles, Clock, CheckCircle2, Bookmark, Workflow } from 'lucide-react';
 import { Cue } from '../../types/script';
 import { CuePaletteProfile } from '../../styles';
 import { UI_TOKENS } from '../../styles/tokens/ui';
 import { COLORS } from '../../constants/script';
 import { useScriptTheme } from '../../hooks/useScriptTheme';
 import { cn } from '../../lib/utils';
+import type { ProcessedLine } from '../../lib/scriptProcessor';
+import { analyzeBriefSections } from '../../lib/briefAnalysis';
 import { CueEditorForm } from './CueEditorForm';
 import { useOptionalCueEditorContext } from './CueEditorContext';
 
@@ -16,6 +18,7 @@ export interface EditRightPanelProps {
   ratio?: number;
   style?: React.CSSProperties;
   cues?: Cue[];
+  processedLines?: ProcessedLine[];
   scriptThemeId?: string;
   cuePaletteProfile?: CuePaletteProfile;
   className?: string;
@@ -28,6 +31,7 @@ export const EditRightPanel: React.FC<EditRightPanelProps> = memo(({
   ratio,
   style,
   cues = [],
+  processedLines = [],
   scriptThemeId = 'studio-light',
   cuePaletteProfile = 'standard',
   className,
@@ -53,6 +57,11 @@ export const EditRightPanel: React.FC<EditRightPanelProps> = memo(({
     }
     return counts;
   }, [cues]);
+
+  // Analyze BRIEF macro-states and sub-states
+  const briefStats = useMemo(() => {
+    return analyzeBriefSections(processedLines);
+  }, [processedLines]);
 
   if (!isOpen) {
     return null;
@@ -141,6 +150,97 @@ export const EditRightPanel: React.FC<EditRightPanelProps> = memo(({
                   Highlight text in the screenplay to draft a new sync cue, or select any cue card in the left panel to inspect and edit timings.
                 </p>
               </div>
+
+              {/* BRIEF State Engine Summary (Only visible when script contains [<BRIEF>] tags) */}
+              {briefStats.totalSections > 0 && (
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-text-faint flex items-center gap-1.5">
+                      <Workflow size={11} /> BRIEF State Engine
+                    </p>
+                    <span className={UI_TOKENS.badge.counter}>
+                      {briefStats.totalSections} {briefStats.totalSections === 1 ? 'Section' : 'Sections'}
+                    </span>
+                  </div>
+
+                  {/* Macro-States and Sub-States Global Counters */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="p-2.5 rounded-xl bg-surface-muted/50 border border-border-subtle flex flex-col justify-between">
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-text-faint">
+                        Macro-States (Sₙ)
+                      </span>
+                      <div className="flex items-baseline justify-between mt-1">
+                        <span className="text-base font-mono font-black text-text-main">
+                          {briefStats.totalMacroStates}
+                        </span>
+                        <span className="text-[9px] font-mono text-text-faint">
+                          lines
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-2.5 rounded-xl bg-surface-muted/50 border border-border-subtle flex flex-col justify-between">
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-text-faint">
+                        Total Sub-States
+                      </span>
+                      <div className="flex items-baseline justify-between mt-1">
+                        <span className="text-base font-mono font-black text-text-main">
+                          {briefStats.totalSubStates}
+                        </span>
+                        <span className="text-[9px] font-mono text-text-faint">
+                          beats
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Per-Section Breakdown Cards */}
+                  <div className="space-y-1.5">
+                    {briefStats.sections.map((section) => (
+                      <div
+                        key={section.sectionIndex}
+                        className="p-2.5 rounded-xl bg-surface-muted/40 border border-border-subtle flex items-center justify-between gap-2"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] font-mono font-bold text-text-main">
+                              Brief #{section.sectionIndex + 1}
+                            </span>
+                            {section.contextLabel && (
+                              <span
+                                className="text-[9px] font-sans font-medium text-text-faint truncate"
+                                title={section.contextLabel}
+                              >
+                                • {section.contextLabel}
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[9px] font-mono text-text-faint mt-0.5">
+                            Range S{section.startStateIndex}–S{section.endStateIndex}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 shrink-0 text-right">
+                          <div
+                            className="px-2 py-0.5 rounded-md bg-surface border border-border-subtle text-[9px] font-mono shadow-2xs"
+                            title={`${section.macroStatesCount} Macro-States`}
+                          >
+                            <span className="font-bold text-text-main">{section.macroStatesCount}</span>
+                            <span className="text-text-faint ml-1">macro</span>
+                          </div>
+                          <div
+                            className="px-2 py-0.5 rounded-md bg-surface border border-border-subtle text-[9px] font-mono shadow-2xs"
+                            title={`${section.subStatesCount} Sub-States`}
+                          >
+                            <span className="font-bold text-text-main">{section.subStatesCount}</span>
+                            <span className="text-text-faint ml-1">sub</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Script Cues Summary */}
               <div className="space-y-2.5">

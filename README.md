@@ -106,8 +106,18 @@ https://github.com/user-attachments/assets/cf3a7fec-2a4b-48d8-9028-245eba49934c
 - **Token-Optimized Minimal Schema** — Modular schema contract strictly focused on data types and enums without noisy descriptions that degrade LLM token generation
 - **Context-Aware Footer Actions** — Tab-specific actions (`Apply Cues (N)` vs `Go to JSON Data →`) with wrap-resistant Title Case styling
 
+### 📝 Studio Script Editor & Formatting Suite (`RawScriptModal`)
+
+- **4-Rank Hierarchical Outline** — Collapsible navigation tree parsing `PART`, Roman numeral acts (`I. ...`), scene headings (`INT./EXT.`), staging containers, brief execution blocks, and directive tags with section item counters, expand/collapse all, and auto-unfold caret tracking
+- **Soft Word-Wrap with Gutter Alignment** — Toggleable via `[ Wrap ]` or <kbd>Alt+Z</kbd>, utilizing an off-screen measurement mirror container computing rendered line heights for exact 1:1 line number gutter alignment without vertical drift
+- **Searchable Formatting Guide Sidebar** — Integrated right-hand cheat sheet with live search, category filtering (`Structure`, `Directives`, `Dialogue`, `Effects`), 1-click **Insert** and **Copy** snippets, and live visual preview badges
+- **Single-Tier Streamlined Toolbar** — 40px single-row toolbar housing segmented view switcher, container wrapping buttons (`[[STAGING]]`, `[<BRIEF>]`), core directive presets (`INTENT`, `LOGIC`, `AESTHETIC`, `OPENING`), persistent custom directive tags with removal pips, and right-aligned history/document utilities
+- **Debounced Undo/Redo & Custom Tags Engine** — Keystroke-debounced history engine (300ms) with full <kbd>Ctrl+Z</kbd>/<kbd>Ctrl+Y</kbd> support and `localStorage` persistence for user-defined directive tags
+- **Fast-Path Outline Parsing & DOM Virtualization** — Fast-path character prefix filtering bypassing 95% of regex evaluations, single-pass bottom-up $O(N)$ accumulation, and `content-visibility: auto` CSS virtualization
+
 ### Data Management
 
+- **Universal File Dropdown Data Access** — Instant direct access to `Sync Cues (JSON)...` and `Source Script...` across both Playback and Edit modes without mode switching
 - **Import/Export** — Save and load projects as JSON files
 - **Remote Sharing** — Share projects via URL using query parameters
 - **Raw Editing** — Direct access to screenplay text and cue data
@@ -118,7 +128,7 @@ https://github.com/user-attachments/assets/cf3a7fec-2a4b-48d8-9028-245eba49934c
 
 - **3-Zone Studio Header Architecture** — Balanced layout: Left Wing tiered `[ File ▾ ]` dropdown (Project I/O, Blank Canvas, Starter Guide, Library), Center Stage segmented mode switcher (`[ ▶ Playback | ✏️ Edit ]`), and Right Wing Studio Preferences
 - **Consolidated Studio Preferences (`[ ⚙️ Settings ▾ ]`)** — 4-theme quick selector grid (`Auto`, `Light`, `Warm`, `Dark`), dedicated "Reading Canvas & Viewport" section with 5-segment Script Width row and 3-segment Focus Line row, `<kbd>` shortcut badges, dynamic `Custom` layout badge, and 1-click `[ ↺ Reset All ]` action
-- **Dynamic App Theming** — Full workspace theming in **Light**, **Warm**, and **Dark** modes with seamless 250ms CSS variable switching
+- **Instant Color Theme Switching** — Zero-lag theme and paper switching powered by a momentary CSS transition suppression engine (`disableTransitionsTemporarily()`), eliminating repaint stutter and frame drops
 - **Auto-Sync Mode** — Application shell automatically adapts to match the active screenplay paper category
 - **Pure Black Canvas (Video Overlay Mode)** — Absolute `#000000` luminance and shadow stripping for NLE Screen/Lighten blend compositing and screen capture
 - **Theme Presets** — 6 screenplay paper themes: Studio Crisp, Warm Parchment, Midnight Slate, OLED Blackout, Navy Slate, Newsprint
@@ -126,11 +136,12 @@ https://github.com/user-attachments/assets/cf3a7fec-2a4b-48d8-9028-245eba49934c
 - **Adaptive Logo** — Automatic dark/white logo switching across light, warm, and dark surfaces
 - **In-Place Cue Editing** — Edit cue text directly without touching raw JSON
 
-### Platform
+### Platform & Performance
 
 - **Mobile-Responsive** — Native bottom-sheet drawers for library and themes with adaptive staging badges and sticky mobile video transport
-- **App Info & Attribution** — Desktop information modal with dynamic versioning (`v2.4.0`), author attribution, and documentation resource links
-- **Keyboard Shortcuts** — Hotkeys for playback (`Space`, `K`), seeking (`← / →`, `J / L`), video collapse (`V`), studio preferences (`Shift+C`, `Shift+T`, `Shift+R`), cue saving (`Ctrl+Enter`), and universal modal dismissal (`Esc`)
+- **App Info & Attribution** — Desktop information modal with dynamic versioning (`v2.5.0`), author attribution, and documentation resource links
+- **Centralized Keyboard Shortcuts Registry & Interactive Cheat-Sheet Modal** — Searchable modal triggered globally via <kbd>?</kbd> (<kbd>Shift+/</kbd>) or Studio Settings, featuring category filter tabs, platform glyphs (<kbd>⌘</kbd> vs <kbd>Ctrl</kbd>), and quick navigation hotkeys (<kbd>Shift+F</kbd> File Menu, <kbd>Shift+S</kbd> Source Script, <kbd>Shift+E</kbd> Cue Editor, <kbd>Shift+L</kbd> Library, <kbd>Ctrl+Enter</kbd> Script Commit)
+- **High-Performance Architecture** — Monolithic bundle splitting via dynamic `React.lazy()` secondary modals and Vite Rollup `manualChunks`, slashing initial JS bundle payload by **70%** (778 kB → 243 kB; 215 kB → 65 kB gzip)
 - **Vercel Analytics** — Audience traffic insights and real-time Web Vitals monitoring
 - **PWA-Ready** — Web manifest and icon suite for standalone app installation
 

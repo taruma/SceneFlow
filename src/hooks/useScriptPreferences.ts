@@ -7,6 +7,7 @@ import {
   DEFAULT_SCROLL_FOCUS_PRESET_ID 
 } from '../constants/script';
 import { DEFAULT_SCRIPT_THEME_ID, type ScriptThemeId, type CuePaletteProfile } from '../lib/scriptStyles';
+import { disableTransitionsTemporarily } from './useAppShellTheme';
 
 export const DEFAULT_SPLIT_RATIO = 65;
 export const MIN_SPLIT_RATIO = 30;
@@ -314,6 +315,7 @@ export function useScriptPreferences(mode: AppMode = 'playback') {
   const [hiddenCueTypes, setHiddenCueTypes] = useState<Set<string>>(new Set());
 
   const setScriptThemeId = useCallback((themeId: ScriptThemeId) => {
+    disableTransitionsTemporarily();
     setScriptThemeIdState(themeId);
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem(SCRIPT_PREFERENCES_STORAGE_KEYS.SCRIPT_THEME, themeId);
@@ -362,6 +364,7 @@ export function useScriptPreferences(mode: AppMode = 'playback') {
   });
 
   const setPureBlackMode = useCallback((enabled: boolean) => {
+    disableTransitionsTemporarily();
     setPureBlackModeState(enabled);
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem(SCRIPT_PREFERENCES_STORAGE_KEYS.PURE_BLACK_BG, String(enabled));

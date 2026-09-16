@@ -27,7 +27,7 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
   - Never execute string operations (such as `scriptText.split('\n')`) or unbounded array transformations inside render bodies or mousemove listeners. Consume pre-computed metrics (`processedLines.length`).
 - **React.memo Decoupling**:
   - Video playback ticks re-render `App.tsx` at 10–60Hz to update `currentTime`.
-  - Because `EditLeftPanel`, `SyncCuesPanel`, `CueEditorForm`, and `ScriptHeaderControls` do not consume continuous `currentTime`, they must remain wrapped in `React.memo` to eliminate cascading re-renders.
+  - Because `WorkstationLeftPanel`, `SyncCuesPanel`, `CueEditorForm`, and `ScriptHeaderControls` do not consume continuous `currentTime`, they must remain wrapped in `React.memo` to eliminate cascading re-renders.
   - **Memoized Style Objects**: Never pass inline style object literals (e.g. `style={{ width: `${splitRatio}%` }}`) to memoized panels in `App.tsx`; always memoize via `useMemo`.
   - **Theme Resolution Hoisting**: Never invoke `useScriptTheme` inside individual cue cards or row items. Hoist `resolveCueColor` to `SyncCuesPanel` and pass down the stable function reference to avoid thousands of redundant hook calls per second during playback.
   - **Pure Fallback Discipline (No "Hook-as-Fallback")**: Never use a React hook as a fallback for an optional hoisted prop inside mapped children or list cards. If a fallback is needed, consume a pure utility function (`getCueColorForTheme`) to guarantee zero hook registrations per list item.
@@ -68,7 +68,7 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
       - Standardized symmetric padding (`py-2` collapsed, `pt-1.5 pb-2.5` expanded) and `ListChecks` icon in the title for visual parity with Playback Highlights.
       - **Action Nomenclature**: `[ { } JSON ]` for raw cue modal and `[ ↺ Resync ]` for proximity realignment with animated `[ ✓ Synced ]` feedback.
       - **Adaptive Density Toggle**: `[ ⊞ Cards | ≡ Compact ]` with responsive text labels collapsing cleanly to icons via container queries.
-      - **Collapsible Search & Multi-Select Filters**: Rested in a slim single-row by default with a `[ 🔍 Filter ]` toggle button, keyboard shortcuts (<kbd>Escape</kbd> to clear/close), autofocus, and multi-select category pills (`Set<string>`) allowing concurrent filtering across categories (e.g. Dialogue + Action).
+      - **Collapsible Search & Multi-Select Filters**: Rested in a slim single-row by default with a `[ 🔍 Filter ]` toggle button, keyboard shortcuts (<kbd>Escape</kbd> to clear/close), autofocus, and multi-select category pills (`Set<string>`) allowing concurrent filtering across categories (e.g. Dialogue + Action). Auto-expands on active filter transitions while allowing manual collapse to reclaim vertical space with active filter dot indicators.
       - **One-Click Filter Reset**: Counter badge (`{filteredCount}/{totalCount}`) converts into an interactive reset chip with `X` whenever filters are active.
     - Dedicated internal scrollable viewport (`SyncCueCard` in Cards mode, `SyncCueRow` in Compact mode) with `pt-2.5 pb-2` padding and `content-visibility: auto` rendering optimization.
 - **Cross-Panel Full Sync Jump**:
@@ -108,22 +108,28 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
 ## 11. Left Panel Performance-Shielded Auto-Scroll & Forward Monotonicity
 - **Tick Shield Boundary & Multi-Cue Active Resolution**:
   - `SyncCuesPanel` must never receive continuous `currentTime` from the playback clock loop. Continuous ticks would force re-rendering 100–300 cue cards/rows at 10–60Hz.
-  - Active cue resolution is computed at the `EditLeftPanel` boundary:
+  - Active cue resolution is computed at the `WorkstationLeftPanel` boundary:
     - `activeCueId: string | null`: Primary active cue target computed via `findActiveCue(matchingCues, currentTime, settings)` for viewport auto-scrolling.
     - `activeCueIds: Set<string>`: All concurrently active cues firing at `currentTime` computed via `isCueActive()`.
   - **Set Reference Stabilization**: `activeCueIds` is memoized and reference-stabilized using a `useRef` shallow-equality check (`prevActiveCueIdsRef`). When video ticks advance through the same active cues, the identical `Set` instance is returned, ensuring `SyncCuesPanel` experiences zero re-render overhead while media is running.
-- **Filter-Aware Active Cue Resolution**:
-  - `EditLeftPanel` tracks filter state (`searchQuery`, `selectedCategories`) and evaluates `filterCues(cues, selectedCategories, searchQuery)` before passing cues to `findActiveCue`.
+- **Filter-Aware Active Cue Resolution & Upcoming Cue Fallback**:
+  - `WorkstationLeftPanel` evaluates `filterCues(cues, selectedCategories, searchQuery)` and resolves two decoupled cue anchors:
+    - `activeCueId: string | null`: Strict active cue resolver via `findActiveCue()` driving `isPrimary` halo glow and category ambient wash without false illumination during gaps.
+    - `scrollTargetCueId: string | null`: Primary auto-scroll anchor via `findScrollTargetCue()`. When playback falls into an inter-cue silence gap or pause between lines (`activeCue === null`), it automatically falls back to the immediate next upcoming cue (`cue.startTime >= currentTime`), centering the viewport on upcoming lines without stranding the list at `scrollTop = 0`.
   - This ensures that when users filter by specific categories (e.g. Action, Camera, VFX) or search queries, auto-scroll accurately tracks visible items rather than losing focus due to unrendered dialogue cues.
 - **Forward Monotonic Scrolling Guard (`furthestScrollTopRef`)**:
   - During normal playback, nested cues frequently occur (e.g., an enclosing Action cue from 0:00 to 0:10 with multiple dialogue or sound cues from 0:02 to 0:08).
   - Without a monotonic guard, when the nested cues end at 0:08, the active resolver would fall back to the still-active Action cue, causing an annoying upward "rubber-band" or yo-yo scroll.
   - Forward monotonic tracking enforces that target scroll positions can only advance forward during forward playback (`targetScrollTop >= furthestScrollTopRef.current - 40px`).
-- **Backward Seek & Filter Invalidation (`seekVersion`)**:
-  - Backward seeks (`currentTime < prevTime - 0.3s`), category filter toggles, density switches, or search input changes increment or trigger a reset of `furthestScrollTopRef.current = 0`, restoring complete bidirectional scroll responsiveness immediately.
+- **Backward Seek, Scrub & Mode Horizon Reset (`seekVersion`)**:
+  - Switching modes into Edit mode (`prevMode !== 'edit' && mode === 'edit'`), playhead scrubber jumps (`currentTime < prevTime - 0.3s` or forward jump $> 1.5$s), manual cue selection (`selectedCueId`), category filter toggles, density switches, or search input changes increment or trigger a reset of `furthestScrollTopRef.current = 0`, restoring complete bidirectional scroll responsiveness immediately and preventing viewport lockouts by downstream cues.
 - **Smooth Cubic Ease-Out Animator & Instant Gesture Interruption**:
   - Uses `smoothScrollTo` (`requestAnimationFrame` cubic ease-out `1 - (1 - t)^3`) for high-refresh display animation.
   - Viewport binds passive `wheel` and `touchmove` listeners that immediately abort any active auto-scroll animation, ensuring zero scroll fighting when the user manually scrolls the list.
+- **Center-Tracking Viewport Spacers (`spacerHeight`)**:
+  - Boundary cues positioned at the extreme start (first cue) and end (last cue) cannot normally reach the viewport vertical center (`H / 2`) because standard containers lack preceding and trailing scroll travel, clamping scroll positions to `0` or `maxScrollTop`.
+  - When auto-scroll is active (`isAutoScrollEnabled = true`) and cues exist, `SyncCuesPanel` renders dynamic `spacerHeight` elements (`Math.max(0, Math.floor(viewportHeight / 2))` measured via `useLayoutEffect` and `ResizeObserver`) above and below the cue items.
+  - Spacers automatically collapse to 0 (`spacerHeight = 0`) when auto-scroll is toggled off or when zero cues match filters, preserving tight top-alignment for manual inspection and centered empty states without scrollbars.
 
 ## 12. Time-Clustered Fluid Grid & Card Sizing Invariants
 - **Temporal Horizon Ceilings (`clusterCuesByTime`)**:
@@ -145,7 +151,7 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
 ## 13. Desktop 3-Panel Workstation & Mode-Aware Layout Invariants
 - **Calibrated 40 / 35 / 25 Workstation Distribution**:
   - Desktop Edit Mode organizes into three specialized vertical columns:
-    1. **Left Panel (`EditLeftPanel`)**: Calibrated to **40%** default width (`editSplitRatio`, bounds 25%–55%), housing the video preview and time-clustered cue list.
+    1. **Left Panel (`WorkstationLeftPanel`)**: Calibrated to **40%** default width (`editSplitRatio`, bounds 25%–55%), housing the video preview and time-clustered cue list.
     2. **Center Panel (Screenplay Canvas)**: Naturally consumes **35%** default width (`flex-1 min-w-0`), providing an unconstrained reading canvas.
     3. **Right Panel (`EditRightPanel`)**: Calibrated to **25%** default width (`inspectorRatio`, bounds 18%–45%), housing the dedicated Cue Inspector.
 - **Independent Multi-Mode Layout Decoupling**:
@@ -181,6 +187,13 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
   - `dismissIfClean()` safely resets `useCueEditor` back to idle workstation overview if no edits have been made (`!isDirty`).
   - In `App.tsx`, `handleScriptClick` is bound to the screenplay reading canvas, safely closing clean cue inspections on click while strictly ignoring clicks on interactive buttons, input fields, staging markers (`e.stopPropagation()`), or active DOM text selections.
 
+- **BRIEF State Engine Idle Overview Integration (`EditRightPanel.tsx`, `briefAnalysis.ts`)**:
+  - When the cue inspector is in idle mode (`!selection`), `EditRightPanel` computes `analyzeBriefSections(processedLines)`.
+  - If the loaded screenplay contains one or more `[<BRIEF>]` execution blocks, it renders a dedicated **BRIEF State Engine** summary card above the cues breakdown:
+    - Global totals for **Macro-States ($S_n$)** and **Total Sub-States** (chained action/camera/audio transitions via `->`).
+    - Granular per-section breakdown cards displaying `Brief #N`, nearest preceding scene context label (`heading`, `roman-title`, or `part-separator`), cumulative state index range ($S_{start}–S_{end}$), and per-section macro/sub-state counts.
+    - Zero-footprint empty state: Automatically omitted for traditional screenplays without `[<BRIEF>]` blocks to preserve a focused cue management view.
+
 ## 15. Cues JSON Editor & LLM Sync Schema Architecture (`RawCuesModal.tsx`)
 - **Two-Column Workstation Layout**:
   - The raw cues modal provides a comprehensive 2-column workstation (`RawCuesModal.tsx`):
@@ -200,3 +213,38 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
 - **Live Non-Blocking Validation & Auto-Unwrapping**:
   - Real-time syntax and schema validation pills report cue counts or actionable error diagnostic messages without triggering blocking browser `alert()` dialogs.
   - `[ ✨ Format JSON ]` standardizer formats indentation to 2 spaces and automatically unrolls `{ cues: [...] }` wrappers into direct cue arrays.
+
+## 16. Studio Script Editor Architecture & Invariants (`RawScriptModal.tsx`, `src/components/raw-script/`)
+- **Modular Subpackage Decomposition**:
+  - The script editor modal is decomposed into an isolated subpackage (`src/components/raw-script/`) with zero regression:
+    - `types.ts`: Clean interfaces for outline items (`TocItem`), history snapshots (`HistoryEntry`), core directive presets (`CORE_DIRECTIVE_PRESETS`), and modal contracts (`RawScriptModalProps`).
+    - `hooks/`: Isolated state machines for debounced history (`useScriptHistory`), 4-rank outline hierarchy and collapse states (`useScriptOutline`), soft word-wrap measurement mirror (`useWordWrap`), and persistent custom tags (`useCustomTags`).
+    - `components/`: Specialized UI subcomponents (`ScriptModalHeader`, `ScriptOutlineSidebar`, `ScriptEditorToolbar`, `ScriptEditorCanvas`, `ScriptFormattingGuide`, `ScriptEditorFooter`).
+    - `index.ts`: Unified barrel export providing clean public integration for `RawScriptModal.tsx`.
+- **Collapsible Hierarchical Script Outline (`useScriptOutline.ts`, `ScriptOutlineSidebar.tsx`)**:
+  - Employs a 4-rank hierarchical stack parser: Rank 1 (`PART`), Rank 2 (Roman numerals `I. ...`), Rank 3 (Scene headings `INT./EXT.`), and Rank 4 (Staging containers, Brief blocks, and Directive tags).
+  - Tracks section collapse state via `collapsedSectionIds: Set<string>` with chevron indicators and section item count badges.
+  - Provides unified "Collapse All / Expand All" controls. Selecting any outline entry auto-unfolds any collapsed parent sections and smooth-scrolls the caret directly to the target line.
+- **Off-Screen Measurement Mirror Soft Word-Wrap (`useWordWrap.ts`, `ScriptEditorCanvas.tsx`)**:
+  - Toggleable via the toolbar `[ Wrap ]` button or global <kbd>Alt+Z</kbd> keyboard shortcut.
+  - Renders an off-screen measurement mirror container (`pre-wrap` with identical monospace font family, size, line-height, and padding) to calculate exact per-line rendered pixel heights (`lineHeights: number[]`).
+  - Line numbers in the gutter dynamically bind matching heights (`style={{ height: `${lineHeights[idx]}px` }}`), guaranteeing 1:1 pixel alignment between line numbers and wrapped text rows with zero vertical drift during deep scrolling.
+- **Formatting Syntax Guide & Live Preview Fidelity (`ScriptFormattingGuide.tsx`)**:
+  - Dedicated right-hand cheat sheet sidebar toggleable via `[ Guide ]` with live search and category filtering (`Structure`, `Directives`, `Dialogue`, `Effects`).
+  - Provides 1-click **Insert** and **Copy** snippets alongside live visual preview badges that mirror SceneFlow's screenplay rendering engine (e.g. `STAGING: INTENT`, `[<BRIEF>]` waterfall preview, italicized parentheticals, and uppercase dialogue headers).
+- **Single-Tier Toolbar Invariant (`ScriptEditorToolbar.tsx`)**:
+  - The editor toolbar must declare `h-10 flex-nowrap overflow-x-auto select-none` to prevent awkward two-tier button wrapping regardless of viewport width.
+  - Consolidates segmented view toggles (`Outline`, `Wrap`, `Guide`), container pills (`[[STAGING]]`, `[<BRIEF>]`), core directive presets (`INTENT`, `LOGIC`, `AESTHETIC`, `OPENING`), saved custom tags (`localStorage`), and right-aligned history/file actions into one continuous horizontal row.
+- **Top Horizon Baseline Invariant**:
+  - All three column headers (Left Outline, Center Canvas, and Right Formatting Guide) must share an exact `h-9` (36px) subheader height with matching hairline bottom borders to lock a seamless visual baseline across the workstation.
+- **Debounced Undo/Redo Engine (`useScriptHistory.ts`)**:
+  - Debounces keystroke history snapshots at 300ms, preserving precise caret indices and scroll offsets across <kbd>Ctrl+Z</kbd>, <kbd>Ctrl+Y</kbd>, and <kbd>Ctrl+Shift+Z</kbd> operations.
+- **High-Performance Rendering & Zero-Lag Invariants (`RawScriptModal.tsx`, `useWordWrap.ts`, `useScriptOutline.ts`, `ScriptOutlineSidebar.tsx`)**:
+  - **Mount Re-render Elimination**: `useWordWrap` must guard pre-paint line height measurement with referential equality checks (`setLineHeights(prev => prev.length === 0 ? prev : [])`), and `useScriptHistory` must eagerly initialize history snapshots on initial mount, preventing redundant synchronous re-render passes during modal mounting.
+  - **Fast-Path Character Prefix Filtering (`useScriptOutline.ts`)**: The outline parser must apply preliminary character checks (`#`, `[`, and section candidate prefixes) before invoking regexes, bypassing ~95% of regex evaluations on dialogue and action lines. Graph descendant counting must compute bottom-up in a single $O(N)$ pass rather than traversing parent hierarchies.
+  - **React 19 Concurrent UI Scheduling (`RawScriptModal.tsx`)**: Pass `useDeferredValue(draftText)` into `useScriptOutline`, keeping modal shell animation and canvas typing latency at 60 FPS while processing symbol trees as non-blocking background work.
+  - **CSS Content-Visibility Virtualization (`ScriptOutlineSidebar.tsx`)**: Outline rows must be extracted into memoized `OutlineItemRow` components configured with `[content-visibility:auto] [contain-intrinsic-size:26px]`, allowing browser rendering engines to skip off-screen layout and paint costs while retaining smooth native scrolling.
+  - **Subcomponent Memoization & GPU Layer Promotion**: All modal subcomponents (`ScriptModalHeader`, `ScriptEditorToolbar`, `ScriptOutlineSidebar`, `ScriptEditorCanvas`, `ScriptFormattingGuide`, `ScriptEditorFooter`) must be wrapped in `React.memo` with stabilized `useCallback` props, and the dialog container must declare `will-change-[transform,opacity]` to guarantee hardware-accelerated transitions.
+- **Root Render Tree Invariant for Deletion & Overlap Dialogs (`DeleteConfirmationModal`, `OverlapPicker`, `ResetConfirmationModal`)**:
+  - State setters in `useCueEditor` (`setDeleteConfirmation`, `setOverlapPicker`) and `useScriptStorage` require their respective dialog consumers (`DeleteConfirmationModal`, `OverlapPicker`, `ResetConfirmationModal`) to remain permanently mounted at the root of `App.tsx`.
+  - When wrapping modals in `React.lazy()` or `<Suspense>`, never omit these non-lazy components; doing so silently disables cue deletions, overlapping cue selection, and project initialization without throwing runtime errors.

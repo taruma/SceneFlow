@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState, useEffect, useRef, useCallback } from 'react';
+import React, { memo, useMemo, useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { FilterX, Highlighter, Clock } from 'lucide-react';
 import { Cue } from '../../types/script';
 import { CuePaletteProfile } from '../../styles';
@@ -20,6 +20,7 @@ export interface SyncCuesPanelProps {
   cuePaletteProfile?: CuePaletteProfile;
   selectedCueId?: string;
   activeCueId?: string | null;
+  scrollTargetCueId?: string | null;
   activeCueIds?: Set<string>;
   seekVersion?: number;
   searchQuery?: string;
@@ -47,6 +48,7 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
   cuePaletteProfile = 'standard',
   selectedCueId,
   activeCueId,
+  scrollTargetCueId,
   activeCueIds,
   seekVersion = 0,
   searchQuery: controlledSearchQuery,
@@ -101,6 +103,28 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
 
   const viewportRef = useRef<HTMLDivElement>(null);
   const scrollAnimRef = useRef<number | null>(null);
+
+  // Measure viewport height to calculate dynamic before/after spacers for center-track alignment
+  const [viewportHeight, setViewportHeight] = useState<number>(0);
+
+  useLayoutEffect(() => {
+    const container = viewportRef.current;
+    if (!container) return;
+
+    setViewportHeight(container.clientHeight);
+
+    if (typeof ResizeObserver !== 'undefined') {
+      const observer = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.target === container) {
+            setViewportHeight(entry.contentRect.height);
+          }
+        }
+      });
+      observer.observe(container);
+      return () => observer.disconnect();
+    }
+  }, []);
 
   // User manual scroll listener to cancel ongoing auto-scroll smoothly without fighting user
   useEffect(() => {
@@ -185,22 +209,32 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
     return clusterCuesByTime(filteredCues, 3.0);
   }, [filteredCues]);
 
+  // Dynamic spacer height: provides half-viewport padding before and after cues when auto-scroll
+  // is enabled, ensuring cues at the start or end of the timeline track exactly in the vertical center.
+  const spacerHeight = isAutoScrollEnabled && filteredCues.length > 0
+    ? Math.max(0, Math.floor(viewportHeight / 2))
+    : 0;
+
   const furthestScrollTopRef = useRef<number>(0);
 
-  // Reset forward scroll guard when user seeks backwards, or changes density/filters
+  // Reset forward scroll guard when user seeks, selects a cue, or changes density/filters/autoscroll
   useEffect(() => {
     furthestScrollTopRef.current = 0;
-  }, [seekVersion, densityMode, filteredCues]);
+  }, [seekVersion, selectedCueId, densityMode, filteredCues, isAutoScrollEnabled]);
 
-  // Auto-scroll logic when activeCueId changes
+  // Effective auto-scroll anchor: prefers scrollTargetCueId (which includes upcoming cue fallback in silence gaps),
+  // falling back to activeCueId.
+  const effectiveTargetCueId = scrollTargetCueId ?? activeCueId;
+
+  // Auto-scroll logic when target cue changes
   useEffect(() => {
-    if (!isAutoScrollEnabled || !activeCueId || !viewportRef.current) return;
+    if (!isAutoScrollEnabled || !effectiveTargetCueId || !viewportRef.current) return;
 
     // Graceful check: ensure cue is visible in current filtered list
-    const isCueVisibleInFiltered = filteredCues.some(c => c.id === activeCueId);
+    const isCueVisibleInFiltered = filteredCues.some(c => c.id === effectiveTargetCueId);
     if (!isCueVisibleInFiltered) return;
 
-    const element = document.getElementById(`sync-cue-${activeCueId}`);
+    const element = document.getElementById(`sync-cue-${effectiveTargetCueId}`);
     const container = viewportRef.current;
     if (!element || !container) return;
 
@@ -208,7 +242,7 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
     const elementRect = element.getBoundingClientRect();
     const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
 
-    // Center the active cue card in the viewport
+    // Center the target cue card in the viewport
     const targetScrollTop = Math.max(0, relativeTop - (containerRect.height / 2) + (elementRect.height / 2));
 
     // Forward Monotonic Guard: During forward playback, never scroll backwards to an
@@ -220,10 +254,10 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
     furthestScrollTopRef.current = Math.max(furthestScrollTopRef.current, targetScrollTop);
 
     // Deadband guard: avoid micro-jitter if already near target
-    if (Math.abs(container.scrollTop - targetScrollTop) > 12) {
+    if (Math.abs(container.scrollTop - targetScrollTop) > 6) {
       smoothScrollTo(container, targetScrollTop, 350, scrollAnimRef);
     }
-  }, [activeCueId, isAutoScrollEnabled, filteredCues]);
+  }, [effectiveTargetCueId, isAutoScrollEnabled, filteredCues, viewportHeight, densityMode]);
 
   return (
     <div className={cn("flex flex-col h-full overflow-hidden select-none", className)}>
@@ -250,6 +284,15 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
 
       {/* Dedicated Scrollable Cue Viewport */}
       <div ref={viewportRef} className="flex-1 min-h-0 overflow-y-auto scrollbar-hide pt-2.5 pb-2 px-0.5">
+        {/* Top spacer: provides empty space so the first cue tracks in the vertical center */}
+        {spacerHeight > 0 && (
+          <div
+            style={{ height: `${spacerHeight}px` }}
+            aria-hidden="true"
+            className="shrink-0 pointer-events-none"
+          />
+        )}
+
         {/* Render Cards Mode (Time-Clustered Fluid Grid) */}
         {densityMode === 'cards' && (
           <div className="space-y-4">
@@ -341,6 +384,15 @@ export const SyncCuesPanel: React.FC<SyncCuesPanelProps> = memo(({
               );
             })}
           </div>
+        )}
+
+        {/* Bottom spacer: provides empty space so the last cue tracks in the vertical center */}
+        {spacerHeight > 0 && (
+          <div
+            style={{ height: `${spacerHeight}px` }}
+            aria-hidden="true"
+            className="shrink-0 pointer-events-none"
+          />
         )}
 
         {/* Empty State: Zero Cues in Project */}

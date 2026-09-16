@@ -63,12 +63,24 @@ export const SyncCuesToolbar: React.FC<SyncCuesToolbarProps> = memo(({
   onResetFilters,
 }) => {
   const { resolveCueColor } = useScriptTheme(scriptThemeId as any, cuePaletteProfile);
-  const [isFilterOpen, setIsFilterOpen] = React.useState(false);
   const searchInputRef = React.useRef<HTMLInputElement>(null);
 
   const isFiltering = Boolean(searchQuery.trim() || selectedCategories.size > 0);
   const isAllSelected = selectedCategories.size === 0;
-  const isExpanded = isFilterOpen || isFiltering;
+
+  // Track explicit open state; initialize to true if filters are active on mount
+  const [isFilterOpen, setIsFilterOpen] = React.useState(isFiltering);
+  const prevFilteringRef = React.useRef(isFiltering);
+
+  // Auto-expand whenever filters transition from inactive to active
+  React.useEffect(() => {
+    if (!prevFilteringRef.current && isFiltering) {
+      setIsFilterOpen(true);
+    }
+    prevFilteringRef.current = isFiltering;
+  }, [isFiltering]);
+
+  const isExpanded = isFilterOpen;
 
   const handleToggleFilter = React.useCallback(() => {
     setIsFilterOpen(prev => {
@@ -203,7 +215,7 @@ export const SyncCuesToolbar: React.FC<SyncCuesToolbarProps> = memo(({
           <button
             type="button"
             onClick={onOpenRawCuesModal}
-            title="View, edit, or import cues JSON"
+            title="View, edit, or import sync cues JSON & AI prompt schema"
             className="flex items-center gap-1 px-2 py-1 bg-surface-muted hover:bg-surface-hover border border-border-main text-text-muted hover:text-text-main rounded-lg text-[9px] font-black uppercase tracking-wider transition-all active:scale-95 shadow-2xs"
           >
             <Braces size={10} className="shrink-0 text-text-muted" />
@@ -241,7 +253,15 @@ export const SyncCuesToolbar: React.FC<SyncCuesToolbarProps> = memo(({
 
       {/* Collapsible Search & Category Filter Section */}
       {isExpanded && (
-        <div className="space-y-2 pt-1 animate-in fade-in slide-in-from-top-1 duration-200">
+        <div 
+          className="space-y-2 pt-1 animate-in fade-in slide-in-from-top-1 duration-200"
+          onKeyDown={(e) => {
+            if (e.key === 'Escape' && e.target !== searchInputRef.current) {
+              e.preventDefault();
+              setIsFilterOpen(false);
+            }
+          }}
+        >
           {/* Middle Row: Search Input Box */}
           <div className="relative group px-0.5">
             <Search size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-faint group-focus-within:text-text-main transition-colors pointer-events-none" />

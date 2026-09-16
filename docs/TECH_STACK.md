@@ -86,11 +86,3 @@ SceneFlow is built with a modern, lightweight, and performant web stack designed
 - **PWA Web Manifest (`public/site.webmanifest`)**: Standalone display configuration with theme colors and application metadata.
 - **Icon Suite**: Multi-resolution icons including `favicon.ico`, `favicon-16x16.png`, `favicon-32x32.png`, `apple-touch-icon.png` (180×180), and Android Chrome icons (192×192, 512×512).
 
----
-
-## 7. Additional Dependencies
-
-- **dotenv (`^17.2.3`)**: Environment variable loader for configuration management.
-- **express (`^4.21.2`) & `@types/express` (`^4.17.21`)**: Lightweight HTTP server utilities for preview or self-hosted deployment environments.
-- **@google/genai (`^1.29.0`)**: Official Google Gen AI SDK for AI workflow integrations.
-

@@ -76,7 +76,7 @@ Supports eight color-coded cue categories, each calibrated with theme-specific R
 - **Compound Context Architecture (`CueEditorContext`, `CueEditorForm`)**: Cue draft state, timing offsets, DOM text selection ranges, alternative locations, and persistence actions are encapsulated within `<CueEditorProvider>`, enabling zero-prop invocation with automatic fallback resolution across layout panels.
 - **Dynamic Dirty Tracking & Reactive Status Badges**: The Cue Inspector (`EditRightPanel`) tracks an `originalCue` baseline snapshot. When editing an existing cue, it dynamically indicates `Saved` (green checkmark) vs `Unsaved` (pulsing amber dot) based on changes to start/end times, quote text, category type, or character offsets. For new drafts, it displays `Draft` or `Draft (Unsaved)`.
 - **Clean Script Click Dismissal (`dismissIfClean`)**: Clicking anywhere on the clean screenplay canvas while in Edit mode safely dismisses the cue inspector back to the idle workstation overview when no unsaved changes exist (`!isDirty`), while strictly ignoring clicks on interactive buttons, input fields, staging markers, and active DOM text drag selections.
-- **Timestamp Capture & Live Precision Timecodes (`CueTimingInputs`)**: Start and End inputs display live formatted precision timecodes (`MM:SS.s`) above each field alongside `Clock` buttons to capture the player's current video time, or input manual values.
+- **Timestamp Capture, Live Precision Timecodes & Nudge Controls (`CueTimingCard`)**: Start and End timing cards display live formatted precision timecodes (`MM:SS.s`), interactive capture buttons to lock current player time, and rapid micro-nudge steppers (`+0.1s`, `-0.1s`, `+0.5s`, `-0.5s`) with loop segment previews.
 - **Manual Monospace Textarea (`CueTextSection`)**: Users can directly edit a cue's selected text in-place within the Edit Sync Cue panel. This allows safe text corrections without manual JSON editing while preserving character synchronization.
 - **ID Sanitization**: All cues loaded from any source (localStorage, built-in examples, remote projects, or pasted JSON) are automatically run through `sanitizeCues()`, which deduplicates IDs, migrates legacy `colorClass` to canonical semantic `type` while stripping the deprecated `colorClass` property, and injects fallback UUIDs for malformed entries.
 - **Duplicate Text & Alternative Location Finder**: When a phrase appears multiple times (e.g., `WIDE SHOT`), clicking "Find Alternative" scans the screenplay and presents a contextual list of all occurrences with character offsets and text snippets for instant snapping. Hidden `[[STAGING]]` block ranges are strictly excluded from search matches.
@@ -88,7 +88,7 @@ Multiple cues can span the same character ranges. In Edit Mode, overlapping regi
 When script text is edited or pasted, the "Resync" tool sorts cues chronologically by time, strips any legacy `colorClass` properties, and uses proximity-aware regex matching to re-anchor cue indices to the nearest logical position, falling back to a 15-character prefix search if major edits occurred.
 
 ### Edit Mode: Studio Workspace & Cue Management
-Desktop Edit Mode features a dedicated Two-Tier studio workspace in the Left Panel (`EditLeftPanel` & `SyncCuesPanel`) optimized for high-density cue inspection and authoring:
+Desktop Edit Mode features a dedicated Two-Tier studio workspace in the Left Panel (`WorkstationLeftPanel` hosting `SyncCuesPanel`) optimized for high-density cue inspection and authoring:
 
 - **Two-Tier Flex Architecture**:
   - **Tier 1 (Media Preview)**:
@@ -110,7 +110,7 @@ Desktop Edit Mode features a dedicated Two-Tier studio workspace in the Left Pan
     - **Secondary Co-Active Cues (`isActive && !isPrimary`)**: Renders with a clearly visible ambient gradient wash (`~16.2% → 4.5%`, `opacity-65`), but explicitly omits colored borders (retains default subtle border) and outer glow shadows to keep visual noise low during dense multi-track playback.
     - **Selected Cue (`isSelected`)**: Maintains primary focus outline (`rgba(${themed.rgb}, 0.7)` with focus ring) for manual inspector editing.
 - **Sync Cues Toolbar Capabilities**:
-  - **Collapsible Search & Filter Bar**: Rests in an ultra-slim single row by default with a `[ 🔍 Filter ]` toggle action, reclaiming ~64px of vertical height. Smoothly expands search input (with autofocus and <kbd>Escape</kbd> shortcut) and category pills when toggled or when active queries/filters are present.
+  - **Collapsible Search & Filter Bar**: Rests in an ultra-slim single row by default with a `[ 🔍 Filter ]` toggle action, reclaiming ~64px of vertical height. Smoothly auto-expands search input (with autofocus and <kbd>Escape</kbd> shortcut) and category pills when new filters are applied, while supporting explicit manual collapse via the `[ Filter ]` button or <kbd>Escape</kbd> without clearing active filters (with a pulsing blue indicator dot on the collapsed button).
   - **Multi-Select Category Filtering**: Category pills use a `Set<string>` to support concurrent multi-category filtering (e.g. `DIALOGUE` + `ACTION` simultaneously).
   - **One-Click Filter Reset**: Counter badge (`{filteredCount}/{totalCount}`) converts into an interactive reset button with an `X` when filtering is active, clearing all filters and auto-collapsing the bar in a single click.
   - **Action Tools**: Standardized on `[ { } JSON ]` for modal cue inspection and `[ ↺ Resync ]` for proximity realignment with animated `[ ✓ Synced ]` feedback.
@@ -124,11 +124,13 @@ Desktop Edit Mode features a dedicated Two-Tier studio workspace in the Left Pan
   - **Context-Aware Multi-Cue Highlighting**: All active cues firing at `currentTime` automatically illuminate with their category ambient wash, while the primary scroll anchor commands focus with an enhanced halo and border.
   - **High-Refresh Cubic Ease-Out Animator**: Uses display-refresh `smoothScrollTo` for fluid, non-blocking auto-scrolling with instant wheel/touch gesture cancellation so manual list scrolling is never fought.
   - **Forward Monotonic Scrolling Guard**: Prevents irritating rubber-band / yo-yo scrolling when nested cues finish inside a long-duration cue (e.g. Action cue spanning 0:00 to 0:10 after nested dialogue cues at 0:05–0:09 finish). The cue list smoothly scrolls forward without snapping back up to older enclosing cues.
-  - **Backward Seek & Filter Reset**: Seeking backwards (`currentTime < prevTime - 0.3s`), toggling category filters, changing density, or clearing searches immediately resets the monotonic guard, providing complete bidirectional scrubbing responsiveness.
+  - **Upcoming Cue Fallback & Mode Re-Anchoring**: When playback falls in an inter-cue silence gap or pause between lines (`activeCue === null`), auto-scroll resolves `scrollTargetCueId` to the immediate next upcoming cue (`findScrollTargetCue`), centering the viewport directly on the upcoming scene text without stranding the list at the top. Active visual highlights (`activeCueId`) remain strictly reserved for actively firing cues.
+  - **Backward Seek, Scrub & Mode Reset**: Switching modes into Edit mode (`mode === 'edit'`), scrubbing forward ($> 1.5$s jump) or backward ($> 0.3$s seek), selecting any cue card/row, toggling category filters, changing density, or clearing searches immediately resets the monotonic guard, providing complete bidirectional scrubbing responsiveness without downstream scroll lockouts.
   - **Filter-Aware Active Tracking**: When filtering cues by multi-select categories (e.g. Action, Camera, VFX) or typing search queries, active cue detection dynamically tracks the active cue among currently matching visible items, ensuring the panel scrolls to the active cue in the filtered set rather than being hidden or dropped due to unrendered dialogue.
+  - **Center-Tracking Viewport Spacers**: When the `[ 🎯 Scroll ]` toggle is enabled, `SyncCuesPanel` injects dynamic top and bottom spacers (`spacerHeight = Math.floor(viewportHeight / 2)` measured via `useLayoutEffect` and `ResizeObserver`) into the scroll viewport. This provides sufficient scroll margin for boundary cues at the very beginning or end of the script timeline to track directly in the vertical center of the view, eliminating container edge clamping. Spacers automatically collapse to 0 when auto-scroll is disabled for compact manual browsing, and during empty-filter states to keep feedback cards centered without scrollbars.
 
 ### Studio-Grade Cues JSON Editor & LLM Sync Setup (`RawCuesModal`)
-Accessible via `[ { } JSON ]` on the `SyncCuesToolbar`, the Raw Cues modal provides a studio-grade 2-column workstation for inspecting, formatting, and synchronizing cues directly with LLM structured outputs:
+Accessible from anywhere via the **File** dropdown (`Sync Cues (JSON)...`) and via `[ { } JSON ]` on the `SyncCuesToolbar` in Edit mode, the Raw Cues modal provides a studio-grade 2-column workstation for inspecting, formatting, and synchronizing cues directly with LLM structured outputs:
 
 - **Two-Column Workstation Architecture**:
   - **Left Column (Schema Reference & Guide)**:
@@ -152,6 +154,45 @@ Accessible via `[ { } JSON ]` on the `SyncCuesToolbar`, the Raw Cues modal provi
   - Automatically switches actions based on the active tab:
     - In **`JSON Data`**: Displays `Cancel` and `Apply Cues ({count})` (disabled when invalid or empty).
     - In **`Sync Prompt & Schema`**: Displays `Close` and an active `Go to JSON Data →` shortcut, with Title Case typography and `whitespace-nowrap` to prevent button height distortion.
+
+### Studio-Grade Screenplay Editor (`RawScriptModal`)
+Accessible from the desktop **File** dropdown (`Source Script...`) or the Edit mode center panel header (`[Edit Source]`), the Studio Script Editor offers a distraction-free, 3-column workstation for editing full screenplay text, managing Auteur Script containers, and navigating narrative structure:
+
+- **Expansive Studio Canvas (`max-w-7xl`)**:
+  - Provides a generous 1280px modal container with a 700px+ editor viewport, preventing horizontal claustrophobia when sidebars are open.
+  - Aligns top horizon baselines across all panels with a uniform `h-9` (36px) subheader height for Outline, Canvas stats (`Fountain / Text`, lines, chars), and Formatting Guide.
+- **Collapsible Hierarchical Script Outline (`ScriptOutlineSidebar`)**:
+  - **4-Rank Structural Parser**: Automatically organizes text into a navigable table of contents across 4 ranks: Rank 1 (`PART`), Rank 2 (Roman numerals `I. ...`), Rank 3 (Scene headings `INT./EXT.`), and Rank 4 (Staging containers, Brief blocks, and Directive tags).
+  - **Fast-Path Character Heuristic & Bottom-Up Counting**: Evaluates first-character anchors (`[`, `#`, and candidate section characters) to bypass ~95% of regex evaluations on dialogue/action lines, coupled with a single-pass bottom-up $O(N)$ descendant counting algorithm.
+  - **Virtual-Free High Density (`content-visibility: auto`)**: Employs CSS `contain-intrinsic-size: 26px` and `content-visibility: auto` on outline rows to eliminate browser layout and DOM tree calculation overhead across large scripts without third-party virtualizer dependencies.
+  - **Collapsible Section Hierarchy**: Sections feature chevron toggles and item count badges. Clicking "Collapse All" or "Expand All" controls the entire document tree.
+  - **Auto-Unfolding Navigation**: Clicking any outline entry auto-unfolds any collapsed ancestor sections and smooth-scrolls the textarea caret directly to the target line.
+- **Soft Word-Wrap with Gutter Alignment (`ScriptEditorCanvas`, `useWordWrap`)**:
+  - Accessible via toolbar `[ Wrap ]` toggle or <kbd>Alt+Z</kbd>.
+  - Built with an off-screen measurement mirror container (`pre-wrap` with matching monospace metrics) that measures the exact rendered pixel height of every wrapped line.
+  - Gutter line number elements bind matching dynamic heights (`style={{ height: `${lineHeights[idx]}px` }}`), ensuring line numbers stay locked to their corresponding text rows with 1:1 pixel accuracy during deep scrolling.
+  - **Zero-Reflow Protection**: Height measurements guard against redundant empty array allocations on unwrapped scripts to avoid synchronous pre-paint re-renders.
+- **Searchable Formatting Guide (`ScriptFormattingGuide`)**:
+  - Dedicated right-hand cheat sheet sidebar (`[ Guide ]` toggle) with real-time text search and category filters (`Structure`, `Directives`, `Dialogue`, `Effects`).
+  - Contains 1-click **Insert** and **Copy** actions for Fountain tags, screenplay headings, transitions, and Auteur directives.
+  - Renders live visual preview badges matching SceneFlow's real-time parser output (e.g. `STAGING: INTENT` badge, `[<BRIEF>]` waterfall preview, italicized parentheticals).
+- **Single-Tier Streamlined Toolbar (`ScriptEditorToolbar`)**:
+  - Designed as an ultra-compact single row (`h-10`, `flex-nowrap overflow-x-auto`) to eliminate multi-tier button wrapping across all screen widths.
+  - **Unified Segmented View Switcher**: Grouped `Outline` (with live item count pill), `Wrap`, and `Guide` toggles.
+  - **Container Wrapping Shortcuts**: Dedicated one-click buttons to wrap selections in `[[STAGING]]` or `[<BRIEF>]` execution blocks.
+  - **Core Directive Presets**: Quick-access tags for `[[INTENT]]`, `[[LOGIC]]`, `[[AESTHETIC]]`, and `[[OPENING]]`.
+  - **Persistent Custom Tags**: Save custom directive tags in `localStorage` (`sceneflow_custom_script_tags`) with 1-click selection wrapping and individual `×` removal pips.
+  - **Right-Aligned History & Document Actions**: Undo (<kbd>Ctrl+Z</kbd>), Redo (<kbd>Ctrl+Y</kbd>), File Import, Text Download, Clipboard Copy (with animated "Copied!" feedback badge), Whitespace Standardizer (`[ Wand ]`), and Clear.
+- **Debounced Undo/Redo Engine (`useScriptHistory`)**:
+  - Keystroke history stack with 300ms debouncing that preserves precise caret indices and scroll offsets across undo/redo actions.
+  - Eagerly initializes initial script state during declaration to eliminate post-mount cascading re-renders.
+- **High-Performance Architecture & Instant Launch Engine**:
+  - **Zero-Jank Modal Mount**: Prevents main-thread stalls by removing heavy full-screen blur filters during entrance transitions, applying `will-change-[transform,opacity]`, and eliminating mount-time layout reflows for an immediate 60 FPS open animation.
+  - **Concurrent UI Scheduling (`useDeferredValue`)**: Outline structural parsing runs with deferred React 19 concurrent priority, keeping keystrokes and modal animations at high refresh rates even across 2,000+ line screenplays.
+  - **Full Component Tree Memoization**: All modular components (`ScriptOutlineSidebar`, `ScriptEditorToolbar`, `ScriptEditorCanvas`, `ScriptEditorFooter`, `ScriptModalHeader`, `ScriptFormattingGuide`) and their callbacks are strictly memoized to prevent spurious re-renders on keystrokes.
+- **Unsaved Draft Protection & Realign Integration**:
+  - Displays an animated `Unsaved Draft` badge in the header whenever text is modified.
+  - "Revert Draft" restores the original script text, while "Apply Changes" commits the new text with optional automatic cue realignment (`Auto-realign cues to updated text`).
 
 ---
 
@@ -222,9 +263,13 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 
 ### Desktop 3-Panel Edit Workstation & Draggable Cue Inspector
 - **Dedicated 3-Panel Workstation Layout**: Desktop Edit Mode organizes the workspace into three specialized vertical columns calibrated to **40 / 35 / 25**:
-  1. *Left Panel (`EditLeftPanel`)*: Defaults to **40%** width, housing the media preview with live timecode HUD badge, persistent transport controls, and the time-clustered Sync Cues fluid grid.
+  1. *Left Panel (`WorkstationLeftPanel`)*: Defaults to **40%** width, housing the media preview with live timecode HUD badge, persistent transport controls, and the time-clustered Sync Cues fluid grid.
   2. *Center Panel (Screenplay Canvas)*: Defaults to **35%** width (`flex-1 min-w-0`), an unobstructed reading canvas ensuring screenplay text editing never overlaps or collides with the cue inspector.
   3. *Right Panel (`EditRightPanel`)*: Defaults to **25%** width, a dedicated Cue Inspector panel featuring a 48px header matching the script toolbar, active status indicator (`Drafting`, `Editing`, `Idle`), collapsible toggle, embedded `CueEditorForm`, and an idle overview displaying cue statistics by category with quick editing shortcuts.
+  - *BRIEF State Engine Statistics & Section Cascade Breakdown*: When the inspector is idle in Edit Mode and the active screenplay contains one or more `[<BRIEF>]` execution blocks, the panel surfaces a dedicated **BRIEF State Engine** deck. It computes and displays:
+    - **Global Macro-States ($S_n$) & Sub-States**: Total count of active macro-state lines and total sub-state beat transformations (split by the `->` operator).
+    - **Granular Per-Section Breakdown**: Cards for each `[<BRIEF>]` block detailing its section index (`Brief #N`), nearest preceding scene context anchor (e.g. `I. FALSE PRETENSE` or `INT. CORRIDOR - NIGHT`), cumulative state range ($S_{start}–S_{end}$), and individual macro/sub-state counts.
+    - **Zero-Footprint Inactive State**: Automatically omitted on standard screenplays without `[<BRIEF>]` blocks to preserve clean, distraction-free cue management.
 - **Draggable Vertical Inspector Splitter (`InspectorSplitDivider`)**:
   - Dragging the divider between the screenplay canvas and cue inspector resizes inspector ratio between `18%` (minimum, pixel floor `260px`) and `45%` (maximum), defaulting to `25%`.
   - Enforces minimum width floors so neither the script canvas nor inspector are ever crushed.
@@ -252,7 +297,7 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 - **Session Persistence**: Stored in `localStorage` (`sceneflow_playback_video_collapsed`), and unified with the Reset View Layout action in Studio Settings or <kbd>Shift+R</kbd> to restore the video player in a single click.
 
 ### Persistent Playback Header Transport Controls
-- **Always-Accessible Media Controls**: The `PLAYBACK` section header in `PlaybackLeftPanel` houses dedicated playback transport controls:
+- **Always-Accessible Media Controls**: The media header in `WorkstationLeftPanel` houses dedicated playback transport controls:
   - **Play / Pause Toggle**: Dynamically toggles between `Play` and `Pause` states with responsive icons and an active blue accent highlight when media is actively playing. Synchronized with the global <kbd>Space</kbd> and <kbd>K</kbd> keyboard shortcuts.
   - **Replay from Beginning (`0:00`)**: A single click on the `Replay` button (`RotateCcw`) immediately jumps playback to `0:00` and resumes playback, enabling fast iterative review without needing manual timeline scrubbing.
 - **Continuous Operation While Video Is Collapsed**: Even when the video viewport is hidden via the `Hide Video` toggle or <kbd>V</kbd> key, the transport controls remain pinned in the header, allowing users to control playback and audio during timeline screen recording.
@@ -261,8 +306,8 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 ### Global 3-Zone Studio Header Layout (`AppHeader`, `ScriptHeaderControls`)
 - **Balanced 3-Zone Composition**: Replaced the previous single-row cluster with a studio-grade 3-zone layout separating brand utilities, workflow state, and content/preferences:
   - **Left Wing (Brand & File Management)**: Houses the SceneFlow logo alongside a dedicated desktop `[ File ▾ ]` dropdown menu (`UI_TOKENS.button.filePill`), organized into three distinct tiers separated by hairline dividers:
-    1. *Project I/O*: `Open Project...` and `Save Project` for the primary inspect-and-sync workflow.
-    2. *Blank Canvas*: `New Project` with confirmation modal to clear the workspace and open Edit mode.
+    1. *Project I/O*: `Open Project...`, `Save Project`, and `New Project` (with confirmation modal) for complete project lifecycle management.
+    2. *Script & Cue Data*: Direct access to `Sync Cues (JSON)...` (`RawCuesModal`) and `Source Script...` (`RawScriptModal`) for raw data inspection, AI prompt generation, and bulk editing without mode switching.
     3. *Resources & Discovery*: `Starter Guide` (`guide.json`) for the full interactive tutorial and `Browse Library...` for community screenplays.
   - **Center Stage (Workflow Mode Switcher)**: Features a centered segmented control (`[ ▶ Playback | ✏️ Edit ]`) with mode-specific active accents (soft blue for Playback, soft amber for Edit) and responsive icon collapsing. Both modes remain visible side-by-side, providing instant discoverability of the application's dual-mode architecture.
   - **Right Wing (Content, Support & Studio Tools)**:
@@ -367,6 +412,13 @@ Accessible directly inside both `ScriptColorModal` and `MobileColorModal`:
 - **Light & Warm Theme Safety**: Strictly inactive on light and warm themes (`Studio Crisp`, `Warm Parchment`, `Newsprint`), preserving standard reading comfort. Switching back to any dark theme instantly re-engages pure black rendering.
 - **Session Persistence**: User preference is preserved in `localStorage` (`sceneflow_pure_black_bg`).
 
+### Instant Theme Switching & Zero-Lag Transitions
+- **Instantaneous Visual Redraw**: Color theme changes (App Shell mode, Script Paper preset, and Pure Black Canvas) occur with zero transition lag or dropped frames.
+- **Eliminated Paint Thrashing**: Removed sluggish `0.25s` and `200ms` background and text color CSS transitions from `body`, `.script-paper-container`, and workstation panel containers, eliminating browser main-thread frame drops that previously occurred when the entire screenplay DOM reconciled concurrently with CSS color fades.
+- **DOM-Wide Transition Suppression Engine**: When switching themes, `disableTransitionsTemporarily()` momentarily applies `.disable-theme-transitions` (`transition: none !important;`) across all DOM nodes and pseudo-elements, executes a synchronous reflow (`offsetHeight`), and cleans up via double `requestAnimationFrame` once styles are painted.
+- **Preserved Micro-Animations**: Interactive UI controls (buttons, pills, modal dropdowns) retain their snappy hover states and press feedback (`active:scale-95`).
+- **Reduced Motion Compliance**: Integrated `@media (prefers-reduced-motion: reduce)` to automatically eliminate all animations and smooth-scrolling behaviors when system motion reduction is enabled.
+
 ### Configurable Screenplay Width Presets (Desktop Playback)
 Selectable directly within Studio Settings (`[ ⚙️ Settings ▾ ]`) via a 5-segment progressive width bar control under Reading Canvas & Viewport:
 - *Narrow*: 384px (`max-w-sm`) — Focused reading column.
@@ -401,8 +453,8 @@ All project states (`screenplay_sync_state`), active workflow mode (`sceneflow_a
 - **Default Load**: Fresh visits default to loading the **Scene Frequency** (`scene_frequency.json`) demo script.
 - **Synchronous Player Reset on Load**: Project loaders (`New Project`, `Starter Guide`, `Open Project...`, example scripts, and remote URLs) synchronously trigger `resetPlayback()` in `useYouTubePlayer`, clearing running timers, zeroing timecode to `00:00`, and pausing and seeking the player.
 - **`[ File ▾ ]` Desktop Dropdown Menu**: Accessible from the desktop header with a 3-tier organized structure:
-  1. *Project I/O*: `Open Project...` (local `.json` file upload) and `Save Project` (export active state).
-  2. *Blank Canvas*: `New Project` prompts confirmation to clear the workspace with a fresh empty template (`blank.json`) and automatically transitions into Edit mode.
+  1. *Project I/O*: `Open Project...` (local `.json` file upload), `Save Project` (export active state), and `New Project` (prompts confirmation to clear workspace with `blank.json` and transitions into Edit mode).
+  2. *Script & Cue Data*: `Sync Cues (JSON)...` to inspect/edit raw cues and copy AI prompts/schemas, and `Source Script...` for raw script editing.
   3. *Reference & Discovery*: `Starter Guide` loads the official 1,200+ line interactive instructional guide (`guide.json`) in Playback mode; `Browse Library...` opens the curated example catalog modal.
 
 ### Export & Import
@@ -433,24 +485,51 @@ For a complete and up-to-date list of all available sceneflow projects, release 
 
 ### Desktop App Info Modal (`AppInfoModal`)
 Accessible via the `i` (Info) icon button in the desktop header toolbar:
-- **Dynamic Version & Metadata**: Automatically loads current version (`v2.4.0`), app title, and description directly from `metadata.json`.
+- **Dynamic Version & Metadata**: Automatically loads current version (`v2.5.0`), app title, and description directly from `metadata.json`.
 - **Author Attribution**: Features creator credit for **Taruma Sakti** in header and footer linking directly to [Linktree](https://linktr.ee/tarumainfo).
 - **Featured Substack Deep Dive**: Prominent hero card showcasing the official introductory article (*Introducing SceneFlow: Script-to-Screen Synchronization* on Substack) with a dedicated header badge, full-width summary, and direct article link.
 - **Interactive Resource Grid**: 2x2 resource links for GitHub Repository, Documentation / Guide, Release Notes (Changelog), and Ko-fi Support.
+- **Dynamic Quick Shortcuts Table**: Displays essential shortcuts pulled directly from the centralized registry, with a direct **Full Cheat-Sheet (?)** action button to launch the comprehensive shortcuts modal.
 - **MIT License**: License status indicator.
 
-### Global Keyboard Shortcuts & Modal Dismissal
-Available on desktop across both Playback and Edit modes with automatic input/textarea and modal guards:
-- `Space` / `K`: Toggle YouTube video playback (Play / Pause).
-- `←` / `→` (ArrowLeft / ArrowRight): Seek -5s / +5s.
-- `J` / `L`: Seek -5s / +5s (YouTube standard navigation hotkeys).
-- `V`: Toggle video player visibility / collapse (Playback and Edit modes).
-- `Shift + C`: Open Script Paper & Colors modal.
-- `Shift + T`: Open Timing & Durations modal.
-- `Shift + R`: Reset View Layout & Video Size to defaults.
-- `Esc`: Close any active modal or popover (`ScriptColorModal`, `TimingSettingsModal`, `LibraryModal`, `MobileLibraryModal`, `RawScriptModal`, `RawCuesModal`, `DeleteConfirmationModal`, `ResetConfirmationModal`, `StagingModal`, `AppInfoModal`, `OverlapPicker`).
-- **Backdrop Dismissal**: Clicking outside modal content on the backdrop overlay dismisses the active modal.
-- **Shortcuts Safeguard**: All playback and studio hotkeys are automatically gated and disabled whenever any modal or confirmation prompt is open, or when typing inside inputs, textareas, or contentEditable elements.
+### Centralized Keyboard Shortcuts Modal (`KeyboardShortcutsModal`)
+Accessible from anywhere in the app via the global <kbd>?</kbd> (<kbd>Shift+/</kbd>) shortcut, through Studio Preferences (`[ ⚙️ Settings ▾ ]`), or via `AppInfoModal`:
+- **Real-Time Multi-Attribute Search**: Live filtering matching shortcut labels, descriptions, key combinations, and secondary aliases.
+- **Category Filter Tabs**: 6 dedicated categories with count badges and icons: **Playback**, **Studio**, **Script**, **Cue**, **Splitters**, and **General**.
+- **Platform-Aware Key Glyphs**: Automatically detects client operating system, rendering Apple glyphs (<kbd>⌘</kbd>, <kbd>⌥ Option</kbd>, <kbd>⇧ Shift</kbd>) on macOS and PC labels (<kbd>Ctrl</kbd>, <kbd>Alt</kbd>, <kbd>Shift</kbd>) on Windows and Linux.
+- **Layout Stabilization**: Employs a locked `h-[620px] max-h-[85vh]` container geometry, permanently eliminating vertical jumping and dialog re-centering when switching between tabs with different item counts.
+
+### Comprehensive Keyboard Shortcuts Reference
+
+| Category | Shortcut (Win / Linux) | Shortcut (macOS) | Action / Description | Context |
+| :--- | :--- | :--- | :--- | :--- |
+| **Playback** | <kbd>Space</kbd> / <kbd>K</kbd> | <kbd>Space</kbd> / <kbd>K</kbd> | Toggle YouTube video playback (Play / Pause) | Global |
+| **Playback** | <kbd>←</kbd> / <kbd>→</kbd> | <kbd>←</kbd> / <kbd>→</kbd> | Jump backward / forward 5 seconds | Global |
+| **Playback** | <kbd>J</kbd> / <kbd>L</kbd> | <kbd>J</kbd> / <kbd>L</kbd> | Jump backward / forward 5 seconds (YouTube standard) | Global |
+| **Playback** | <kbd>V</kbd> | <kbd>V</kbd> | Toggle video player collapse / visibility | Global |
+| **Studio** | <kbd>Shift + C</kbd> | <kbd>Shift + C</kbd> | Open Script Paper & Colors modal | Global |
+| **Studio** | <kbd>Shift + T</kbd> | <kbd>Shift + T</kbd> | Open Timing & Durations settings modal | Global |
+| **Studio** | <kbd>Shift + R</kbd> | <kbd>Shift + R</kbd> | Reset View Layout, split ratios, and video height | Global |
+| **Navigation** | <kbd>Shift + F</kbd> / <kbd>Alt + F</kbd> | <kbd>Shift + F</kbd> / <kbd>Alt + F</kbd> | Toggle desktop File dropdown menu | Global |
+| **Navigation** | <kbd>Shift + S</kbd> | <kbd>Shift + S</kbd> | Open Source Script editor modal (badged in File menu) | Global |
+| **Navigation** | <kbd>Shift + E</kbd> | <kbd>Shift + E</kbd> | Open Cue Editor JSON modal (badged in File menu) | Global |
+| **Navigation** | <kbd>Shift + L</kbd> | <kbd>Shift + L</kbd> | Open Script Library catalogue | Global |
+| **Navigation** | <kbd>?</kbd> (<kbd>Shift + /</kbd>) | <kbd>?</kbd> (<kbd>Shift + /</kbd>) | Open Keyboard Shortcuts cheat-sheet modal | Global |
+| **Authoring** | <kbd>Ctrl + Enter</kbd> | <kbd>⌘ + Enter</kbd> | Commit and apply script changes (badged in footer) | Inside Script Modal |
+| **Authoring** | <kbd>Ctrl + Enter</kbd> | <kbd>⌘ + Enter</kbd> | Save or update cue draft | Cue Inspector |
+| **Authoring** | <kbd>Alt + Z</kbd> | <kbd>⌥ + Z</kbd> | Toggle soft word-wrap with pixel-aligned gutter | Inside Script Modal |
+| **Authoring** | <kbd>Ctrl + Z</kbd> | <kbd>⌘ + Z</kbd> | Undo text edit with 300ms debounce | Inside Script Modal |
+| **Authoring** | <kbd>Ctrl + Y</kbd> / <kbd>Ctrl+Shift+Z</kbd> | <kbd>⌘ + Shift + Z</kbd> | Redo text edit | Inside Script Modal |
+| **Splitters** | <kbd>←</kbd> / <kbd>→</kbd> | <kbd>←</kbd> / <kbd>→</kbd> | Shift panel split ratio by 1% | Focused Divider |
+| **Splitters** | <kbd>↑</kbd> / <kbd>↓</kbd> | <kbd>↑</kbd> / <kbd>↓</kbd> | Adjust video height by 10px | Focused Divider |
+| **Splitters** | <kbd>Enter</kbd> / <kbd>Home</kbd> | <kbd>Enter</kbd> / <kbd>Home</kbd> | Reset split ratio to default | Focused Divider |
+| **General** | <kbd>Esc</kbd> | <kbd>Esc</kbd> | Dismiss active modal, close search drawer, or cancel cue draft | Modal / Drawer |
+
+### Safeguards & Input Suppression
+- **Input Suppression Guard**: Single-character hotkeys and global modifier hotkeys are strictly suppressed whenever focus is inside an `<input>`, `<textarea>`, or `contentEditable` element (`isTypingInInput`), ensuring typing never accidentally triggers video jumps or launches dialogs.
+- **Modal Stack Isolation**: When any modal dialog is mounted (`disabled={isAnyModalOpen}`), global navigation and playback hotkeys are deactivated, allowing modal-internal hotkeys (<kbd>Esc</kbd>, <kbd>Ctrl+Enter</kbd>, <kbd>Ctrl+Z</kbd>) to operate without global interference.
+- **Truthful Badging Discipline**: Visual `<kbd>` shortcut badges are rendered only for actions with active event listeners. In the File dropdown, badges are cleanly scoped to "Source Script..." (<kbd>Shift+S</kbd>) and "Sync Cues (JSON)..." (<kbd>Shift+E</kbd>), leaving top-level and library navigation uncluttered.
+
 
 
 

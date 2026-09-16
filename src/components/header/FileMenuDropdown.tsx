@@ -5,7 +5,9 @@ import {
   Download, 
   Plus, 
   Sparkles, 
-  Book 
+  Book,
+  Braces,
+  FileText
 } from 'lucide-react';
 import { UI_TOKENS } from '../../styles/tokens/ui';
 import { cn } from '../../lib/utils';
@@ -21,6 +23,8 @@ export interface FileMenuDropdownProps {
   onNewProject?: () => void;
   onOpenGuide?: () => void;
   onOpenLibrary: () => void;
+  onOpenRawCuesModal?: () => void;
+  onOpenRawScriptModal?: () => void;
 }
 
 export const FileMenuDropdown: React.FC<FileMenuDropdownProps> = memo(({
@@ -32,6 +36,8 @@ export const FileMenuDropdown: React.FC<FileMenuDropdownProps> = memo(({
   onNewProject,
   onOpenGuide,
   onOpenLibrary,
+  onOpenRawCuesModal,
+  onOpenRawScriptModal,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -66,9 +72,9 @@ export const FileMenuDropdown: React.FC<FileMenuDropdownProps> = memo(({
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="app-file-menu-button"
-          className="absolute top-full left-0 mt-2 w-56 bg-surface rounded-2xl shadow-2xl border border-border-main overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 text-text-main divide-y divide-border-subtle"
+          className="absolute top-full left-0 mt-2 w-60 bg-surface rounded-2xl shadow-2xl border border-border-main overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 text-text-main divide-y divide-border-subtle"
         >
-          {/* Section 1: Project I/O (Open & Save) */}
+          {/* Section 1: Project I/O (Open, Save & New) */}
           <div className="p-1.5 space-y-0.5">
             <label
               role="menuitem"
@@ -104,11 +110,8 @@ export const FileMenuDropdown: React.FC<FileMenuDropdownProps> = memo(({
                 <span>Save Project</span>
               </div>
             </button>
-          </div>
 
-          {/* Section 2: Create Blank Slate */}
-          {onNewProject && (
-            <div className="p-1.5 space-y-0.5">
+            {onNewProject && (
               <button
                 role="menuitem"
                 onClick={() => {
@@ -123,6 +126,47 @@ export const FileMenuDropdown: React.FC<FileMenuDropdownProps> = memo(({
                   <span>New Project</span>
                 </div>
               </button>
+            )}
+          </div>
+
+          {/* Section 2: Script & Cue Data (Raw Editors) */}
+          {(onOpenRawCuesModal || onOpenRawScriptModal) && (
+            <div className="p-1.5 space-y-0.5">
+              {onOpenRawCuesModal && (
+                <button
+                  role="menuitem"
+                  onClick={() => {
+                    onClose();
+                    onOpenRawCuesModal();
+                  }}
+                  className={UI_TOKENS.dropdown.item}
+                  title="View, edit, or import sync cues JSON & AI prompt schema (Shift+E)"
+                >
+                  <div className="flex items-center gap-2">
+                    <Braces size={14} className="text-text-muted" />
+                    <span>Sync Cues (JSON)...</span>
+                  </div>
+                  <kbd className={UI_TOKENS.badge.shortcut}>Shift+E</kbd>
+                </button>
+              )}
+
+              {onOpenRawScriptModal && (
+                <button
+                  role="menuitem"
+                  onClick={() => {
+                    onClose();
+                    onOpenRawScriptModal();
+                  }}
+                  className={UI_TOKENS.dropdown.item}
+                  title="Edit source script text (Shift+S)"
+                >
+                  <div className="flex items-center gap-2">
+                    <FileText size={14} className="text-text-muted" />
+                    <span>Source Script...</span>
+                  </div>
+                  <kbd className={UI_TOKENS.badge.shortcut}>Shift+S</kbd>
+                </button>
+              )}
             </div>
           )}
 

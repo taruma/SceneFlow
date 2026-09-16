@@ -6,6 +6,25 @@ export type AppThemeCategory = 'light' | 'warm' | 'dark';
 
 const STORAGE_KEY = 'sceneflow_app_theme_mode';
 
+/**
+ * Suppresses CSS transitions across the entire DOM momentarily during theme or mode changes.
+ * This eliminates choppy paint transitions and frame drops caused by global CSS variable cascades.
+ */
+export function disableTransitionsTemporarily() {
+  if (typeof document === 'undefined') return;
+  const root = document.documentElement;
+  root.classList.add('disable-theme-transitions');
+
+  // Force synchronous reflow so that styles apply with transitions disabled
+  void root.offsetHeight;
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      root.classList.remove('disable-theme-transitions');
+    });
+  });
+}
+
 export function useAppShellTheme(currentScriptThemeId: ScriptThemeId) {
   const [themeMode, setThemeModeState] = useState<AppThemeMode>(() => {
     if (typeof localStorage !== 'undefined') {
@@ -37,6 +56,7 @@ export function useAppShellTheme(currentScriptThemeId: ScriptThemeId) {
   // Apply to documentElement
   useEffect(() => {
     if (typeof document !== 'undefined') {
+      disableTransitionsTemporarily();
       document.documentElement.setAttribute('data-theme-category', effectiveCategory);
       document.body.setAttribute('data-theme-category', effectiveCategory);
     }
