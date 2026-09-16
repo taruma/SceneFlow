@@ -155,6 +155,37 @@ Accessible from anywhere via the **File** dropdown (`Sync Cues (JSON)...`) and v
     - In **`JSON Data`**: Displays `Cancel` and `Apply Cues ({count})` (disabled when invalid or empty).
     - In **`Sync Prompt & Schema`**: Displays `Close` and an active `Go to JSON Data →` shortcut, with Title Case typography and `whitespace-nowrap` to prevent button height distortion.
 
+### Studio-Grade Screenplay Editor (`RawScriptModal`)
+Accessible from the desktop **File** dropdown (`Source Script...`) or the Edit mode center panel header (`[Edit Source]`), the Studio Script Editor offers a distraction-free, 3-column workstation for editing full screenplay text, managing Auteur Script containers, and navigating narrative structure:
+
+- **Expansive Studio Canvas (`max-w-7xl`)**:
+  - Provides a generous 1280px modal container with a 700px+ editor viewport, preventing horizontal claustrophobia when sidebars are open.
+  - Aligns top horizon baselines across all panels with a uniform `h-9` (36px) subheader height for Outline, Canvas stats (`Fountain / Text`, lines, chars), and Formatting Guide.
+- **Collapsible Hierarchical Script Outline (`ScriptOutlineSidebar`)**:
+  - **4-Rank Structural Parser**: Automatically organizes text into a navigable table of contents across 4 ranks: Rank 1 (`PART`), Rank 2 (Roman numerals `I. ...`), Rank 3 (Scene headings `INT./EXT.`), and Rank 4 (Staging containers, Brief blocks, and Directive tags).
+  - **Collapsible Section Hierarchy**: Sections feature chevron toggles and item count badges. Clicking "Collapse All" or "Expand All" controls the entire document tree.
+  - **Auto-Unfolding Navigation**: Clicking any outline entry auto-unfolds any collapsed ancestor sections and smooth-scrolls the textarea caret directly to the target line.
+- **Soft Word-Wrap with Gutter Alignment (`ScriptEditorCanvas`, `useWordWrap`)**:
+  - Accessible via toolbar `[ Wrap ]` toggle or <kbd>Alt+Z</kbd>.
+  - Built with an off-screen measurement mirror container (`pre-wrap` with matching monospace metrics) that measures the exact rendered pixel height of every wrapped line.
+  - Gutter line number elements bind matching dynamic heights (`style={{ height: `${lineHeights[idx]}px` }}`), ensuring line numbers stay locked to their corresponding text rows with 1:1 pixel accuracy during deep scrolling.
+- **Searchable Formatting Guide (`ScriptFormattingGuide`)**:
+  - Dedicated right-hand cheat sheet sidebar (`[ Guide ]` toggle) with real-time text search and category filters (`Structure`, `Directives`, `Dialogue`, `Effects`).
+  - Contains 1-click **Insert** and **Copy** actions for Fountain tags, screenplay headings, transitions, and Auteur directives.
+  - Renders live visual preview badges matching SceneFlow's real-time parser output (e.g. `STAGING: INTENT` badge, `[<BRIEF>]` waterfall preview, italicized parentheticals).
+- **Single-Tier Streamlined Toolbar (`ScriptEditorToolbar`)**:
+  - Designed as an ultra-compact single row (`h-10`, `flex-nowrap overflow-x-auto`) to eliminate multi-tier button wrapping across all screen widths.
+  - **Unified Segmented View Switcher**: Grouped `Outline` (with live item count pill), `Wrap`, and `Guide` toggles.
+  - **Container Wrapping Shortcuts**: Dedicated one-click buttons to wrap selections in `[[STAGING]]` or `[<BRIEF>]` execution blocks.
+  - **Core Directive Presets**: Quick-access tags for `[[INTENT]]`, `[[LOGIC]]`, `[[AESTHETIC]]`, and `[[OPENING]]`.
+  - **Persistent Custom Tags**: Save custom directive tags in `localStorage` (`sceneflow_custom_script_tags`) with 1-click selection wrapping and individual `×` removal pips.
+  - **Right-Aligned History & Document Actions**: Undo (<kbd>Ctrl+Z</kbd>), Redo (<kbd>Ctrl+Y</kbd>), File Import, Text Download, Clipboard Copy (with animated "Copied!" feedback badge), Whitespace Standardizer (`[ Wand ]`), and Clear.
+- **Debounced Undo/Redo Engine (`useScriptHistory`)**:
+  - Keystroke history stack with 300ms debouncing that preserves precise caret indices and scroll offsets across undo/redo actions.
+- **Unsaved Draft Protection & Realign Integration**:
+  - Displays an animated `Unsaved Draft` badge in the header whenever text is modified.
+  - "Revert Draft" restores the original script text, while "Apply Changes" commits the new text with optional automatic cue realignment (`Auto-realign cues to updated text`).
+
 ---
 
 ## 4. Multi-Track Sync Timeline & Active Highlights

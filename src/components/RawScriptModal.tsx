@@ -1,69 +1,370 @@
-import React from 'react';
-import { FileText, X } from 'lucide-react';
+import React, { useState, useRef, useCallback } from 'react';
 import { UI_TOKENS } from '../styles/tokens/ui';
 import { useEscapeKey } from '../hooks/useEscapeKey';
+import { 
+  RawScriptModalProps,
+  TocItem,
+  useScriptHistory,
+  useWordWrap,
+  useScriptOutline,
+  useCustomTags,
+  ScriptModalHeader,
+  ScriptOutlineSidebar,
+  ScriptEditorToolbar,
+  ScriptEditorCanvas,
+  ScriptEditorFooter,
+  ScriptFormattingGuide,
+} from './raw-script';
 
-interface RawScriptModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  scriptText: string;
-  onChangeScriptText: (text: string) => void;
-}
+export type { TocItem, RawScriptModalProps } from './raw-script';
 
 export function RawScriptModal({
   isOpen,
   onClose,
   scriptText,
+  onSaveScript,
   onChangeScriptText,
+  activeCuesCount = 0,
 }: RawScriptModalProps) {
-  useEscapeKey(onClose, isOpen);
+  const [autoRealign, setAutoRealign] = useState(true);
+  const [copied, setCopied] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const lineNumbersRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Undo / Redo history engine
+  const {
+    draftText,
+    setDraftText,
+    canUndo,
+    canRedo,
+    pushHistory,
+    handleUndo,
+    handleRedo,
+    handleTextareaChange,
+    handleKeyDown: historyKeyDown,
+    lastTypingTimeoutRef,
+  } = useScriptHistory({
+    initialText: scriptText,
+    isOpen,
+    textareaRef,
+    lineNumbersRef,
+  });
+
+  // Word wrap (soft wrap) and gutter height measurement
+  const {
+    wordWrap,
+    toggleWordWrap,
+    lineHeights,
+    mirrorWidth,
+    mirrorRef,
+    lines,
+    lineCount,
+    lineNumbersText,
+  } = useWordWrap({
+    draftText,
+    textareaRef,
+  });
+
+  // Handle keydown with Alt+Z word wrap toggle + history shortcuts
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.altKey && e.key.toLowerCase() === 'z') {
+      e.preventDefault();
+      toggleWordWrap();
+      return;
+    }
+    historyKeyDown(e);
+  }, [toggleWordWrap, historyKeyDown]);
+
+  // Collapsible hierarchical outline
+  const {
+    showToc,
+    setShowToc,
+    activeTocId,
+    collapsedSectionIds,
+    tocItems,
+    visibleTocItems,
+    descendantCountMap,
+    collapsibleItemIds,
+    areAllCollapsed,
+    toggleSectionCollapse,
+    toggleCollapseAll,
+    handleNavigateToSection,
+  } = useScriptOutline({
+    draftText,
+    wordWrap,
+    lineHeights,
+    textareaRef,
+    lineNumbersRef,
+  });
+
+  // Persistent Custom Tags kit & staging insertion
+  const {
+    customTags,
+    removeCustomTag,
+    handleWrapSelection,
+    handleWrapBrief,
+    handleCustomTagPrompt,
+  } = useCustomTags({
+    textareaRef,
+    lineNumbersRef,
+    lastTypingTimeoutRef,
+    setDraftText,
+    pushHistory,
+  });
+
+  const isDirty = draftText !== (scriptText || '');
+
+  // Insert snippet from formatting guide directly into editor
+  const handleInsertSnippet = useCallback((snippet: string) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart ?? draftText.length;
+    const end = textarea.selectionEnd ?? draftText.length;
+    const before = draftText.substring(0, start);
+    const after = draftText.substring(end);
+    const newText = before + snippet + after;
+    const newPos = start + snippet.length;
+
+    setDraftText(newText);
+    pushHistory(newText, newPos, newPos, textarea.scrollTop);
+
+    requestAnimationFrame(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus({ preventScroll: true });
+        textareaRef.current.setSelectionRange(newPos, newPos);
+      }
+    });
+  }, [draftText, setDraftText, pushHistory]);
+
+  // File Import Logic
+  const handleFileImport = useCallback((file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result;
+      if (typeof text === 'string') {
+        setDraftText(text);
+        pushHistory(text, 0, 0, 0);
+      }
+    };
+    reader.readAsText(file);
+  }, [setDraftText, pushHistory]);
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileImport(file);
+    }
+    e.target.value = '';
+  };
+
+  // Drag and Drop
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      handleFileImport(file);
+    }
+  };
+
+  // Export File (.txt with timestamp and 4-digit identifier)
+  const handleExport = () => {
+    const now = new Date();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+    const identifier = Math.floor(1000 + Math.random() * 9000);
+    const filename = `script_${timestamp}_${identifier}.txt`;
+
+    const blob = new Blob([draftText], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  // Copy to Clipboard
+  const handleCopy = () => {
+    if (navigator?.clipboard) {
+      navigator.clipboard.writeText(draftText).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1800);
+      });
+    }
+  };
+
+  // Format / Clean Whitespace
+  const handleCleanFormat = () => {
+    const prevScrollTop = textareaRef.current?.scrollTop ?? 0;
+    const cleaned = draftText
+      .split('\n')
+      .map(line => line.trimEnd())
+      .join('\n')
+      .replace(/\n{3,}/g, '\n\n');
+    setDraftText(cleaned);
+    pushHistory(cleaned, 0, 0, prevScrollTop);
+
+    requestAnimationFrame(() => {
+      if (textareaRef.current) {
+        textareaRef.current.scrollTop = prevScrollTop;
+      }
+      if (lineNumbersRef.current) {
+        lineNumbersRef.current.scrollTop = prevScrollTop;
+      }
+    });
+  };
+
+  // Clear Editor (revertible via Revert Draft or Undo)
+  const handleClear = () => {
+    setDraftText('');
+    pushHistory('', 0, 0, 0);
+  };
+
+  // Reset to Saved Script
+  const handleReset = () => {
+    const saved = scriptText || '';
+    setDraftText(saved);
+    pushHistory(saved, 0, 0, 0);
+  };
+
+  // Close & Discard Draft
+  const handleClose = useCallback(() => {
+    setDraftText(scriptText || '');
+    onClose();
+  }, [scriptText, onClose, setDraftText]);
+
+  useEscapeKey(handleClose, isOpen);
+
+  // Apply Changes
+  const handleApply = () => {
+    if (onSaveScript) {
+      onSaveScript(draftText, autoRealign);
+    } else if (onChangeScriptText) {
+      onChangeScriptText(draftText);
+    }
+    onClose();
+  };
 
   if (!isOpen) return null;
 
   return (
-    <div 
-      className={UI_TOKENS.modal.overlayHeavy}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div className={UI_TOKENS.modal.containerMd}>
+    <div className={UI_TOKENS.modal.overlayHeavy}>
+      <div className="bg-surface w-[96vw] max-w-7xl h-[90vh] md:h-[92vh] rounded-[1.75rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border-main text-text-main flex flex-col">
+        
+        {/* Modal Header */}
+        <ScriptModalHeader isDirty={isDirty} onClose={handleClose} />
 
-        <div className={UI_TOKENS.modal.bodyPad}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className={UI_TOKENS.iconWrapper.neutral}>
-                <FileText size={24} className="text-text-body" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-text-main">Source Script</h3>
-                <p className="text-xs text-text-faint uppercase tracking-[0.2em] font-black">Initial Input & Bulk Edit</p>
-              </div>
-            </div>
-            <button 
-              onClick={onClose}
-              className={UI_TOKENS.button.iconClose}
-            >
-              <X size={24} />
-            </button>
-          </div>
+        {/* Toolbar: Outline Toggle, Wrap Tags, Undo/Redo & File Actions */}
+        <ScriptEditorToolbar
+          showToc={showToc}
+          onToggleToc={() => setShowToc(prev => !prev)}
+          tocCount={tocItems.length}
+          wordWrap={wordWrap}
+          onToggleWordWrap={toggleWordWrap}
+          showGuide={showGuide}
+          onToggleGuide={() => setShowGuide(prev => !prev)}
+          onWrapSelection={handleWrapSelection}
+          onWrapBrief={handleWrapBrief}
+          customTags={customTags}
+          onRemoveCustomTag={removeCustomTag}
+          onAddCustomTag={handleCustomTagPrompt}
+          canUndo={canUndo}
+          onUndo={handleUndo}
+          canRedo={canRedo}
+          onRedo={handleRedo}
+          fileInputRef={fileInputRef}
+          onFileInputChange={handleFileInputChange}
+          onExport={handleExport}
+          onCopy={handleCopy}
+          copied={copied}
+          onCleanFormat={handleCleanFormat}
+          onClear={handleClear}
+        />
+
+        {/* Modal Workstation: Table of Contents Sidebar + Script Editor + Formatting Guide */}
+        <div className="flex-1 flex min-h-0 overflow-hidden divide-x divide-border-subtle">
           
-          <textarea
-            value={scriptText}
-            onChange={(e) => onChangeScriptText(e.target.value)}
-            className={`h-96 ${UI_TOKENS.input.textarea}`}
-            placeholder="Paste your script here..."
+          {/* Left Column: Outline Sidebar */}
+          <ScriptOutlineSidebar
+            showToc={showToc}
+            tocItems={tocItems}
+            visibleTocItems={visibleTocItems}
+            activeTocId={activeTocId}
+            descendantCountMap={descendantCountMap}
+            collapsibleItemIds={collapsibleItemIds}
+            areAllCollapsed={areAllCollapsed}
+            collapsedSectionIds={collapsedSectionIds}
+            toggleSectionCollapse={toggleSectionCollapse}
+            toggleCollapseAll={toggleCollapseAll}
+            handleNavigateToSection={handleNavigateToSection}
           />
 
-          <div className="flex justify-end gap-3 pt-2">
-            <button
-              onClick={onClose}
-              className={UI_TOKENS.button.primary}
-            >
-              Done
-            </button>
-          </div>
+          {/* Center Column: Script Editor Canvas with Line Numbers */}
+          <ScriptEditorCanvas
+            textareaRef={textareaRef}
+            lineNumbersRef={lineNumbersRef}
+            mirrorRef={mirrorRef}
+            draftText={draftText}
+            onTextChange={handleTextareaChange}
+            onKeyDown={handleKeyDown}
+            onScroll={(e) => {
+              if (lineNumbersRef.current) {
+                lineNumbersRef.current.scrollTop = e.currentTarget.scrollTop;
+              }
+            }}
+            wordWrap={wordWrap}
+            lines={lines}
+            lineHeights={lineHeights}
+            lineNumbersText={lineNumbersText}
+            mirrorWidth={mirrorWidth}
+            isDragging={isDragging}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          />
+
+          {/* Right Column: Formatting Guide Sidebar */}
+          <ScriptFormattingGuide
+            isOpen={showGuide}
+            onClose={() => setShowGuide(false)}
+            onInsertSnippet={handleInsertSnippet}
+          />
+
         </div>
+
+        {/* Bottom Footer Bar */}
+        <ScriptEditorFooter
+          isDirty={isDirty}
+          onReset={handleReset}
+          lineCount={lineCount}
+          charCount={draftText.length}
+          wordWrap={wordWrap}
+          onToggleWordWrap={toggleWordWrap}
+          activeCuesCount={activeCuesCount}
+          autoRealign={autoRealign}
+          onToggleAutoRealign={setAutoRealign}
+          onClose={handleClose}
+          onApply={handleApply}
+        />
+
       </div>
     </div>
   );

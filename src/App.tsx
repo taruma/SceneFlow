@@ -3,6 +3,7 @@ import YouTube from 'react-youtube';
 import { Video } from 'lucide-react';
 import { EXAMPLE_SECTIONS } from './examples';
 import { processScript } from './lib/scriptProcessor';
+import { realignCuesList } from './lib/cueUtils';
 import { ScriptLine } from './components/script/ScriptLine';
 import { StagingModal } from './components/StagingModal';
 import { LibraryModal } from './components/LibraryModal';
@@ -576,6 +577,15 @@ export default function App() {
     setIsScriptModalOpen(true);
   }, []);
 
+  const handleSaveScript = useCallback((newScriptText: string, shouldRealign?: boolean) => {
+    if (shouldRealign && state.cues && state.cues.length > 0) {
+      const { updatedCues } = realignCuesList(state.cues, newScriptText);
+      setState(prev => ({ ...prev, scriptText: newScriptText, cues: updatedCues }));
+    } else {
+      setState(prev => ({ ...prev, scriptText: newScriptText }));
+    }
+  }, [state.cues, setState]);
+
   const handleOpenRawCuesModal = useCallback(() => {
     setRawCuesText(JSON.stringify(state.cues, null, 2));
     setIsCuesModalOpen(true);
@@ -970,7 +980,8 @@ export default function App() {
         isOpen={isScriptModalOpen}
         onClose={() => setIsScriptModalOpen(false)}
         scriptText={state.scriptText}
-        onChangeScriptText={(text) => setState(prev => ({ ...prev, scriptText: text }))}
+        onSaveScript={handleSaveScript}
+        activeCuesCount={state.cues?.length || 0}
       />
 
       {/* Raw Cues Modal */}
