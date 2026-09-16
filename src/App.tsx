@@ -18,6 +18,7 @@ import { TimingSettingsModal } from './components/TimingSettingsModal';
 import { ScriptColorModal } from './components/ScriptColorModal';
 import { MobileColorModal } from './components/MobileColorModal';
 import { AppInfoModal } from './components/AppInfoModal';
+import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
 import { AppHeader } from './components/AppHeader';
 import { WorkstationLeftPanel } from './components/left-panel';
 import { EditRightPanel, CueEditorForm, CueEditorProvider, type CueEditorContextValue } from './components/edit';
@@ -78,6 +79,7 @@ export default function App() {
   const [isCuesModalOpen, setIsCuesModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [rawCuesText, setRawCuesText] = useState("");
 
@@ -266,6 +268,7 @@ export default function App() {
     isColorModalOpen ||
     isSettingsOpen ||
     isInfoModalOpen ||
+    isShortcutsModalOpen ||
     isScriptModalOpen ||
     isCuesModalOpen ||
     isLibraryOpen ||
@@ -290,6 +293,7 @@ export default function App() {
     onOpenColors: () => setIsColorModalOpen(true),
     onOpenTiming: () => setIsSettingsOpen(true),
     onResetView: handleResetView,
+    onOpenShortcuts: () => setIsShortcutsModalOpen(true),
     disabled: isAnyModalOpen,
   });
 
@@ -785,6 +789,7 @@ export default function App() {
         onSetThemeMode={setThemeMode}
         isViewCustomized={isEffectiveViewCustomized}
         onResetView={handleResetView}
+        onOpenShortcuts={() => setIsShortcutsModalOpen(true)}
         scriptWidthPreset={scriptWidthPreset}
         setScriptWidthPreset={setScriptWidthPreset}
         scrollFocusPreset={scrollFocusPreset}
@@ -1094,6 +1099,13 @@ export default function App() {
       <AppInfoModal
         isOpen={isInfoModalOpen}
         onClose={() => setIsInfoModalOpen(false)}
+        onOpenShortcuts={() => setIsShortcutsModalOpen(true)}
+      />
+
+      {/* Keyboard Shortcuts Palette / Guide Modal */}
+      <KeyboardShortcutsModal
+        isOpen={isShortcutsModalOpen}
+        onClose={() => setIsShortcutsModalOpen(false)}
       />
     </div>
   );

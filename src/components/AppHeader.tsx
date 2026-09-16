@@ -38,6 +38,7 @@ export interface AppHeaderProps {
   onSetThemeMode?: (mode: AppThemeMode) => void;
   isViewCustomized?: boolean;
   onResetView?: () => void;
+  onOpenShortcuts?: () => void;
   scriptWidthPreset?: ScriptWidthPresetId;
   setScriptWidthPreset?: (preset: ScriptWidthPresetId) => void;
   scrollFocusPreset?: ScrollFocusPresetId;
@@ -70,6 +71,7 @@ export const AppHeader: React.FC<AppHeaderProps> = memo(({
   onSetThemeMode,
   isViewCustomized = false,
   onResetView,
+  onOpenShortcuts,
   scriptWidthPreset,
   setScriptWidthPreset,
   scrollFocusPreset,
@@ -189,6 +191,7 @@ export const AppHeader: React.FC<AppHeaderProps> = memo(({
           onOpenTiming={() => setIsSettingsOpen(true)}
           isViewCustomized={isViewCustomized}
           onResetView={onResetView}
+          onOpenShortcuts={onOpenShortcuts}
           scriptWidthPreset={scriptWidthPreset}
           setScriptWidthPreset={setScriptWidthPreset}
           scrollFocusPreset={scrollFocusPreset}

@@ -8,6 +8,7 @@ interface UseKeyboardShortcutsOptions {
   onOpenColors?: () => void;
   onOpenTiming?: () => void;
   onResetView?: () => void;
+  onOpenShortcuts?: () => void;
   disabled?: boolean;
 }
 
@@ -19,6 +20,7 @@ export function useKeyboardShortcuts({
   onOpenColors,
   onOpenTiming,
   onResetView,
+  onOpenShortcuts,
   disabled = false,
 }: UseKeyboardShortcutsOptions) {
   const [isDesktop, setIsDesktop] = useState(
@@ -34,6 +36,7 @@ export function useKeyboardShortcuts({
 
   // Global shortcuts:
   // - Studio Preferences: Shift+C (Colors), Shift+T (Timing), Shift+R (Reset Layout)
+  // - Shortcuts Help Modal: ? / Shift+/
   // - Playback (requires player): Space/K (play/pause), ArrowLeft/J (-5s), ArrowRight/L (+5s), V (toggle video)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -44,6 +47,19 @@ export function useKeyboardShortcuts({
         document.activeElement?.tagName === 'TEXTAREA' ||
         (document.activeElement as HTMLElement)?.isContentEditable
       ) {
+        return;
+      }
+
+      // Keyboard Shortcuts Help Modal (? or Shift+/) — functional regardless of player instance
+      if (
+        (e.key === '?' || (e.shiftKey && (e.code === 'Slash' || e.key === '/'))) &&
+        !e.ctrlKey &&
+        !e.metaKey &&
+        !e.altKey &&
+        onOpenShortcuts
+      ) {
+        e.preventDefault();
+        onOpenShortcuts();
         return;
       }
 
@@ -96,7 +112,7 @@ export function useKeyboardShortcuts({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [player, togglePlayPause, jumpBy, disabled, onToggleVideo, onOpenColors, onOpenTiming, onResetView]);
+  }, [player, togglePlayPause, jumpBy, disabled, onToggleVideo, onOpenColors, onOpenTiming, onResetView, onOpenShortcuts]);
 
   return { isDesktop };
 }

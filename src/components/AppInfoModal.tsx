@@ -17,15 +17,22 @@ import { cn } from '../lib/utils';
 import { UI_TOKENS } from '../styles/tokens/ui';
 import { EXTERNAL_LINKS } from '../constants/links';
 import { useEscapeKey } from '../hooks/useEscapeKey';
+import { 
+  SHORTCUTS_REGISTRY, 
+  getShortcutDisplayKeys, 
+  isMacUser 
+} from '../constants/shortcuts';
 
 interface AppInfoModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenShortcuts?: () => void;
 }
 
-export function AppInfoModal({ isOpen, onClose }: AppInfoModalProps) {
+export function AppInfoModal({ isOpen, onClose, onOpenShortcuts }: AppInfoModalProps) {
   useEscapeKey(onClose, isOpen);
 
+  const isMac = isMacUser();
 
   if (!isOpen) return null;
 
@@ -45,7 +52,7 @@ export function AppInfoModal({ isOpen, onClose }: AppInfoModalProps) {
       color: 'hover:border-border-main hover:bg-surface-subtle text-text-main',
     },
     {
-      label: 'Documentation & Guide',
+      label: 'Documentation & Architecture',
       url: EXTERNAL_LINKS.docs,
       icon: BookOpen,
       tag: 'Docs',
@@ -67,16 +74,29 @@ export function AppInfoModal({ isOpen, onClose }: AppInfoModalProps) {
     },
   ];
 
-  const shortcuts = [
-    { key: 'Space / K', desc: 'Play / Pause playback' },
-    { key: '← / →', desc: 'Seek -5s / +5s' },
-    { key: 'J / L', desc: 'Seek -5s / +5s' },
-    { key: 'V', desc: 'Toggle video visibility' },
-    { key: 'Shift+C', desc: 'Script Paper & Colors' },
-    { key: 'Shift+T', desc: 'Timing & Durations' },
-    { key: 'Shift+R', desc: 'Reset View Layout' },
-    { key: 'Esc', desc: 'Close active modal' },
+  // Highlighted shortcuts derived from single source of truth
+  const highlightIds = [
+    'playback.playPause',
+    'playback.seekForward',
+    'playback.toggleVideo',
+    'studio.colors',
+    'studio.timing',
+    'studio.resetLayout',
+    'inspector.saveCue',
+    'general.closeModal',
   ];
+
+  const shortcuts = highlightIds
+    .map(id => SHORTCUTS_REGISTRY.find(s => s.id === id))
+    .filter(Boolean)
+    .map(s => {
+      const keys = getShortcutDisplayKeys(s!, isMac).join('+');
+      const aliasStr = s!.aliases?.length ? ` / ${s!.aliases[0]}` : '';
+      return {
+        key: `${keys}${aliasStr}`,
+        desc: s!.label,
+      };
+    });
 
   return (
     <div 
@@ -241,10 +261,25 @@ export function AppInfoModal({ isOpen, onClose }: AppInfoModalProps) {
               </ul>
             </div>
 
-            <div className="p-4 bg-surface-subtle border border-border-main rounded-xl space-y-2">
-              <div className="flex items-center gap-2 text-text-main">
-                <Keyboard size={14} className="text-text-muted" />
-                <span className="text-[11px] font-bold uppercase tracking-wider">Quick Shortcuts</span>
+            <div className="p-4 bg-surface-subtle border border-border-main rounded-xl space-y-2.5">
+              <div className="flex items-center justify-between text-text-main">
+                <div className="flex items-center gap-2">
+                  <Keyboard size={14} className="text-text-muted" />
+                  <span className="text-[11px] font-bold uppercase tracking-wider">Quick Shortcuts</span>
+                </div>
+                {onOpenShortcuts && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      onOpenShortcuts();
+                    }}
+                    className="flex items-center gap-1.5 text-[10px] font-bold text-btn-primary-bg dark:text-purple-400 hover:underline cursor-pointer"
+                  >
+                    <span>Full Cheat-Sheet</span>
+                    <kbd className={UI_TOKENS.badge.shortcut}>?</kbd>
+                  </button>
+                )}
               </div>
               <div className="grid grid-cols-2 gap-1.5 text-xs text-text-body">
                 {shortcuts.map((s) => (
