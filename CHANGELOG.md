@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.4.1-dev] - Unreleased
 
+### Fixed
+- **Restore Missing Confirmation Dialogs & Overlap Picker (`src/App.tsx`)**:
+  - **Reconnected Reset Confirmation Modal (`ResetConfirmationModal.tsx`)**: Re-mounted the confirmation dialog in `App.tsx`'s root render tree, resolving a critical regression where selecting screenplay examples from the Library (`LibraryModal` / `MobileLibraryModal`), launching the Starter Guide, creating a blank project (`New Project`), or resetting timing preferences appeared unresponsive.
+  - **Reconnected Cue Deletion Modal (`DeleteConfirmationModal.tsx`)**: Re-mounted the deletion confirmation dialog in `App.tsx`, restoring the interactive confirmation prompt required to delete cues from the timeline and editor.
+  - **Reconnected Overlap Cue Selector (`OverlapPicker.tsx`)**: Re-mounted the floating context menu popover, restoring the ability to select and edit individual overlapping cues on screenplay script lines.
+
 ### Optimized
 - **Instant Color Theme Switching & CSS Transition Suppression Engine (`src/index.css`, `src/hooks/useAppShellTheme.ts`, `src/hooks/useScriptPreferences.ts`, `src/App.tsx`, `src/styles/tokens/ui.ts`)**:
   - **Eliminated Paint & Transition Thrashing**: Removed sluggish `0.25s` and `200ms` background-color and text-color CSS transitions from `body`, `.script-paper-container`, and `rightPanelBase`, eliminating main-thread frame drops and stutter caused by concurrent React full-script reconciliation and CSS transitions.

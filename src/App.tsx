@@ -957,6 +957,51 @@ export default function App() {
       </main>
     </CueEditorProvider>
 
+      {/* Overlap Picker Menu */}
+      <OverlapPicker
+        isOpen={overlapPicker.isOpen}
+        position={overlapPicker.position}
+        cues={overlapPicker.cues}
+        cuePaletteProfile={cuePaletteProfile}
+        onSelectCue={(cue) => {
+          selectCueForEdit(cue);
+          setOverlapPicker({ ...overlapPicker, isOpen: false });
+        }}
+        onClose={() => setOverlapPicker({ ...overlapPicker, isOpen: false })}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={deleteConfirmation.isOpen}
+        cue={deleteConfirmation.cue}
+        onClose={() => setDeleteConfirmation({ isOpen: false, cue: null })}
+        onConfirm={confirmDelete}
+      />
+
+      {/* General Reset Confirmation Modal */}
+      <ResetConfirmationModal
+        resetConfirmation={resetConfirmation}
+        isRemoteLoading={isRemoteLoading}
+        onClose={() => setResetConfirmation({ isOpen: false, type: null, error: null })}
+        onClearError={() => setResetConfirmation(prev => ({ ...prev, error: null }))}
+        onConfirm={() => {
+          if (resetConfirmation.type === 'settings') {
+            setState(prev => ({ ...prev, settings: DEFAULT_SETTINGS }));
+            setResetConfirmation({ isOpen: false, type: null, error: null });
+          } else if (resetConfirmation.type === 'new') {
+            createNewProject();
+          } else if (resetConfirmation.type === 'guide' || resetConfirmation.type === 'blank') {
+            loadGuide();
+          } else if (resetConfirmation.type === 'data') {
+            resetState();
+          } else if (resetConfirmation.type === 'example' && resetConfirmation.examplePath) {
+            loadExample(resetConfirmation.examplePath);
+          } else if (resetConfirmation.type === 'remote' && resetConfirmation.remoteUrl) {
+            loadRemoteProject(resetConfirmation.remoteUrl);
+          }
+        }}
+      />
+
       <Suspense fallback={null}>
         {/* Staging Modal */}
         <StagingModal

@@ -405,4 +405,12 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
       - Never display `<kbd>` badges on actions without active event listeners.
       - In the desktop `FileMenuDropdown`, only "Source Script..." (<kbd>Shift+S</kbd>) and "Sync Cues (JSON)..." (<kbd>Shift+E</kbd>) display the `<kbd>` badge on the right side. The top-level `[ File ▾ ]` button and `Browse Library...` items deliberately omit badges to prevent visual crowding in primary navigation bars.
 
-
+21. **Root Dialog Mounting & Confirmation Modal Invariants (`src/App.tsx`, `ResetConfirmationModal.tsx`, `DeleteConfirmationModal.tsx`, `OverlapPicker.tsx`)**:
+    - **Permanent Root Mount Invariant**:
+      - Guarded and destructive workflows (`ResetConfirmationModal`, `DeleteConfirmationModal`, and `OverlapPicker`) must remain permanently mounted in the root JSX tree of `App.tsx`.
+      - When code-splitting secondary dialogs (`RawScriptModal`, `LibraryModal`, `TimingSettingsModal`, etc.) using `React.lazy()` and `<Suspense>`, never drop non-lazy siblings.
+      - Dropping `<ResetConfirmationModal />` silently breaks library example loading, starter guide initialization, blank project creation, and timing resets.
+      - Dropping `<DeleteConfirmationModal />` silently blocks cue deletion across both Playback and Edit modes.
+      - Dropping `<OverlapPicker />` silently disables multi-cue selection on screenplay script lines.
+    - **State Producer/Consumer Parity**:
+      - Every state setter invoked across child components or hooks (`setResetConfirmation`, `setDeleteConfirmation`, `setOverlapPicker`) must have an active consumer element in the rendered DOM tree.
