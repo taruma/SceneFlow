@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.4.1-dev] - Unreleased
 
 ### Added
+- **BRIEF State Engine Counters & Multi-Section Breakdown (`src/lib/briefAnalysis.ts`, `src/lib/scriptProcessor.ts`, `src/components/edit/EditRightPanel.tsx`, `src/App.tsx`)**:
+  - **State Engine Analysis Engine (`src/lib/briefAnalysis.ts`)**: Introduced a pure analysis module providing `countSubStatesInLine` to parse modular beat transitions chained by `->` (filtering empty whitespace, minimum 1) and `analyzeBriefSections` to aggregate overall totals and per-section breakdowns.
+  - **Multi-Brief Section Partitioning (`src/lib/scriptProcessor.ts`)**: Added `briefSectionIndex?: number` to `ProcessedLine`, incrementing sequential section indices upon each `[<BRIEF>]` opening delimiter to support multi-scene/multi-part scripts with multiple execution blocks.
+  - **Contextual Scene Anchoring**: Dynamically resolves the nearest preceding structural heading, roman title, or part separator (e.g. `I. FALSE PRETENSE` or `INT. CORRIDOR - NIGHT`) traversing past staging blocks to label each section card clearly.
+  - **Cue Inspector Idle Overview Deck (`src/components/edit/EditRightPanel.tsx`)**: Rendered a dedicated **BRIEF State Engine** summary card in the idle workstation view featuring global **Macro-States ($S_n$)** and **Total Sub-States** metric counters, section count badge, and individual section cards detailing state index ranges ($S_{start}–S_{end}$) and macro/sub-state counts. Automatically hides on traditional scripts without `[<BRIEF>]` tags to preserve focused cue management.
+  - **Workstation Plumbing (`src/App.tsx`)**: Forwarded memoized `processedLines` into `<EditRightPanel />`.
 - **Auto-Scroll Center-Tracking Viewport Spacers (`src/components/edit/SyncCuesPanel.tsx`)**:
   - Added dynamic `spacerHeight` (calculated as `Math.max(0, Math.floor(viewportHeight / 2))` measured via `useLayoutEffect` and `ResizeObserver` on the viewport container) rendered as top and bottom spacers before and after the cues list in both **Cards** and **Compact** density modes.
   - Enables true vertical center-tracking (`scrollTop = relativeTop - H/2 + h/2`) for cues positioned at the extreme start (first cue) and end (last cue) of the timeline, eliminating viewport boundary clamping where boundary cues were previously restricted to the top or bottom edges due to lack of scroll travel.

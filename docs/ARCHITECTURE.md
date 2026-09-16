@@ -66,7 +66,7 @@ The processing layer extracts structure, metadata, and character positions from 
   - `action`: Emphasized ALL CAPS action beats or standard narrative text.
   - `default`: Fallback text formatting.
 - **Dialogue Lookahead**: Pre-scans consecutive speech lines following a character heading and attaches `charName` context to each dialogue line.
-- **Auteur Brief & State Transition Handling**: Recognizes `[<BRIEF>]` and `[</BRIEF>]` delimiters, skips blank lines within technical blocks, and sets `isBrief: true` to trigger waterfall indentation (`->`) and bold anchor tagging (`[...]`).
+- **Auteur Brief & State Transition Handling**: Recognizes `[<BRIEF>]` and `[</BRIEF>]` delimiters, skips blank lines within technical blocks, and sets `isBrief: true` alongside sequential `briefSectionIndex` stamps to trigger waterfall indentation (`->`), bold anchor tagging (`[...]`), and multi-brief section partitioning.
 - **Character Offset Indexing**: Computes exact `lineStart` and `lineEnd` character offsets to ensure sync cues remain accurately positioned.
 
 ---
@@ -74,6 +74,11 @@ The processing layer extracts structure, metadata, and character positions from 
 ## 2. Utility Layer
 
 The utility layer provides pure functions, shared constants, and data normalization that bridge processing output to the visuals and hooks layers.
+
+### `src/lib/briefAnalysis.ts`
+A specialized analysis module for Auteur Script state-machine blocks (`[<BRIEF>]`):
+- **`countSubStatesInLine(lineText)`**: Counts modular sub-state transformations delimited by the `->` transition operator (minimum 1 for valid macro-state lines).
+- **`analyzeBriefSections(processedLines)`**: Aggregates macro-states ($S_n$), total sub-states, and per-section breakdowns (`BriefSectionSummary[]`), dynamically resolving nearest preceding structural headings or titles (traversing across staging blocks) and cumulative state ranges ($S_{start}–S_{end}$).
 
 ### `src/lib/cueUtils.ts`
 A dedicated module containing fourteen exported pure functions for cue lifecycle management:

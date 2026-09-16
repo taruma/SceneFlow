@@ -227,6 +227,10 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
   1. *Left Panel (`EditLeftPanel`)*: Defaults to **40%** width, housing the media preview with live timecode HUD badge, persistent transport controls, and the time-clustered Sync Cues fluid grid.
   2. *Center Panel (Screenplay Canvas)*: Defaults to **35%** width (`flex-1 min-w-0`), an unobstructed reading canvas ensuring screenplay text editing never overlaps or collides with the cue inspector.
   3. *Right Panel (`EditRightPanel`)*: Defaults to **25%** width, a dedicated Cue Inspector panel featuring a 48px header matching the script toolbar, active status indicator (`Drafting`, `Editing`, `Idle`), collapsible toggle, embedded `CueEditorForm`, and an idle overview displaying cue statistics by category with quick editing shortcuts.
+  - *BRIEF State Engine Statistics & Section Cascade Breakdown*: When the inspector is idle in Edit Mode and the active screenplay contains one or more `[<BRIEF>]` execution blocks, the panel surfaces a dedicated **BRIEF State Engine** deck. It computes and displays:
+    - **Global Macro-States ($S_n$) & Sub-States**: Total count of active macro-state lines and total sub-state beat transformations (split by the `->` operator).
+    - **Granular Per-Section Breakdown**: Cards for each `[<BRIEF>]` block detailing its section index (`Brief #N`), nearest preceding scene context anchor (e.g. `I. FALSE PRETENSE` or `INT. CORRIDOR - NIGHT`), cumulative state range ($S_{start}–S_{end}$), and individual macro/sub-state counts.
+    - **Zero-Footprint Inactive State**: Automatically omitted on standard screenplays without `[<BRIEF>]` blocks to preserve clean, distraction-free cue management.
 - **Draggable Vertical Inspector Splitter (`InspectorSplitDivider`)**:
   - Dragging the divider between the screenplay canvas and cue inspector resizes inspector ratio between `18%` (minimum, pixel floor `260px`) and `45%` (maximum), defaulting to `25%`.
   - Enforces minimum width floors so neither the script canvas nor inspector are ever crushed.

@@ -23,6 +23,7 @@ export interface ProcessedLine {
   lineStart: number;
   lineEnd: number;
   isBrief?: boolean;
+  briefSectionIndex?: number;
 }
 
 /**
@@ -54,6 +55,7 @@ export function processScript(scriptText: string): ProcessedLine[] {
   const processedLines: ProcessedLine[] = [];
   let currentPos = 0;
   let inBrief = false;
+  let briefSectionIndex = -1;
 
   lines.forEach((line, lineIdx) => {
     const lineStart = currentPos;
@@ -65,6 +67,7 @@ export function processScript(scriptText: string): ProcessedLine[] {
     // Check for BRIEF tags - more robust regex
     if (/^\[<BRIEF>\]$/i.test(trimmed)) {
       inBrief = true;
+      briefSectionIndex++;
       return; // Skip tag line
     }
     if (/^\[<\/BRIEF>\]$/i.test(trimmed)) {
@@ -123,7 +126,8 @@ export function processScript(scriptText: string): ProcessedLine[] {
       stagingMarker,
       lineStart,
       lineEnd,
-      isBrief: inBrief
+      isBrief: inBrief,
+      briefSectionIndex: inBrief ? briefSectionIndex : undefined
     });
   });
 

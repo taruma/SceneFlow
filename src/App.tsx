@@ -915,6 +915,7 @@ export default function App() {
               ratio={inspectorRatio}
               onClose={() => setIsInspectorOpen(false)}
               cues={state.cues}
+              processedLines={processedLines}
               scriptThemeId={scriptThemeId}
               cuePaletteProfile={cuePaletteProfile}
             />

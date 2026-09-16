@@ -53,7 +53,7 @@ The parser relies on deterministic line-by-line regex patterns. When modifying o
 - **Character Names**: Must be ALL CAPS and end with a colon (`^[A-Z0-9_\s]+:$`). Dialogue lines immediately following a character line inherit character speech context.
 - **Scene Headings**: Must detect case-insensitive `INT.` and `EXT.` at line start.
 - **Staging Blocks**: Line-based parsing. Look for `[[STAGING]]` and `[[/STAGING]]` on their own lines, enclosing labeled sub-blocks (`[[LABEL]]...[[/LABEL]]`). Do not match staging tags inline.
-- **Brief Blocks**: Match opening `[<BRIEF>]` and closing `[</BRIEF>]` tags on their own lines. Ensure whitespace-only lines inside brief blocks are skipped to prevent ghost cards.
+- **Brief Blocks**: Match opening `[<BRIEF>]` and closing `[</BRIEF>]` tags on their own lines. Ensure whitespace-only lines inside brief blocks are skipped to prevent ghost cards. Track sequential `briefSectionIndex` (incrementing upon each `[<BRIEF>]` opening) to distinguish multi-brief section boundaries. Use `analyzeBriefSections()` in `src/lib/briefAnalysis.ts` to compute macro-state and sub-state cascades.
 - **Roman Numerals**: Match uppercase roman numerals with a trailing period (e.g., `^IV\.\s+.+$`) with uppercase line validation.
 - **Exclusion Filters**: When implementing search or auto-alignment engines, always exclude text ranges within `[[STAGING]]` blocks so cues never snap to hidden prompt metadata.
 

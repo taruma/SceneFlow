@@ -187,6 +187,13 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
   - `dismissIfClean()` safely resets `useCueEditor` back to idle workstation overview if no edits have been made (`!isDirty`).
   - In `App.tsx`, `handleScriptClick` is bound to the screenplay reading canvas, safely closing clean cue inspections on click while strictly ignoring clicks on interactive buttons, input fields, staging markers (`e.stopPropagation()`), or active DOM text selections.
 
+- **BRIEF State Engine Idle Overview Integration (`EditRightPanel.tsx`, `briefAnalysis.ts`)**:
+  - When the cue inspector is in idle mode (`!selection`), `EditRightPanel` computes `analyzeBriefSections(processedLines)`.
+  - If the loaded screenplay contains one or more `[<BRIEF>]` execution blocks, it renders a dedicated **BRIEF State Engine** summary card above the cues breakdown:
+    - Global totals for **Macro-States ($S_n$)** and **Total Sub-States** (chained action/camera/audio transitions via `->`).
+    - Granular per-section breakdown cards displaying `Brief #N`, nearest preceding scene context label (`heading`, `roman-title`, or `part-separator`), cumulative state index range ($S_{start}–S_{end}$), and per-section macro/sub-state counts.
+    - Zero-footprint empty state: Automatically omitted for traditional screenplays without `[<BRIEF>]` blocks to preserve a focused cue management view.
+
 ## 15. Cues JSON Editor & LLM Sync Schema Architecture (`RawCuesModal.tsx`)
 - **Two-Column Workstation Layout**:
   - The raw cues modal provides a comprehensive 2-column workstation (`RawCuesModal.tsx`):
