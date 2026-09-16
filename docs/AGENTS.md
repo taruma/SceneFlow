@@ -235,7 +235,7 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
 15. **Global 3-Zone Studio Header Architecture (`AppHeader.tsx`, `src/components/header/*`)**:
     - The top application header strictly follows a 3-zone spatial composition: Left Wing (Logo + `[ File ▾ ]` desktop dropdown menu), Center Stage (Centered `[ ▶ Playback | ✏️ Edit ]` segmented mode switcher), and Right Wing (`[ 📚 LIBRARY ]` standalone gateway, `[ ☕ Support ]` Ko-fi pill, `[ ⚙️ Settings ▾ ]` dropdown pill, and `[ ℹ ]` Info trigger).
     - **Modular Subcomponent Decomposition (`src/components/header/`)**:
-      - `FileMenuDropdown.tsx`: Dedicated 3-tier project I/O, canvas creation, and guide/library menu.
+      - `FileMenuDropdown.tsx`: Dedicated 3-tier menu covering project I/O, script & cue data editors, and guide/library discovery.
       - `SettingsMenuDropdown.tsx`: Consolidated Studio Preferences dropdown housing the header `[↺ Reset All]` action, 4-theme picker, Reading Canvas & Viewport controls (Script Width and Focus Line segmented rows), shortcut badge rows (`Shift+C`, `Shift+T`, `Shift+R`), and dynamic `Custom` layout badge.
       - `ModeSegmentedControl.tsx`: Centered mode switcher with mode-specific active accents and ARIA group attributes.
     - **0 Hz Header Re-Render Invariant (`AppHeader`, `ScriptHeaderControls`)**:
@@ -248,9 +248,9 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
     - **Mobile Viewport Exclusion Invariant (`hidden lg:flex`)**:
       - SceneFlow mobile viewports are strictly playback/review experiences; edit mode and desktop cue authoring are desktop-only (`hidden lg:flex`). `AppHeader` must be declared unconditionally with `hidden lg:flex` so desktop controls never leak onto mobile screens during window resizing.
     - **Truthful Shortcuts & Badging Discipline**: Never add visual shortcut badges (<kbd>Ctrl+O</kbd>, <kbd>Ctrl+S</kbd>, <kbd>?</kbd>) or tooltip annotations for actions lacking active event listeners in `useKeyboardShortcuts.ts` or `useEscapeKey.ts`.
-    - **File Dropdown Menu (`[ File ▾ ]`)**: Local JSON import/export actions, new project creation, and guide/library access belong inside the desktop `[ File ▾ ]` dropdown (`UI_TOKENS.button.filePill`), keeping mobile headers clean. The menu is organized into three tiered functional groups separated by hairline borders:
-      1. *Project I/O*: `Open Project...` and `Save Project` (top tier for instant inspection and synchronization of existing projects).
-      2. *Blank Canvas*: `New Project` (middle tier to clear the workspace and open Edit mode).
+    - **File Dropdown Menu (`[ File ▾ ]`)**: Local JSON import/export actions, new project creation, raw cues/script text editors, and guide/library access belong inside the desktop `[ File ▾ ]` dropdown (`UI_TOKENS.button.filePill`), keeping mobile headers clean. The menu is organized into three tiered functional groups separated by hairline borders:
+      1. *Project I/O*: `Open Project...`, `Save Project`, and `New Project` (top tier for project lifecycle management).
+      2. *Script & Cue Data*: `Sync Cues (JSON)...` and `Source Script...` (middle tier for universal access to raw data and AI prompt templates across both modes).
       3. *Reference & Discovery*: `Starter Guide` (`guide.json`) and `Browse Library...` (bottom tier).
     - **Top Header Chrome Constraints**: Top header chrome must **never** render raw floating timecode; playback timing belongs exclusively to the media player and Active Highlights timeline.
     - **Studio Preferences Dropdown**: Studio preferences must be consolidated inside the `[ ⚙️ Settings ▾ ]` dropdown, providing direct 4-theme selection (`Auto`, `Light`, `Warm`, `Dark`), Script Color presets access (with `<kbd>Shift+C</kbd>` badge), Timing Settings access (with `<kbd>Shift+T</kbd>` badge), and a live customized layout reset indicator (with `<kbd>Shift+R</kbd>` badge). Keyboard shortcuts in `useKeyboardShortcuts.ts` are guarded with `!e.ctrlKey && !e.metaKey && !e.altKey` and input/modal checks to prevent any clash with browser or playback keys.

@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.4.1-dev] - Unreleased
 
 ### Added
+- **File Menu Sync Cues JSON & Source Script Integration (`src/components/header/FileMenuDropdown.tsx`, `src/components/RawScriptModal.tsx`, `src/components/AppHeader.tsx`, `src/App.tsx`, `src/components/edit/SyncCuesToolbar.tsx`)**:
+  - **Universal Raw Data Access in File Dropdown**: Integrated `Sync Cues (JSON)...` (with `Braces` icon) and `Source Script...` (with `FileText` icon) directly into the desktop `[ File ▾ ]` dropdown menu within a dedicated **Script & Cue Data** middle section.
+  - **Zero-Mode-Switching Friction**: Grants immediate access to raw cues JSON, schema validation, Gemini AI prompt templates, and source script editing across both Playback and Edit modes without requiring users to switch modes or search through sub-panel toolbars.
+  - **Unified Project I/O Tier**: Consolidated `New Project` alongside `Open Project...` and `Save Project` in the top tier for coherent document lifecycle management.
+  - **Dropdown Width Calibration**: Expanded container width to `w-60` for comfortable whitespace, clean typography, and seamless visual balance.
+  - **Header Plumbing & Modal Auto-Dismissal**: Added `onOpenRawCuesModal`, `onOpenRawScriptModal`, `isCuesModalOpen`, and `isScriptModalOpen` to `AppHeaderProps`, automatically dismissing open dropdown menus when either modal launches.
+  - **In-Panel Tooltip Clarity**: Enhanced the tooltip for the in-panel `[ { } JSON ]` button in `SyncCuesToolbar.tsx` to `"View, edit, or import sync cues JSON & AI prompt schema"`.
 - **BRIEF State Engine Counters & Multi-Section Breakdown (`src/lib/briefAnalysis.ts`, `src/lib/scriptProcessor.ts`, `src/components/edit/EditRightPanel.tsx`, `src/App.tsx`)**:
   - **State Engine Analysis Engine (`src/lib/briefAnalysis.ts`)**: Introduced a pure analysis module providing `countSubStatesInLine` to parse modular beat transitions chained by `->` (filtering empty whitespace, minimum 1) and `analyzeBriefSections` to aggregate overall totals and per-section breakdowns.
   - **Multi-Brief Section Partitioning (`src/lib/scriptProcessor.ts`)**: Added `briefSectionIndex?: number` to `ProcessedLine`, incrementing sequential section indices upon each `[<BRIEF>]` opening delimiter to support multi-scene/multi-part scripts with multiple execution blocks.

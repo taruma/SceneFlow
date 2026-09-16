@@ -44,6 +44,10 @@ export interface AppHeaderProps {
   applyScrollFocus?: (preset: ScrollFocusPresetId) => void;
   isPreferencesCustomized?: boolean;
   onResetAll?: () => void;
+  onOpenRawCuesModal?: () => void;
+  onOpenRawScriptModal?: () => void;
+  isCuesModalOpen?: boolean;
+  isScriptModalOpen?: boolean;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = memo(({
@@ -72,6 +76,10 @@ export const AppHeader: React.FC<AppHeaderProps> = memo(({
   applyScrollFocus,
   isPreferencesCustomized = false,
   onResetAll,
+  onOpenRawCuesModal,
+  onOpenRawScriptModal,
+  isCuesModalOpen = false,
+  isScriptModalOpen = false,
 }) => {
   const [activeMenu, setActiveMenu] = useState<HeaderMenuId | null>(null);
 
@@ -85,10 +93,10 @@ export const AppHeader: React.FC<AppHeaderProps> = memo(({
 
   // Auto-close open dropdown menus whenever a modal opens
   useEffect(() => {
-    if (isColorModalOpen || isSettingsOpen || isInfoModalOpen || isLibraryOpen) {
+    if (isColorModalOpen || isSettingsOpen || isInfoModalOpen || isLibraryOpen || isCuesModalOpen || isScriptModalOpen) {
       setActiveMenu(null);
     }
-  }, [isColorModalOpen, isSettingsOpen, isInfoModalOpen, isLibraryOpen]);
+  }, [isColorModalOpen, isSettingsOpen, isInfoModalOpen, isLibraryOpen, isCuesModalOpen, isScriptModalOpen]);
 
   return (
     <header className={cn(UI_TOKENS.layout.appHeader, "hidden lg:flex")}>
@@ -119,6 +127,8 @@ export const AppHeader: React.FC<AppHeaderProps> = memo(({
           onNewProject={onNewProject}
           onOpenGuide={onOpenGuide}
           onOpenLibrary={() => setIsLibraryOpen(true)}
+          onOpenRawCuesModal={onOpenRawCuesModal}
+          onOpenRawScriptModal={onOpenRawScriptModal}
         />
       </div>
 

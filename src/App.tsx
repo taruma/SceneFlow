@@ -781,6 +781,10 @@ export default function App() {
         applyScrollFocus={applyScrollFocus}
         isPreferencesCustomized={isPreferencesCustomized}
         onResetAll={handleResetAllPreferences}
+        onOpenRawCuesModal={handleOpenRawCuesModal}
+        onOpenRawScriptModal={handleOpenRawScriptModal}
+        isCuesModalOpen={isCuesModalOpen}
+        isScriptModalOpen={isScriptModalOpen}
       />
 
       <CueEditorProvider value={cueEditorContextValue}>

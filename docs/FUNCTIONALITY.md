@@ -130,7 +130,7 @@ Desktop Edit Mode features a dedicated Two-Tier studio workspace in the Left Pan
   - **Center-Tracking Viewport Spacers**: When the `[ 🎯 Scroll ]` toggle is enabled, `SyncCuesPanel` injects dynamic top and bottom spacers (`spacerHeight = Math.floor(viewportHeight / 2)` measured via `useLayoutEffect` and `ResizeObserver`) into the scroll viewport. This provides sufficient scroll margin for boundary cues at the very beginning or end of the script timeline to track directly in the vertical center of the view, eliminating container edge clamping. Spacers automatically collapse to 0 when auto-scroll is disabled for compact manual browsing, and during empty-filter states to keep feedback cards centered without scrollbars.
 
 ### Studio-Grade Cues JSON Editor & LLM Sync Setup (`RawCuesModal`)
-Accessible via `[ { } JSON ]` on the `SyncCuesToolbar`, the Raw Cues modal provides a studio-grade 2-column workstation for inspecting, formatting, and synchronizing cues directly with LLM structured outputs:
+Accessible from anywhere via the **File** dropdown (`Sync Cues (JSON)...`) and via `[ { } JSON ]` on the `SyncCuesToolbar` in Edit mode, the Raw Cues modal provides a studio-grade 2-column workstation for inspecting, formatting, and synchronizing cues directly with LLM structured outputs:
 
 - **Two-Column Workstation Architecture**:
   - **Left Column (Schema Reference & Guide)**:
@@ -267,8 +267,8 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 ### Global 3-Zone Studio Header Layout (`AppHeader`, `ScriptHeaderControls`)
 - **Balanced 3-Zone Composition**: Replaced the previous single-row cluster with a studio-grade 3-zone layout separating brand utilities, workflow state, and content/preferences:
   - **Left Wing (Brand & File Management)**: Houses the SceneFlow logo alongside a dedicated desktop `[ File ▾ ]` dropdown menu (`UI_TOKENS.button.filePill`), organized into three distinct tiers separated by hairline dividers:
-    1. *Project I/O*: `Open Project...` and `Save Project` for the primary inspect-and-sync workflow.
-    2. *Blank Canvas*: `New Project` with confirmation modal to clear the workspace and open Edit mode.
+    1. *Project I/O*: `Open Project...`, `Save Project`, and `New Project` (with confirmation modal) for complete project lifecycle management.
+    2. *Script & Cue Data*: Direct access to `Sync Cues (JSON)...` (`RawCuesModal`) and `Source Script...` (`RawScriptModal`) for raw data inspection, AI prompt generation, and bulk editing without mode switching.
     3. *Resources & Discovery*: `Starter Guide` (`guide.json`) for the full interactive tutorial and `Browse Library...` for community screenplays.
   - **Center Stage (Workflow Mode Switcher)**: Features a centered segmented control (`[ ▶ Playback | ✏️ Edit ]`) with mode-specific active accents (soft blue for Playback, soft amber for Edit) and responsive icon collapsing. Both modes remain visible side-by-side, providing instant discoverability of the application's dual-mode architecture.
   - **Right Wing (Content, Support & Studio Tools)**:
@@ -407,8 +407,8 @@ All project states (`screenplay_sync_state`), active workflow mode (`sceneflow_a
 - **Default Load**: Fresh visits default to loading the **Scene Frequency** (`scene_frequency.json`) demo script.
 - **Synchronous Player Reset on Load**: Project loaders (`New Project`, `Starter Guide`, `Open Project...`, example scripts, and remote URLs) synchronously trigger `resetPlayback()` in `useYouTubePlayer`, clearing running timers, zeroing timecode to `00:00`, and pausing and seeking the player.
 - **`[ File ▾ ]` Desktop Dropdown Menu**: Accessible from the desktop header with a 3-tier organized structure:
-  1. *Project I/O*: `Open Project...` (local `.json` file upload) and `Save Project` (export active state).
-  2. *Blank Canvas*: `New Project` prompts confirmation to clear the workspace with a fresh empty template (`blank.json`) and automatically transitions into Edit mode.
+  1. *Project I/O*: `Open Project...` (local `.json` file upload), `Save Project` (export active state), and `New Project` (prompts confirmation to clear workspace with `blank.json` and transitions into Edit mode).
+  2. *Script & Cue Data*: `Sync Cues (JSON)...` to inspect/edit raw cues and copy AI prompts/schemas, and `Source Script...` for raw script editing.
   3. *Reference & Discovery*: `Starter Guide` loads the official 1,200+ line interactive instructional guide (`guide.json`) in Playback mode; `Browse Library...` opens the curated example catalog modal.
 
 ### Export & Import
