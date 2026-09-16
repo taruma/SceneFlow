@@ -414,3 +414,4 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
       - Dropping `<OverlapPicker />` silently disables multi-cue selection on screenplay script lines.
     - **State Producer/Consumer Parity**:
       - Every state setter invoked across child components or hooks (`setResetConfirmation`, `setDeleteConfirmation`, `setOverlapPicker`) must have an active consumer element in the rendered DOM tree.
+    - **Detailed Invariant Rules**: See `.agents/rules/refactoring-and-performance-invariants.md` for single-responsibility commit sequencing, surgical JSX wrapping protocols, and smoke test guidelines.
