@@ -412,6 +412,13 @@ Accessible directly inside both `ScriptColorModal` and `MobileColorModal`:
 - **Light & Warm Theme Safety**: Strictly inactive on light and warm themes (`Studio Crisp`, `Warm Parchment`, `Newsprint`), preserving standard reading comfort. Switching back to any dark theme instantly re-engages pure black rendering.
 - **Session Persistence**: User preference is preserved in `localStorage` (`sceneflow_pure_black_bg`).
 
+### Instant Theme Switching & Zero-Lag Transitions
+- **Instantaneous Visual Redraw**: Color theme changes (App Shell mode, Script Paper preset, and Pure Black Canvas) occur with zero transition lag or dropped frames.
+- **Eliminated Paint Thrashing**: Removed sluggish `0.25s` and `200ms` background and text color CSS transitions from `body`, `.script-paper-container`, and workstation panel containers, eliminating browser main-thread frame drops that previously occurred when the entire screenplay DOM reconciled concurrently with CSS color fades.
+- **DOM-Wide Transition Suppression Engine**: When switching themes, `disableTransitionsTemporarily()` momentarily applies `.disable-theme-transitions` (`transition: none !important;`) across all DOM nodes and pseudo-elements, executes a synchronous reflow (`offsetHeight`), and cleans up via double `requestAnimationFrame` once styles are painted.
+- **Preserved Micro-Animations**: Interactive UI controls (buttons, pills, modal dropdowns) retain their snappy hover states and press feedback (`active:scale-95`).
+- **Reduced Motion Compliance**: Integrated `@media (prefers-reduced-motion: reduce)` to automatically eliminate all animations and smooth-scrolling behaviors when system motion reduction is enabled.
+
 ### Configurable Screenplay Width Presets (Desktop Playback)
 Selectable directly within Studio Settings (`[ ⚙️ Settings ▾ ]`) via a 5-segment progressive width bar control under Reading Canvas & Viewport:
 - *Narrow*: 384px (`max-w-sm`) — Focused reading column.

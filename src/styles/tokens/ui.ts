@@ -11,7 +11,7 @@ export const UI_TOKENS = {
     scriptHeader: "h-12 border-b border-border-main flex items-center justify-between px-4 lg:px-8 bg-surface shrink-0 z-20 sticky top-0 shadow-sm text-text-main",
     scriptHeaderPlayback: "h-12 border-b border-border-main flex items-center justify-between px-4 lg:px-8 bg-surface shrink-0 z-20 sticky top-0 shadow-sm text-text-main",
     leftPanelBase: "flex flex-col bg-surface border-border-main z-10 text-text-main",
-    rightPanelBase: "bg-app flex flex-col overflow-hidden relative transition-[border-color,background-color] duration-200",
+    rightPanelBase: "bg-app flex flex-col overflow-hidden relative",
     sectionTitle: "text-xs font-black uppercase tracking-[0.2em] text-text-faint",
     sectionTitleMini: "text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-text-faint",
   },

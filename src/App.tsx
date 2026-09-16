@@ -38,7 +38,7 @@ import {
   MAX_SPLIT_RATIO,
 } from './hooks/useScriptPreferences';
 import { useScriptTheme } from './hooks/useScriptTheme';
-import { useAppShellTheme } from './hooks/useAppShellTheme';
+import { useAppShellTheme, disableTransitionsTemporarily } from './hooks/useAppShellTheme';
 import { useAutoScroll } from './hooks/useAutoScroll';
 import { useCueEditor } from './hooks/useCueEditor';
 import { useCueAlignment } from './hooks/useCueAlignment';
@@ -169,6 +169,7 @@ export default function App() {
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
+      disableTransitionsTemporarily();
       if (isScriptPureBlack) {
         document.documentElement.setAttribute('data-pure-black-script', 'true');
         document.body.setAttribute('data-pure-black-script', 'true');
@@ -910,7 +911,7 @@ export default function App() {
             )}
           >
             <div className={cn(
-              "script-paper-container mx-auto min-h-full rounded-sm relative transition-colors duration-200",
+              "script-paper-container mx-auto min-h-full rounded-sm relative",
               isScriptPureBlack ? "!bg-black !shadow-none" : cn(activeTheme.paperBg, activeTheme.paperShadow),
               activeTheme.paperBorder,
               activeTheme.textColor,

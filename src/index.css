@@ -154,7 +154,6 @@
 
 body {
   @apply font-sans text-text-main bg-app;
-  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* Adaptive Theme Logo */
@@ -219,6 +218,25 @@ body.is-resizing-split * {
 
 body.is-resizing-split iframe {
   pointer-events: none !important;
+}
+
+/* Instant Theme Switching: Suppress cascading transitions during theme swaps to eliminate transition lag */
+.disable-theme-transitions,
+.disable-theme-transitions *,
+.disable-theme-transitions *::before,
+.disable-theme-transitions *::after {
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Container Queries for Responsive Split Panel Headers (Edit & Playback Left Panels) */

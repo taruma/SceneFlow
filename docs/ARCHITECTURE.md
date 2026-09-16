@@ -188,6 +188,7 @@ Application shell theme resolution and persistence:
 - Automatically computes `effectiveCategory` by referencing the active script theme when in `'auto'` mode.
 - Applies `data-theme-category` attributes to `document.documentElement` and `document.body` for global CSS variable scoping.
 - Exposes `themeMode`, `setThemeMode`, `cycleThemeMode`, and `effectiveCategory`.
+- Exports and orchestrates `disableTransitionsTemporarily()`: momentarily injects `.disable-theme-transitions` (`transition: none !important;`) onto `document.documentElement` during shell mode, script paper preset, and pure black canvas updates. Forces a synchronous layout flush (`offsetHeight`) and double-RAF cleanup to ensure instantaneous, zero-lag theme switches without frame drops.
 
 ### `useScriptStorage`
 State initialization and persistence engine:

@@ -76,4 +76,12 @@ When rendering selectable, clickable, or active items that possess a category co
    - Active Playback Border/Glow: `borderColor: rgba(${themed.rgb}, 0.55)` with `boxShadow: 0 0 8px rgba(${themed.rgb}, 0.25), 0 0 0 1px rgba(${themed.rgb}, 0.3)`.
 3. **Theme & CVD Profile Compatibility**: Deriving from `themed.rgb` guarantees that interactive selection states remain visually harmonious across Light, Warm, Dark, and Protanopia-safe palettes without secondary color collisions.
 
+## 8. Instant Theme Switching & Transition Suppression Invariant
+When updating themes, modes, or canvas modifiers:
+1. **Zero Persistent Color Transitions**: Never attach long or persistent CSS color transitions (`transition: background-color 0.25s`, `transition-colors duration-200`) to `body`, `.script-paper-container`, or workstation panel containers. Simultaneous full-script React reconciliation and CSS variable recalculation cause severe main-thread frame drops and transition judder.
+2. **Momentary Transition Suppression (`disableTransitionsTemporarily`)**:
+   - Whenever updating theme mode (`setThemeMode`), screenplay theme preset (`setScriptThemeId`), or canvas modifiers (`setPureBlackMode`), invoke `disableTransitionsTemporarily()` from `src/hooks/useAppShellTheme.ts`.
+   - This momentarily adds `.disable-theme-transitions` (forcing `transition: none !important;` across all DOM nodes and pseudo-elements), triggers a synchronous layout flush (`void root.offsetHeight`), and removes the class via double `requestAnimationFrame`.
+   - This ensures theme switches are instantaneous cuts while preserving snappy interactive button hover and click micro-animations (`active:scale-95`).
+
 
