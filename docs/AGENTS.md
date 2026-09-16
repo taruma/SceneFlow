@@ -377,3 +377,25 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
     - **Debounced Undo/Redo Engine (`useScriptHistory.ts`)**:
       - Debounces keystroke history snapshots at 300ms, preserving precise caret indices and scroll offsets across <kbd>Ctrl+Z</kbd>, <kbd>Ctrl+Y</kbd>, and <kbd>Ctrl+Shift+Z</kbd> operations.
 
+20. **Keyboard Shortcuts Architecture & Help Modal Invariants (`src/constants/shortcuts.ts`, `src/hooks/useKeyboardShortcuts.ts`, `src/components/KeyboardShortcutsModal.tsx`)**:
+    - **Separation of Metadata vs. Execution**:
+      - Metadata (definitions, human-readable labels, descriptions, categories, platform key mappings, aliases, search helpers) lives strictly in `src/constants/shortcuts.ts`.
+      - Execution (event listeners, state mutations, callback invocations, debounce timers) lives strictly in the respective hooks and components (`useKeyboardShortcuts.ts`, `useScriptHistory.ts`, `useCueEditor.ts`).
+      - This decoupling prevents regression: adding or restructuring shortcut metadata never perturbs the browser event loop or triggers spurious re-renders.
+    - **Input Suppression Guards (`isTypingInInput`)**:
+      - Global shortcuts in `useKeyboardShortcuts.ts` must evaluate `isTypingInInput(target)` (`INPUT`, `TEXTAREA`, `[contenteditable="true"]`).
+      - Single-letter hotkeys (<kbd>Space</kbd>, <kbd>K</kbd>, <kbd>J</kbd>, <kbd>L</kbd>, <kbd>V</kbd>, <kbd>?</kbd>) and modifier shortcuts (<kbd>Shift+F</kbd>, <kbd>Shift+S</kbd>, etc.) must never fire while the user is actively typing script text, searching, or entering timecodes.
+    - **Modal Stack Isolation Invariant (`disabled={isAnyModalOpen}`)**:
+      - `useKeyboardShortcuts` takes `disabled={isAnyModalOpen}` to deactivate global navigation and playback hotkeys while any modal is mounted.
+      - Modal-internal hotkeys (<kbd>Esc</kbd> via `useEscapeKey`, <kbd>Ctrl+Enter</kbd> / <kbd>Cmd+Enter</kbd> for commit/save in `RawScriptModal` and `CueEditorForm`, and <kbd>Ctrl+Z</kbd>/<kbd>Ctrl+Y</kbd> in `useScriptHistory`) manage their own lifecycle locally.
+    - **Platform Awareness Invariant**:
+      - Shortcut items in `shortcuts.ts` define separate `win` and `mac` key arrays (`keys: { win: ['Ctrl', 'Enter'], mac: ['⌘', 'Enter'] }`).
+      - UI components (`KeyboardShortcutsModal`, `AppInfoModal`) must resolve keys dynamically via `resolveShortcutKeys(shortcut, isMac)` or `isMacPlatform()` to render native glyphs (`⌘`, `Option`, `Ctrl`, `Alt`) matching the user's operating system.
+    - **Modal Height Stabilization & Zero Layout Shift Invariant (`KeyboardShortcutsModal.tsx`)**:
+      - The shortcuts cheat-sheet modal must declare a fixed container height paired with a max-height clamp (`h-[620px] max-h-[85vh] flex flex-col overflow-hidden`).
+      - Switching between category tabs with differing item counts (e.g. Playback with 5 items vs. General with 8 items) must never cause the modal window to shrink, expand, or vertically re-center on screen.
+    - **Truthful Badging & Visibility Boundary Discipline**:
+      - Never display `<kbd>` badges on actions without active event listeners.
+      - In the desktop `FileMenuDropdown`, only "Source Script..." (<kbd>Shift+S</kbd>) and "Sync Cues (JSON)..." (<kbd>Shift+E</kbd>) display the `<kbd>` badge on the right side. The top-level `[ File ▾ ]` button and `Browse Library...` items deliberately omit badges to prevent visual crowding in primary navigation bars.
+
+

@@ -69,15 +69,30 @@ export function RawScriptModal({
     textareaRef,
   });
 
-  // Handle keydown with Alt+Z word wrap toggle + history shortcuts
+  // Apply Changes (via Apply button or Ctrl+Enter)
+  const handleApply = useCallback(() => {
+    if (onSaveScript) {
+      onSaveScript(draftText, autoRealign);
+    } else if (onChangeScriptText) {
+      onChangeScriptText(draftText);
+    }
+    onClose();
+  }, [draftText, autoRealign, onSaveScript, onChangeScriptText, onClose]);
+
+  // Handle keydown with Alt+Z word wrap toggle + history shortcuts + Ctrl+Enter save
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      handleApply();
+      return;
+    }
     if (e.altKey && e.key.toLowerCase() === 'z') {
       e.preventDefault();
       toggleWordWrap();
       return;
     }
     historyKeyDown(e);
-  }, [toggleWordWrap, historyKeyDown]);
+  }, [handleApply, toggleWordWrap, historyKeyDown]);
 
   // Collapsible hierarchical outline
   const {
@@ -252,16 +267,6 @@ export function RawScriptModal({
   }, [scriptText, onClose, setDraftText]);
 
   useEscapeKey(handleClose, isOpen);
-
-  // Apply Changes
-  const handleApply = () => {
-    if (onSaveScript) {
-      onSaveScript(draftText, autoRealign);
-    } else if (onChangeScriptText) {
-      onChangeScriptText(draftText);
-    }
-    onClose();
-  };
 
   if (!isOpen) return null;
 

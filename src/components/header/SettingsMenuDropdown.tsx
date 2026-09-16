@@ -8,7 +8,8 @@ import {
   Sun, 
   Palette, 
   Clock, 
-  RotateCcw 
+  RotateCcw,
+  Keyboard
 } from 'lucide-react';
 import { UI_TOKENS } from '../../styles/tokens/ui';
 import { cn } from '../../lib/utils';
@@ -36,6 +37,7 @@ export interface SettingsMenuDropdownProps {
   onOpenTiming: () => void;
   isViewCustomized?: boolean;
   onResetView?: () => void;
+  onOpenShortcuts?: () => void;
   scriptWidthPreset?: ScriptWidthPresetId;
   setScriptWidthPreset?: (preset: ScriptWidthPresetId) => void;
   scrollFocusPreset?: ScrollFocusPresetId;
@@ -55,6 +57,7 @@ export const SettingsMenuDropdown: React.FC<SettingsMenuDropdownProps> = memo(({
   onOpenTiming,
   isViewCustomized = false,
   onResetView,
+  onOpenShortcuts,
   scriptWidthPreset = DEFAULT_SCRIPT_WIDTH_PRESET_ID,
   setScriptWidthPreset,
   scrollFocusPreset = DEFAULT_SCROLL_FOCUS_PRESET_ID,
@@ -332,6 +335,24 @@ export const SettingsMenuDropdown: React.FC<SettingsMenuDropdownProps> = memo(({
                   )}
                   <kbd className={UI_TOKENS.badge.shortcut}>Shift+R</kbd>
                 </div>
+              </button>
+            )}
+
+            {onOpenShortcuts && (
+              <button
+                role="menuitem"
+                onClick={() => {
+                  onClose();
+                  onOpenShortcuts();
+                }}
+                className={UI_TOKENS.dropdown.item}
+                title="Keyboard Shortcuts Cheat-Sheet (?)"
+              >
+                <div className="flex items-center gap-2">
+                  <Keyboard size={14} className="text-text-muted" />
+                  <span>Keyboard Shortcuts</span>
+                </div>
+                <kbd className={UI_TOKENS.badge.shortcut}>?</kbd>
               </button>
             )}
           </div>

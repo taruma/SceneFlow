@@ -32,6 +32,7 @@ Across all user interface copy, dialog titles, button labels, tooltips, document
 | **Parsed Line Item** | `ScriptLine` / `Script Line` | `ScreenplayLine` |
 | **Parser Utility** | `scriptParser.ts` / `scriptProcessor.ts` | `screenplayParser.ts` |
 | **Core Hooks** | `useScriptTheme`, `useScriptPreferences`, `useScriptStorage` | `useScreenplayTheme` |
+| **Shortcuts Category / Tab** | `Script Editor` / `Script` | `Screenplay Editor` / `Screenplay` |
 
 > [!NOTE]
 > **Strict Legacy Exceptions**:

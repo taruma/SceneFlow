@@ -38,6 +38,7 @@ export interface AppHeaderProps {
   onSetThemeMode?: (mode: AppThemeMode) => void;
   isViewCustomized?: boolean;
   onResetView?: () => void;
+  onOpenShortcuts?: () => void;
   scriptWidthPreset?: ScriptWidthPresetId;
   setScriptWidthPreset?: (preset: ScriptWidthPresetId) => void;
   scrollFocusPreset?: ScrollFocusPresetId;
@@ -48,6 +49,9 @@ export interface AppHeaderProps {
   onOpenRawScriptModal?: () => void;
   isCuesModalOpen?: boolean;
   isScriptModalOpen?: boolean;
+  activeMenu?: HeaderMenuId | null;
+  onToggleMenu?: (menuId: HeaderMenuId) => void;
+  onCloseMenu?: () => void;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = memo(({
@@ -70,6 +74,7 @@ export const AppHeader: React.FC<AppHeaderProps> = memo(({
   onSetThemeMode,
   isViewCustomized = false,
   onResetView,
+  onOpenShortcuts,
   scriptWidthPreset,
   setScriptWidthPreset,
   scrollFocusPreset,
@@ -80,23 +85,32 @@ export const AppHeader: React.FC<AppHeaderProps> = memo(({
   onOpenRawScriptModal,
   isCuesModalOpen = false,
   isScriptModalOpen = false,
+  activeMenu: activeMenuProp,
+  onToggleMenu: onToggleMenuProp,
+  onCloseMenu: onCloseMenuProp,
 }) => {
-  const [activeMenu, setActiveMenu] = useState<HeaderMenuId | null>(null);
+  const [internalActiveMenu, setInternalActiveMenu] = useState<HeaderMenuId | null>(null);
+  const activeMenu = activeMenuProp !== undefined ? activeMenuProp : internalActiveMenu;
 
   const closeMenu = useCallback(() => {
-    setActiveMenu(null);
-  }, []);
+    if (onCloseMenuProp) onCloseMenuProp();
+    setInternalActiveMenu(null);
+  }, [onCloseMenuProp]);
 
   const toggleMenu = useCallback((menuId: HeaderMenuId) => {
-    setActiveMenu(prev => (prev === menuId ? null : menuId));
-  }, []);
+    if (onToggleMenuProp) {
+      onToggleMenuProp(menuId);
+    } else {
+      setInternalActiveMenu(prev => (prev === menuId ? null : menuId));
+    }
+  }, [onToggleMenuProp]);
 
   // Auto-close open dropdown menus whenever a modal opens
   useEffect(() => {
     if (isColorModalOpen || isSettingsOpen || isInfoModalOpen || isLibraryOpen || isCuesModalOpen || isScriptModalOpen) {
-      setActiveMenu(null);
+      closeMenu();
     }
-  }, [isColorModalOpen, isSettingsOpen, isInfoModalOpen, isLibraryOpen, isCuesModalOpen, isScriptModalOpen]);
+  }, [isColorModalOpen, isSettingsOpen, isInfoModalOpen, isLibraryOpen, isCuesModalOpen, isScriptModalOpen, closeMenu]);
 
   return (
     <header className={cn(UI_TOKENS.layout.appHeader, "hidden lg:flex")}>
@@ -189,6 +203,7 @@ export const AppHeader: React.FC<AppHeaderProps> = memo(({
           onOpenTiming={() => setIsSettingsOpen(true)}
           isViewCustomized={isViewCustomized}
           onResetView={onResetView}
+          onOpenShortcuts={onOpenShortcuts}
           scriptWidthPreset={scriptWidthPreset}
           setScriptWidthPreset={setScriptWidthPreset}
           scrollFocusPreset={scrollFocusPreset}

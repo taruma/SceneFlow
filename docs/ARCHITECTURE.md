@@ -12,7 +12,7 @@ SceneFlow follows a modular, 5-layer architecture that separates script parsing,
 ┌────────────────────────────────────────────────────────────────────────┐
 │                            UTILITY LAYER                               │
 │  src/lib/cueUtils.ts (14 pure functions) • src/lib/utils.ts •          │
-│  src/constants/script.ts (COLORS, presets, DEFAULT_SETTINGS)           │
+│  src/constants/script.ts • src/constants/shortcuts.ts (Registry)       │
 └──────────────────────────────────┬─────────────────────────────────────┘
                                    │ sanitized cues, aligned offsets, theme configs
                                    ▼
@@ -38,7 +38,7 @@ SceneFlow follows a modular, 5-layer architecture that separates script parsing,
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
 │                              UI LAYER                                  │
-│  src/App.tsx (orchestrator)  •  src/components/* (23 modular components)│
+│  src/App.tsx (orchestrator)  •  src/components/* (25 modular components)│
 │  src/types/script.ts (14 domain interfaces)                            │
 └────────────────────────────────────────────────────────────────────────┘
 ```
@@ -116,6 +116,13 @@ Centralized application constants and configuration:
 ### `src/constants/links.ts`
 Centralized repository, guide, publication, and author links:
 - **`EXTERNAL_LINKS`**: Unified URLs for the official Substack introduction article (`article`, `articleTitle`), creator support (`kofi`), source repository (`github`), documentation guide (`docs`), release changelog (`changelog`), and author profile (`author`).
+
+### `src/constants/shortcuts.ts`
+Centralized keyboard shortcuts metadata registry and single source of truth:
+- **`SHORTCUT_CATEGORIES`**: Six domain categories (`playback`, `studio`, `editor`, `inspector`, `dividers`, `general`) with descriptive labels, tab labels (`tabLabel`), descriptions, and Lucide icon mappings.
+- **`SHORTCUTS_REGISTRY`**: Comprehensive array of typed `ShortcutItem` entries specifying unique `id`, `category`, `label`, `description`, platform-aware key combos (`keys: { win: string[], mac: string[] }`), secondary `aliases`, and operational `context` (e.g. `Global`, `Inside Raw Script Editor`, `When list card is focused`).
+- **Platform Key Resolver (`resolveShortcutKeys`)**: Pure function resolving the appropriate key array based on operating system detection (`isMac`).
+- **Search & Filter Helpers**: `searchShortcuts(query, items)` (performs case-insensitive matching across labels, descriptions, and key names) and `getShortcutsByCategory(category, items)`.
 
 ---
 
@@ -342,6 +349,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 22. **`MobileColorModal.tsx`**: Mobile/tablet bottom-sheet drawer providing a thumb-friendly 4-segment App Shell switcher, the Cue Palette Accessibility Profile selector (`Standard` vs. `Protan Safe`), and 6 compact screenplay preset cards.
 23. **`ScriptLine.tsx` (`src/components/script/ScriptLine.tsx`)**: Dedicated memoized line component encapsulating screenplay line-level rendering, staging badges, roman titles, separators, brief formatting, and cue highlights. Implements an optimized `areScriptLinePropsEqual` custom comparator that skips re-renders for lines with no cues (~95% of lines) and only re-renders lines when overlapping cues become active, change opacity, or exit their playback window. Coupled with static `currentTime={0}` decoupling for non-cue lines in `App.tsx`, eliminates virtual DOM diffing across the vast majority of the script. Applies GPU CSS transitions (`100ms linear`) to highlight spans during playback for analog fading without CPU overhead.
 24. **`XIcon.tsx` (`src/components/common/XIcon.tsx`)**: Dedicated SVG component rendering the official X (formerly Twitter) brand mark with configurable size and styling, exported via `src/components/common/index.ts`.
+25. **`KeyboardShortcutsModal.tsx`**: Studio-grade searchable keyboard shortcuts cheat-sheet modal triggered globally via <kbd>?</kbd> (<kbd>Shift+/</kbd>), through Studio Preferences (`[ ⚙️ Settings ▾ ]`), or via `AppInfoModal`. Features real-time multi-attribute search filtering, 6 category tabs, elevated `<kbd>` key badges with platform glyphs (Mac `⌘`/`Option` vs. Windows `Ctrl`/`Alt`), and stabilized `h-[620px]` container geometry preventing vertical layout shifts.
 
 ### Type Definitions & Data Schemas
 - **`src/types/script.ts`**: Defines 14 domain interfaces and types: `Cue`, `TimingSettings`, `ColorCategory`, `AppState`, `ScriptWidthPresetId`, `ScriptWidthPreset`, `ScrollFocusPresetId`, `ScrollFocusPreset`, `TextSelection`, `DeleteConfirmationState`, `ResetConfirmationState`, `OverlapPickerState`, `AlternativeLocation`, and `AppMode`.
