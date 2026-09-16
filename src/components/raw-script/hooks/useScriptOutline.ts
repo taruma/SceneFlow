@@ -37,69 +37,31 @@ export function useScriptOutline({
       const lineLength = line.length;
 
       if (trimmed.length > 0) {
-        // Track closing staging/brief container tags
-        if (/^\[\[\/([A-Z0-9_\s]+)\]\]$/i.test(trimmed)) {
-          const closeTag = trimmed.match(/^\[\[\/([A-Z0-9_\s]+)\]\]$/i)?.[1]?.toUpperCase();
-          if (closeTag === 'STAGING') {
-            insideStaging = false;
-            // Pop staging and any inner items from stack
+        let itemTitle: string | null = null;
+        let itemType: TocItem['type'] = 'heading';
+        let itemRank = 3;
+
+        const firstChar = trimmed[0].toUpperCase();
+
+        // 1. Bracketed directives, tags, or brief sequences
+        if (trimmed[0] === '[') {
+          if (/^\[\[\/([A-Z0-9_\s]+)\]\]$/i.test(trimmed)) {
+            const closeTag = trimmed.match(/^\[\[\/([A-Z0-9_\s]+)\]\]$/i)?.[1]?.toUpperCase();
+            if (closeTag === 'STAGING') {
+              insideStaging = false;
+              while (stack.length > 0 && stack[stack.length - 1].rank >= 3) {
+                stack.pop();
+              }
+            }
+          } else if (/^\[<\/(BRIEF)>\]$/i.test(trimmed)) {
             while (stack.length > 0 && stack[stack.length - 1].rank >= 3) {
               stack.pop();
             }
-          }
-        } else if (/^\[<\/(BRIEF)>\]$/i.test(trimmed)) {
-          while (stack.length > 0 && stack[stack.length - 1].rank >= 3) {
-            stack.pop();
-          }
-        } else {
-          let itemTitle: string | null = null;
-          let itemType: TocItem['type'] = 'heading';
-          let itemRank = 3;
-
-          // 1. Roman Numeral / Part / Chapter / Act Titles (Rank 1 - Major Sections)
-          const isRomanNumeral = /^([IVXLCDM]+\.\s+.*)$/i.test(trimmed);
-          const isPart = /^(PART\s+([0-9]+|[IVXLCDM]+|ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN|EIGHT|NINE|TEN|[A-Z])(\s*[-:—–].*|\s+.*)?)$/i.test(trimmed) ||
-                         (trimmed.length <= 40 && trimmed.toUpperCase() === trimmed && /^PART\s+/i.test(trimmed));
-          const isAct = /^(ACT\s+([0-9]+|[IVXLCDM]+|ONE|TWO|THREE|FOUR|FIVE|[A-Z])(\s*[-:—–].*|\s+.*)?)$/i.test(trimmed);
-          const isChapter = /^(CHAPTER\s+([0-9]+|[IVXLCDM]+|ONE|TWO|THREE|FOUR|FIVE|[A-Z])(\s*[-:—–].*|\s+.*)?)$/i.test(trimmed);
-          const isPrologueOrEpilogue = /^(PROLOGUE|EPILOGUE)(\s*[-:—–].*|\s+.*)?$/i.test(trimmed);
-          const isMarkdownH1 = /^#\s+(.*)$/.test(trimmed);
-
-          if (isRomanNumeral || isPart || isAct || isChapter || isPrologueOrEpilogue) {
-            insideStaging = false;
-            itemTitle = trimmed;
-            itemType = 'part';
-            itemRank = 1;
-          } else if (isMarkdownH1) {
-            itemTitle = trimmed.replace(/^#\s+/, '');
-            itemType = 'heading';
-            itemRank = 1;
-          }
-          // 2. Scene Headings (Rank 2)
-          else if (/^(INT\.|EXT\.|INT\/EXT\.|EXT\/INT\.|I\/E\.)/i.test(trimmed)) {
-            insideStaging = false;
-            itemTitle = trimmed;
-            itemType = 'scene';
-            itemRank = 2;
-          } else if (/^##\s+(.*)$/.test(trimmed)) {
-            itemTitle = trimmed.replace(/^##\s+/, '');
-            itemType = 'heading';
-            itemRank = 2;
-          }
-          // 3. Markdown H3 (Rank 3)
-          else if (/^###\s+(.*)$/.test(trimmed)) {
-            itemTitle = trimmed.replace(/^###\s+/, '');
-            itemType = 'heading';
-            itemRank = 3;
-          }
-          // 4. Brief Sequences (Rank 3)
-          else if (/^\[<BRIEF>\]$/i.test(trimmed) || /^\[<BRIEF>\s*(.*)\]$/i.test(trimmed)) {
+          } else if (/^\[<BRIEF>\]$/i.test(trimmed) || /^\[<BRIEF>\s*(.*)\]$/i.test(trimmed)) {
             itemTitle = '[<BRIEF>] Sequence';
             itemType = 'brief';
             itemRank = 3;
-          }
-          // 5. Staging Blocks & Directives (Rank 3 or 4)
-          else if (/^\[\[([A-Z0-9_\s]+)\]\]$/i.test(trimmed) && !trimmed.startsWith('[[/')) {
+          } else if (/^\[\[([A-Z0-9_\s]+)\]\]$/i.test(trimmed) && !trimmed.startsWith('[[/')) {
             const tagMatch = trimmed.match(/^\[\[([A-Z0-9_\s]+)\]\]$/i);
             const tagName = tagMatch ? tagMatch[1].toUpperCase() : 'TAG';
             
@@ -114,35 +76,76 @@ export function useScriptOutline({
               itemRank = insideStaging ? 4 : 3;
             }
           }
+        } 
+        // 2. Markdown Headings (#, ##, ###)
+        else if (trimmed[0] === '#') {
+          if (/^###\s+(.*)$/.test(trimmed)) {
+            itemTitle = trimmed.replace(/^###\s+/, '');
+            itemType = 'heading';
+            itemRank = 3;
+          } else if (/^##\s+(.*)$/.test(trimmed)) {
+            itemTitle = trimmed.replace(/^##\s+/, '');
+            itemType = 'heading';
+            itemRank = 2;
+          } else if (/^#\s+(.*)$/.test(trimmed)) {
+            itemTitle = trimmed.replace(/^#\s+/, '');
+            itemType = 'heading';
+            itemRank = 1;
+          }
+        } 
+        // 3. Screenplay Scene Headings or Major Section Dividers (Roman numerals, PART, ACT, CHAPTER, etc.)
+        else if (
+          firstChar === 'I' || firstChar === 'E' || firstChar === 'P' || 
+          firstChar === 'A' || firstChar === 'C' || firstChar === 'V' || 
+          firstChar === 'X' || firstChar === 'L' || firstChar === 'D' || firstChar === 'M'
+        ) {
+          const isRomanNumeral = /^([IVXLCDM]+\.\s+.*)$/i.test(trimmed);
+          const isPart = /^(PART\s+([0-9]+|[IVXLCDM]+|ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN|EIGHT|NINE|TEN|[A-Z])(\s*[-:—–].*|\s+.*)?)$/i.test(trimmed) ||
+                         (trimmed.length <= 40 && trimmed.toUpperCase() === trimmed && /^PART\s+/i.test(trimmed));
+          const isAct = /^(ACT\s+([0-9]+|[IVXLCDM]+|ONE|TWO|THREE|FOUR|FIVE|[A-Z])(\s*[-:—–].*|\s+.*)?)$/i.test(trimmed);
+          const isChapter = /^(CHAPTER\s+([0-9]+|[IVXLCDM]+|ONE|TWO|THREE|FOUR|FIVE|[A-Z])(\s*[-:—–].*|\s+.*)?)$/i.test(trimmed);
+          const isPrologueOrEpilogue = /^(PROLOGUE|EPILOGUE)(\s*[-:—–].*|\s+.*)?$/i.test(trimmed);
 
-          // If a section/item was matched, calculate parentage via stack
-          if (itemTitle) {
-            // Pop stack items that are at the same or deeper rank
-            while (stack.length > 0 && stack[stack.length - 1].rank >= itemRank) {
-              stack.pop();
-            }
+          if (isRomanNumeral || isPart || isAct || isChapter || isPrologueOrEpilogue) {
+            insideStaging = false;
+            itemTitle = trimmed;
+            itemType = 'part';
+            itemRank = 1;
+          } else if (/^(INT\.|EXT\.|INT\/EXT\.|EXT\/INT\.|I\/E\.)/i.test(trimmed)) {
+            insideStaging = false;
+            itemTitle = trimmed;
+            itemType = 'scene';
+            itemRank = 2;
+          }
+        }
 
-            const parentId = stack.length > 0 ? stack[stack.length - 1].id : undefined;
-            const level = stack.length;
+        // If a section/item was matched, calculate parentage via stack
+        if (itemTitle) {
+          // Pop stack items that are at the same or deeper rank
+          while (stack.length > 0 && stack[stack.length - 1].rank >= itemRank) {
+            stack.pop();
+          }
 
-            const newItem: TocItem = {
-              id: `toc_${i}_${currentPos}`,
-              title: itemTitle,
-              type: itemType,
-              rank: itemRank,
-              level,
-              parentId,
-              lineIdx: i,
-              charOffset: currentPos,
-              length: lineLength,
-            };
+          const parentId = stack.length > 0 ? stack[stack.length - 1].id : undefined;
+          const level = stack.length;
 
-            items.push(newItem);
+          const newItem: TocItem = {
+            id: `toc_${i}_${currentPos}`,
+            title: itemTitle,
+            type: itemType,
+            rank: itemRank,
+            level,
+            parentId,
+            lineIdx: i,
+            charOffset: currentPos,
+            length: lineLength,
+          };
 
-            // Push to stack if this item can be a parent group (rank < 4)
-            if (itemRank < 4) {
-              stack.push({ id: newItem.id, rank: itemRank });
-            }
+          items.push(newItem);
+
+          // Push to stack if this item can be a parent group (rank < 4)
+          if (itemRank < 4) {
+            stack.push({ id: newItem.id, rank: itemRank });
           }
         }
       }
@@ -164,18 +167,18 @@ export function useScriptOutline({
     return map;
   }, [tocItems]);
 
-  // Lookup map: parent id -> total descendants count
+  // Lookup map: parent id -> total descendants count (calculated in single bottom-up O(N) pass)
   const descendantCountMap = useMemo(() => {
     const counts = new Map<string, number>();
-    for (const item of tocItems) {
-      let currParent = parentMap.get(item.id);
-      while (currParent) {
-        counts.set(currParent, (counts.get(currParent) || 0) + 1);
-        currParent = parentMap.get(currParent);
+    for (let i = tocItems.length - 1; i >= 0; i--) {
+      const item = tocItems[i];
+      if (item.parentId) {
+        const itemDescendants = counts.get(item.id) || 0;
+        counts.set(item.parentId, (counts.get(item.parentId) || 0) + 1 + itemDescendants);
       }
     }
     return counts;
-  }, [tocItems, parentMap]);
+  }, [tocItems]);
 
   // List of all items that can be collapsed (items that have children)
   const collapsibleItemIds = useMemo(() => {

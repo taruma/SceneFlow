@@ -32,17 +32,19 @@ export function useWordWrap({ draftText, textareaRef }: UseWordWrapOptions) {
   const measureLineHeights = useCallback(() => {
     if (!wordWrap || !mirrorRef.current) return;
     const children = mirrorRef.current.children;
-    if (children.length === 0) return;
-    const heights: number[] = new Array(children.length);
-    for (let i = 0; i < children.length; i++) {
-      heights[i] = (children[i] as HTMLElement).getBoundingClientRect().height || 19.2;
+    const len = children.length;
+    if (len === 0) return;
+    const heights: number[] = new Array(len);
+    for (let i = 0; i < len; i++) {
+      const el = children[i] as HTMLElement;
+      heights[i] = el.offsetHeight || 19.2;
     }
     setLineHeights(heights);
   }, [wordWrap]);
 
   useLayoutEffect(() => {
     if (!wordWrap) {
-      setLineHeights([]);
+      setLineHeights(prev => (prev.length === 0 ? prev : []));
       return;
     }
 
@@ -50,11 +52,11 @@ export function useWordWrap({ draftText, textareaRef }: UseWordWrapOptions) {
     if (!textarea) return;
 
     const contentWidth = Math.max(0, textarea.clientWidth - 28);
-    setMirrorWidth(contentWidth);
+    setMirrorWidth(prev => (prev === contentWidth ? prev : contentWidth));
 
     // Measure immediately after DOM layout
     measureLineHeights();
-  }, [wordWrap, draftText, mirrorWidth, measureLineHeights, textareaRef]);
+  }, [wordWrap, draftText, measureLineHeights, textareaRef]);
 
   // Keep mirror width and heights synced on window resize
   useEffect(() => {
@@ -64,7 +66,7 @@ export function useWordWrap({ draftText, textareaRef }: UseWordWrapOptions) {
 
     const ro = new ResizeObserver(() => {
       const contentWidth = Math.max(0, textarea.clientWidth - 28);
-      setMirrorWidth(contentWidth);
+      setMirrorWidth(prev => (prev === contentWidth ? prev : contentWidth));
       measureLineHeights();
     });
     ro.observe(textarea);

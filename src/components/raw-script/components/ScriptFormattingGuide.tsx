@@ -187,7 +187,7 @@ interface ScriptFormattingGuideProps {
   onInsertSnippet: (snippet: string) => void;
 }
 
-export function ScriptFormattingGuide({
+export const ScriptFormattingGuide = React.memo(function ScriptFormattingGuide({
   isOpen,
   onClose,
   onInsertSnippet,
@@ -358,4 +358,4 @@ export function ScriptFormattingGuide({
 
     </div>
   );
-}
+});

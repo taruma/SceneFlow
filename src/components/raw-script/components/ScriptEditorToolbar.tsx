@@ -44,7 +44,7 @@ interface ScriptEditorToolbarProps {
   onClear: () => void;
 }
 
-export function ScriptEditorToolbar({
+export const ScriptEditorToolbar = React.memo(function ScriptEditorToolbar({
   showToc,
   onToggleToc,
   tocCount,
@@ -302,4 +302,4 @@ export function ScriptEditorToolbar({
 
     </div>
   );
-}
+});

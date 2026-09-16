@@ -16,8 +16,13 @@ export function useScriptHistory({
   lineNumbersRef,
   onWordWrapToggle,
 }: UseScriptHistoryOptions) {
-  const [draftText, setDraftText] = useState(initialText);
-  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [draftText, setDraftText] = useState(initialText || '');
+  const [history, setHistory] = useState<HistoryEntry[]>(() => [{
+    text: initialText || '',
+    selectionStart: 0,
+    selectionEnd: 0,
+    scrollTop: 0,
+  }]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const lastTypingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -25,14 +30,25 @@ export function useScriptHistory({
   useEffect(() => {
     if (isOpen) {
       const text = initialText || '';
-      setDraftText(text);
-      setHistory([{
-        text,
-        selectionStart: 0,
-        selectionEnd: 0,
-        scrollTop: 0,
-      }]);
-      setHistoryIndex(0);
+      setDraftText(prev => (prev === text ? prev : text));
+      setHistory(prev => {
+        if (
+          prev.length === 1 &&
+          prev[0].text === text &&
+          prev[0].selectionStart === 0 &&
+          prev[0].selectionEnd === 0 &&
+          prev[0].scrollTop === 0
+        ) {
+          return prev;
+        }
+        return [{
+          text,
+          selectionStart: 0,
+          selectionEnd: 0,
+          scrollTop: 0,
+        }];
+      });
+      setHistoryIndex(prev => (prev === 0 ? prev : 0));
     }
   }, [isOpen, initialText]);
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useDeferredValue } from 'react';
 import { UI_TOKENS } from '../styles/tokens/ui';
 import { useEscapeKey } from '../hooks/useEscapeKey';
 import { 
@@ -94,6 +94,9 @@ export function RawScriptModal({
     historyKeyDown(e);
   }, [handleApply, toggleWordWrap, historyKeyDown]);
 
+  // Outline parsing decoupled from critical render path via React 19 concurrent transition
+  const deferredDraftText = useDeferredValue(draftText);
+
   // Collapsible hierarchical outline
   const {
     showToc,
@@ -109,12 +112,22 @@ export function RawScriptModal({
     toggleCollapseAll,
     handleNavigateToSection,
   } = useScriptOutline({
-    draftText,
+    draftText: deferredDraftText,
     wordWrap,
     lineHeights,
     textareaRef,
     lineNumbersRef,
   });
+
+  const handleToggleToc = useCallback(() => setShowToc(prev => !prev), [setShowToc]);
+  const handleToggleGuide = useCallback(() => setShowGuide(prev => !prev), []);
+  const handleCloseGuide = useCallback(() => setShowGuide(false), []);
+
+  const handleScroll = useCallback((e: React.UIEvent<HTMLTextAreaElement>) => {
+    if (lineNumbersRef.current) {
+      lineNumbersRef.current.scrollTop = e.currentTarget.scrollTop;
+    }
+  }, []);
 
   // Persistent Custom Tags kit & staging insertion
   const {
@@ -169,36 +182,36 @@ export function RawScriptModal({
     reader.readAsText(file);
   }, [setDraftText, pushHistory]);
 
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       handleFileImport(file);
     }
     e.target.value = '';
-  };
+  }, [handleFileImport]);
 
   // Drag and Drop
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
-  };
+  }, []);
 
-  const handleDragLeave = (e: React.DragEvent) => {
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-  };
+  }, []);
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
     if (file) {
       handleFileImport(file);
     }
-  };
+  }, [handleFileImport]);
 
   // Export File (.txt with timestamp and 4-digit identifier)
-  const handleExport = () => {
+  const handleExport = useCallback(() => {
     const now = new Date();
     const pad = (n: number) => String(n).padStart(2, '0');
     const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
@@ -214,20 +227,20 @@ export function RawScriptModal({
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  };
+  }, [draftText]);
 
   // Copy to Clipboard
-  const handleCopy = () => {
+  const handleCopy = useCallback(() => {
     if (navigator?.clipboard) {
       navigator.clipboard.writeText(draftText).then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 1800);
       });
     }
-  };
+  }, [draftText]);
 
   // Format / Clean Whitespace
-  const handleCleanFormat = () => {
+  const handleCleanFormat = useCallback(() => {
     const prevScrollTop = textareaRef.current?.scrollTop ?? 0;
     const cleaned = draftText
       .split('\n')
@@ -245,20 +258,20 @@ export function RawScriptModal({
         lineNumbersRef.current.scrollTop = prevScrollTop;
       }
     });
-  };
+  }, [draftText, setDraftText, pushHistory]);
 
   // Clear Editor (revertible via Revert Draft or Undo)
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     setDraftText('');
     pushHistory('', 0, 0, 0);
-  };
+  }, [setDraftText, pushHistory]);
 
   // Reset to Saved Script
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     const saved = scriptText || '';
     setDraftText(saved);
     pushHistory(saved, 0, 0, 0);
-  };
+  }, [scriptText, setDraftText, pushHistory]);
 
   // Close & Discard Draft
   const handleClose = useCallback(() => {
@@ -272,7 +285,7 @@ export function RawScriptModal({
 
   return (
     <div className={UI_TOKENS.modal.overlayHeavy}>
-      <div className="bg-surface w-[96vw] max-w-7xl h-[90vh] md:h-[92vh] rounded-[1.75rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border-main text-text-main flex flex-col">
+      <div className="bg-surface w-[96vw] max-w-7xl h-[90vh] md:h-[92vh] rounded-[1.75rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border-main text-text-main flex flex-col will-change-[transform,opacity]">
         
         {/* Modal Header */}
         <ScriptModalHeader isDirty={isDirty} onClose={handleClose} />
@@ -280,12 +293,12 @@ export function RawScriptModal({
         {/* Toolbar: Outline Toggle, Wrap Tags, Undo/Redo & File Actions */}
         <ScriptEditorToolbar
           showToc={showToc}
-          onToggleToc={() => setShowToc(prev => !prev)}
+          onToggleToc={handleToggleToc}
           tocCount={tocItems.length}
           wordWrap={wordWrap}
           onToggleWordWrap={toggleWordWrap}
           showGuide={showGuide}
-          onToggleGuide={() => setShowGuide(prev => !prev)}
+          onToggleGuide={handleToggleGuide}
           onWrapSelection={handleWrapSelection}
           onWrapBrief={handleWrapBrief}
           customTags={customTags}
@@ -330,11 +343,7 @@ export function RawScriptModal({
             draftText={draftText}
             onTextChange={handleTextareaChange}
             onKeyDown={handleKeyDown}
-            onScroll={(e) => {
-              if (lineNumbersRef.current) {
-                lineNumbersRef.current.scrollTop = e.currentTarget.scrollTop;
-              }
-            }}
+            onScroll={handleScroll}
             wordWrap={wordWrap}
             lines={lines}
             lineHeights={lineHeights}
@@ -349,7 +358,7 @@ export function RawScriptModal({
           {/* Right Column: Formatting Guide Sidebar */}
           <ScriptFormattingGuide
             isOpen={showGuide}
-            onClose={() => setShowGuide(false)}
+            onClose={handleCloseGuide}
             onInsertSnippet={handleInsertSnippet}
           />
 

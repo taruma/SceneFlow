@@ -6,7 +6,7 @@ interface ScriptModalHeaderProps {
   onClose: () => void;
 }
 
-export function ScriptModalHeader({ isDirty, onClose }: ScriptModalHeaderProps) {
+export const ScriptModalHeader = React.memo(function ScriptModalHeader({ isDirty, onClose }: ScriptModalHeaderProps) {
   return (
     <div className="flex items-center justify-between px-5 py-3 border-b border-border-subtle bg-surface-subtle shrink-0">
       <div className="flex items-center gap-3">
@@ -39,4 +39,4 @@ export function ScriptModalHeader({ isDirty, onClose }: ScriptModalHeaderProps) 
       </button>
     </div>
   );
-}
+});

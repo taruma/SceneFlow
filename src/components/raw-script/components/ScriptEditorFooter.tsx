@@ -16,7 +16,7 @@ interface ScriptEditorFooterProps {
   onApply: () => void;
 }
 
-export function ScriptEditorFooter({
+export const ScriptEditorFooter = React.memo(function ScriptEditorFooter({
   isDirty,
   onReset,
   lineCount,
@@ -104,4 +104,4 @@ export function ScriptEditorFooter({
       </div>
     </div>
   );
-}
+});

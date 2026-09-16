@@ -21,7 +21,7 @@ interface ScriptEditorCanvasProps {
   onDrop: (e: React.DragEvent) => void;
 }
 
-export function ScriptEditorCanvas({
+export const ScriptEditorCanvas = React.memo(function ScriptEditorCanvas({
   textareaRef,
   lineNumbersRef,
   mirrorRef,
@@ -141,4 +141,4 @@ export function ScriptEditorCanvas({
       </div>
     </div>
   );
-}
+});
