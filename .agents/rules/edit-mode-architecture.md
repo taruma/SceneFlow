@@ -27,7 +27,7 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
   - Never execute string operations (such as `scriptText.split('\n')`) or unbounded array transformations inside render bodies or mousemove listeners. Consume pre-computed metrics (`processedLines.length`).
 - **React.memo Decoupling**:
   - Video playback ticks re-render `App.tsx` at 10–60Hz to update `currentTime`.
-  - Because `EditLeftPanel`, `SyncCuesPanel`, `CueEditorForm`, and `ScriptHeaderControls` do not consume continuous `currentTime`, they must remain wrapped in `React.memo` to eliminate cascading re-renders.
+  - Because `WorkstationLeftPanel`, `SyncCuesPanel`, `CueEditorForm`, and `ScriptHeaderControls` do not consume continuous `currentTime`, they must remain wrapped in `React.memo` to eliminate cascading re-renders.
   - **Memoized Style Objects**: Never pass inline style object literals (e.g. `style={{ width: `${splitRatio}%` }}`) to memoized panels in `App.tsx`; always memoize via `useMemo`.
   - **Theme Resolution Hoisting**: Never invoke `useScriptTheme` inside individual cue cards or row items. Hoist `resolveCueColor` to `SyncCuesPanel` and pass down the stable function reference to avoid thousands of redundant hook calls per second during playback.
   - **Pure Fallback Discipline (No "Hook-as-Fallback")**: Never use a React hook as a fallback for an optional hoisted prop inside mapped children or list cards. If a fallback is needed, consume a pure utility function (`getCueColorForTheme`) to guarantee zero hook registrations per list item.
@@ -108,7 +108,7 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
 ## 11. Left Panel Performance-Shielded Auto-Scroll & Forward Monotonicity
 - **Tick Shield Boundary & Multi-Cue Active Resolution**:
   - `SyncCuesPanel` must never receive continuous `currentTime` from the playback clock loop. Continuous ticks would force re-rendering 100–300 cue cards/rows at 10–60Hz.
-  - Active cue resolution is computed at the `EditLeftPanel` boundary:
+  - Active cue resolution is computed at the `WorkstationLeftPanel` boundary:
     - `activeCueId: string | null`: Primary active cue target computed via `findActiveCue(matchingCues, currentTime, settings)` for viewport auto-scrolling.
     - `activeCueIds: Set<string>`: All concurrently active cues firing at `currentTime` computed via `isCueActive()`.
   - **Set Reference Stabilization**: `activeCueIds` is memoized and reference-stabilized using a `useRef` shallow-equality check (`prevActiveCueIdsRef`). When video ticks advance through the same active cues, the identical `Set` instance is returned, ensuring `SyncCuesPanel` experiences zero re-render overhead while media is running.
@@ -151,7 +151,7 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
 ## 13. Desktop 3-Panel Workstation & Mode-Aware Layout Invariants
 - **Calibrated 40 / 35 / 25 Workstation Distribution**:
   - Desktop Edit Mode organizes into three specialized vertical columns:
-    1. **Left Panel (`EditLeftPanel`)**: Calibrated to **40%** default width (`editSplitRatio`, bounds 25%–55%), housing the video preview and time-clustered cue list.
+    1. **Left Panel (`WorkstationLeftPanel`)**: Calibrated to **40%** default width (`editSplitRatio`, bounds 25%–55%), housing the video preview and time-clustered cue list.
     2. **Center Panel (Screenplay Canvas)**: Naturally consumes **35%** default width (`flex-1 min-w-0`), providing an unconstrained reading canvas.
     3. **Right Panel (`EditRightPanel`)**: Calibrated to **25%** default width (`inspectorRatio`, bounds 18%–45%), housing the dedicated Cue Inspector.
 - **Independent Multi-Mode Layout Decoupling**:

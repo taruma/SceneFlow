@@ -258,7 +258,7 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
       - Reading column width and auto-scroll focus presets must be resolved through typed lookup helpers (`getScriptWidthPreset(id)` and `getScrollFocusPreset(id)`) with guaranteed default fallbacks (`DEFAULT_SCRIPT_WIDTH_PRESET`, `DEFAULT_SCROLL_FOCUS_PRESET`), preventing repetitive and fragile `.find() || [0]` ladders across components.
       - Viewport auto-scroll offsets are computed strictly through the pure helper `calculateTargetScrollTop(relativeTop, containerHeight, elementHeight, isDesktop, focusRatio)`, unifying manual preset adjustments (`applyScrollFocus`) and continuous playback auto-scrolling to eliminate formula drift.
 
-16. **Edit Mode Architecture & Two-Tier Left Panel Invariants (`EditLeftPanel.tsx`, `SyncCuesPanel.tsx`, `SyncCuesToolbar.tsx`)**:
+16. **Edit Mode Architecture & Two-Tier Left Panel Invariants (`WorkstationLeftPanel.tsx`, `SyncCuesPanel.tsx`, `SyncCuesToolbar.tsx`)**:
     - **Two-Tier Flex Container**: Edit mode avoids `sticky top-0` scroll container hacks by structuring the Left Panel as an unpinned, two-zone flex container (`h-full flex flex-col overflow-hidden`):
       - **Tier 1 (Media Preview)**: Contains persistent transport controls, `LiveTimecodeBadge` (real-time `MM:SS.s` timecode and duration), collapsible YouTube source pill (`[ 🟢 {videoId} ✏️ ]` reclaiming ~50px height), resizable 16:9 video player, and horizontal `VideoSplitDivider` (tightened with `className="mt-2 mb-1"`).
       - **Tier 2 (Sync Cues Studio)**: Occupies `flex-1 min-h-0 flex flex-col overflow-hidden` with `pt-0` to eliminate dead space. Houses permanently docked `SyncCuesToolbar` and internal scrollable cue list viewport.
@@ -288,7 +288,7 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
     - **Playback Tick Shielding & Static Options (`EditVideoViewport`, `YOUTUBE_PLAYER_OPTS`)**:
       - The YouTube player viewport in Edit mode is encapsulated within the memoized subcomponent `EditVideoViewport` consuming module-level `YOUTUBE_PLAYER_OPTS`.
       - High-frequency timecode ticks (10Hz) delivered to `LiveTimecodeBadge` must never cause React to reconcile or re-evaluate the YouTube iframe player container.
-    - **Left Panel Performance-Shielded Auto-Scroll & Forward Monotonic Tracking (`SyncCuesPanel.tsx`, `EditLeftPanel.tsx`, `cueUtils.ts`)**:
+    - **Left Panel Performance-Shielded Auto-Scroll & Forward Monotonic Tracking (`SyncCuesPanel.tsx`, `WorkstationLeftPanel.tsx`, `cueUtils.ts`)**:
       - **Tick Shield Boundary & Multi-Cue Resolution**: `SyncCuesPanel` must never receive continuous `currentTime` from the playback clock loop. Continuous ticks would force re-rendering 100–300 cue cards/rows at 10–60Hz. Active cue resolution is computed at the `WorkstationLeftPanel` boundary:
         - `activeCueId: string | null`: Primary active cue computed via `findActiveCue()`, passed down strictly for active visual feedback (`isPrimary` halo and gradient wash).
         - `scrollTargetCueId: string | null`: Primary auto-scroll anchor computed via `findScrollTargetCue()`. Decoupled from `activeCueId` to provide intelligent **Upcoming Cue Fallback** when playback is in an inter-cue silence gap or paused between lines (`activeCue === null`), centering the viewport on the next upcoming cue (`cue.startTime >= currentTime`) rather than leaving the list stranded at `scrollTop = 0`.
@@ -310,7 +310,7 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
         - **Selected Cue (`isSelected`)**: Maintains primary focus outline (`rgba(${themed.rgb}, 0.7)` with focus ring) for manual inspector editing.
 
 17. **Desktop 3-Panel Workstation & Cue Inspector Architecture (`EditRightPanel.tsx`, `InspectorSplitDivider.tsx`, `CueTimingCard.tsx`, `CueSceneContext.tsx`, `CueScriptAnchoring.tsx`, `useScriptPreferences.ts`)**:
-    - **Desktop 3-Panel Workstation & 40 / 35 / 25 Distribution**: Edit mode is structured into three dedicated vertical columns: Left Panel (`EditLeftPanel`, default **40%**), Center Panel (Screenplay Canvas with `flex-1 min-w-0`, default **35%**), and Right Panel (`EditRightPanel`, default **25%**).
+    - **Desktop 3-Panel Workstation & 40 / 35 / 25 Distribution**: Edit mode is structured into three dedicated vertical columns: Left Panel (`WorkstationLeftPanel`, default **40%**), Center Panel (Screenplay Canvas with `flex-1 min-w-0`, default **35%**), and Right Panel (`EditRightPanel`, default **25%**).
     - **Mode-Aware Layout Decoupling & Reset**: Layout states (`editSplitRatio` vs `splitRatio`) and storage keys (`sceneflow_edit_split_ratio`, `sceneflow_inspector_ratio`) are decoupled per mode. Triggering "Reset View Layout" (<kbd>Shift+R</kbd>, Settings, or double-click handles) restores 40/35/25 in Edit Mode (re-opening the inspector if closed) and 65/35 in Playback Mode.
     - **Draggable Inspector Divider (`InspectorSplitDivider`)**:
       - Dynamically resizes inspector ratio via pointer capture and `requestAnimationFrame` VSync throttling, measuring `((windowWidth - clientX) / windowWidth) * 100`, clamped between `18%` and `45%` with a `260px` pixel-floor safety limit.

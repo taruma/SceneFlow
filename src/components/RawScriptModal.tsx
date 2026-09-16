@@ -16,7 +16,7 @@ import {
   ScriptFormattingGuide,
 } from './raw-script';
 
-export type { TocItem, RawScriptModalProps } from './raw-script';
+export type { RawScriptModalProps } from './raw-script';
 
 export function RawScriptModal({
   isOpen,

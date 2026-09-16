@@ -76,7 +76,7 @@ Supports eight color-coded cue categories, each calibrated with theme-specific R
 - **Compound Context Architecture (`CueEditorContext`, `CueEditorForm`)**: Cue draft state, timing offsets, DOM text selection ranges, alternative locations, and persistence actions are encapsulated within `<CueEditorProvider>`, enabling zero-prop invocation with automatic fallback resolution across layout panels.
 - **Dynamic Dirty Tracking & Reactive Status Badges**: The Cue Inspector (`EditRightPanel`) tracks an `originalCue` baseline snapshot. When editing an existing cue, it dynamically indicates `Saved` (green checkmark) vs `Unsaved` (pulsing amber dot) based on changes to start/end times, quote text, category type, or character offsets. For new drafts, it displays `Draft` or `Draft (Unsaved)`.
 - **Clean Script Click Dismissal (`dismissIfClean`)**: Clicking anywhere on the clean screenplay canvas while in Edit mode safely dismisses the cue inspector back to the idle workstation overview when no unsaved changes exist (`!isDirty`), while strictly ignoring clicks on interactive buttons, input fields, staging markers, and active DOM text drag selections.
-- **Timestamp Capture & Live Precision Timecodes (`CueTimingInputs`)**: Start and End inputs display live formatted precision timecodes (`MM:SS.s`) above each field alongside `Clock` buttons to capture the player's current video time, or input manual values.
+- **Timestamp Capture, Live Precision Timecodes & Nudge Controls (`CueTimingCard`)**: Start and End timing cards display live formatted precision timecodes (`MM:SS.s`), interactive capture buttons to lock current player time, and rapid micro-nudge steppers (`+0.1s`, `-0.1s`, `+0.5s`, `-0.5s`) with loop segment previews.
 - **Manual Monospace Textarea (`CueTextSection`)**: Users can directly edit a cue's selected text in-place within the Edit Sync Cue panel. This allows safe text corrections without manual JSON editing while preserving character synchronization.
 - **ID Sanitization**: All cues loaded from any source (localStorage, built-in examples, remote projects, or pasted JSON) are automatically run through `sanitizeCues()`, which deduplicates IDs, migrates legacy `colorClass` to canonical semantic `type` while stripping the deprecated `colorClass` property, and injects fallback UUIDs for malformed entries.
 - **Duplicate Text & Alternative Location Finder**: When a phrase appears multiple times (e.g., `WIDE SHOT`), clicking "Find Alternative" scans the screenplay and presents a contextual list of all occurrences with character offsets and text snippets for instant snapping. Hidden `[[STAGING]]` block ranges are strictly excluded from search matches.
@@ -88,7 +88,7 @@ Multiple cues can span the same character ranges. In Edit Mode, overlapping regi
 When script text is edited or pasted, the "Resync" tool sorts cues chronologically by time, strips any legacy `colorClass` properties, and uses proximity-aware regex matching to re-anchor cue indices to the nearest logical position, falling back to a 15-character prefix search if major edits occurred.
 
 ### Edit Mode: Studio Workspace & Cue Management
-Desktop Edit Mode features a dedicated Two-Tier studio workspace in the Left Panel (`EditLeftPanel` & `SyncCuesPanel`) optimized for high-density cue inspection and authoring:
+Desktop Edit Mode features a dedicated Two-Tier studio workspace in the Left Panel (`WorkstationLeftPanel` hosting `SyncCuesPanel`) optimized for high-density cue inspection and authoring:
 
 - **Two-Tier Flex Architecture**:
   - **Tier 1 (Media Preview)**:
@@ -263,7 +263,7 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 
 ### Desktop 3-Panel Edit Workstation & Draggable Cue Inspector
 - **Dedicated 3-Panel Workstation Layout**: Desktop Edit Mode organizes the workspace into three specialized vertical columns calibrated to **40 / 35 / 25**:
-  1. *Left Panel (`EditLeftPanel`)*: Defaults to **40%** width, housing the media preview with live timecode HUD badge, persistent transport controls, and the time-clustered Sync Cues fluid grid.
+  1. *Left Panel (`WorkstationLeftPanel`)*: Defaults to **40%** width, housing the media preview with live timecode HUD badge, persistent transport controls, and the time-clustered Sync Cues fluid grid.
   2. *Center Panel (Screenplay Canvas)*: Defaults to **35%** width (`flex-1 min-w-0`), an unobstructed reading canvas ensuring screenplay text editing never overlaps or collides with the cue inspector.
   3. *Right Panel (`EditRightPanel`)*: Defaults to **25%** width, a dedicated Cue Inspector panel featuring a 48px header matching the script toolbar, active status indicator (`Drafting`, `Editing`, `Idle`), collapsible toggle, embedded `CueEditorForm`, and an idle overview displaying cue statistics by category with quick editing shortcuts.
   - *BRIEF State Engine Statistics & Section Cascade Breakdown*: When the inspector is idle in Edit Mode and the active screenplay contains one or more `[<BRIEF>]` execution blocks, the panel surfaces a dedicated **BRIEF State Engine** deck. It computes and displays:
@@ -297,7 +297,7 @@ Reveals smoothly below the timeline whenever video playback is paused or a cue b
 - **Session Persistence**: Stored in `localStorage` (`sceneflow_playback_video_collapsed`), and unified with the Reset View Layout action in Studio Settings or <kbd>Shift+R</kbd> to restore the video player in a single click.
 
 ### Persistent Playback Header Transport Controls
-- **Always-Accessible Media Controls**: The `PLAYBACK` section header in `PlaybackLeftPanel` houses dedicated playback transport controls:
+- **Always-Accessible Media Controls**: The media header in `WorkstationLeftPanel` houses dedicated playback transport controls:
   - **Play / Pause Toggle**: Dynamically toggles between `Play` and `Pause` states with responsive icons and an active blue accent highlight when media is actively playing. Synchronized with the global <kbd>Space</kbd> and <kbd>K</kbd> keyboard shortcuts.
   - **Replay from Beginning (`0:00`)**: A single click on the `Replay` button (`RotateCcw`) immediately jumps playback to `0:00` and resumes playback, enabling fast iterative review without needing manual timeline scrubbing.
 - **Continuous Operation While Video Is Collapsed**: Even when the video viewport is hidden via the `Hide Video` toggle or <kbd>V</kbd> key, the transport controls remain pinned in the header, allowing users to control playback and audio during timeline screen recording.

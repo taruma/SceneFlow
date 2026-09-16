@@ -101,7 +101,6 @@ A dedicated module containing fourteen exported pure functions for cue lifecycle
 Shared utility functions extracted from `App.tsx`:
 - **`cn(...inputs)`**: Merges Tailwind utility classes safely using `clsx` and `tailwind-merge`.
 - **`extractYoutubeId(url)`**: Extracts an 11-character YouTube video ID from various URL formats (standard, shortened `youtu.be`, embeds, shorts, mobile).
-- **`formatTimecode(seconds)`**: Formats seconds into standard `MM:SS` (or `H:MM:SS` for $\ge 1\text{h}$) timecode strings.
 - **`formatPrecisionTimecode(seconds)`**: Formats raw seconds into standardized `MM:SS.s` (or `HH:MM:SS.s` for $\ge 1\text{h}$) precision timecodes for live playback badges, cue editors, and cue card tags.
 - **`generateId()`**: UUID generator utilizing `crypto.randomUUID()` with fallback.
 
@@ -336,8 +335,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
     - **`TimelineLane.tsx` & `TimelineCueBlock.tsx`**: Isolated track components with continuous sub-frame rendering via `displayTime` (with fixed `100ms linear` transitions eliminated to prevent stop-and-go stutter when YouTube ticks jitter), compact track header geometry (`w-18` / 72px), theme coloring, synchronized density offsets, stable category-level sub-lane height preservation (`totalSubLanes`), narrow block label elision (`widthPercent < 3.5%`), and interactive lane headers that toggle category visibility.
     - **`TimelinePlayheadRuler.tsx`**: Gliding timecode ruler and glowing vertical playhead marker continuously rendered at display refresh rates via `displayTime` without CSS timer interpolation lag.
     - **`PausedInspectorCard.tsx`**: Docked paused cue inspector with multi-cue tabs, screenplay quote, and instant replay action.
-    - **`HighlightFilterBar.tsx`**: Centered category filter pills with active pulsing state dots and smooth collapsible drawer integration.
-15. **`PlaybackLeftPanel.tsx` & `EditLeftPanel.tsx`**: Ergonomic compatibility bridges delegating directly to `WorkstationLeftPanel.tsx` with predetermined modes (`mode="playback"` and `mode="edit"`), preserving backward-compatibility while ensuring single-instance YouTube iframe persistence across the entire application lifecycle.
+15. **`WorkstationLeftPanel.tsx` (`src/components/left-panel/`)**: Unified Left Panel container dynamically hosting Tier 1 (persistent media header and single-instance YouTube iframe) and Tier 2 (`ActiveHighlightsPanel` in Playback mode, `SyncCuesPanel` in Edit mode), ensuring zero-unmount YouTube player continuity across application mode switches.
 16. **`SplitPaneDivider.tsx` & `InspectorSplitDivider.tsx` (`src/components/common/`)**: Desktop-only draggable vertical split pane dividers featuring global `window`-level pointer event subscriptions, pointer capture, `requestAnimationFrame` VSync throttling, `.is-resizing-split` CSS transition suppression, double-click reset, transparent iframe drag guard, `onLostPointerCapture` fallback, and persistent storage commit on pointer release:
     - **`SplitPaneDivider.tsx`**: Resizes left panel split ratio (clamped between 30% and 72% with `MIN_PANEL_PIXEL_WIDTH = 380`).
     - **`InspectorSplitDivider.tsx`**: Resizes right Cue Inspector width (measured from right viewport boundary, clamped between 280px and 560px with floor safeguard for center and left panels).

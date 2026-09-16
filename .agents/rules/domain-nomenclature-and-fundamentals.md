@@ -84,7 +84,7 @@ SceneFlow features two purpose-built desktop modes:
   - High-refresh auto-scrolling (`useAutoScroll`) with user-configurable focus anchor lines (35% Top, 50% Center, 65% Bottom).
   - One-click video collapse (<kbd>V</kbd>) with zero-height background audio continuity for screen recording clean timeline overlays.
 - **Edit Mode (Authoring & Synchronization)**:
-  - Desktop-only two-tier studio workspace (`EditLeftPanel` & `SyncCuesPanel`).
+  - Desktop-only two-tier studio workspace (`WorkstationLeftPanel` hosting `SyncCuesPanel`).
   - Precision timecode capture (`MM:SS.s`), interactive text adjustment, and duplicate occurrence finding.
   - Chronological proximity realignment (`realignCues`) and non-destructive JSON synchronization (`[ { } JSON ]`).
   - Cross-panel synchronized jump: clicking any cue card seeks the video player, populates the editor form, and smoothly scrolls the script canvas to center the target line.

@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.4.1-dev] - Unreleased
 
 ### Optimized
+- **Monolithic Bundle Splitting & 70% Initial JS Payload Reduction (`src/App.tsx`, `vite.config.ts`, `package.json`)**:
+  - **Dynamic Lazy Modal Loading (`src/App.tsx`)**: Converted secondary modals (`RawScriptModal`, `RawCuesModal`, `LibraryModal`, `MobileLibraryModal`, `ScriptColorModal`, `MobileColorModal`, `KeyboardShortcutsModal`, `AppInfoModal`, `TimingSettingsModal`, `StagingModal`) to `React.lazy()` dynamic imports wrapped in `<Suspense fallback={null}>`. Secondary dialog code is no longer evaluated on initial page load.
+  - **Viewport-Aware Modal Mounting (`src/App.tsx`)**: Conditioned `LibraryModal` vs `MobileLibraryModal` and `ScriptColorModal` vs `MobileColorModal` on `isDesktop`, eliminating duplicate hidden modal DOM mounting and duplicate theme listeners.
+  - **Vite Rollup Manual Chunks (`vite.config.ts`)**: Configured `build.rollupOptions.output.manualChunks` to split vendor dependencies into isolated cacheable chunks (`vendor-react`, `vendor-motion`, `vendor-icons`, `vendor-player`).
+  - **Dramatic Bundle Footprint Reduction**: Reduced the initial entry bundle from `778 kB` (`index-DZjqG_4g.js`) down to `243 kB` (`index-C1mX-LZ-.js`) and initial gzip from `215 kB` down to `65 kB` (~70% reduction), eliminating all Vite chunk size warnings and isolating `vendor-motion` (`128 kB`) strictly to animated modal usage.
+
+### Removed
+- **Dead Dependencies & Orphaned Legacy Components (Zero-Regression Pruning)**:
+  - **Unused `package.json` Dependencies**: Removed unused server framework `express` (`^4.21.2`), `@types/express` (`^4.17.21`), `dotenv` (`^17.2.3`), unused AI SDK `@google/genai` (`^1.29.0`), duplicate `vite` in `dependencies`, and `autoprefixer` (`^10.4.21`).
+  - **Orphaned Component Files**: Pruned superseded compatibility adapters and early prototypes (`PlaybackLeftPanel.tsx`, `EditLeftPanel.tsx`, `CueTimingInputs.tsx`, `CueEditorActions.tsx`) with zero runtime references.
+  - **Dead Internal Exports**: Removed unused legacy `formatTimecode(seconds)` in `src/lib/utils.ts`, unused alias `CUES_SYSTEM_PROMPT` in `src/schemas/cues.prompt.ts`, and re-exports in `src/components/edit/index.ts`.
+  - **Clean Knip Audit**: Verified 0 unused files, 0 unused dependencies, and 0 unused devDependencies across the repository.
+
+### Optimized
 - **Source Script Studio High-Performance Engine & Zero-Lag Modal Opening (`src/components/RawScriptModal.tsx`, `src/components/raw-script/*`)**:
   - **Eliminated Mount Re-render Cascades (`useWordWrap.ts`, `useScriptHistory.ts`)**: Guarded pre-paint line height measurement state (`prev.length === 0 ? prev : []`) and eagerly initialized history entries, eliminating two redundant synchronous re-render passes during modal mount.
   - **95% Faster Outline Parsing (`useScriptOutline.ts`)**: Implemented fast-path character prefix filtering (`[`, `#`, and section token pre-checks) to bypass tens of thousands of regular expression evaluations on standard dialogue and action lines. Replaced ancestral tree walks with a single-pass bottom-up $O(N)$ graph accumulation for section descendant counts.

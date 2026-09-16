@@ -15,5 +15,3 @@ Rules:
 3. Categorization:
    - Set speaker to the uppercase character name for dialogue; set to null for other types.
    - Assign the appropriate type (dialogue, action, shot, camera, audio, vfx, transition, environment).`;
-
-export const CUES_SYSTEM_PROMPT = CUES_SYNC_PROMPT;

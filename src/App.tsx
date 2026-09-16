@@ -1,25 +1,26 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback, Suspense, lazy } from 'react';
 import YouTube from 'react-youtube';
 import { Video } from 'lucide-react';
 import { EXAMPLE_SECTIONS } from './examples';
 import { processScript } from './lib/scriptProcessor';
 import { realignCuesList } from './lib/cueUtils';
 import { ScriptLine } from './components/script/ScriptLine';
-import { StagingModal } from './components/StagingModal';
-import { LibraryModal } from './components/LibraryModal';
-import { MobileLibraryModal } from './components/MobileLibraryModal';
 import { InitializingScreen } from './components/InitializingScreen';
-import { RawScriptModal } from './components/RawScriptModal';
-import { RawCuesModal } from './components/RawCuesModal';
 import { OverlapPicker } from './components/OverlapPicker';
 import { DeleteConfirmationModal } from './components/DeleteConfirmationModal';
 import { ResetConfirmationModal } from './components/ResetConfirmationModal';
-import { TimingSettingsModal } from './components/TimingSettingsModal';
-import { ScriptColorModal } from './components/ScriptColorModal';
-import { MobileColorModal } from './components/MobileColorModal';
-import { AppInfoModal } from './components/AppInfoModal';
-import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
 import { AppHeader, type HeaderMenuId } from './components/AppHeader';
+// Lazy-loaded secondary dialogs to optimize initial bundle size
+const StagingModal = lazy(() => import('./components/StagingModal').then(m => ({ default: m.StagingModal })));
+const LibraryModal = lazy(() => import('./components/LibraryModal').then(m => ({ default: m.LibraryModal })));
+const MobileLibraryModal = lazy(() => import('./components/MobileLibraryModal').then(m => ({ default: m.MobileLibraryModal })));
+const RawScriptModal = lazy(() => import('./components/RawScriptModal').then(m => ({ default: m.RawScriptModal })));
+const RawCuesModal = lazy(() => import('./components/RawCuesModal').then(m => ({ default: m.RawCuesModal })));
+const TimingSettingsModal = lazy(() => import('./components/TimingSettingsModal').then(m => ({ default: m.TimingSettingsModal })));
+const ScriptColorModal = lazy(() => import('./components/ScriptColorModal').then(m => ({ default: m.ScriptColorModal })));
+const MobileColorModal = lazy(() => import('./components/MobileColorModal').then(m => ({ default: m.MobileColorModal })));
+const AppInfoModal = lazy(() => import('./components/AppInfoModal').then(m => ({ default: m.AppInfoModal })));
+const KeyboardShortcutsModal = lazy(() => import('./components/KeyboardShortcutsModal').then(m => ({ default: m.KeyboardShortcutsModal })));
 import { WorkstationLeftPanel } from './components/left-panel';
 import { EditRightPanel, CueEditorForm, CueEditorProvider, type CueEditorContextValue } from './components/edit';
 import { SplitPaneDivider, InspectorSplitDivider } from './components/common';
@@ -955,170 +956,133 @@ export default function App() {
       </main>
     </CueEditorProvider>
 
-      <StagingModal
-        isOpen={!!activeStaging}
-        onClose={() => setActiveStaging(null)}
-        label={activeStaging?.label || ""}
-        content={activeStaging?.content || ""}
-      />
+      <Suspense fallback={null}>
+        {/* Staging Modal */}
+        <StagingModal
+          isOpen={!!activeStaging}
+          onClose={() => setActiveStaging(null)}
+          label={activeStaging?.label || ""}
+          content={activeStaging?.content || ""}
+        />
 
-      <LibraryModal
-        isOpen={isLibraryOpen}
-        onClose={() => setIsLibraryOpen(false)}
-        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'guide', error: null })}
-        onSelectExample={(path, title) => {
-          setResetConfirmation({ 
-            isOpen: true, 
-            type: 'example', 
-            examplePath: path, 
-            exampleTitle: title,
-            error: null,
-          });
-        }}
-      />
+        {/* Examples Library Modal (Desktop vs Mobile) */}
+        {isDesktop ? (
+          <LibraryModal
+            isOpen={isLibraryOpen}
+            onClose={() => setIsLibraryOpen(false)}
+            onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'guide', error: null })}
+            onSelectExample={(path, title) => {
+              setResetConfirmation({ 
+                isOpen: true, 
+                type: 'example', 
+                examplePath: path, 
+                exampleTitle: title, 
+                error: null,
+              });
+            }}
+          />
+        ) : (
+          <MobileLibraryModal
+            isOpen={isLibraryOpen}
+            onClose={() => setIsLibraryOpen(false)}
+            onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'guide', error: null })}
+            onSelectExample={(path, title) => {
+              setResetConfirmation({ 
+                isOpen: true, 
+                type: 'example', 
+                examplePath: path, 
+                exampleTitle: title, 
+                error: null,
+              });
+            }}
+          />
+        )}
 
-      <MobileLibraryModal
-        isOpen={isLibraryOpen}
-        onClose={() => setIsLibraryOpen(false)}
-        onOpenGuide={() => setResetConfirmation({ isOpen: true, type: 'guide', error: null })}
-        onSelectExample={(path, title) => {
-          setResetConfirmation({ 
-            isOpen: true, 
-            type: 'example', 
-            examplePath: path, 
-            exampleTitle: title,
-            error: null,
-          });
-        }}
-      />
+        {/* Raw Script Modal */}
+        <RawScriptModal
+          isOpen={isScriptModalOpen}
+          onClose={() => setIsScriptModalOpen(false)}
+          scriptText={state.scriptText}
+          onSaveScript={handleSaveScript}
+          activeCuesCount={state.cues?.length || 0}
+        />
 
-      {/* Raw Script Modal */}
-      <RawScriptModal
-        isOpen={isScriptModalOpen}
-        onClose={() => setIsScriptModalOpen(false)}
-        scriptText={state.scriptText}
-        onSaveScript={handleSaveScript}
-        activeCuesCount={state.cues?.length || 0}
-      />
+        {/* Raw Cues Modal */}
+        <RawCuesModal
+          isOpen={isCuesModalOpen}
+          onClose={() => setIsCuesModalOpen(false)}
+          rawCuesText={rawCuesText}
+          onChangeRawCuesText={setRawCuesText}
+          onSave={saveRawCues}
+        />
 
-      {/* Raw Cues Modal */}
-      <RawCuesModal
-        isOpen={isCuesModalOpen}
-        onClose={() => setIsCuesModalOpen(false)}
-        rawCuesText={rawCuesText}
-        onChangeRawCuesText={setRawCuesText}
-        onSave={saveRawCues}
-      />
-
-      {/* Overlap Picker Menu */}
-      <OverlapPicker
-        isOpen={overlapPicker.isOpen}
-        position={overlapPicker.position}
-        cues={overlapPicker.cues}
-        cuePaletteProfile={cuePaletteProfile}
-        onSelectCue={(cue) => {
-          selectCueForEdit(cue);
-          setOverlapPicker({ ...overlapPicker, isOpen: false });
-        }}
-        onClose={() => setOverlapPicker({ ...overlapPicker, isOpen: false })}
-      />
-
-      {/* Delete Confirmation Modal */}
-      <DeleteConfirmationModal
-        isOpen={deleteConfirmation.isOpen}
-        cue={deleteConfirmation.cue}
-        onClose={() => setDeleteConfirmation({ isOpen: false, cue: null })}
-        onConfirm={confirmDelete}
-      />
-
-      {/* General Reset Confirmation Modal */}
-      <ResetConfirmationModal
-        resetConfirmation={resetConfirmation}
-        isRemoteLoading={isRemoteLoading}
-        onClose={() => setResetConfirmation({ isOpen: false, type: null, error: null })}
-        onClearError={() => setResetConfirmation(prev => ({ ...prev, error: null }))}
-        onConfirm={() => {
-          if (resetConfirmation.type === 'settings') {
-            setState(prev => ({ ...prev, settings: DEFAULT_SETTINGS }));
-            setResetConfirmation({ isOpen: false, type: null, error: null });
-          } else if (resetConfirmation.type === 'new') {
-            createNewProject();
-          } else if (resetConfirmation.type === 'guide' || resetConfirmation.type === 'blank') {
-            loadGuide();
-          } else if (resetConfirmation.type === 'data') {
-            resetState();
-          } else if (resetConfirmation.type === 'example' && resetConfirmation.examplePath) {
-            loadExample(resetConfirmation.examplePath);
-          } else if (resetConfirmation.type === 'remote' && resetConfirmation.remoteUrl) {
-            loadRemoteProject(resetConfirmation.remoteUrl);
-          }
-        }}
-      />
-
-      {/* Timing Settings Modal */}
-      <TimingSettingsModal
-        isOpen={isSettingsOpen}
-        settings={state.settings}
-        colors={COLORS}
-        scriptThemeId={scriptThemeId}
-        cuePaletteProfile={cuePaletteProfile}
-        onClose={() => setIsSettingsOpen(false)}
-        onResetClick={() => setResetConfirmation({ isOpen: true, type: 'settings', error: null })}
-        onUpdateSetting={(category, field, value) => {
-          setState(prev => ({
-            ...prev,
-            settings: {
-              ...prev.settings,
-              [category]: {
-                ...(prev.settings?.[category] || { before: 0, after: 0 }),
-                [field]: value,
+        {/* Timing Settings Modal */}
+        <TimingSettingsModal
+          isOpen={isSettingsOpen}
+          settings={state.settings}
+          colors={COLORS}
+          scriptThemeId={scriptThemeId}
+          cuePaletteProfile={cuePaletteProfile}
+          onClose={() => setIsSettingsOpen(false)}
+          onResetClick={() => setResetConfirmation({ isOpen: true, type: 'settings', error: null })}
+          onUpdateSetting={(category, field, value) => {
+            setState(prev => ({
+              ...prev,
+              settings: {
+                ...prev.settings,
+                [category]: {
+                  ...(prev.settings?.[category] || { before: 0, after: 0 }),
+                  [field]: value,
+                },
               },
-            },
-          }));
-        }}
-      />
-      {/* Script Color & Theme Modal */}
-      <ScriptColorModal
-        isOpen={isColorModalOpen}
-        onClose={() => setIsColorModalOpen(false)}
-        currentThemeId={scriptThemeId}
-        onSelectTheme={setScriptThemeId}
-        themeMode={themeMode}
-        setThemeMode={setThemeMode}
-        effectiveThemeCategory={effectiveCategory}
-        pureBlackMode={pureBlackMode}
-        setPureBlackMode={setPureBlackMode}
-        cuePaletteProfile={cuePaletteProfile}
-        onSelectPaletteProfile={setCuePaletteProfile}
-      />
+            }));
+          }}
+        />
 
-      {/* Mobile Script Color & Theme Drawer */}
-      <MobileColorModal
-        isOpen={isColorModalOpen}
-        onClose={() => setIsColorModalOpen(false)}
-        currentThemeId={scriptThemeId}
-        onSelectTheme={setScriptThemeId}
-        themeMode={themeMode}
-        setThemeMode={setThemeMode}
-        effectiveThemeCategory={effectiveCategory}
-        pureBlackMode={pureBlackMode}
-        setPureBlackMode={setPureBlackMode}
-        cuePaletteProfile={cuePaletteProfile}
-        onSelectPaletteProfile={setCuePaletteProfile}
-      />
+        {/* Script Color & Theme Modal (Desktop vs Mobile) */}
+        {isDesktop ? (
+          <ScriptColorModal
+            isOpen={isColorModalOpen}
+            onClose={() => setIsColorModalOpen(false)}
+            currentThemeId={scriptThemeId}
+            onSelectTheme={setScriptThemeId}
+            themeMode={themeMode}
+            setThemeMode={setThemeMode}
+            effectiveThemeCategory={effectiveCategory}
+            pureBlackMode={pureBlackMode}
+            setPureBlackMode={setPureBlackMode}
+            cuePaletteProfile={cuePaletteProfile}
+            onSelectPaletteProfile={setCuePaletteProfile}
+          />
+        ) : (
+          <MobileColorModal
+            isOpen={isColorModalOpen}
+            onClose={() => setIsColorModalOpen(false)}
+            currentThemeId={scriptThemeId}
+            onSelectTheme={setScriptThemeId}
+            themeMode={themeMode}
+            setThemeMode={setThemeMode}
+            effectiveThemeCategory={effectiveCategory}
+            pureBlackMode={pureBlackMode}
+            setPureBlackMode={setPureBlackMode}
+            cuePaletteProfile={cuePaletteProfile}
+            onSelectPaletteProfile={setCuePaletteProfile}
+          />
+        )}
 
-      {/* App Info / About Modal */}
-      <AppInfoModal
-        isOpen={isInfoModalOpen}
-        onClose={() => setIsInfoModalOpen(false)}
-        onOpenShortcuts={() => setIsShortcutsModalOpen(true)}
-      />
+        {/* App Info / About Modal */}
+        <AppInfoModal
+          isOpen={isInfoModalOpen}
+          onClose={() => setIsInfoModalOpen(false)}
+          onOpenShortcuts={() => setIsShortcutsModalOpen(true)}
+        />
 
-      {/* Keyboard Shortcuts Palette / Guide Modal */}
-      <KeyboardShortcutsModal
-        isOpen={isShortcutsModalOpen}
-        onClose={() => setIsShortcutsModalOpen(false)}
-      />
+        {/* Keyboard Shortcuts Palette / Guide Modal */}
+        <KeyboardShortcutsModal
+          isOpen={isShortcutsModalOpen}
+          onClose={() => setIsShortcutsModalOpen(false)}
+        />
+      </Suspense>
     </div>
   );
 }
