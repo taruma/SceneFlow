@@ -356,7 +356,14 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 - **`src/schemas/cues.prompt.ts` & `public/sync-prompt.txt`**: Canonical video-to-script synchronization prompt (`CUES_SYNC_PROMPT`) enforcing strict verbatim `<ScriptText>` substring copying and `(minutes * 60) + seconds` timecode math.
 - **`src/examples.ts`**: Defines the `Example` and `ExampleSection` schemas and holds the built-in catalogue metadata.
 
+### Reference Documentation & Conceptual Specifications (`docs/articles/`)
+Local reference suite preserving published articles and foundational conceptual frameworks for SceneFlow and the Auteur Script framework:
+- **`docs/articles/sceneflow-script-to-screen.md`**: Author's launch article on Substack (*"Introducing SceneFlow: Script-to-Screen Synchronization"*), detailing the dual-pane architecture, color spectrum, adapted layout, and in-browser cue alignment engine.
+- **`docs/articles/auteur_script/index.md`**: Foundational reference guide for the Auteur Script framework, covering the two-phase staging workflow ($S_0 \to S_1 \dots S_n$) and video showcase breakdowns.
+- **`docs/articles/auteur_script/conceptual_model.md`**: Conceptual blueprint formalizing the state vector model ($S_n = \langle s_{\text{camera}}, s_{\text{action}}, s_{\text{audio}}, \dots \rangle$), recursive staging equations ($S_n = f(S_{n-1} \mid \text{STAGING})$), and cognitive pre-visualization scaffolding.
+
 ---
+
 
 ## 6. Data Flow Diagram
 

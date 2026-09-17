@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.5.1-dev] - Unreleased
 
+### Added
+- **Reference Documentation Suite (`docs/articles/`)**:
+  - **SceneFlow Launch Publication (`docs/articles/sceneflow-script-to-screen.md`)**: Local reference copy of the author's official Substack publication (*"Introducing SceneFlow: Script-to-Screen Synchronization"* on *Grounded Hallucinations*), detailing the dual-pane synchronized playback engine, 8-category color spectrum, adapted screenplay layout, in-browser cue alignment editor, and library catalogue.
+  - **Auteur Script Framework Reference (`docs/articles/auteur_script/index.md`)**: Foundational reference documentation for the Auteur Script prompt specification, covering two-phase production staging (Staging $S_0$ vs. Execution $S_1 \dots S_n$), single-dimension orthogonality rules, and three production video showcases.
+  - **Auteur Script Conceptual Model & State Grammar (`docs/articles/auteur_script/conceptual_model.md`)**: Theoretical reference specification detailing state vector formulation ($S_n = \langle s_{\text{camera}}, s_{\text{action}}, s_{\text{audio}}, \dots \rangle$), recursive staging equations ($S_n = f(S_{n-1} \mid \text{STAGING})$), camera persistence, physical baggage inheritance, and dual pre-visualization / diagnostic workflows.
+
 ## [2.5.0] - 2026-09-16
 
 ### Added

@@ -415,3 +415,13 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
     - **State Producer/Consumer Parity**:
       - Every state setter invoked across child components or hooks (`setResetConfirmation`, `setDeleteConfirmation`, `setOverlapPicker`) must have an active consumer element in the rendered DOM tree.
     - **Detailed Invariant Rules**: See `.agents/rules/refactoring-and-performance-invariants.md` for single-responsibility commit sequencing, surgical JSX wrapping protocols, and smoke test guidelines.
+
+22. **Reference Documentation & Articles Architecture (`docs/articles/`)**:
+    - **Reference-Only Boundary Invariant**:
+      - Files located under `docs/articles/` serve strictly as static, conceptual reference documentation and published articles.
+      - They preserve the theoretical foundations of the Auteur Script framework and author publications (such as the Substack launch article).
+      - They must **never** be treated as runtime code, state schemas, or active application guides.
+    - **Document Scope**:
+      - `docs/articles/sceneflow-script-to-screen.md`: Reference copy of the author's official Substack launch article (*"Introducing SceneFlow: Script-to-Screen Synchronization"* on *Grounded Hallucinations*).
+      - `docs/articles/auteur_script/index.md`: Overview of the Auteur Script framework, two-phase staging workflow ($S_0 \to S_1 \dots S_n$), and production exhibits.
+      - `docs/articles/auteur_script/conceptual_model.md`: Theoretical blueprint formalizing state vector formulation ($S_n = \langle s_{\text{camera}}, s_{\text{action}}, s_{\text{audio}}, \dots \rangle$), recursive staging equations ($S_n = f(S_{n-1} \mid \text{STAGING})$), and cognitive pre-visualization scaffolding.

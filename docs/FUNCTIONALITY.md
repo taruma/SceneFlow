@@ -53,7 +53,15 @@ Blocks wrapped in `[[STAGING]]...[[/STAGING]]` hold multi-level prompt directive
 - **Staging Modal**: Clicking a staging badge opens a monospace inspector displaying the hidden technical directives. Badges are disabled during active video playback, and any open staging modal automatically closes upon video play.
 - **Mobile Adaptation**: Staging badge sizes, padding, and gaps scale down dynamically on mobile viewports for compact wrapping.
 
+> [!NOTE]
+> **Conceptual Reference Documentation (`docs/articles/`)**:  
+> For the complete conceptual blueprints and historical background on the Auteur Script framework and SceneFlow's synchronization model, see:
+> - [The Auteur Script Blueprint](articles/auteur_script/conceptual_model.md)
+> - [Auteur Script Overview & Directorial Grammar](articles/auteur_script/index.md)
+> - [Introducing SceneFlow: Script-to-Screen Synchronization](articles/sceneflow-script-to-screen.md)
+
 ---
+
 
 ## 3. Syncing System (Cues)
 
