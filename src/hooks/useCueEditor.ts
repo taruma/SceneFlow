@@ -65,13 +65,13 @@ export function useCueEditor({
     }
   }, []);
 
-  const handleSelection = useCallback(() => {
-    if (mode !== 'edit') return;
+  const handleSelection = useCallback((): boolean => {
+    if (mode !== 'edit') return false;
     const sel = window.getSelection();
     
     if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
       if (overlapPicker.isOpen) setOverlapPicker(prev => ({ ...prev, isOpen: false }));
-      return;
+      return false;
     }
 
     const res = getSelectionIndicesFromDOM(sel, scriptText);
@@ -89,8 +89,10 @@ export function useCueEditor({
         startIndex: res.start,
         endIndex: res.end,
       });
+      return true;
     } else {
       console.warn("Text not found in raw scriptText. Selection might span across complex formatting or have different whitespace.");
+      return false;
     }
   }, [mode, scriptText, overlapPicker.isOpen]);
 

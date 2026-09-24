@@ -50,3 +50,28 @@ Universal behavioral guardrails, architectural invariants, and verification prot
     2. **Guarded Action**: Trigger a confirmation-dependent action (e.g., click a Library example card, delete a cue, reset settings).
     3. **Confirmation Verification**: Verify that the confirmation modal displays on screen with expected warning text.
     4. **State Persistence**: Confirm the prompt and verify that the target action (e.g. project load, cue deletion) completes successfully.
+
+---
+
+## 5. Native Event Lifecycle & Trailing Click Shielding on Interactive Containers
+
+- **The React DOM Mutation vs. Native Selection Race**:
+  - In browsers, mouse drag operations dispatch `mousedown` $\to$ `mousemove` $\to$ `mouseup` $\to$ trailing `click`.
+  - If a `mouseup` handler updates React state that replaces or wraps the underlying DOM `TextNode` (such as inserting temporary selection highlight spans `<span className="cueTemp">`), the browser engine immediately invalidates and collapses the native selection range (`sel.isCollapsed === true`, `sel.toString() === ""`).
+- **Insufficient Guard (`window.getSelection()`)**:
+  - Never rely solely on `if (sel && !sel.isCollapsed)` inside container `onClick` handlers to protect text drag selections from dismissal logic. By the time `click` executes, the native selection may already be collapsed by React's DOM insertion.
+- **Defensive Multi-Tier Trailing Click Shielding**:
+  - Whenever implementing canvas-level click-to-dismiss behavior on containers supporting drag-selection:
+    1. **Synchronous Capture Flag (`justSelectedRef`)**: Have selection handlers return a boolean signal upon successful capture. Set a single-use ref flag (`justSelectedRef.current = true`) on `mouseup`, and consume/exit on this flag in `onClick`.
+    2. **Mouse Displacement Threshold (`mouseDownPosRef`)**: Record `(clientX, clientY)` on `onMouseDown`. In `onClick`, measure displacement: if `Math.hypot(dx, dy) > 4`, treat the event as a drag gesture rather than a stationary click.
+    3. **Ref Garbage Collection**: Always reset `mouseDownPosRef.current = null` immediately after distance evaluation to guarantee 1:1 event pairing and prevent stale coordinates from contaminating synthetic or keyboard events.
+    4. **Active Selection Guarding on Nested Click Targets**: If children have `onClick` actions (e.g. cue cards in a list), guard them with `if (sel && !sel.isCollapsed) return;` so drag gestures crossing child boundaries do not trigger click actions.
+
+---
+
+## 6. Investigation Discipline: Architectural Code Evaluation Before Browser Subagents
+
+- **Symptom Observation vs. Root-Cause Analysis**:
+  - When investigating UI discrepancies, event failures, or regressions reported by the user, **always perform code inspection and commit history tracing (`git log -S`, `git log -L`) before launching browser subagents**.
+  - Browser subagents verify runtime symptoms, but static code tracing and git archaeology isolate the exact commit, author intent, and lifecycle race condition that caused the defect.
+  - Browser subagents should be reserved for **verification after formulating the hypothesis and testing the fix**, rather than open-ended initial exploration.

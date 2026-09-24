@@ -248,3 +248,18 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
 - **Root Render Tree Invariant for Deletion & Overlap Dialogs (`DeleteConfirmationModal`, `OverlapPicker`, `ResetConfirmationModal`)**:
   - State setters in `useCueEditor` (`setDeleteConfirmation`, `setOverlapPicker`) and `useScriptStorage` require their respective dialog consumers (`DeleteConfirmationModal`, `OverlapPicker`, `ResetConfirmationModal`) to remain permanently mounted at the root of `App.tsx`.
   - When wrapping modals in `React.lazy()` or `<Suspense>`, never omit these non-lazy components; doing so silently disables cue deletions, overlapping cue selection, and project initialization without throwing runtime errors.
+
+## 17. Text Selection Lifecycle & Trailing Click Shielding Invariants (`App.tsx`, `useCueEditor.ts`, `ScriptLine.tsx`)
+- **React DOM Replacement vs. Native Selection Collapse**:
+  - In Edit Mode, capturing a text selection on `mouseup` updates `selection` state in `useCueEditor`.
+  - When React re-renders `ScriptLineComponent` to wrap the character range in a temporary highlight span (`<span className="cueTemp">`), the underlying DOM `TextNode` is split and replaced, causing the browser engine to automatically collapse active native selection ranges (`sel.isCollapsed === true`, `sel.toString() === ""`).
+- **Trailing Click Shielding (`justSelectedRef`)**:
+  - In DOM event lifecycle, mouse drag release fires `mouseup` immediately followed by a native `click` event on the common ancestor container (`scriptRef`).
+  - Because the native range collapses during React's synchronous render before `handleScriptClick` executes, standard `!sel.isCollapsed` guards fail.
+  - To prevent `dismissIfClean()` from prematurely wiping clean/untouched cue drafts, `handleScriptMouseUp` must set a single-use `justSelectedRef.current = true` whenever `handleSelection()` returns `true`, and `handleScriptClick` must immediately consume and exit on this flag.
+- **Drag Displacement Threshold & Ref Hygiene (`mouseDownPosRef`)**:
+  - Track pointer displacement on `scriptRef` via `mouseDownPosRef` with a calibrated 4px threshold (`Math.hypot(dx, dy) > 4`), ensuring drag-selection gestures are never confused with stationary clicks on blank paper background.
+  - Immediately reset `mouseDownPosRef.current = null` upon distance evaluation to guarantee strict 1:1 event pairing and prevent stale coordinate contamination on synthetic or keyboard events.
+- **Active Selection Shielding on Existing Cue Cards (`ScriptLine.tsx`)**:
+  - Cue span `onClick` handlers must inspect `window.getSelection()` and abort `onSelectCue` if an active non-collapsed selection exists, preventing drag selections that cross existing cues from accidentally opening cue inspection instead of drafting.
+

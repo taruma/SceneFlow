@@ -226,10 +226,11 @@ Real-time playback auto-scroll engine:
 
 ### `useCueEditor`
 Cue authoring and editing state machine:
-- Handles line-anchored DOM text selection → script-text mapping via `getSelectionIndicesFromDOM` with fallback to `findTextInScript`.
+- Handles line-anchored DOM text selection → script-text mapping via `getSelectionIndicesFromDOM` (with dynamic `data-line-end` windowing) and fallback to `findTextInScript`.
+- `handleSelection()` returns a synchronous boolean confirmation signal to callers upon successful range extraction.
 - Manages cue creation, editing, deletion with confirmation modals, and duplicate occurrence lookup.
 - Tracks `originalCue` baseline snapshot when selecting a cue and derives dynamic `isDirty` state across start/end times, quote text, category type, and character offsets (and timing/text customizations for new drafts).
-- Exposes `dismissIfClean()` helper allowing clean screenplay canvas clicks (`handleScriptClick`) to safely close the cue inspector back to idle overview when no unsaved changes exist.
+- Exposes `dismissIfClean()` helper coordinated with `App.tsx`'s `justSelectedRef` and `mouseDownPosRef` drag-displacement tracking, safely closing the cue inspector back to idle overview on stationary empty-paper clicks without disrupting drag selections or multi-click captures.
 - Exposes `selection`, `newCue`, `originalCue`, `isDirty`, `dismissIfClean`, `altLocations`, `overlapPicker`, and `deleteConfirmation` state (with project lifecycle `resetConfirmation` cleanly isolated to `App.tsx`).
 
 ### `useCueAlignment`

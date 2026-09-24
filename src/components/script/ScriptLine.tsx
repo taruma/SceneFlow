@@ -278,6 +278,11 @@ function ScriptLineComponent({
         id={idToUse}
         onClick={(e) => {
           if (mode !== 'edit' || isTemp) return;
+
+          // If the user was drag-selecting text, ignore the cue click so the text selection can register
+          const sel = window.getSelection();
+          if (sel && !sel.isCollapsed && Boolean(sel.toString().trim())) return;
+
           e.stopPropagation();
 
           const actualCues = segmentCues.filter(c => c.id !== 'temp-selection');

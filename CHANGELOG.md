@@ -5,7 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.5.1-dev] - Unreleased
+## [2.5.1] - 2026-09-24
+
+### Fixed
+- **Edit Mode Text Selection Registration & Trailing Click Shielding (`src/App.tsx`, `src/hooks/useCueEditor.ts`, `src/components/script/ScriptLine.tsx`, `src/lib/cueUtils.ts`)**:
+  - **Trailing Click Shielding (`justSelectedRef`)**: Resolved an issue where selecting text on a single line in Edit Mode immediately vanished without displaying the cue draft. When React re-rendered `ScriptLine` to insert `<span className="cueTemp">`, the native DOM selection range collapsed before the trailing browser `click` event fired, causing `handleScriptClick` to falsely evaluate `!isDirty` and cancel the draft. Added a single-use `justSelectedRef` flag to shield newly created selections and double-click word captures.
+  - **Drag Displacement Tracking (`mouseDownPosRef`)**: Added mouse drag displacement tracking on `scriptRef` with a calibrated 4px movement threshold, ensuring drag gestures are never misinterpreted as stationary background dismiss clicks. Self-resetting ref hygiene (`mouseDownPosRef.current = null`) prevents coordinate leakage across clicks.
+  - **Synchronous Selection Capture Signal (`useCueEditor.ts`)**: Updated `handleSelection` to return a `boolean` confirming when a non-empty selection has been successfully captured and applied to state.
+  - **Active Selection Shielding on Existing Cues (`ScriptLine.tsx`)**: In `ScriptLineComponent`, guarded cue span `onClick` handlers against active native text drag selections, preventing accidental invocation of `onSelectCue` when dragging across text that already contains a cue.
+  - **Bounded Full-Line Search Windowing (`cueUtils.ts`)**: Enhanced `getSelectionIndicesFromDOM` to read `data-line-end` attributes from line containers, dynamically expanding local search windows across formatted lines of any length.
+  - **Refactoring & Investigation Invariants (`.agents/rules/`)**: Codified Section 5 (Native Event Lifecycle & Trailing Click Shielding on Interactive Containers) and Section 6 (Investigation Discipline: Codebase Evaluation Before Browser Subagents) in `refactoring-and-performance-invariants.md`.
 
 ### Added
 - **Reference Documentation Suite (`docs/articles/`)**:

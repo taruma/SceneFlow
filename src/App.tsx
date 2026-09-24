@@ -218,12 +218,21 @@ export default function App() {
   });
 
   const [isInspectorOpen, setIsInspectorOpen] = useState(true);
+  const justSelectedRef = useRef<boolean>(false);
+  const mouseDownPosRef = useRef<{ x: number; y: number } | null>(null);
+
+  const handleScriptMouseDown = useCallback((e: React.MouseEvent) => {
+    mouseDownPosRef.current = { x: e.clientX, y: e.clientY };
+  }, []);
 
   const handleScriptMouseUp = useCallback(() => {
-    handleSelection();
+    const didCapture = handleSelection();
+    if (didCapture) {
+      justSelectedRef.current = true;
+    }
     if (mode === 'edit') {
       const sel = window.getSelection();
-      if (sel && sel.rangeCount > 0 && !sel.isCollapsed && sel.toString().trim()) {
+      if ((sel && sel.rangeCount > 0 && !sel.isCollapsed && Boolean(sel.toString().trim())) || didCapture) {
         setIsInspectorOpen(true);
       }
     }
@@ -232,22 +241,37 @@ export default function App() {
   const handleScriptClick = useCallback((e: React.MouseEvent) => {
     if (mode !== 'edit') return;
 
-    // If overlap picker was open, let its own click-outside handler dismiss it without closing cue edit
+    // 1. If a text selection was just captured during mouseup, don't dismiss it
+    if (justSelectedRef.current) {
+      justSelectedRef.current = false;
+      return;
+    }
+
+    // 2. If mouse moved significantly between mousedown and click (> 4px), treat as drag, not dismiss click
+    if (mouseDownPosRef.current) {
+      const dist = Math.hypot(e.clientX - mouseDownPosRef.current.x, e.clientY - mouseDownPosRef.current.y);
+      mouseDownPosRef.current = null;
+      if (dist > 4) {
+        return;
+      }
+    }
+
+    // 3. If overlap picker was open, let its own click-outside handler dismiss it without closing cue edit
     if (overlapPicker.isOpen) return;
 
-    // Ignore clicks on buttons, inputs, links, or staging markers
+    // 4. Ignore clicks on buttons, inputs, links, or staging markers
     const target = e.target as HTMLElement | null;
     if (target?.closest('button, [role="button"], a, input, textarea, select, [data-prevent-dismiss]')) {
       return;
     }
 
-    // Ignore if there is an active text drag selection
+    // 5. Ignore if native text drag selection is still active
     const sel = window.getSelection();
     if (sel && !sel.isCollapsed && Boolean(sel.toString().trim())) {
       return;
     }
 
-    // Safely dismiss back to idle overview if no changes were made
+    // 6. Safely dismiss back to idle overview if no changes were made
     dismissIfClean();
   }, [mode, overlapPicker.isOpen, dismissIfClean]);
 
@@ -902,6 +926,7 @@ export default function App() {
 
           <div 
             ref={scriptRef}
+            onMouseDown={handleScriptMouseDown}
             onClick={handleScriptClick}
             onMouseUp={handleScriptMouseUp}
             className={cn(

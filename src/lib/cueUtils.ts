@@ -129,8 +129,10 @@ export function getSelectionIndicesFromDOM(
         }
 
         // Search in a local window bounded by the surrounding line
-        const windowStart = Math.max(0, start - 60);
-        const windowEnd = Math.min(scriptText.length, end + 60);
+        const lineEndAttr = startLineEl.getAttribute('data-line-end');
+        const parsedLineEnd = lineEndAttr !== null ? parseInt(lineEndAttr, 10) : end + 60;
+        const windowStart = Math.max(0, Math.min(lineStart, start - 60));
+        const windowEnd = Math.min(scriptText.length, Math.max(parsedLineEnd, end + 60));
         const localSnippet = scriptText.substring(windowStart, windowEnd);
         
         // Try exact match within local snippet

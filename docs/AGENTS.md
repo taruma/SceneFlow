@@ -332,9 +332,13 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
     - **Dynamic Dirty Tracking & Status Badging (`useCueEditor.ts`, `EditRightPanel.tsx`)**:
       - `useCueEditor` preserves an `originalCue` baseline snapshot when selecting a cue for editing, deriving `isDirty` by comparing start/end times, selected quote text, cue type, color class, and character offsets. New drafts are dirty if timings or text are customized.
       - `EditRightPanel` header displays reactive status badges: `Saved` (green check) vs `Unsaved` (pulsing amber dot) for existing cues, and `Draft` vs `Draft (Unsaved)` for new drafts.
-    - **Clean Script Click Dismissal (`dismissIfClean`, `handleScriptClick`)**:
+    - **Clean Script Click Dismissal & Trailing Click Shielding (`dismissIfClean`, `handleScriptClick`, `justSelectedRef`, `mouseDownPosRef`)**:
       - `dismissIfClean()` safely resets `useCueEditor` back to idle workstation overview if no edits have been made (`!isDirty`).
-      - In `App.tsx`, `handleScriptClick` is bound to the screenplay reading canvas, safely closing clean cue inspections on click while strictly ignoring clicks on interactive buttons, input fields, staging markers (`e.stopPropagation()` in `ScriptLine`), or active DOM text selections.
+      - In `App.tsx`, `handleScriptClick` is bound to the screenplay reading canvas, safely closing clean cue inspections on click while strictly ignoring clicks on interactive buttons, input fields, and staging markers (`e.stopPropagation()` in `ScriptLine`).
+      - **Trailing Click & Drag Displacement Shielding**: Because React re-rendering `ScriptLine` to insert temporary selection highlight spans (`themeStyles.cueTemp`) collapses native browser DOM selection ranges before trailing `click` events arrive, `handleScriptClick` employs two defensive guards:
+        1. `justSelectedRef`: Set when `handleSelection()` returns `true` on `mouseup`, suppressing the immediate trailing click.
+        2. `mouseDownPosRef`: Tracks drag displacement with a 4px threshold and self-resetting ref hygiene (`mouseDownPosRef.current = null`), ensuring drag gestures never trigger dismissals.
+        3. `ScriptLineComponent` cue span `onClick` suppresses `onSelectCue` if an active native selection exists, preserving drag selections that cross existing cues.
 
 18. **Cues JSON Editor & LLM Sync Schema Invariants (`RawCuesModal.tsx`, `cues.schema.json`, `cues.prompt.ts`)**:
     - **Minimal Canonical Schema vs. Prompt Domain Rules**:
