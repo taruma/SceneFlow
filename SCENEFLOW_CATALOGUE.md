@@ -14,10 +14,11 @@ To load a remote project, use `?project=URL`.
 
 ---
 
-## AI Scenes (16)
+## AI Scenes (17)
 
 | Date | ID | Title | Video Model |
 |---|---|---|---|
+| 2026-08-12 | `scene_three_years_late` | Three Years Late | Seedance 2.5 |
 | 2026-08-11 | `scene_observation_only` | Observation Only | Seedance 2.5 |
 | 2026-08-09 | `scene_entropy` | Entropy | Seedance 2.5 |
 | 2026-08-08 | `scene_frequency` | Frequency Over Force *(default)* | Seedance 2.5 |

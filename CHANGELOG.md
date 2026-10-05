@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Three Years Late [AI Scenes] Example (`scene_three_years_late`, `src/examples.ts`, `SCENEFLOW_CATALOGUE.md`)**:
+  - Added new sample project `scene_three_years_late.json` featuring a 4-part ensemble drama set at Cabo da Roca with 35mm aesthetic and Seedance 2.5 cue mappings synchronized to YouTube playback.
+  - Registered 'Three Years Late' under **AI Scenes** in `src/examples.ts` as a featured project and updated `SCENEFLOW_CATALOGUE.md`.
+
 ## [2.5.1] - 2026-09-24
 
 ### Fixed

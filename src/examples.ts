@@ -159,6 +159,15 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         releaseDate: '2026-06-16',
         tags: ['auteur script', 'seedance 2.0'],
         featured: true
+      },
+      {
+        id: 'scene_three_years_late',
+        title: 'Three Years Late',
+        path: '/examples/scenes/scene_three_years_late.json',
+        description: 'Four longtime friends reunite on a windswept cliffside observation deck in Portugal to relive past road trips and celebrate an overdue promise, until the quiet passage of time reveals a bittersweet truth about memory, loss, and letting go.',
+        releaseDate: '2026-08-12',
+        tags: ['auteur script', 'seedance 2.5'],
+        featured: true
       }
     ]
   },
