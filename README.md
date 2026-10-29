@@ -242,6 +242,7 @@ npm run dev
 7. **Studio Cues JSON Editor & LLM Sync** — Click **[ { } JSON ]** to open the 2-column workstation:
    - Validate and prettify raw cue JSON with live feedback (`{ cues } detected`).
    - Copy the standardized **Gemini Sync Prompt** and minimal **JSON Schema** to generate synchronized cues directly from video models in Google AI Studio.
+   - Tighten drafted times with **Snap to Measurements...**: load `{ "cuts": [2.125], "words": [{ "text": "Wait,", "start": 4.2, "end": 4.69 }] }` (seconds, either key optional), e.g. PySceneDetect `list-scenes` cuts and whisper.cpp `-ml 1 -sow -oj` words. Shot, camera, and transition cues move to a cut within 0.6s, dialogue cues to their spoken words; review, then **Apply Cues** or **Cancel**.
 8. **Export Project** — Download a portable JSON project file via **[ File ▾ ] → Save Project**.
 
 ### Keyboard Shortcuts

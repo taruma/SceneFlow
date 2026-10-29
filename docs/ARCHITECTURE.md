@@ -97,6 +97,11 @@ A dedicated module containing fourteen exported pure functions for cue lifecycle
 - **`exportStateToJsonFile(state, fileName)`**: Triggers client-side formatted JSON state download.
 - **`validateImportedScriptJson(json)`**: Validates, normalizes, and injects default fallbacks for imported project files.
 
+### `src/lib/snapCues.ts`
+Pure timing correction against measurements made outside the app:
+- **`snapCues(cues, measurements)`**: Snaps cue times to measured cuts and recognized words (shot/camera/transition cues to the nearest cut within 0.6s, dialogue cues to their in-order word matches within ±3s), returning the new cues and a per-type count of moved cues. Used by **Snap to Measurements...** in `RawCuesModal`.
+- **`parseMeasurements(json)`**: Validates the `{ cuts?, words? }` measurements file.
+
 ### `src/lib/utils.ts`
 Shared utility functions extracted from `App.tsx`:
 - **`cn(...inputs)`**: Merges Tailwind utility classes safely using `clsx` and `tailwind-merge`.
@@ -317,7 +322,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
      - `useWordWrap`: Soft word-wrap toggle (<kbd>Alt+Z</kbd>) with off-screen measurement mirror container computing rendered line heights for exact 1:1 line number gutter alignment, guarded against empty-array reference churn to avoid synchronous pre-paint re-renders.
      - `useCustomTags`: Persistent user directive tag storage in `localStorage` with smart wrapping and insertion.
 7. **`RawCuesModal.tsx`**: Studio-grade Two-Column Cues JSON Editor and LLM Sync Workstation:
-   - **Left Column (Schema Reference & Guide)**: Displays compact visual cue schema reference (Essential Fields `startTime`, `endTime`, `selectedText`, `type`; collapsible Optional & Auto-Calc Fields; and quick example payload with copy and insert actions).
+   - **Left Column (Schema Reference & Guide)**: Displays compact visual cue schema reference (Essential Fields `startTime`, `endTime`, `selectedText`, `type`; collapsible Optional & Auto-Calc Fields; quick example payload with copy and insert actions; and the Measured Timing card's `Snap to Measurements...` file action).
    - **Right Column (Dual-Tab Workstation)**:
      - **`JSON Data` Tab**: Full-height textarea with line counter, live schema validation pill (`{ cues } detected`, `N cues ready`, error diagnostics without blocking `alert()`), and `[ ✨ Format JSON ]` 2-space indentation standardizer with automatic `{ cues: [...] }` unwrapping.
      - **`Sync Prompt & Schema` Tab**: Dedicated AI/Gemini synchronization workspace featuring a compact 3-step setup guide with public file links (`/sync-prompt.txt`, `/schema.json`), inline draft baseline guidance, segmented full-width code viewports (`[ 📄 Sync Prompt ]`, `[ 🤖 Gemini Schema ]`, and `[ ◫ Split ]`), and synchronized 1-click copy actions.
