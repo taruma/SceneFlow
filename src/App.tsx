@@ -99,6 +99,19 @@ export default function App() {
     loadRemoteProject: loadRemoteProjectStorage,
   } = useScriptStorage();
 
+  // Object URL for the session only; the project keeps its youtubeId
+  const [localVideo, setLocalVideo] = useState<{ url: string; name: string } | null>(null);
+
+  useEffect(() => {
+    if (!localVideo) return;
+    return () => URL.revokeObjectURL(localVideo.url);
+  }, [localVideo]);
+
+  // A project or URL with a different youtubeId drops the local file
+  useEffect(() => {
+    setLocalVideo(null);
+  }, [state.youtubeId]);
+
   const {
     player,
     playerState,
@@ -113,6 +126,7 @@ export default function App() {
     resetPlayback,
   } = useYouTubePlayer({
     youtubeId: state.youtubeId,
+    localVideoUrl: localVideo?.url,
     onPlay: () => setActiveStaging(null),
   });
 
@@ -638,6 +652,14 @@ export default function App() {
     setState(prev => ({ ...prev, youtubeId: '' }));
   }, [setState]);
 
+  const handleSelectLocalVideo = useCallback((file: File) => {
+    setLocalVideo({ url: URL.createObjectURL(file), name: file.name });
+  }, []);
+
+  const handleClearLocalVideo = useCallback(() => {
+    setLocalVideo(null);
+  }, []);
+
   const handleReplay = useCallback(() => {
     seekTo(0, true, true);
   }, [seekTo]);
@@ -851,6 +873,10 @@ export default function App() {
           youtubeId={state.youtubeId}
           onChangeYoutubeId={handleChangeYoutubeId}
           onClearYoutubeId={handleClearYoutubeId}
+          localVideoUrl={localVideo?.url}
+          localVideoName={localVideo?.name}
+          onSelectLocalVideo={handleSelectLocalVideo}
+          onClearLocalVideo={handleClearLocalVideo}
           hasPlayer={!!player}
           videoHeight={videoHeight}
           setVideoHeight={setVideoHeight}

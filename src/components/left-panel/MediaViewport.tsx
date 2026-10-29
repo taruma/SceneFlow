@@ -1,6 +1,7 @@
 import React, { memo, useMemo } from 'react';
 import YouTube, { type YouTubeProps } from 'react-youtube';
 import { extractYoutubeId, cn } from '../../lib/utils';
+import { createVideoElementPlayer } from '../../lib/mediaPlayer';
 
 export const YOUTUBE_PLAYER_OPTS: YouTubeProps['opts'] = {
   playerVars: {
@@ -13,6 +14,8 @@ export const YOUTUBE_PLAYER_OPTS: YouTubeProps['opts'] = {
 
 export interface MediaViewportProps {
   youtubeId: string;
+  localVideoUrl?: string;
+  onLocalVideoError?: (url: string) => void;
   videoHeight: number;
   isVideoCollapsed: boolean;
   isDesktop: boolean;
@@ -28,6 +31,8 @@ export interface MediaViewportProps {
  */
 export const MediaViewport: React.FC<MediaViewportProps> = memo(({
   youtubeId,
+  localVideoUrl,
+  onLocalVideoError,
   videoHeight,
   isVideoCollapsed,
   isDesktop,
@@ -35,6 +40,10 @@ export const MediaViewport: React.FC<MediaViewportProps> = memo(({
   onStateChange,
 }) => {
   const extractedVideoId = useMemo(() => extractYoutubeId(youtubeId), [youtubeId]);
+
+  const emitStateChange = (video: HTMLVideoElement, data: number) => {
+    onStateChange({ target: createVideoElementPlayer(video), data });
+  };
 
   return (
     <div 
@@ -62,15 +71,34 @@ export const MediaViewport: React.FC<MediaViewportProps> = memo(({
       }}
       aria-hidden={isVideoCollapsed}
     >
-      <YouTube
-        key={extractedVideoId}
-        videoId={extractedVideoId}
-        opts={YOUTUBE_PLAYER_OPTS}
-        onReady={onReady}
-        onStateChange={onStateChange}
-        className="w-full h-full bg-black"
-        iframeClassName="w-full h-full block border-0 bg-black"
-      />
+      {localVideoUrl ? (
+        <video
+          key={localVideoUrl}
+          src={localVideoUrl}
+          controls
+          playsInline
+          onLoadedMetadata={(e) => {
+            // A video codec the browser lacks (HEVC, ProRes) still loads its audio track, with no error event
+            if (e.currentTarget.videoWidth === 0) onLocalVideoError?.(localVideoUrl);
+            else onReady({ target: createVideoElementPlayer(e.currentTarget) });
+          }}
+          onPlaying={(e) => emitStateChange(e.currentTarget, 1)}
+          onPause={(e) => emitStateChange(e.currentTarget, 2)}
+          onEnded={(e) => emitStateChange(e.currentTarget, 0)}
+          onError={() => onLocalVideoError?.(localVideoUrl)}
+          className="w-full h-full block bg-black"
+        />
+      ) : (
+        <YouTube
+          key={extractedVideoId}
+          videoId={extractedVideoId}
+          opts={YOUTUBE_PLAYER_OPTS}
+          onReady={onReady}
+          onStateChange={onStateChange}
+          className="w-full h-full bg-black"
+          iframeClassName="w-full h-full block border-0 bg-black"
+        />
+      )}
     </div>
   );
 });

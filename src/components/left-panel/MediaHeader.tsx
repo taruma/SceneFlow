@@ -9,6 +9,7 @@ export interface MediaHeaderProps {
   mode: AppMode;
   youtubeId: string;
   extractedId?: string;
+  localVideoName?: string;
   hasPlayer: boolean;
   isSourceInputOpen?: boolean;
   onToggleSourceInput?: () => void;
@@ -25,6 +26,7 @@ export const MediaHeader: React.FC<MediaHeaderProps> = memo(({
   mode,
   youtubeId,
   extractedId,
+  localVideoName,
   hasPlayer,
   isSourceInputOpen = false,
   onToggleSourceInput,
@@ -36,6 +38,8 @@ export const MediaHeader: React.FC<MediaHeaderProps> = memo(({
   currentTime,
   duration,
 }) => {
+  const hasSource = Boolean(localVideoName || youtubeId);
+
   return (
     <div className={cn(
       "flex items-center justify-between px-3 pt-2 pb-1 lg:px-0 lg:pt-0 lg:pb-0.5 gap-2 min-w-0",
@@ -66,7 +70,9 @@ export const MediaHeader: React.FC<MediaHeaderProps> = memo(({
             title={
               isSourceInputOpen
                 ? "Hide YouTube source input"
-                : (youtubeId ? `Video ID: ${extractedId || youtubeId} (Click to change URL)` : "Set YouTube video source URL")
+                : localVideoName
+                  ? `${localVideoName} (Local file, not saved with the project)`
+                  : (youtubeId ? `Video ID: ${extractedId || youtubeId} (Click to change URL)` : "Set YouTube video source URL")
             }
             className={cn(
               "group flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono transition-all duration-150 border shadow-2xs select-none active:scale-95 shrink-0",
@@ -77,13 +83,13 @@ export const MediaHeader: React.FC<MediaHeaderProps> = memo(({
           >
             <span className={cn(
               "w-1.5 h-1.5 rounded-full shrink-0 transition-all duration-300",
-              youtubeId
+              hasSource
                 ? (hasPlayer ? "bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.6)]" : "bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.5)]")
                 : "bg-red-400"
             )} />
-            {youtubeId ? (
+            {hasSource ? (
               <>
-                <span className="truncate max-w-[85px] youtube-pill-text">{extractedId || youtubeId}</span>
+                <span className="truncate max-w-[85px] youtube-pill-text">{localVideoName || extractedId || youtubeId}</span>
                 <Edit2 size={9} className="shrink-0 text-text-faint group-hover:text-text-main transition-colors opacity-70" />
               </>
             ) : (

@@ -1,6 +1,7 @@
 import React, { createContext, useContext } from 'react';
 import type { Cue, TextSelection, AlternativeLocation } from '../../types/script';
 import type { CuePaletteProfile } from '../../styles';
+import type { MediaPlayer } from '../../lib/mediaPlayer';
 
 export interface CueEditorContextValue {
   newCue: Partial<Cue>;
@@ -18,7 +19,7 @@ export interface CueEditorContextValue {
   scriptText: string;
   scriptThemeId: string;
   cuePaletteProfile?: CuePaletteProfile;
-  player: any;
+  player: MediaPlayer | null;
   widthClass?: string;
   selectCueForEdit?: (cue: Cue) => void;
 }

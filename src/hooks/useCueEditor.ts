@@ -12,13 +12,14 @@ import { COLORS } from '../constants/script';
 import { LEGACY_CLASS_MAP } from '../styles/tokens/cues';
 import { generateId } from '../lib/utils';
 import { getSelectionIndicesFromDOM, findAlternativeLocations as searchAlternativeLocations } from '../lib/cueUtils';
+import type { MediaPlayer } from '../lib/mediaPlayer';
 
 interface UseCueEditorOptions {
   scriptText: string;
   cues: Cue[];
   setState: React.Dispatch<React.SetStateAction<AppState>>;
   mode: AppMode;
-  player: any;
+  player: MediaPlayer | null;
 }
 
 export function useCueEditor({

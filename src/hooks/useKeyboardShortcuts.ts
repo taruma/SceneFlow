@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
+import type { MediaPlayer } from '../lib/mediaPlayer';
 
 interface UseKeyboardShortcutsOptions {
-  player: any;
+  player: MediaPlayer | null;
   togglePlayPause: () => void;
   jumpBy: (seconds: number) => void;
   onToggleVideo?: () => void;
