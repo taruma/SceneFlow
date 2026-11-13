@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Local Video File Playback ([#19](https://github.com/taruma/SceneFlow/pull/19))**:
+  - Added a **Local File** picker in the Edit-mode source bar to play local `.mp4`, `.webm`, and `.mov` files via an HTML `<video>` element for the current session without modifying the project's `youtubeId` or saved JSON.
+  - Introduced the `MediaPlayer` interface (`src/lib/mediaPlayer.ts`) and `createVideoElementPlayer` adapter so transport, timeline scrubbing, seeking, loop preview, keyboard shortcuts, and cue timing work uniformly across YouTube and local video sources.
+  - Added codec/file decode error handling (`"This browser can't play this file"`) and updated `README.md` (contributed by [@icanhasjonas](https://github.com/icanhasjonas)).
 - **Last Radio [AI Clips] Example (`clip_last_radio`, `src/examples.ts`, `SCENEFLOW_CATALOGUE.md`)**:
   - Added new sample project `clip_last_radio.json` featuring a visceral 35mm disaster thriller cross-cut between a submerging subterranean parking structure and a storm-battered street command zone with Seedance 2.5 cue mappings synchronized to YouTube playback.
   - Registered 'Last Radio' under **AI Clips** in `src/examples.ts` and updated `SCENEFLOW_CATALOGUE.md`.
