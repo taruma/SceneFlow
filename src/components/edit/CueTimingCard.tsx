@@ -2,6 +2,7 @@ import React, { memo, useState, useEffect, useRef, useCallback } from 'react';
 import { Clock, Play, Pause, RotateCw, Plus, Minus } from 'lucide-react';
 import { formatPrecisionTimecode } from '../../lib/utils';
 import { cn } from '../../lib/utils';
+import type { MediaPlayer } from '../../lib/mediaPlayer';
 
 export interface CueTimingCardProps {
   startTime?: number;
@@ -10,7 +11,7 @@ export interface CueTimingCardProps {
   onEndTimeChange: (time: number | undefined) => void;
   onCaptureStartTime: () => void;
   onCaptureEndTime: () => void;
-  player?: any;
+  player?: MediaPlayer | null;
 }
 
 export const CueTimingCard: React.FC<CueTimingCardProps> = memo(({

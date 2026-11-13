@@ -78,6 +78,7 @@ https://github.com/user-attachments/assets/cf3a7fec-2a4b-48d8-9028-245eba49934c
 - **Persistent Transport Controls** — Header-mounted Play, Pause, and Replay (0:00) controls operable even when video is hidden
 - **Live Timecode HUD Badge** — Real-time `MM:SS.s` precision timecode and media duration indicator active in both modes
 - **Collapsible YouTube Source Header Pill** — Replaces bulky inputs with a sleek `[ 🟢 {videoId} ✏️ ]` pill, saving vertical space
+- **Local Video Files** — Play an MP4, WebM, or MOV from your computer in place of the YouTube source for the current session; the file is not saved with the project
 - **Collapsible Video Player** — Hide video frame with zero-height clipping for clean timeline screen recording while keeping background audio and clock continuity (`V`)
 - **Mode-Aware Layout Reset** — Snaps split panes to calibrated distributions (40/35/25 in Edit Mode, 65/35 in Playback Mode) with 1-click or `Shift+R`
 - **Timeline Zoom & Height Modes** — Discrete zoom presets (4s, 8s, 16s) and Fixed vs. Flexible track height allocation

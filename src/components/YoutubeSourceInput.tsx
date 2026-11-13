@@ -1,5 +1,5 @@
-import React from 'react';
-import { Video, X, Check } from 'lucide-react';
+import React, { useRef } from 'react';
+import { Video, X, Check, FileVideo } from 'lucide-react';
 import { cn, extractYoutubeId } from '../lib/utils';
 import { UI_TOKENS } from '../styles/tokens/ui';
 
@@ -7,6 +7,10 @@ interface YoutubeSourceInputProps {
   youtubeId: string;
   onChange: (value: string) => void;
   onClear: () => void;
+  localVideoName?: string;
+  localVideoError?: boolean;
+  onSelectLocalVideo?: (file: File) => void;
+  onClearLocalVideo?: () => void;
   hasPlayer: boolean;
   className?: string;
   compact?: boolean;
@@ -17,12 +21,17 @@ export function YoutubeSourceInput({
   youtubeId,
   onChange,
   onClear,
+  localVideoName,
+  localVideoError = false,
+  onSelectLocalVideo,
+  onClearLocalVideo,
   hasPlayer,
   className,
   compact = false,
   onClose,
 }: YoutubeSourceInputProps) {
   const extractedId = extractYoutubeId(youtubeId);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <div className={cn(
@@ -35,7 +44,7 @@ export function YoutubeSourceInput({
           "uppercase font-black flex items-center gap-1.5 text-text-faint",
           compact ? "text-[9px] tracking-wider" : "text-[10px] tracking-[0.2em]"
         )}>
-          <Video size={compact ? 11 : 12} /> YouTube Source
+          <Video size={compact ? 11 : 12} /> {localVideoName ? 'Local Video' : 'YouTube Source'}
           <div className={cn(
             "rounded-full transition-all duration-500",
             compact ? "w-1.5 h-1.5" : "w-2 h-2",
@@ -43,10 +52,34 @@ export function YoutubeSourceInput({
           )} />
         </label>
         <div className="flex items-center gap-1.5">
-          {youtubeId && extractedId !== youtubeId && (
+          {!localVideoName && youtubeId && extractedId !== youtubeId && (
             <span className="text-[8.5px] font-mono text-blue-500 bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20">
               ID: {extractedId}
             </span>
+          )}
+          {onSelectLocalVideo && (
+            <>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="video/mp4,video/webm,video/quicktime"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) onSelectLocalVideo(file);
+                  e.target.value = '';
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider text-text-muted hover:text-text-main bg-surface hover:bg-surface-subtle border border-border-subtle hover:border-border-main transition-colors shadow-2xs active:scale-95 select-none"
+                title="Play a video file from this computer (MP4, WebM, MOV)"
+              >
+                <FileVideo size={10} className="text-blue-500" />
+                <span className="source-btn-label">Local File</span>
+              </button>
+            </>
           )}
           {onClose && (
             <button
@@ -60,7 +93,32 @@ export function YoutubeSourceInput({
           )}
         </div>
       </div>
-      <div className="relative group">
+      {localVideoName && (
+        <>
+          <div className="relative">
+            <div
+              className="w-full pl-8 pr-8 py-1.5 bg-surface-subtle border border-border-main text-text-main rounded-xl font-mono text-xs truncate"
+              title={localVideoName}
+            >
+              {localVideoName}
+            </div>
+            <FileVideo size={13} className="absolute top-1/2 -translate-y-1/2 left-2.5 text-text-faint" />
+            <button
+              type="button"
+              onClick={onClearLocalVideo}
+              className="absolute top-1/2 -translate-y-1/2 right-2.5 text-text-faint hover:text-text-main transition-colors"
+              title="Back to the YouTube source"
+              aria-label="Back to the YouTube source"
+            >
+              <X size={13} />
+            </button>
+          </div>
+          <p className={cn("px-1 text-[10px]", localVideoError ? "text-red-500" : "text-text-muted")}>
+            {localVideoError ? "This browser can't play this file" : 'Local file, not saved with the project'}
+          </p>
+        </>
+      )}
+      <div className={cn("relative group", localVideoName && "hidden")}>
         <input
           type="text"
           value={youtubeId}

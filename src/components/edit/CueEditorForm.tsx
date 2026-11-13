@@ -3,6 +3,7 @@ import { Edit2, Plus, X, Check, Trash2 } from 'lucide-react';
 import { Cue, TextSelection, AlternativeLocation } from '../../types/script';
 import { CuePaletteProfile } from '../../styles';
 import { cn } from '../../lib/utils';
+import type { MediaPlayer } from '../../lib/mediaPlayer';
 import { useEscapeKey } from '../../hooks';
 import { CueTextSection } from './CueTextSection';
 import { CueSceneContext } from './CueSceneContext';
@@ -25,7 +26,7 @@ export interface CueEditorFormProps {
   scriptText: string;
   scriptThemeId: string;
   cuePaletteProfile?: CuePaletteProfile;
-  player: any;
+  player: MediaPlayer | null;
   className?: string;
 }
 

@@ -268,7 +268,8 @@ body.is-resizing-split iframe {
   }
 }
 @container (max-width: 510px) {
-  .media-header-edit .media-btn-label {
+  .media-header-edit .media-btn-label,
+  .source-btn-label {
     display: none !important;
   }
 }

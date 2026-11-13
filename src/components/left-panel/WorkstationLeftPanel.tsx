@@ -18,6 +18,10 @@ export interface WorkstationLeftPanelProps {
   youtubeId: string;
   onChangeYoutubeId?: (value: string) => void;
   onClearYoutubeId?: () => void;
+  localVideoUrl?: string;
+  localVideoName?: string;
+  onSelectLocalVideo?: (file: File) => void;
+  onClearLocalVideo?: () => void;
   hasPlayer?: boolean;
   videoHeight: number;
   setVideoHeight: (height: number) => void;
@@ -68,6 +72,10 @@ export const WorkstationLeftPanel: React.FC<WorkstationLeftPanelProps> = memo(({
   youtubeId,
   onChangeYoutubeId,
   onClearYoutubeId,
+  localVideoUrl,
+  localVideoName,
+  onSelectLocalVideo,
+  onClearLocalVideo,
   hasPlayer = false,
   videoHeight,
   setVideoHeight,
@@ -209,6 +217,9 @@ export const WorkstationLeftPanel: React.FC<WorkstationLeftPanelProps> = memo(({
 
   const extractedId = useMemo(() => extractYoutubeId(youtubeId), [youtubeId]);
 
+  // Keyed by object URL, so picking another file clears the error
+  const [failedVideoUrl, setFailedVideoUrl] = useState<string | null>(null);
+
   const handleClearYoutubeId = useCallback(() => {
     onClearYoutubeId?.();
     setIsSourceInputOpen(true);
@@ -249,6 +260,7 @@ export const WorkstationLeftPanel: React.FC<WorkstationLeftPanelProps> = memo(({
           mode={mode}
           youtubeId={youtubeId}
           extractedId={extractedId}
+          localVideoName={localVideoName}
           hasPlayer={hasPlayer}
           isSourceInputOpen={isSourceInputOpen}
           onToggleSourceInput={() => setIsSourceInputOpen(prev => !prev)}
@@ -267,6 +279,10 @@ export const WorkstationLeftPanel: React.FC<WorkstationLeftPanelProps> = memo(({
             youtubeId={youtubeId}
             onChange={onChangeYoutubeId}
             onClear={handleClearYoutubeId}
+            localVideoName={localVideoName}
+            localVideoError={!!localVideoUrl && failedVideoUrl === localVideoUrl}
+            onSelectLocalVideo={onSelectLocalVideo}
+            onClearLocalVideo={onClearLocalVideo}
             hasPlayer={hasPlayer}
             compact={true}
             onClose={() => setIsSourceInputOpen(false)}
@@ -276,6 +292,8 @@ export const WorkstationLeftPanel: React.FC<WorkstationLeftPanelProps> = memo(({
         {/* Persistent Video Viewport (Stays mounted across mode changes) */}
         <MediaViewport
           youtubeId={youtubeId}
+          localVideoUrl={localVideoUrl}
+          onLocalVideoError={setFailedVideoUrl}
           videoHeight={videoHeight}
           isVideoCollapsed={isVideoCollapsed}
           isDesktop={isDesktop}

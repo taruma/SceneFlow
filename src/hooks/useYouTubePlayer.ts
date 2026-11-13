@@ -1,21 +1,22 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import type { YouTubeProps } from 'react-youtube';
+import type { MediaPlayer } from '../lib/mediaPlayer';
 
 interface UseYouTubePlayerOptions {
   youtubeId: string;
+  localVideoUrl?: string;
   onPlay?: () => void;
   onPause?: () => void;
 }
 
-export function useYouTubePlayer({ youtubeId, onPlay, onPause }: UseYouTubePlayerOptions) {
-  const [player, setPlayer] = useState<any>(null);
+export function useYouTubePlayer({ youtubeId, localVideoUrl, onPlay, onPause }: UseYouTubePlayerOptions) {
+  const [player, setPlayer] = useState<MediaPlayer | null>(null);
   const [playerState, setPlayerState] = useState<number>(-1);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const timerRef = useRef<number | null>(null);
   const isSeekingWhilePausedRef = useRef<boolean>(false);
   const seekPauseTimeoutRef = useRef<number | null>(null);
-  const playerRef = useRef<any>(null);
+  const playerRef = useRef<MediaPlayer | null>(null);
   playerRef.current = player;
 
   const stopTimer = useCallback(() => {
@@ -48,12 +49,12 @@ export function useYouTubePlayer({ youtubeId, onPlay, onPause }: UseYouTubePlaye
     }
   }, [stopTimer]);
 
-  // Reset player instance and timing when video ID changes
+  // Reset player instance and timing when the video source changes
   useEffect(() => {
     resetPlayback();
     setPlayer(null);
     setDuration(0);
-  }, [youtubeId, resetPlayback]);
+  }, [youtubeId, localVideoUrl, resetPlayback]);
 
   const startTimer = useCallback(() => {
     if (timerRef.current) return;
@@ -73,7 +74,7 @@ export function useYouTubePlayer({ youtubeId, onPlay, onPause }: UseYouTubePlaye
     };
   }, [stopTimer]);
 
-  const onReady: YouTubeProps['onReady'] = useCallback((event) => {
+  const onReady = useCallback((event: { target: MediaPlayer }) => {
     setPlayer(event.target);
     setPlayerState(event.target.getPlayerState());
     const dur = event.target.getDuration?.();
@@ -82,7 +83,7 @@ export function useYouTubePlayer({ youtubeId, onPlay, onPause }: UseYouTubePlaye
     }
   }, []);
 
-  const onStateChange: YouTubeProps['onStateChange'] = useCallback((event) => {
+  const onStateChange = useCallback((event: { target: MediaPlayer; data: number }) => {
     setPlayerState(event.data);
     if (event.data === 1) { // Playing
       const dur = event.target?.getDuration?.();
