@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { 
   Braces, 
   X, 
@@ -15,10 +15,12 @@ import {
   ExternalLink,
   Code2,
   Columns,
-  ArrowRight
+  ArrowRight,
+  Magnet
 } from 'lucide-react';
 import { Cue } from '../types/script';
 import { sanitizeCues } from '../lib/cueUtils';
+import { snapCues, parseMeasurements } from '../lib/snapCues';
 import { UI_TOKENS } from '../styles/tokens/ui';
 import { useEscapeKey } from '../hooks/useEscapeKey';
 import { cn } from '../lib/utils';
@@ -99,6 +101,14 @@ const OPTIONAL_FIELDS: CueSchemaField[] = [
   },
 ];
 
+function formatSnapSummary(moved: Record<string, number>): string {
+  const entries = Object.entries(moved);
+  if (entries.length === 0) return 'No cue moved.';
+  const total = entries.reduce((sum, [, count]) => sum + count, 0);
+  const parts = entries.map(([type, count]) => `${count} ${type}`);
+  return `Moved ${parts.join(', ')} ${total === 1 ? 'cue' : 'cues'}. Apply to keep.`;
+}
+
 export function RawCuesModal({
   isOpen,
   onClose,
@@ -115,6 +125,11 @@ export function RawCuesModal({
   const [activeTab, setActiveTab] = useState<'data' | 'prompt-schema'>('data');
   const [promptSchemaView, setPromptSchemaView] = useState<'prompt' | 'schema' | 'split'>('prompt');
   const [isOptionalFieldsOpen, setIsOptionalFieldsOpen] = useState(false);
+  const [snapNotice, setSnapNotice] = useState<{ text: string; isError: boolean } | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) setSnapNotice(null);
+  }, [isOpen]);
 
   // Live validation of the JSON input
   const validationResult = useMemo(() => {
@@ -184,6 +199,27 @@ export function RawCuesModal({
       // Cannot format invalid JSON
     }
   }, [rawCuesText, onChangeRawCuesText]);
+
+  const handleSnapFile = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const measurements = parseMeasurements(JSON.parse(event.target?.result as string));
+        const { cues, moved } = snapCues(validationResult.cues, measurements);
+        if (Object.keys(moved).length > 0) {
+          onChangeRawCuesText(JSON.stringify(cues, null, 2));
+        }
+        setSnapNotice({ text: formatSnapSummary(moved), isError: false });
+      } catch (err: any) {
+        setSnapNotice({ text: `Measurements file: ${err?.message || 'invalid JSON.'}`, isError: true });
+      }
+      setActiveTab('data');
+    };
+    reader.readAsText(file);
+  }, [validationResult, onChangeRawCuesText]);
 
   // Copy Schema Example
   const handleCopyExample = useCallback(() => {
@@ -426,6 +462,37 @@ export function RawCuesModal({
               <pre className="p-2 bg-surface border border-border-subtle rounded-xl font-mono text-[9px] text-text-muted leading-tight overflow-hidden shadow-2xs">
                 {EXAMPLE_CUE_SCHEMA}
               </pre>
+            </div>
+
+            {/* Snap to Measured Cuts & Words */}
+            <div className="space-y-1.5 pt-1">
+              <span className="block px-0.5 text-[9px] font-black uppercase tracking-wider text-text-faint">
+                Measured Timing
+              </span>
+              <div className="p-2.5 bg-surface rounded-xl border border-border-subtle text-[10px] text-text-muted leading-snug shadow-2xs space-y-2">
+                <p>
+                  Snap shot, camera and transition cues to detected cuts, and dialogue to recognized words, from a <code className="text-[9px] text-blue-500 font-mono whitespace-nowrap">{'{ cuts, words }'}</code> JSON file.
+                </p>
+                <label
+                  title="Load a measurements JSON file and snap the cues in JSON Data"
+                  className={cn(
+                    "w-full flex items-center justify-center gap-1 px-3 py-1 rounded-xl text-xs font-bold transition-all border shadow-2xs bg-surface-subtle border-border-subtle text-text-muted whitespace-nowrap",
+                    validationResult.isValid
+                      ? "cursor-pointer active:scale-95 hover:bg-surface-hover hover:text-text-main"
+                      : "opacity-40 cursor-not-allowed"
+                  )}
+                >
+                  <Magnet size={12} />
+                  <span>Snap to Measurements...</span>
+                  <input
+                    type="file"
+                    accept=".json"
+                    disabled={!validationResult.isValid}
+                    onChange={handleSnapFile}
+                    className="hidden"
+                  />
+                </label>
+              </div>
             </div>
 
           </div>
@@ -825,8 +892,15 @@ export function RawCuesModal({
             <div className="px-5 py-3 border-t border-border-subtle bg-surface-subtle flex items-center justify-between gap-4 shrink-0">
               {activeTab === 'data' ? (
                 <>
-                  <p className="text-[11px] text-text-muted hidden sm:block">
-                    Applying updates will replace current project cues.
+                  <p className={cn(
+                    "text-[11px] hidden sm:block",
+                    !snapNotice
+                      ? "text-text-muted"
+                      : snapNotice.isError
+                        ? "text-amber-600 dark:text-amber-400"
+                        : "text-emerald-600 dark:text-emerald-400"
+                  )}>
+                    {snapNotice?.text ?? 'Applying updates will replace current project cues.'}
                   </p>
                   <div className="flex items-center gap-2.5 shrink-0">
                     <button
