@@ -14,15 +14,22 @@ To load a remote project, use `?project=URL`.
 
 ---
 
-## AI Scenes (17)
+## AI Scenes (24)
 
 | Date | ID | Title | Video Model |
 |---|---|---|---|
+| 2026-08-16 | `scene_screaming_amber_wood` | Screaming Amber Wood | Seedance 2.5 |
+| 2026-08-15 | `scene_coordinates_for_three` | Coordinates for Three | Seedance 2.5 |
 | 2026-08-12 | `scene_three_years_late` | Three Years Late | Seedance 2.5 |
 | 2026-08-11 | `scene_observation_only` | Observation Only | Seedance 2.5 |
 | 2026-08-09 | `scene_entropy` | Entropy | Seedance 2.5 |
 | 2026-08-08 | `scene_frequency` | Frequency Over Force *(default)* | Seedance 2.5 |
+| 2026-07-30 | `scene_pineapple` | Pineapple | Seedance 2.0 |
+| 2026-07-27 | `scene_what_the_glacier_keeps` | What the Glacier Keeps | Seedance 2.0 |
+| 2026-07-23 | `scene_paperweight` | Paperweight | Seedance 2.0 |
 | 2026-07-17 | `scene_still_here` | Still Here | Seedance 2.0 |
+| 2026-07-09 | `scene_the_unresolved_variable` | The Unresolved Variable | Seedance 2.0 |
+| 2026-07-03 | `scene_the_event_boundary` | The Event Boundary | Seedance 2.0 |
 | 2026-06-16 | `scene_vector_field` | Vector Field | Seedance 2.0 |
 | 2026-06-13 | `museum` | Museum | Seedance 2.0 |
 | 2026-05-24 | `afraid` | Afraid | Seedance 2.0 |

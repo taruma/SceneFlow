@@ -340,15 +340,17 @@ When developing or modifying playback, cue synchronization, or timeline visualiz
         2. `mouseDownPosRef`: Tracks drag displacement with a 4px threshold and self-resetting ref hygiene (`mouseDownPosRef.current = null`), ensuring drag gestures never trigger dismissals.
         3. `ScriptLineComponent` cue span `onClick` suppresses `onSelectCue` if an active native selection exists, preserving drag selections that cross existing cues.
 
-18. **Cues JSON Editor & LLM Sync Schema Invariants (`RawCuesModal.tsx`, `cues.schema.json`, `cues.prompt.ts`)**:
+18. **Cues JSON Editor & LLM Sync Schema Invariants (`RawCuesModal.tsx`, `cues.schema.json`, `cues.prompt.ts`, `vite.config.ts`)**:
+    - **Single Source of Truth (SSOT) via Vite Asset Plugin**:
+      - `src/schemas/cues.schema.json` and `src/schemas/cues.prompt.ts` are the sole canonical sources; do **not** re-introduce duplicate files in `public/`. `cuesAssetsPlugin` in `vite.config.ts` serves `/schema.json` and `/sync-prompt.txt` in dev middleware and emits them to `dist/` during production builds.
     - **Minimal Canonical Schema vs. Prompt Domain Rules**:
-      - `cues.schema.json` (and `public/schema.json`) must remain strictly a minimal structural data contract defining types, enums (`type: dialogue | action | sound | ...`), and required properties (`startTime`, `endTime`, `selectedText`, `type`).
-      - Avoid embedding conversational descriptions or instructions in JSON schema field `description` tags; excessive meta-text degrades token sampling quality during LLM constrained decoding (e.g. Gemini JSON Schema mode).
-      - Business logic—such as verbatim substring copying from `<ScriptText>` and `(minutes * 60) + seconds` timecode math—belongs strictly in `cues.prompt.ts` (`CUES_SYNC_PROMPT` / `public/sync-prompt.txt`).
+      - `cues.schema.json` must remain strictly a Gemini-compatible structural data contract defining types, enums (`dialogue | action | camera | shot | audio | vfx | transition | environment`), nullable `speaker`, and required properties (`id`, `type`, `speaker`, `selectedText`, `startTime`, `endTime`).
+      - Avoid embedding conversational descriptions or `$schema` meta-keys that degrade token sampling or compatibility during LLM constrained decoding (e.g. Gemini Structured Output).
+      - Business logic—such as verbatim substring copying from `<ScriptText>`, `[[STAGING]]` block exclusion, chronological sorting, `endTime > startTime`, speaker extension stripping, `(minutes * 60) + seconds` timecode math, and the 8 category definitions—belongs strictly in `cues.prompt.ts` (`CUES_SYNC_PROMPT`).
     - **External Draft Guidance Separation**:
       - Draft baseline notices ("This prompt provides a baseline draft. You are encouraged to customize it...") must reside cleanly outside the markdown prompt text in the UI to keep copied prompts pure and ready for system instructions.
     - **Segmented Sub-View Architecture (`prompt` | `schema` | `split`)**:
-      - Provide a top-level segmented sub-view switcher within the Prompt & Schema tab. Full-width views (`prompt` or `schema`) allow single-column reading with zero horizontal scrollbar clipping on schema lines; `split` remains available for side-by-side inspection on wide screens.
+      - Provide a top-level segmented sub-view switcher within the Prompt & Schema tab. Full-width views (`prompt` or `schema`) allow single-column reading with zero horizontal scrollbar clipping on schema lines; `split` remains available for side-by-side inspection on wide screens. Keep a single Copy button inside each panel header without duplicate toolbar copy buttons or redundant tab-switch links.
     - **Modal Footer Action Stability & Text Wrap Prevention**:
       - Modal footer actions must use `whitespace-nowrap`, matching vertical padding (`py-2`), and Title Case typography (e.g., `Go to JSON Data →`) to guarantee buttons never wrap across multiple lines or distort footer height.
       - Footer buttons are context-aware: displaying `Cancel` & `Apply Cues (N)` on the `JSON Data` tab, and `Close` & `Go to JSON Data →` on the `Sync Prompt & Schema` tab.

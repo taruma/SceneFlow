@@ -469,7 +469,7 @@ export function RawCuesModal({
               </div>
 
               {/* Right Side Header Controls */}
-              {activeTab === 'data' ? (
+              {activeTab === 'data' && (
                 <div className="flex items-center gap-2">
                   {/* Live Validation Pill */}
                   {validationResult.isValid ? (
@@ -508,17 +508,6 @@ export function RawCuesModal({
                   >
                     {formatSuccess ? <Check size={12} /> : <Sparkles size={12} />}
                     <span>{formatSuccess ? 'Formatted' : 'Format JSON'}</span>
-                  </button>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('data')}
-                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold text-text-muted hover:text-text-main hover:bg-surface-subtle transition-all"
-                  >
-                    <span>Edit JSON</span>
-                    <ArrowRight size={12} />
                   </button>
                 </div>
               )}
@@ -621,7 +610,7 @@ export function RawCuesModal({
                   </div>
                 </div>
 
-                {/* Sub-view Switcher & Actions Toolbar */}
+                {/* Sub-view Switcher */}
                 <div className="flex items-center justify-between gap-3 shrink-0 flex-wrap">
                   {/* Segmented control for Prompt / Schema / Split */}
                   <div className="flex items-center gap-1 bg-surface-muted p-0.5 rounded-xl border border-border-subtle shadow-2xs">
@@ -665,62 +654,6 @@ export function RawCuesModal({
                       <Columns size={12} className={promptSchemaView === 'split' ? "text-blue-500" : "text-text-faint"} />
                       <span>Split</span>
                     </button>
-                  </div>
-
-                  {/* Contextual Copy Button */}
-                  <div className="flex items-center gap-2">
-                    {promptSchemaView === 'prompt' && (
-                      <button
-                        type="button"
-                        onClick={handleCopyPrompt}
-                        className={cn(
-                          "flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all active:scale-95 border shadow-2xs",
-                          copiedPrompt
-                            ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
-                            : "bg-surface hover:bg-surface-hover border-border-subtle text-text-main"
-                        )}
-                      >
-                        {copiedPrompt ? <Check size={12} className="text-emerald-500" /> : <Copy size={12} />}
-                        <span>{copiedPrompt ? 'Copied Prompt' : 'Copy Prompt'}</span>
-                      </button>
-                    )}
-
-                    {promptSchemaView === 'schema' && (
-                      <button
-                        type="button"
-                        onClick={handleCopySchema}
-                        className={cn(
-                          "flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all active:scale-95 border shadow-2xs",
-                          copiedSchema
-                            ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
-                            : "bg-surface hover:bg-surface-hover border-border-subtle text-text-main"
-                        )}
-                      >
-                        {copiedSchema ? <Check size={12} className="text-emerald-500" /> : <Copy size={12} />}
-                        <span>{copiedSchema ? 'Copied Schema' : 'Copy Schema'}</span>
-                      </button>
-                    )}
-
-                    {promptSchemaView === 'split' && (
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={handleCopyPrompt}
-                          className="flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold border border-border-subtle bg-surface hover:bg-surface-hover text-text-main"
-                        >
-                          {copiedPrompt ? <Check size={11} className="text-emerald-500" /> : <Copy size={11} />}
-                          <span>{copiedPrompt ? 'Copied Prompt' : 'Copy Prompt'}</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleCopySchema}
-                          className="flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold border border-border-subtle bg-surface hover:bg-surface-hover text-text-main"
-                        >
-                          {copiedSchema ? <Check size={11} className="text-emerald-500" /> : <Copy size={11} />}
-                          <span>{copiedSchema ? 'Copied Schema' : 'Copy Schema'}</span>
-                        </button>
-                      </div>
-                    )}
                   </div>
                 </div>
 
