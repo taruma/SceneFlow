@@ -199,14 +199,14 @@ When developing, refactoring, or adding features to Edit mode in SceneFlow, stri
   - The raw cues modal provides a comprehensive 2-column workstation (`RawCuesModal.tsx`):
     - **Left Column**: Live schema reference with essential fields (`startTime`, `endTime`, `selectedText`, `type`), collapsible optional/auto-calculated fields, and quick copyable example snippet with 1-click insertion.
     - **Right Column**: Dual-tab workspace housing the `{ } JSON Data` editor and `🤖 Sync Prompt & Schema` AI integration deck.
-- **Minimal Canonical Schema Contract (`cues.schema.json`, `public/schema.json`)**:
-  - JSON schema must remain strictly a structural data contract (types, enums, required fields).
-  - Avoid verbose descriptions inside schema properties, as excessive natural language degrades token sampling quality during LLM constrained decoding.
-  - Business logic—such as verbatim `<ScriptText>` excerpt copying and `(minutes * 60) + seconds` timecode math—is enforced within `cues.prompt.ts` (`public/sync-prompt.txt`).
+- **Minimal Canonical Schema & Prompt SSOT (`src/schemas/cues.schema.json`, `src/schemas/cues.prompt.ts`, `vite.config.ts`)**:
+  - `src/schemas/` is the Single Source of Truth (SSOT); `cuesAssetsPlugin` in `vite.config.ts` serves `/sync-prompt.txt` and `/schema.json` in dev and emits them to `dist/` at build time without maintaining duplicate files in `public/`.
+  - `cues.schema.json` must remain strictly a Gemini-compatible structural data contract (types, enums, nullable `speaker`, required fields: `id`, `type`, `speaker`, `selectedText`, `startTime`, `endTime`) without `$schema` or verbose natural-language bloat.
+  - Business logic—such as verbatim `<ScriptText>` excerpt copying, `[[STAGING]]` block exclusion, chronological sorting, `endTime > startTime`, speaker extension stripping, `(minutes * 60) + seconds` timecode math, and the 8 cue `type` definitions—is enforced within `cues.prompt.ts`.
 - **Draft Baseline UI Separation**:
   - Guidance indicating that prompts provide a draft baseline for user customization must reside cleanly outside the markdown prompt text in the UI to keep copied prompts ready for Gemini/LLM system instructions.
 - **Segmented Sub-View Switcher (`prompt` | `schema` | `split`)**:
-  - Supports switching between full-width views (`prompt` or `schema`) to ensure zero horizontal scrollbars on JSON schema lines, while preserving a `split` option for side-by-side comparison on wide screens.
+  - Supports switching between full-width views (`prompt` or `schema`) to ensure zero horizontal scrollbars on JSON schema lines, while preserving a `split` option for side-by-side comparison on wide screens. Each panel header owns a single Copy action (no duplicate toolbar copy buttons or redundant top-right `Edit JSON` tab switches).
 - **Context-Aware Footer & Wrap-Resistant Buttons**:
   - Footers adapt actions dynamically per tab: `Cancel` and `Apply Cues (N)` on JSON Data; `Close` and `Go to JSON Data →` on Sync Prompt & Schema.
   - Buttons must declare `whitespace-nowrap`, matching vertical padding (`py-2`), and Title Case labels to eliminate multi-line wrapping and container height distortion.

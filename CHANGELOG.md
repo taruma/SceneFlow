@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.6.0] - 2026-11-14
 
+### Refactored
+- **Sync Prompt & Schema Single Source of Truth (`src/schemas/`, `vite.config.ts`)**:
+  - Removed duplicate `public/sync-prompt.txt` and `public/schema.json` static files.
+  - Added `cuesAssetsPlugin` in `vite.config.ts` to serve `/sync-prompt.txt` and `/schema.json` in dev middleware and emit them into `dist/` during production builds directly from `src/schemas/cues.prompt.ts` and `src/schemas/cues.schema.json`.
+- **Cues JSON Editor UI Cleanup (`src/components/RawCuesModal.tsx`)**:
+  - Removed duplicate copy buttons from the `Sync Prompt & Schema` sub-view toolbar (retaining the single contextual Copy button in each panel header) and removed the redundant top-right `Edit JSON →` tab-switch button.
+
+### Changed
+- **Sync Prompt & Gemini Schema Refinement (`src/schemas/cues.prompt.ts`, `src/schemas/cues.schema.json`)**:
+  - Updated `CUES_SYNC_PROMPT` to preserve casing, ignore `[[STAGING]]` blocks, enforce chronological sorting and `endTime > startTime` (minimum `0.5s` for instantaneous transitions/shots), strip `(V.O.)`/`(O.S.)`/`(CONT'D)` extensions from `speaker`, and define all 8 cue `type` categories.
+  - Updated `cues.schema.json` to mark `speaker` as `required` with `nullable: true` (`"Explicitly null if non-dialogue."`) and stripped non-Gemini `$schema` metadata.
+
 ### Added
 - **7 New AI Scenes Examples (`src/examples.ts`, `SCENEFLOW_CATALOGUE.md`)**:
   - Added `scene_screaming_amber_wood.json` (**Screaming Amber Wood**, Seedance 2.5), `scene_coordinates_for_three.json` (**Coordinates for Three**, Seedance 2.5), `scene_pineapple.json` (**Pineapple**, Seedance 2.0), `scene_what_the_glacier_keeps.json` (**What the Glacier Keeps**, Seedance 2.0), `scene_paperweight.json` (**Paperweight**, Seedance 2.0), `scene_the_unresolved_variable.json` (**The Unresolved Variable**, Seedance 2.0), and `scene_the_event_boundary.json` (**The Event Boundary**, Seedance 2.0) under `public/examples/scenes/`.

@@ -320,7 +320,7 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
    - **Left Column (Schema Reference & Guide)**: Displays compact visual cue schema reference (Essential Fields `startTime`, `endTime`, `selectedText`, `type`; collapsible Optional & Auto-Calc Fields; and quick example payload with copy and insert actions).
    - **Right Column (Dual-Tab Workstation)**:
      - **`JSON Data` Tab**: Full-height textarea with line counter, live schema validation pill (`{ cues } detected`, `N cues ready`, error diagnostics without blocking `alert()`), and `[ ✨ Format JSON ]` 2-space indentation standardizer with automatic `{ cues: [...] }` unwrapping.
-     - **`Sync Prompt & Schema` Tab**: Dedicated AI/Gemini synchronization workspace featuring a compact 3-step setup guide with public file links (`/sync-prompt.txt`, `/schema.json`), inline draft baseline guidance, segmented full-width code viewports (`[ 📄 Sync Prompt ]`, `[ 🤖 Gemini Schema ]`, and `[ ◫ Split ]`), and synchronized 1-click copy actions.
+     - **`Sync Prompt & Schema` Tab**: Dedicated AI/Gemini synchronization workspace featuring a compact 3-step setup guide with SSOT asset links (`/sync-prompt.txt`, `/schema.json` served by `cuesAssetsPlugin`), inline draft baseline guidance, segmented full-width code viewports (`[ 📄 Sync Prompt ]`, `[ 🤖 Gemini Schema ]`, and `[ ◫ Split ]`), and a single Copy action inside each panel header.
    - **Context-Aware Footer**: Adapts footer actions per tab (`Cancel` & `Apply Cues (N)` on JSON Data; `Close` & `Go to JSON Data →` on Sync Prompt & Schema), styled with `whitespace-nowrap` and Title Case typography.
 8. **`OverlapPicker.tsx`**: Floating context popup for selecting which overlapping cue to edit at a shared position.
 9. **`DeleteConfirmationModal.tsx`**: Confirmation dialog with cue text preview prior to permanent deletion styled via `UI_TOKENS`.
@@ -353,8 +353,8 @@ The UI layer coordinates video playback, real-time highlighting, user interactio
 
 ### Type Definitions & Data Schemas
 - **`src/types/script.ts`**: Defines 14 domain interfaces and types: `Cue`, `TimingSettings`, `ColorCategory`, `AppState`, `ScriptWidthPresetId`, `ScriptWidthPreset`, `ScrollFocusPresetId`, `ScrollFocusPreset`, `TextSelection`, `DeleteConfirmationState`, `ResetConfirmationState`, `OverlapPickerState`, `AlternativeLocation`, and `AppMode`.
-- **`src/schemas/cues.schema.json` & `public/schema.json`**: Modular JSON schema contract defining the canonical cue data structure for LLM structured output decoding (array of objects with `id`, `type`, `speaker`, `selectedText`, `startTime`, `endTime`).
-- **`src/schemas/cues.prompt.ts` & `public/sync-prompt.txt`**: Canonical video-to-script synchronization prompt (`CUES_SYNC_PROMPT`) enforcing strict verbatim `<ScriptText>` substring copying and `(minutes * 60) + seconds` timecode math.
+- **`src/schemas/cues.schema.json`**: Single Source of Truth (SSOT) JSON schema contract defining the canonical cue data structure for Gemini structured output decoding (array of objects with `id`, `type`, nullable `speaker`, `selectedText`, `startTime`, `endTime`), served/emitted at `/schema.json` by `cuesAssetsPlugin` in `vite.config.ts`.
+- **`src/schemas/cues.prompt.ts`**: Single Source of Truth (SSOT) video-to-script synchronization prompt (`CUES_SYNC_PROMPT`) enforcing strict verbatim `<ScriptText>` substring copying, `[[STAGING]]` block exclusion, chronological sorting, `endTime > startTime`, `(minutes * 60) + seconds` timecode math, speaker extension stripping, and 8 cue type definitions, served/emitted at `/sync-prompt.txt` by `cuesAssetsPlugin` in `vite.config.ts`.
 - **`src/examples.ts`**: Defines the `Example` and `ExampleSection` schemas and holds the built-in catalogue metadata.
 
 ### Reference Documentation & Conceptual Specifications (`docs/articles/`)

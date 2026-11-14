@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
     "cues": {
@@ -25,7 +24,7 @@
           },
           "speaker": {
             "type": "string",
-            "description": "Character name speaking. Null if non-dialogue.",
+            "description": "Character name speaking. Explicitly null if non-dialogue.",
             "nullable": true
           },
           "selectedText": {
@@ -44,6 +43,7 @@
         "required": [
           "id",
           "type",
+          "speaker",
           "selectedText",
           "startTime",
           "endTime"

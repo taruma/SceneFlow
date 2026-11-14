@@ -155,9 +155,9 @@ Accessible from anywhere via the **File** dropdown (`Sync Cues (JSON)...`) and v
         2. *Set Output Schema*: Provide the cues JSON schema under Gemini *Structured Output* (or API `responseSchema`).
         3. *Import Cues*: Copy the model's generated JSON response and paste directly into the **JSON Data** tab.
       - **Draft Baseline Guidance**: Clearly positioned outside the markdown prompt to emphasize that the template provides a baseline draft that users are encouraged to customize for their specific workflow.
-      - **Standalone Public Asset Links**: Clickable chips linking directly to [sync-prompt.txt](/sync-prompt.txt) and [schema.json](/schema.json) for easy downloading or external referencing.
-      - **Segmented Sub-View Switcher**: Instant switching between `[ 📄 Sync Prompt ]`, `[ 🤖 Gemini Schema ]`, and `[ ◫ Split ]`. In standard single-view mode, the active file takes the full ~650px container width, completely eliminating horizontal scrollbars on JSON schema lines.
-      - **Prompt Enforcement Rules**: Enforces strict verbatim extraction from `<ScriptText>` and explicit `(minutes * 60) + seconds` timecode math with negative counter-examples (`01:23.3 is 83.3, NOT 123.3`).
+      - **Standalone SSOT Asset Links**: Clickable chips linking directly to [sync-prompt.txt](/sync-prompt.txt) and [schema.json](/schema.json) (served and emitted directly from `src/schemas/` via Vite) for easy downloading or external referencing.
+      - **Segmented Sub-View Switcher**: Instant switching between `[ 📄 Sync Prompt ]`, `[ 🤖 Gemini Schema ]`, and `[ ◫ Split ]` with a single contextual Copy button in each panel header. In standard single-view mode, the active file takes the full ~650px container width, completely eliminating horizontal scrollbars on JSON schema lines.
+      - **Prompt Enforcement Rules**: Enforces strict verbatim extraction from `<ScriptText>` (ignoring `[[STAGING]]` blocks), chronological sorting, `endTime > startTime`, explicit `(minutes * 60) + seconds` timecode math with negative counter-examples (`01:23.3 is 83.3, NOT 123.3`), clean `speaker` extraction, and definitions for all 8 cue categories.
 - **Context-Aware Modal Footer**:
   - Automatically switches actions based on the active tab:
     - In **`JSON Data`**: Displays `Cancel` and `Apply Cues ({count})` (disabled when invalid or empty).
