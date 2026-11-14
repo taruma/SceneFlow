@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.0] - 2026-11-14
+
 ### Added
 - **Local Video File Playback ([#19](https://github.com/taruma/SceneFlow/pull/19))**:
   - Added a **Local File** picker in the Edit-mode source bar to play local `.mp4`, `.webm`, and `.mov` files via an HTML `<video>` element for the current session without modifying the project's `youtubeId` or saved JSON.
