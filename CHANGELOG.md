@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.6.0] - 2026-11-14
 
 ### Added
+- **7 New AI Scenes Examples (`src/examples.ts`, `SCENEFLOW_CATALOGUE.md`)**:
+  - Added `scene_screaming_amber_wood.json` (**Screaming Amber Wood**, Seedance 2.5), `scene_coordinates_for_three.json` (**Coordinates for Three**, Seedance 2.5), `scene_pineapple.json` (**Pineapple**, Seedance 2.0), `scene_what_the_glacier_keeps.json` (**What the Glacier Keeps**, Seedance 2.0), `scene_paperweight.json` (**Paperweight**, Seedance 2.0), `scene_the_unresolved_variable.json` (**The Unresolved Variable**, Seedance 2.0), and `scene_the_event_boundary.json` (**The Event Boundary**, Seedance 2.0) under `public/examples/scenes/`.
+  - Registered all 7 projects under **AI Scenes** in `src/examples.ts` with `auteur script` and Seedance tags, loglines/release dates from `vector-film`, and updated `SCENEFLOW_CATALOGUE.md` (24 total AI Scenes).
 - **Local Video File Playback ([#19](https://github.com/taruma/SceneFlow/pull/19))**:
   - Added a **Local File** picker in the Edit-mode source bar to play local `.mp4`, `.webm`, and `.mov` files via an HTML `<video>` element for the current session without modifying the project's `youtubeId` or saved JSON.
   - Introduced the `MediaPlayer` interface (`src/lib/mediaPlayer.ts`) and `createVideoElementPlayer` adapter so transport, timeline scrubbing, seeking, loop preview, keyboard shortcuts, and cue timing work uniformly across YouTube and local video sources.

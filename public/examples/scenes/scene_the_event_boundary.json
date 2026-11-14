@@ -1,0 +1,674 @@
+{
+  "youtubeId": "https://youtu.be/IrpryOBcapg",
+  "scriptText": "I. PART I\n\n[[STAGING]]\n[[INTENT]]\nCreate a cinematic, atmospheric sci-fi, high-fidelity scene. Ensure the \"Split\" phenomenon looks grounded and physical rather than a digital effect, utilizing high-contrast lighting to emphasize the 1973 Mid-Century aesthetic and the psychological weight of the two characters. Make sure the result is cinematic with strong composition.\n[[/INTENT]]\n\n[[ESTABLISHING SCENE]]\nThe environment is a heavy, 1970s-era academic seminar room, defined by the dark oak wainscoting and the long, polished conference table seen in @LOCATION_01 and @LOCATION_02. The room is bisected by a terrifyingly clean temporal rift. To the LEFT, the space is identical to @LOCATION_01, bathed in warm, golden morning sunlight with dust motes drifting lazily in the air. To the RIGHT, where the entrance door is located, the room is identical to @LOCATION_02, shrouded in the cold, blue-black shadows of the current night. The \"split\" is a razor-sharp vertical line that cuts through the center of the chalkboard and the middle of the table, creating a surreal, non-blended juxtaposition of two different times.\n[[/ESTABLISHING SCENE]] \n\n[[VISUAL BLOCKING]]\nThe scene begins in the frantic, strobe-lit corridor outside the room. @FRANK runs toward the seminar room door. @DAVE is already inside the room, positioned just behind the heavy oak door on the @LOCATION_02 NIGHT SIDE (Right). As Frank reaches the door, Dave pulls it open, hauls Frank inside, and quickly slams it shut. Both men remain huddled in the far-right corner of the room, anchored in the darkness. Frank leans against the door, physically exhausted, while Dave stands slightly to his side, his body angled toward the impossible sunlight on the other side of the room. They never near the center line.\n[[/VISUAL BLOCKING]]\n[[/STAGING]]\n\nEXT. UNIVERSITY CORRIDOR - NIGHT\n\nA low-frequency COSMIC RUMBLE vibrates the tiles. The hallway is dark, pulsing with failing fluorescent lights.\n\nTRACKING SHOT from behind/back of @FRANK as he sprints toward Seminar Room. His heavy tweed coat flaps as he stumbles. The sound of his LABORED BREATHING competes with the roar of the anomaly behind him. He reaches the oak door.\n\nIt swings open inward. A hand reaches out—@DAVE. He PULLS Frank into the room.\n\nINT. SEMINAR ROOM - CONTINUOUS\n\nWIDE SHOT. The camera is positioned at the back of the room, looking toward the chalkboard. The room is SPLIT perfectly down the center. On the @LOCATION_02 RIGHT, Frank and Dave are silhouettes in the cold moonlight. On the @LOCATION_01 LEFT, the room is a peaceful, sun-drenched morning.\n\nFrank SLAMS the door shut and leans his back against the wood, gasping for air.\n\nFRANK: \n(Strained)\nGive me a second. Just... give me a second to think.\n\nMEDIUM TWO-SHOT. @FRANK is in the foreground, his face weary and sweat-streaked. @DAVE is slightly behind him, but his gaze is not on the door. He is staring OFF THE CAMERA, or rather, at the golden light flooding the (off-screen) left side of the frame. The warm glow catches the side of Frank & Dave face, contrasting with the blue shadows on the other side.\n\nDAVE: \n(Whispering, breathless)\nFrank. Look.\n\nCUT TO WIDE SHOT (SAME AS BEFORE). The two men look like figures standing on the right edge of the room.\n\nII. PART II\n\n[[STAGING]]\n[[INTENT]]\nCreate a cinematic, atmospheric sci-fi, high-fidelity scene. Ensure the \"Split\" phenomenon looks grounded and physical utilizing high-contrast lighting to emphasize the 1970 Mid-Century aesthetic and the psychological weight of the two characters. Make sure the result is cinematic with strong composition. Continue from @PREVIOUS_CLIP.\n[[/INTENT]]\n\n[[CONTINUITY PROTOCOL]]\nContinue from @PREVIOUS_CLIP to maintain absolute continuity. @DAVE is standing just behind @FRANK by the heavy oak door on the right side of the room, his eyes locked onto the impossible sunlight. @FRANK is leaning heavily against the door, still trying to catch his breath from the chaotic chase outside. The room remains perfectly bisected, half shrouded in the dark night @LOCATION_01 and half bathed in the serene, golden morning @LOCATION_02. Make sure the voice of each actor same from @PREVIOUS_CLIP\n[[/CONTINUITY PROTOCOL]]\n\n[[VISUAL BLOCKING]]\nThe scene opens with @FRANK and @DAVE positioned at the far right corner by the door. Intoxicated by the phenomenon, @DAVE slowly begins to walk away from the door, moving across the dark side of the room toward the center dividing line. He stops just a few paces short of the threshold. @FRANK, noticing Dave wandering too close to the anomaly, pushes himself off the door.  Frank walks directly behind Dave, stopping him by placing a firm hand on his shoulder. Both characters end the scene standing together on the night side, just a few feet away from the center line, looking toward the morning light.\n[[/VISUAL BLOCKING]]\n[[/STAGING]]\n\nINT. SEMINAR ROOM - NIGHT / MORNING (CONTINUOUS FROM @PREVIOUS_CLIP)\n\nCUT TO MEDIUM TWO-SHOT. @FRANK is hunched by the door, exhausted. @DAVE, completely captivated, slowly STEPS FORWARD, moving past Frank and deeper into the cold, blue shadows of the room.\n\nDAVE: \nIt’s not a reflection.\n\nFrank looks up, his exhaustion momentarily replaced by alarm as he watches Dave move closer to the center.\n\nFRANK: \nStay back, Dave.\n \nSIDE PROFILE SHOT. The camera views @DAVE from the side as he slowly approaches the center of the room. The razor-sharp dividing line of light is just steps away. He stares intently at the golden sunlight and the floating particles in the air, perfectly matching the serene atmosphere of @LOCATION_02.\n\nDAVE: \nThe dust motes... they’re suspended in a perfectly stationary temporal field.\n\nOVER-THE-SHOULDER TWO-SHOT. @FRANK QUICKLY STEPS INTO FRAME behind Dave. Catching his breath, Frank PLACES A FIRM HAND on Dave’s shoulder, physically halting his advance.\n\nFRANK: \nIt’s a glitch in the vacuum. Get back here.\n\n@DAVE TURNS HIS HEAD to look back at Frank, his expression a mix of awe and underlying grief. After a brief beat of eye contact, Dave SLOWLY TURNS HIS GAZE back to the glowing left side of the room, his eyes fixing on the analog clock hanging on the wall.\n\nDAVE: \nIt’s exactly that morning.\n\nFRANK: \nIt doesn't matter. It’s not our \"now.\"\n\nWIDE SHOT. The camera cuts to the back of the room, providing a full SPLIT view of the space just like the establishing shots of @LOCATION_02 and @LOCATION_01 combined. The temporal split perfectly divides the frame. Dave is now standing only a few feet away from the golden threshold, with Frank standing immediately behind him in the cold darkness. They appear as small, vulnerable figures dwarfed by the cosmic impossibility of the room.",
+  "cues": [
+    {
+      "id": "cue-001",
+      "type": "audio",
+      "speaker": null,
+      "selectedText": "A low-frequency COSMIC RUMBLE",
+      "startTime": 0,
+      "endTime": 3.25,
+      "startIndex": 1849,
+      "endIndex": 1878
+    },
+    {
+      "id": "cue-002",
+      "type": "environment",
+      "speaker": null,
+      "selectedText": "The hallway is dark",
+      "startTime": 0,
+      "endTime": 2.5,
+      "startIndex": 1899,
+      "endIndex": 1918
+    },
+    {
+      "id": "cue-003",
+      "type": "environment",
+      "speaker": null,
+      "selectedText": "failing fluorescent lights",
+      "startTime": 0,
+      "endTime": 2.5,
+      "startIndex": 1933,
+      "endIndex": 1959
+    },
+    {
+      "id": "cue-004",
+      "type": "camera",
+      "speaker": null,
+      "selectedText": "TRACKING SHOT",
+      "startTime": 0,
+      "endTime": 2.5,
+      "startIndex": 1962,
+      "endIndex": 1975
+    },
+    {
+      "id": "cue-005",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "from behind/back of @FRANK",
+      "startTime": 0,
+      "endTime": 2.5,
+      "startIndex": 1976,
+      "endIndex": 2002
+    },
+    {
+      "id": "cue-006",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "sprints toward Seminar Room",
+      "startTime": 0,
+      "endTime": 2,
+      "startIndex": 2009,
+      "endIndex": 2036
+    },
+    {
+      "id": "cue-007",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "His heavy tweed coat flaps",
+      "startTime": 0,
+      "endTime": 2,
+      "startIndex": 2038,
+      "endIndex": 2064
+    },
+    {
+      "id": "cue-008",
+      "type": "audio",
+      "speaker": null,
+      "selectedText": "LABORED BREATHING",
+      "startTime": 0,
+      "endTime": 2.5,
+      "startIndex": 2098,
+      "endIndex": 2115
+    },
+    {
+      "id": "cue-009",
+      "type": "audio",
+      "speaker": null,
+      "selectedText": "roar of the anomaly behind him",
+      "startTime": 0,
+      "endTime": 3.25,
+      "startIndex": 2134,
+      "endIndex": 2164
+    },
+    {
+      "id": "cue-010",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "stumbles",
+      "startTime": 1.2,
+      "endTime": 2,
+      "startIndex": 2071,
+      "endIndex": 2079
+    },
+    {
+      "id": "cue-011",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "He reaches the oak door",
+      "startTime": 1.8,
+      "endTime": 2.4,
+      "startIndex": 2166,
+      "endIndex": 2189
+    },
+    {
+      "id": "cue-012",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "It swings open inward",
+      "startTime": 2,
+      "endTime": 2.7,
+      "startIndex": 2192,
+      "endIndex": 2213
+    },
+    {
+      "id": "cue-013",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "A hand reaches out",
+      "startTime": 2.3,
+      "endTime": 2.8,
+      "startIndex": 2215,
+      "endIndex": 2233
+    },
+    {
+      "id": "cue-014",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "He PULLS Frank into the room",
+      "startTime": 2.5,
+      "endTime": 3.25,
+      "startIndex": 2241,
+      "endIndex": 2269
+    },
+    {
+      "id": "cue-015",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "WIDE SHOT",
+      "startTime": 3.25,
+      "endTime": 7.5,
+      "startIndex": 2304,
+      "endIndex": 2313
+    },
+    {
+      "id": "cue-016",
+      "type": "camera",
+      "speaker": null,
+      "selectedText": "The camera is positioned at the back of the room, looking toward the chalkboard",
+      "startTime": 3.25,
+      "endTime": 7.5,
+      "startIndex": 2315,
+      "endIndex": 2394
+    },
+    {
+      "id": "cue-017",
+      "type": "vfx",
+      "speaker": null,
+      "selectedText": "The room is SPLIT perfectly down the center",
+      "startTime": 3.25,
+      "endTime": 7.5,
+      "startIndex": 2396,
+      "endIndex": 2439
+    },
+    {
+      "id": "cue-018",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "Frank and Dave are silhouettes",
+      "startTime": 3.25,
+      "endTime": 7.5,
+      "startIndex": 2468,
+      "endIndex": 2498
+    },
+    {
+      "id": "cue-019",
+      "type": "environment",
+      "speaker": null,
+      "selectedText": "cold moonlight",
+      "startTime": 3.25,
+      "endTime": 7.5,
+      "startIndex": 2506,
+      "endIndex": 2520
+    },
+    {
+      "id": "cue-020",
+      "type": "environment",
+      "speaker": null,
+      "selectedText": "peaceful, sun-drenched morning",
+      "startTime": 3.25,
+      "endTime": 7.5,
+      "startIndex": 2562,
+      "endIndex": 2592
+    },
+    {
+      "id": "cue-021",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "Frank SLAMS the door shut",
+      "startTime": 3.5,
+      "endTime": 4.3,
+      "startIndex": 2595,
+      "endIndex": 2620
+    },
+    {
+      "id": "cue-022",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "leans his back against the wood",
+      "startTime": 4.3,
+      "endTime": 7.5,
+      "startIndex": 2625,
+      "endIndex": 2656
+    },
+    {
+      "id": "cue-023",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "gasping for air",
+      "startTime": 4.5,
+      "endTime": 7.2,
+      "startIndex": 2658,
+      "endIndex": 2673
+    },
+    {
+      "id": "cue-024",
+      "type": "dialogue",
+      "speaker": "FRANK",
+      "selectedText": "Give me a second. Just... give me a second to think.",
+      "startTime": 6.8,
+      "endTime": 10.5,
+      "startIndex": 2695,
+      "endIndex": 2747
+    },
+    {
+      "id": "cue-025",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "MEDIUM TWO-SHOT",
+      "startTime": 7.5,
+      "endTime": 13.5,
+      "startIndex": 2749,
+      "endIndex": 2764
+    },
+    {
+      "id": "cue-026",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "@FRANK is in the foreground",
+      "startTime": 7.5,
+      "endTime": 13.5,
+      "startIndex": 2766,
+      "endIndex": 2793
+    },
+    {
+      "id": "cue-027",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "his face weary and sweat-streaked",
+      "startTime": 7.5,
+      "endTime": 13.5,
+      "startIndex": 2795,
+      "endIndex": 2828
+    },
+    {
+      "id": "cue-028",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "@DAVE is slightly behind him",
+      "startTime": 7.5,
+      "endTime": 13.5,
+      "startIndex": 2830,
+      "endIndex": 2858
+    },
+    {
+      "id": "cue-029",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "his gaze is not on the door",
+      "startTime": 7.5,
+      "endTime": 13.5,
+      "startIndex": 2864,
+      "endIndex": 2891
+    },
+    {
+      "id": "cue-030",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "staring OFF THE CAMERA",
+      "startTime": 7.5,
+      "endTime": 13.5,
+      "startIndex": 2899,
+      "endIndex": 2921
+    },
+    {
+      "id": "cue-031",
+      "type": "environment",
+      "speaker": null,
+      "selectedText": "golden light flooding the (off-screen) left side of the frame",
+      "startTime": 7.5,
+      "endTime": 13.5,
+      "startIndex": 2941,
+      "endIndex": 3002
+    },
+    {
+      "id": "cue-032",
+      "type": "environment",
+      "speaker": null,
+      "selectedText": "blue shadows",
+      "startTime": 7.5,
+      "endTime": 13.5,
+      "startIndex": 3078,
+      "endIndex": 3090
+    },
+    {
+      "id": "cue-033",
+      "type": "environment",
+      "speaker": null,
+      "selectedText": "The warm glow catches the side of Frank & Dave face",
+      "startTime": 11.5,
+      "endTime": 13.5,
+      "startIndex": 3004,
+      "endIndex": 3055
+    },
+    {
+      "id": "cue-034",
+      "type": "dialogue",
+      "speaker": "DAVE",
+      "selectedText": "Frank. Look.",
+      "startTime": 11.6,
+      "endTime": 13.5,
+      "startIndex": 3143,
+      "endIndex": 3155
+    },
+    {
+      "id": "cue-035",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "WIDE SHOT (SAME AS BEFORE)",
+      "startTime": 13.5,
+      "endTime": 17.75,
+      "startIndex": 3164,
+      "endIndex": 3190
+    },
+    {
+      "id": "cue-036",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "The two men look like figures standing on the right edge of the room",
+      "startTime": 13.5,
+      "endTime": 17.75,
+      "startIndex": 3192,
+      "endIndex": 3260
+    },
+    {
+      "id": "cue-037",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "@FRANK is hunched by the door, exhausted",
+      "startTime": 13.5,
+      "endTime": 17.75,
+      "startIndex": 4963,
+      "endIndex": 5003
+    },
+    {
+      "id": "cue-038",
+      "type": "dialogue",
+      "speaker": "DAVE",
+      "selectedText": "It’s not a reflection.",
+      "startTime": 15.2,
+      "endTime": 16.4,
+      "startIndex": 5135,
+      "endIndex": 5157
+    },
+    {
+      "id": "cue-039",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "slowly STEPS FORWARD, moving past Frank and deeper into the cold, blue shadows of the room",
+      "startTime": 15.5,
+      "endTime": 17.75,
+      "startIndex": 5035,
+      "endIndex": 5125
+    },
+    {
+      "id": "cue-040",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "Frank looks up, his exhaustion momentarily replaced by alarm as he watches Dave move closer to the center",
+      "startTime": 16.2,
+      "endTime": 17.75,
+      "startIndex": 5159,
+      "endIndex": 5264
+    },
+    {
+      "id": "cue-041",
+      "type": "dialogue",
+      "speaker": "FRANK",
+      "selectedText": "Stay back, Dave.",
+      "startTime": 16.6,
+      "endTime": 17.6,
+      "startIndex": 5275,
+      "endIndex": 5291
+    },
+    {
+      "id": "cue-042",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "SIDE PROFILE SHOT",
+      "startTime": 17.75,
+      "endTime": 22.75,
+      "startIndex": 5294,
+      "endIndex": 5311
+    },
+    {
+      "id": "cue-043",
+      "type": "camera",
+      "speaker": null,
+      "selectedText": "The camera views @DAVE from the side as he slowly approaches the center of the room",
+      "startTime": 17.75,
+      "endTime": 22.75,
+      "startIndex": 5313,
+      "endIndex": 5396
+    },
+    {
+      "id": "cue-044",
+      "type": "vfx",
+      "speaker": null,
+      "selectedText": "The razor-sharp dividing line of light is just steps away",
+      "startTime": 17.75,
+      "endTime": 22.75,
+      "startIndex": 5398,
+      "endIndex": 5455
+    },
+    {
+      "id": "cue-045",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "He stares intently at the golden sunlight and the floating particles in the air",
+      "startTime": 17.75,
+      "endTime": 22.75,
+      "startIndex": 5457,
+      "endIndex": 5536
+    },
+    {
+      "id": "cue-046",
+      "type": "vfx",
+      "speaker": null,
+      "selectedText": "floating particles in the air",
+      "startTime": 17.75,
+      "endTime": 22.75,
+      "startIndex": 5507,
+      "endIndex": 5536
+    },
+    {
+      "id": "cue-047",
+      "type": "dialogue",
+      "speaker": "DAVE",
+      "selectedText": "The dust motes... they’re suspended in a perfectly stationary temporal field.",
+      "startTime": 18,
+      "endTime": 22.5,
+      "startIndex": 5604,
+      "endIndex": 5681
+    },
+    {
+      "id": "cue-048",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "OVER-THE-SHOULDER TWO-SHOT",
+      "startTime": 22.75,
+      "endTime": 27.75,
+      "startIndex": 5683,
+      "endIndex": 5709
+    },
+    {
+      "id": "cue-049",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "@FRANK QUICKLY STEPS INTO FRAME behind Dave",
+      "startTime": 22.75,
+      "endTime": 24.2,
+      "startIndex": 5711,
+      "endIndex": 5754
+    },
+    {
+      "id": "cue-050",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "Catching his breath",
+      "startTime": 22.75,
+      "endTime": 24.5,
+      "startIndex": 5756,
+      "endIndex": 5775
+    },
+    {
+      "id": "cue-051",
+      "type": "dialogue",
+      "speaker": "FRANK",
+      "selectedText": "It’s a glitch in the vacuum. Get back here.",
+      "startTime": 23.8,
+      "endTime": 25.8,
+      "startIndex": 5863,
+      "endIndex": 5906
+    },
+    {
+      "id": "cue-052",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "Frank PLACES A FIRM HAND on Dave’s shoulder",
+      "startTime": 23.8,
+      "endTime": 25.5,
+      "startIndex": 5777,
+      "endIndex": 5820
+    },
+    {
+      "id": "cue-053",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "physically halting his advance",
+      "startTime": 24,
+      "endTime": 25.5,
+      "startIndex": 5822,
+      "endIndex": 5852
+    },
+    {
+      "id": "cue-054",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "@DAVE TURNS HIS HEAD to look back at Frank",
+      "startTime": 24.8,
+      "endTime": 26.2,
+      "startIndex": 5908,
+      "endIndex": 5950
+    },
+    {
+      "id": "cue-055",
+      "type": "dialogue",
+      "speaker": "DAVE",
+      "selectedText": "It’s exactly that morning.",
+      "startTime": 26.2,
+      "endTime": 27.5,
+      "startIndex": 6172,
+      "endIndex": 6198
+    },
+    {
+      "id": "cue-056",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "Dave SLOWLY TURNS HIS GAZE back to the glowing left side of the room",
+      "startTime": 26.5,
+      "endTime": 27.75,
+      "startIndex": 6037,
+      "endIndex": 6105
+    },
+    {
+      "id": "cue-057",
+      "type": "dialogue",
+      "speaker": "FRANK",
+      "selectedText": "It doesn't matter. It’s not our \"now.\"",
+      "startTime": 27.5,
+      "endTime": 29.1,
+      "startIndex": 6208,
+      "endIndex": 6246
+    },
+    {
+      "id": "cue-058",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "WIDE SHOT",
+      "startTime": 27.75,
+      "endTime": 29.208,
+      "startIndex": 6248,
+      "endIndex": 6257
+    },
+    {
+      "id": "cue-059",
+      "type": "camera",
+      "speaker": null,
+      "selectedText": "The camera cuts to the back of the room",
+      "startTime": 27.75,
+      "endTime": 29.208,
+      "startIndex": 6259,
+      "endIndex": 6298
+    },
+    {
+      "id": "cue-060",
+      "type": "vfx",
+      "speaker": null,
+      "selectedText": "full SPLIT view of the space",
+      "startTime": 27.75,
+      "endTime": 29.208,
+      "startIndex": 6312,
+      "endIndex": 6340
+    },
+    {
+      "id": "cue-061",
+      "type": "vfx",
+      "speaker": null,
+      "selectedText": "temporal split perfectly divides the frame",
+      "startTime": 27.75,
+      "endTime": 29.208,
+      "startIndex": 6421,
+      "endIndex": 6463
+    },
+    {
+      "id": "cue-062",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "Dave is now standing only a few feet away from the golden threshold, with Frank standing immediately behind him in the cold darkness",
+      "startTime": 27.75,
+      "endTime": 29.208,
+      "startIndex": 6465,
+      "endIndex": 6597
+    },
+    {
+      "id": "cue-063",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "They appear as small, vulnerable figures dwarfed by the cosmic impossibility of the room",
+      "startTime": 27.75,
+      "endTime": 29.208,
+      "startIndex": 6599,
+      "endIndex": 6687
+    }
+  ],
+  "settings": {
+    "general": {
+      "before": 0.6,
+      "after": 0.5
+    },
+    "dialogue": {
+      "before": 0.4,
+      "after": 0.5
+    },
+    "action": {
+      "before": 0,
+      "after": 0
+    },
+    "camera": {
+      "before": 0.2,
+      "after": 0.1
+    },
+    "shot": {
+      "before": 0.2,
+      "after": 0.2
+    },
+    "audio": {
+      "before": 0,
+      "after": 0
+    },
+    "vfx": {
+      "before": 0,
+      "after": 0
+    },
+    "transition": {
+      "before": 0,
+      "after": 0
+    },
+    "environment": {
+      "before": 0,
+      "after": 0
+    }
+  }
+}

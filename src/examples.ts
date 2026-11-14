@@ -168,6 +168,69 @@ export const EXAMPLE_SECTIONS: ExampleSection[] = [
         releaseDate: '2026-08-12',
         tags: ['auteur script', 'seedance 2.5'],
         featured: true
+      },
+      {
+        id: 'scene_screaming_amber_wood',
+        title: 'Screaming Amber Wood',
+        path: '/examples/scenes/scene_screaming_amber_wood.json',
+        description: 'Deep inside a frozen forest, an exiled queen attempts a forbidden rite to pull her fallen companion back from the dead.',
+        releaseDate: '2026-08-16',
+        tags: ['auteur script', 'seedance 2.5'],
+        featured: false
+      },
+      {
+        id: 'scene_coordinates_for_three',
+        title: 'Coordinates for Three',
+        path: '/examples/scenes/scene_coordinates_for_three.json',
+        description: 'On a quiet summer afternoon, three restless companions press their fingers to a dormant artifact that erupts into a blaze of levitating light.',
+        releaseDate: '2026-08-15',
+        tags: ['auteur script', 'seedance 2.5'],
+        featured: false
+      },
+      {
+        id: 'scene_pineapple',
+        title: 'Pineapple',
+        path: '/examples/scenes/scene_pineapple.json',
+        description: 'Pulled over on an empty highway, four nervous road-trippers face an oddly intense interrogation over a single pineapple.',
+        releaseDate: '2026-07-30',
+        tags: ['auteur script', 'seedance 2.0'],
+        featured: false
+      },
+      {
+        id: 'scene_what_the_glacier_keeps',
+        title: 'What the Glacier Keeps',
+        path: '/examples/scenes/scene_what_the_glacier_keeps.json',
+        description: 'After surviving a mountain blizzard, two climbers begin to suspect their missing partner chose not to make the descent.',
+        releaseDate: '2026-07-27',
+        tags: ['auteur script', 'seedance 2.0'],
+        featured: false
+      },
+      {
+        id: 'scene_paperweight',
+        title: 'Paperweight',
+        path: '/examples/scenes/scene_paperweight.json',
+        description: 'During a midnight thunderstorm, a writer in a cluttered workshop discovers an old manuscript with a life of its own.',
+        releaseDate: '2026-07-23',
+        tags: ['auteur script', 'seedance 2.0'],
+        featured: false
+      },
+      {
+        id: 'scene_the_unresolved_variable',
+        title: 'The Unresolved Variable',
+        path: '/examples/scenes/scene_the_unresolved_variable.json',
+        description: 'Sitting in the dirt beneath a solitary winter tree, an exhausted mathematician is joined by his mentor for a quiet reality check.',
+        releaseDate: '2026-07-09',
+        tags: ['auteur script', 'seedance 2.0'],
+        featured: false
+      },
+      {
+        id: 'scene_the_event_boundary',
+        title: 'The Event Boundary',
+        path: '/examples/scenes/scene_the_event_boundary.json',
+        description: 'Bursting into a campus seminar room, two physicists confront a vertical split in reality where a long-lost morning waits on the other side.',
+        releaseDate: '2026-07-03',
+        tags: ['auteur script', 'seedance 2.0'],
+        featured: false
       }
     ]
   },

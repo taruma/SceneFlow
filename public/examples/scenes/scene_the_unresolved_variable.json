@@ -1,0 +1,513 @@
+{
+  "youtubeId": "https://youtu.be/VJZnfNySwQA",
+  "scriptText": "I. PART I\n\n[[STAGING]]\n[[INTENT]]\nCreate a cinematic, quiet indie film scene featuring @MARK as MARK and @ROBERT as ROBERT. Mark is lying on the ground beneath a massive oak tree, tossing an apple, when Robert approaches.\n[[/INTENT]] \n[[LOGIC]]\nMaintain spatial continuity with Mark lying on the damp grass, leaning his back against the base of the massive tree trunk frame-left. Keep Robert standing frame-right. Track the red apple in Mark's right hand across shots. End on silent, non-dialogue visual beats.\n[[/LOGIC]]\n[[AESTHETIC]]\nStyle: muted autumn tones, moody overcast lighting, shallow depth of field\nWardrobe (Mark): Charcoal wool trench coat, cream cable-knit sweater, dark trousers\nWardrobe (Robert): Navy corduroy blazer, grey wool cardigan, tortoise-shell glasses\nSound Design: Soft wind, dry leaves scraping. Diegetic only. No Music.\n[[/AESTHETIC]]\n[[OPENING]]\nWS, static. Mark is lying on the ground, leaning his back against the giant roots of the massive oak tree frame-left. He slowly tosses a red apple with his right hand.\n[[/OPENING]]\n[[/STAGING]]\n\n[<BRIEF>]\n[CAM] MCU, low-angle on Mark -> [ACT] Mark lies on the grass, tossing the red apple up and catching it, his gaze fixed upward -> [AUDIO] Leaves rustling softly\n[CAM] CU on Mark's hand catching the apple -> [ACT] His fingers close tightly around the red skin -> [AUDIO] ROBERT (J-CUT): \"Still calculating gravity...\"\n[CAM] WS, tracking -> [ACT] Robert enters from frame-right, walking slowly toward the massive trunk -> [AUDIO] ROBERT: \"...or just waiting for a sign?\"\n[CAM] Medium Two-Shot -> [ACT] Robert stands frame-right looking down at Mark, who remains lying against the tree -> [AUDIO] MARK: \"Just measuring the distance to the ground.\"\n[CAM] CU on Robert -> [ACT] Robert adjusts his tortoise-shell glasses, looking down with quiet concern -> [AUDIO] ROBERT: \"And why exactly are you lying out here in the cold?\"\n[CAM] CU on Mark -> [ACT] Mark slowly turns his head to look up at Robert -> [AUDIO] MARK (L-CUT): \"Because it's closer.\"\n[CAM] OTS looking down at Mark -> [ACT] Mark looks back up at the gray sky and tosses the apple one last time -> [AUDIO] Wind picks up, swelling slightly\n[CAM] WS -> [ACT] Mark catches the apple and rests it on his chest. Robert stands quietly beside him, both men staring up into the bare canopy -> [AUDIO] cold wind ambience\n[</BRIEF>]\n\nII. PART II\n\n[[STAGING]]\n[[INTENT]]\nContinue from @PREVIOUS_CLIP to create a cinematic indie drama scene featuring @MARK as MARK and @ROBERT as ROBERT. The two mathematics professors continue their existential conversation beneath the ancient oak tree.\n[[/INTENT]]\n[[LOGIC]]\nMaintain the spatial relationship established in the final frame of @PREVIOUS_CLIP : Mark lying against the bark frame-left, Robert standing right. Match the color grade and overcast lighting of @PREVIOUS_CLIP. Track the red apple in Mark's right hand. Prioritize a slow, rhythmic pace with motivated camera moves.   \n[[/LOGIC]]\n[[AESTHETIC]]\nWardrobe/Styling: Persistent from @PREVIOUS_CLIP (Mark in charcoal trench/cream sweater; Robert in navy corduroy/glasses)\nMusic Design: No Music, crisp crunch of dry leaves and distance campus bells\n[[/AESTHETIC]]\n[[OPENING]]\nWS, matching the final frame of @PREVIOUS_CLIP. Mark lies against the tree trunk frame-left, gazing upward. Robert stands frame-right, looking down at him. The massive oak branches frame the top of the screen.\n[[/OPENING]]\n[[/STAGING]]\n\n[<BRIEF>]\n[CAM] CU on Robert -> [ACT] Robert sighs, a faint cloud of breath visible in the cold air. He slowly begins to lower himself to the ground -> [AUDIO] ROBERT: \"Closer to what, Mark? The root system?\"\n[CAM] MS, low-angle -> [ACT] Robert sits down on the grass beside Mark, frame-right, leaning his back against the same tree trunk -> [AUDIO] MARK (J-CUT): \"Deterministic Chaos.\"\n[CAM] CU on Mark -> [ACT] Mark continues to toss the apple a few inches into the air and catch it. His eyes are fixed on the bare branches above -> [AUDIO] MARK: \"Sometimes you need the noise of the dirt to hear the signal of the universe.\"\n[CAM] ECU on the apple in Mark's hand -> [ACT] He catches the apple and holds it still. A small brown leaf is stuck to the damp skin of the fruit -> [AUDIO] ROBERT (O.S.): \"That's a very poetic way of describing...\"\n[CAM] OTS over Mark's shoulder looking at Robert -> [ACT] Robert is looking straight ahead now, his glasses reflecting the grey sky. He looks tired but thoughtful -> [AUDIO] ROBERT: \"...a complete nervous breakdown.\"\n[CAM] CU on Mark's face -> [ACT] A tiny, almost imperceptible smirk forms on Mark's lips. He doesn't look at Robert, just blinks slowly -> [AUDIO] MARK: \"Is there a mathematical difference?\"\n[CAM] WS, static -> [ACT] Both men sit side-by-side, leaning against the massive trunk, looking out toward the empty campus horizon. Mark slowly bites into the apple -> [AUDIO] Loud, crisp crunch of the apple; wind swells\n[CAM] EWS, slow zoom out -> [ACT] The two small figures are dwarfed by the scale of the ancient tree and the grey sky. They remain perfectly still\n[</BRIEF>]",
+  "cues": [
+    {
+      "id": "cue-001",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "Mark lies on the grass, tossing the red apple up and catching it, his gaze fixed upward",
+      "startTime": 0,
+      "endTime": 1.54,
+      "startIndex": 1120,
+      "endIndex": 1207
+    },
+    {
+      "id": "cue-002",
+      "type": "audio",
+      "speaker": null,
+      "selectedText": "Leaves rustling softly",
+      "startTime": 0,
+      "endTime": 1.54,
+      "startIndex": 1219,
+      "endIndex": 1241
+    },
+    {
+      "id": "cue-003",
+      "type": "camera",
+      "speaker": null,
+      "selectedText": "MCU, low-angle on Mark",
+      "startTime": 1.54,
+      "endTime": 3.12,
+      "startIndex": 1088,
+      "endIndex": 1110
+    },
+    {
+      "id": "cue-004",
+      "type": "dialogue",
+      "speaker": "ROBERT",
+      "selectedText": "Still calculating gravity...",
+      "startTime": 1.95,
+      "endTime": 3.1,
+      "startIndex": 1368,
+      "endIndex": 1396
+    },
+    {
+      "id": "cue-005",
+      "type": "camera",
+      "speaker": null,
+      "selectedText": "CU on Mark's hand catching the apple",
+      "startTime": 3.12,
+      "endTime": 4.15,
+      "startIndex": 1248,
+      "endIndex": 1284
+    },
+    {
+      "id": "cue-006",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "His fingers close tightly around the red skin",
+      "startTime": 3.12,
+      "endTime": 4.15,
+      "startIndex": 1294,
+      "endIndex": 1339
+    },
+    {
+      "id": "cue-007",
+      "type": "dialogue",
+      "speaker": "ROBERT",
+      "selectedText": "...or just waiting for a sign?",
+      "startTime": 3.9,
+      "endTime": 5,
+      "startIndex": 1518,
+      "endIndex": 1548
+    },
+    {
+      "id": "cue-008",
+      "type": "camera",
+      "speaker": null,
+      "selectedText": "WS, tracking",
+      "startTime": 4.15,
+      "endTime": 5.75,
+      "startIndex": 1404,
+      "endIndex": 1416
+    },
+    {
+      "id": "cue-009",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "Robert enters from frame-right, walking slowly toward the massive trunk",
+      "startTime": 4.15,
+      "endTime": 5.75,
+      "startIndex": 1426,
+      "endIndex": 1497
+    },
+    {
+      "id": "cue-010",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "Medium Two-Shot",
+      "startTime": 5.75,
+      "endTime": 7.8,
+      "startIndex": 1556,
+      "endIndex": 1571
+    },
+    {
+      "id": "cue-011",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "Robert stands frame-right looking down at Mark, who remains lying against the tree",
+      "startTime": 5.75,
+      "endTime": 7.8,
+      "startIndex": 1581,
+      "endIndex": 1663
+    },
+    {
+      "id": "cue-012",
+      "type": "dialogue",
+      "speaker": "MARK",
+      "selectedText": "Just measuring the distance to the ground.",
+      "startTime": 6,
+      "endTime": 7.55,
+      "startIndex": 1682,
+      "endIndex": 1724
+    },
+    {
+      "id": "cue-013",
+      "type": "camera",
+      "speaker": null,
+      "selectedText": "CU on Robert",
+      "startTime": 7.8,
+      "endTime": 10.15,
+      "startIndex": 1732,
+      "endIndex": 1744
+    },
+    {
+      "id": "cue-014",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "Robert adjusts his tortoise-shell glasses, looking down with quiet concern",
+      "startTime": 7.8,
+      "endTime": 10.15,
+      "startIndex": 1754,
+      "endIndex": 1828
+    },
+    {
+      "id": "cue-015",
+      "type": "dialogue",
+      "speaker": "ROBERT",
+      "selectedText": "And why exactly are you lying out here in the cold?",
+      "startTime": 8.1,
+      "endTime": 10.1,
+      "startIndex": 1849,
+      "endIndex": 1900
+    },
+    {
+      "id": "cue-016",
+      "type": "camera",
+      "speaker": null,
+      "selectedText": "CU on Mark",
+      "startTime": 10.15,
+      "endTime": 13,
+      "startIndex": 1908,
+      "endIndex": 1918
+    },
+    {
+      "id": "cue-017",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "Mark slowly turns his head to look up at Robert",
+      "startTime": 10.15,
+      "endTime": 13,
+      "startIndex": 1928,
+      "endIndex": 1975
+    },
+    {
+      "id": "cue-018",
+      "type": "dialogue",
+      "speaker": "MARK",
+      "selectedText": "Because it's closer.",
+      "startTime": 11,
+      "endTime": 12.1,
+      "startIndex": 2002,
+      "endIndex": 2022
+    },
+    {
+      "id": "cue-019",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "OTS looking down at Mark",
+      "startTime": 13,
+      "endTime": 14.7,
+      "startIndex": 2030,
+      "endIndex": 2054
+    },
+    {
+      "id": "cue-020",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "Mark looks back up at the gray sky and tosses the apple one last time",
+      "startTime": 13,
+      "endTime": 14.7,
+      "startIndex": 2064,
+      "endIndex": 2133
+    },
+    {
+      "id": "cue-021",
+      "type": "audio",
+      "speaker": null,
+      "selectedText": "Wind picks up, swelling slightly",
+      "startTime": 13,
+      "endTime": 14.7,
+      "startIndex": 2145,
+      "endIndex": 2177
+    },
+    {
+      "id": "cue-022",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "WS",
+      "startTime": 14.7,
+      "endTime": 16.9,
+      "startIndex": 2184,
+      "endIndex": 2186
+    },
+    {
+      "id": "cue-023",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "Mark catches the apple and rests it on his chest. Robert stands quietly beside him, both men staring up into the bare canopy",
+      "startTime": 14.7,
+      "endTime": 16.9,
+      "startIndex": 2196,
+      "endIndex": 2320
+    },
+    {
+      "id": "cue-024",
+      "type": "audio",
+      "speaker": null,
+      "selectedText": "cold wind ambience",
+      "startTime": 14.7,
+      "endTime": 16.9,
+      "startIndex": 2332,
+      "endIndex": 2350
+    },
+    {
+      "id": "cue-025",
+      "selectedText": "CU on Robert",
+      "startIndex": 3460,
+      "endIndex": 3472,
+      "startTime": 14.8,
+      "endTime": 16.7,
+      "type": "camera"
+    },
+    {
+      "id": "cue-026",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "Robert sighs, a faint cloud of breath visible in the cold air. He slowly begins to lower himself to the ground",
+      "startTime": 14.8,
+      "endTime": 16.7,
+      "startIndex": 3482,
+      "endIndex": 3592
+    },
+    {
+      "id": "cue-027",
+      "type": "dialogue",
+      "speaker": "ROBERT",
+      "selectedText": "Closer to what, Mark? The root system?",
+      "startTime": 15,
+      "endTime": 16.7,
+      "startIndex": 3613,
+      "endIndex": 3651
+    },
+    {
+      "id": "cue-028",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "MS, low-angle",
+      "startTime": 16.7,
+      "endTime": 18.2,
+      "startIndex": 3659,
+      "endIndex": 3672
+    },
+    {
+      "id": "cue-029",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "Robert sits down on the grass beside Mark, frame-right, leaning his back against the same tree trunk",
+      "startTime": 16.7,
+      "endTime": 18.2,
+      "startIndex": 3682,
+      "endIndex": 3782
+    },
+    {
+      "id": "cue-030",
+      "type": "dialogue",
+      "speaker": "MARK",
+      "selectedText": "Deterministic Chaos.",
+      "startTime": 17,
+      "endTime": 18.1,
+      "startIndex": 3809,
+      "endIndex": 3829
+    },
+    {
+      "id": "cue-031",
+      "type": "camera",
+      "speaker": null,
+      "selectedText": "CU on Mark",
+      "startTime": 18.2,
+      "endTime": 21.8,
+      "startIndex": 3837,
+      "endIndex": 3847
+    },
+    {
+      "id": "cue-032",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "Mark continues to toss the apple a few inches into the air and catch it. His eyes are fixed on the bare branches above",
+      "startTime": 18.2,
+      "endTime": 21.8,
+      "startIndex": 3857,
+      "endIndex": 3975
+    },
+    {
+      "id": "cue-033",
+      "type": "dialogue",
+      "speaker": "MARK",
+      "selectedText": "Sometimes you need the noise of the dirt to hear the signal of the universe.",
+      "startTime": 18.5,
+      "endTime": 21.5,
+      "startIndex": 3994,
+      "endIndex": 4070
+    },
+    {
+      "id": "cue-034",
+      "type": "camera",
+      "speaker": null,
+      "selectedText": "ECU on the apple in Mark's hand",
+      "startTime": 21.8,
+      "endTime": 22.8,
+      "startIndex": 4078,
+      "endIndex": 4109
+    },
+    {
+      "id": "cue-035",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "He catches the apple and holds it still. A small brown leaf is stuck to the damp skin of the fruit",
+      "startTime": 21.8,
+      "endTime": 22.8,
+      "startIndex": 4119,
+      "endIndex": 4217
+    },
+    {
+      "id": "cue-036",
+      "type": "dialogue",
+      "speaker": "ROBERT",
+      "selectedText": "That's a very poetic way of describing...",
+      "startTime": 21.9,
+      "endTime": 22.7,
+      "startIndex": 4245,
+      "endIndex": 4286
+    },
+    {
+      "id": "cue-037",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "OTS over Mark's shoulder looking at Robert",
+      "startTime": 22.8,
+      "endTime": 24.8,
+      "startIndex": 4294,
+      "endIndex": 4336
+    },
+    {
+      "id": "cue-038",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "Robert is looking straight ahead now, his glasses reflecting the grey sky. He looks tired but thoughtful",
+      "startTime": 22.8,
+      "endTime": 24.8,
+      "startIndex": 4346,
+      "endIndex": 4450
+    },
+    {
+      "id": "cue-039",
+      "type": "dialogue",
+      "speaker": "ROBERT",
+      "selectedText": "...a complete nervous breakdown.",
+      "startTime": 22.8,
+      "endTime": 24.7,
+      "startIndex": 4471,
+      "endIndex": 4503
+    },
+    {
+      "id": "cue-040",
+      "type": "camera",
+      "speaker": null,
+      "selectedText": "CU on Mark's face",
+      "startTime": 24.8,
+      "endTime": 26.2,
+      "startIndex": 4511,
+      "endIndex": 4528
+    },
+    {
+      "id": "cue-041",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "A tiny, almost imperceptible smirk forms on Mark's lips. He doesn't look at Robert, just blinks slowly",
+      "startTime": 24.8,
+      "endTime": 26.2,
+      "startIndex": 4538,
+      "endIndex": 4640
+    },
+    {
+      "id": "cue-042",
+      "type": "dialogue",
+      "speaker": "MARK",
+      "selectedText": "Is there a mathematical difference?",
+      "startTime": 25,
+      "endTime": 26.1,
+      "startIndex": 4659,
+      "endIndex": 4694
+    },
+    {
+      "id": "cue-043",
+      "type": "shot",
+      "speaker": null,
+      "selectedText": "WS, static",
+      "startTime": 26.2,
+      "endTime": 27.8,
+      "startIndex": 4702,
+      "endIndex": 4712
+    },
+    {
+      "id": "cue-044",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "Both men sit side-by-side, leaning against the massive trunk, looking out toward the empty campus horizon. Mark slowly bites into the apple",
+      "startTime": 26.2,
+      "endTime": 27.8,
+      "startIndex": 4722,
+      "endIndex": 4861
+    },
+    {
+      "id": "cue-045",
+      "type": "audio",
+      "speaker": null,
+      "selectedText": "Loud, crisp crunch of the apple; wind swells",
+      "startTime": 26.2,
+      "endTime": 27.8,
+      "startIndex": 4873,
+      "endIndex": 4917
+    },
+    {
+      "id": "cue-046",
+      "type": "camera",
+      "speaker": null,
+      "selectedText": "EWS, slow zoom out",
+      "startTime": 27.8,
+      "endTime": 29.8,
+      "startIndex": 4924,
+      "endIndex": 4942
+    },
+    {
+      "id": "cue-047",
+      "type": "action",
+      "speaker": null,
+      "selectedText": "The two small figures are dwarfed by the scale of the ancient tree and the grey sky. They remain perfectly still",
+      "startTime": 27.8,
+      "endTime": 29.8,
+      "startIndex": 4952,
+      "endIndex": 5064
+    }
+  ],
+  "settings": {
+    "general": {
+      "before": 0.5,
+      "after": 0.5
+    },
+    "dialogue": {
+      "before": 0.3,
+      "after": 0.3
+    },
+    "action": {
+      "before": 0,
+      "after": 0
+    },
+    "camera": {
+      "before": 0.2,
+      "after": 0.3
+    },
+    "shot": {
+      "before": 0.2,
+      "after": 0.3
+    },
+    "audio": {
+      "before": 0,
+      "after": 0
+    },
+    "vfx": {
+      "before": 0,
+      "after": 0
+    },
+    "transition": {
+      "before": 0,
+      "after": 0
+    },
+    "environment": {
+      "before": 0,
+      "after": 0
+    }
+  }
+}
